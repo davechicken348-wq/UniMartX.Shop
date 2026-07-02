@@ -4,6 +4,7 @@ import prisma from '../lib/prisma';
 import { listProductsSchema, toggleStatusSchema } from '../schemas/product.schema';
 import { createProductSchema, type CreateProductInput } from '../schemas/product.schema';
 import { authenticate } from '../controllers/auth.controller';
+import { uploadToR2, productImageKey, extFromFilename } from '../services/r2.service';
 
 /** GET /api/seller/products/admin/stats — admin-only product KPIs */
 export const adminProductStats = async (_req: Request, res: Response): Promise<void> => {
@@ -126,12 +127,22 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
       throw new AppError('Seller account not found. Please register as a seller.', 404);
     }
 
-    // Collect uploaded image URLs
-    const files = (req as any).files as File[] | undefined;
+    // Collect uploaded image URLs — upload to R2 under sellers/{sellerId}/products/{productId}/
+    const files = (req as any).files as Express.Multer.File[] | undefined;
     let imageUrls: string[] = [];
 
     if (files && files.length > 0) {
-      imageUrls = files.map(f => `/uploads/${(f as any).filename}`);
+      // We need a product ID first — generate one and use it as the folder
+      const tempProductId = require('crypto').randomUUID();
+      imageUrls = await Promise.all(
+        files.map(f => uploadToR2(
+          productImageKey(seller.id, tempProductId, extFromFilename(f.originalname)),
+          f.buffer,
+          f.mimetype,
+        ))
+      );
+      // Store tempProductId so Prisma uses it
+      (req as any)._productId = tempProductId;
     }
 
     // Fallback: plain JSON placeholder strings (for dev/testing without upload)
@@ -148,6 +159,7 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
 
     // ── Build Prisma create payload ──
     const createData: any = {
+      id: (req as any)._productId,
       sellerId: seller.id,
       name: input.name,
       description: input.description,
@@ -554,9 +566,17 @@ export const updateProduct = async (req: Request, res: Response): Promise<void> 
     const seller = await prisma.seller.findUnique({ where: { userId: userPayload.userId }, select: { id: true } });
     if (!seller || existing.sellerId !== seller.id) throw new AppError('Forbidden', 403);
 
-    const files = (req as any).files as File[] | undefined;
+    const files = (req as any).files as Express.Multer.File[] | undefined;
     let imageUrls: string[] = [];
-    if (files && files.length > 0) imageUrls = files.map(f => `/uploads/${(f as any).filename}`);
+    if (files && files.length > 0) {
+      imageUrls = await Promise.all(
+        files.map(f => uploadToR2(
+          productImageKey(seller.id, id, extFromFilename(f.originalname)),
+          f.buffer,
+          f.mimetype,
+        ))
+      );
+    }
 
     const updateData: any = {
       name:        input.name,

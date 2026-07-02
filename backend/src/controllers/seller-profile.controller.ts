@@ -4,22 +4,7 @@ import { AppError } from '../middleware/errorHandler';
 import prisma from '../lib/prisma';
 import { authenticate, type JwtPayload } from '../controllers/auth.controller';
 import { updateProfileSchema } from '../schemas/seller-profile.schema';
-import { writeFileSync, mkdirSync, existsSync } from 'fs';
-import { join } from 'path';
-
-const UPLOADS_DIR = join(__dirname, '..', '..', 'uploads');
-if (!existsSync(UPLOADS_DIR)) mkdirSync(UPLOADS_DIR, { recursive: true });
-
-// Save a base64 data URL to disk, return the /uploads/<filename> path
-function saveBase64Image(base64: string, prefix: string): string {
-  const match = base64.match(/^data:image\/(\w+);base64,(.+)$/);
-  if (!match) throw new AppError('Invalid image data', 400);
-  const ext = match[1] === 'jpeg' ? 'jpg' : match[1];
-  const filename = `${prefix}-${Date.now()}.${ext}`;
-  const buffer = Buffer.from(match[2], 'base64');
-  writeFileSync(join(UPLOADS_DIR, filename), buffer);
-  return `/uploads/${filename}`;
-}
+import { uploadToR2, sellerAvatarKey, sellerBannerKey, sellerStoreAvatarKey, parseBase64 } from '../services/r2.service';
 
 const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:5000';
 function absUrl(path: string | null | undefined): string | null {
@@ -123,7 +108,10 @@ export const updateSellerProfile = async (req: Request, res: Response): Promise<
     if (input.phone !== undefined) userUpdate.phone = input.phone ? input.phone.trim() : null;
     if (input.avatar !== undefined) {
       if (input.avatar && input.avatar.startsWith('data:')) {
-        userUpdate.avatar = saveBase64Image(input.avatar, 'avatar');
+        const sellerForAvatar = await prisma.seller.findUnique({ where: { userId: userPayload.userId }, select: { id: true } });
+        if (!sellerForAvatar) throw new AppError('Seller not found', 404);
+        const { buffer, mime, ext } = parseBase64(input.avatar);
+        userUpdate.avatar = await uploadToR2(sellerAvatarKey(sellerForAvatar.id, ext), buffer, mime);
       } else {
         userUpdate.avatar = input.avatar;
       }
@@ -145,14 +133,20 @@ export const updateSellerProfile = async (req: Request, res: Response): Promise<
      if (input.pickupAddress !== undefined) sellerUpdate.pickupAddress = input.pickupAddress ? input.pickupAddress.trim() : null;
      if (input.storeBanner !== undefined) {
        if (input.storeBanner && input.storeBanner.startsWith('data:')) {
-         sellerUpdate.storeBanner = saveBase64Image(input.storeBanner, 'banner');
+         const s = await prisma.seller.findUnique({ where: { userId: userPayload.userId }, select: { id: true } });
+         if (!s) throw new AppError('Seller not found', 404);
+         const { buffer, mime, ext } = parseBase64(input.storeBanner);
+         sellerUpdate.storeBanner = await uploadToR2(sellerBannerKey(s.id, ext), buffer, mime);
        } else {
          sellerUpdate.storeBanner = input.storeBanner ? input.storeBanner.trim() : null;
        }
      }
      if (input.storeAvatar !== undefined) {
        if (input.storeAvatar && input.storeAvatar.startsWith('data:')) {
-         sellerUpdate.storeAvatar = saveBase64Image(input.storeAvatar, 'store-avatar');
+         const s = await prisma.seller.findUnique({ where: { userId: userPayload.userId }, select: { id: true } });
+         if (!s) throw new AppError('Seller not found', 404);
+         const { buffer, mime, ext } = parseBase64(input.storeAvatar);
+         sellerUpdate.storeAvatar = await uploadToR2(sellerStoreAvatarKey(s.id, ext), buffer, mime);
        } else {
          sellerUpdate.storeAvatar = input.storeAvatar ? input.storeAvatar.trim() : null;
        }

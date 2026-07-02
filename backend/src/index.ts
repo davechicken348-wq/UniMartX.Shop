@@ -20,6 +20,7 @@ import orderRoutes from './routes/order.routes';
 import refundRoutes from './routes/refund.routes';
 import { errorHandler } from './middleware/errorHandler';
 import { initializeEmailService } from './services/email.service';
+import { initializeR2 } from './services/r2.service';
 
 dotenv.config();
 
@@ -100,17 +101,6 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/refunds', refundRoutes);
 app.use('/api/orders', orderRoutes);
 
-// ── Static uploads ──
-import { join } from 'path';
-app.use('/uploads', express.static(join(__dirname, '..', 'uploads'), {
-  setHeaders: (_res, filePath) => {
-    _res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
-    _res.setHeader('X-Content-Type-Options', 'nosniff');
-    if (/\.(jpg|jpeg|png|webp|gif|svg|avif|ico)$/i.test(filePath)) {
-      _res.setHeader('Cache-Control', 'public, max-age=86400, immutable');
-    }
-  },
-}));
 
 // ── Error handler (must be last) ──
 app.use(errorHandler);
@@ -121,6 +111,9 @@ process.on('SIGINT', async () => {
   await prisma.$disconnect();
   process.exit(0);
 });
+
+// ── Init R2 storage ──
+initializeR2();
 
 // ── Init email service (non-critical — silent failure is OK) ──
 initializeEmailService().catch((error) => {

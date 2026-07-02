@@ -3,30 +3,14 @@ import multer from 'multer';
 import { asyncHandler } from '../middleware/asyncHandler';
 import { createProduct, listProducts, deleteProduct, getProductById, toggleProductStatus, updateProduct } from '../controllers/product.controller';
 import { listProductsSchema } from '../schemas/product.schema';
-import path from 'path';
-import { mkdirSync, existsSync } from 'fs';
 
 const router = Router();
 
-// ── Uploads directory (inside backend/) ──
-const UPLOADS_DIR = path.join(__dirname, '..', '..', 'uploads');
-if (!existsSync(UPLOADS_DIR)) mkdirSync(UPLOADS_DIR, { recursive: true });
-
-const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => cb(null, UPLOADS_DIR),
-  filename: (_req, file, cb) => {
-    const ext = (file.originalname.split('.').pop() || 'jpg').toLowerCase();
-    const safe = file.originalname.replace(/[^a-zA-Z0-9._-]/g, '').replace(/\s+/g, '-');
-    cb(null, `product-${Date.now()}-${safe}`);
-  },
-});
-
 const upload = multer({
-  storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB per file
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (_req, file, cb) => {
-    const type = file.mimetype.split('/')[0];
-    cb(null, type === 'image' || file.mimetype === 'image/svg+xml');
+    cb(null, file.mimetype.startsWith('image/'));
   },
 });
 
