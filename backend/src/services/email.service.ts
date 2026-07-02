@@ -282,10 +282,13 @@ async function sendMail(to: string, subject: string, html: string, replyTo?: str
     console.warn(`[email] Resend not configured, skipping email to ${to}`);
     return false;
   }
+  const devOverride = process.env.EMAIL_DEV_OVERRIDE;
+  const recipient = devOverride || to;
+  if (devOverride) console.log(`[email] DEV OVERRIDE: redirecting email from ${to} to ${devOverride}`);
   try {
-    const { error } = await resend.emails.send({ from: fromAddress, to, subject, html, ...(replyTo ? { replyTo } : {}) });
+    const { error } = await resend.emails.send({ from: fromAddress, to: recipient, subject, html, ...(replyTo ? { replyTo } : {}) });
     if (error) { console.error(`❌ Failed to send email to ${to}:`, error); return false; }
-    console.log(`✓ Email sent to ${to}`);
+    console.log(`✓ Email sent to ${recipient}`);
     return true;
   } catch (error) {
     console.error(`❌ Failed to send email to ${to}:`, error);
