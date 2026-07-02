@@ -211,6 +211,7 @@ export const updateSellerProfile = async (req: Request, res: Response): Promise<
   } catch (error) {
     if (error instanceof AppError) throw error;
     if (error instanceof z.ZodError) throw new AppError('Invalid input data', 400);
+    console.error('updateSellerProfile error:', error);
     throw new AppError('Failed to update profile', 500);
   }
 };
