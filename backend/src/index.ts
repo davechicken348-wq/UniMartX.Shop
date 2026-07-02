@@ -41,11 +41,12 @@ process.on('SIGTERM', async () => {
 });
 
 // ── Middleware ──
-const isDev = process.env.NODE_ENV !== 'production';
+const isDev = process.env.NODE_ENV === 'development';
+const allowedOrigins = isDev
+  ? ['http://localhost:3000', 'http://127.0.0.1:3000', 'http://localhost:5173', 'http://localhost:5500', 'http://localhost:8080', 'http://localhost:5000', 'http://127.0.0.1:5000']
+  : [process.env.FRONTEND_URL || ''].filter(Boolean);
 app.use(cors({
-  origin: isDev
-    ? ['http://localhost:3000', 'http://127.0.0.1:3000', 'http://localhost:5173', 'http://localhost:5500', 'http://localhost:8080', 'http://localhost:5000', 'http://127.0.0.1:5000']
-    : [process.env.FRONTEND_URL || ''].filter(Boolean),
+  origin: allowedOrigins,
   credentials: true,
 }));
 const backendOrigin = process.env.BACKEND_URL || 'http://localhost:5000';
