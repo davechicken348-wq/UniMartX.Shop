@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - UnimartX</title>
+    <script src="../../../config.js"></script>
+    <script>if(localStorage.getItem('sidebar_collapsed')==='true')document.documentElement.classList.add('no-transition')</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../shared/css/buyer-base.css">
+    <link rel="stylesheet" href="../shared/css/sidebar.css">
+    <link rel="stylesheet" href="../shared/css/topnav.css">
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <link rel="stylesheet" href="../assets/css/profile.css">
+</head>
+<body>
+
+    <!-- ═══════════════════════════════════════════
+         SIDEBAR
+    ═══════════════════════════════════════════ -->
+    <aside class="sidebar" id="sidebar">
+
+        <!-- Logo -->
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-icon">
+                <i data-lucide="shopping-bag"></i>
+            </div>
+            <span class="sidebar-logo-text">Unimart<span>X</span></span>
+        </div>
+
+        <!-- Toggle -->
+        <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
+            <i data-lucide="chevron-left"></i>
+        </button>
+
+        <!-- Nav -->
+        <nav class="sidebar-nav">
+
+            <span class="nav-section-label">Main</span>
+
+            <a href="dashboard.html" class="nav-item active" data-tooltip="Dashboard">
+                <div class="nav-item-icon"><i data-lucide="layout-dashboard"></i></div>
+                <span class="nav-item-label">Dashboard</span>
+            </a>
+
+            <a href="../orders/orders.html" class="nav-item" data-tooltip="My Orders">
+                <div class="nav-item-icon"><i data-lucide="package"></i></div>
+                <span class="nav-item-label">My Orders</span>
+                <span class="nav-item-badge" id="sidebar-orders-count" style="display:none"></span>
+            </a>
+
+            <a href="../shopping/wishlist.html" class="nav-item" data-tooltip="Wishlist">
+                <div class="nav-item-icon"><i data-lucide="heart"></i></div>
+                <span class="nav-item-label">Wishlist</span>
+                <span class="nav-item-badge" id="sidebar-wishlist-count" style="display:none"></span>
+            </a>
+
+            <a href="../notifications/notifications.html" class="nav-item" data-tooltip="Notifications">
+                <div class="nav-item-icon"><i data-lucide="bell"></i></div>
+                <span class="nav-item-label">Notifications</span>
+                <span class="nav-item-badge" id="sidebar-notif-count" style="display:none"></span>
+            </a>
+                        <span class="nav-section-label">Account</span>
+
+            <a href="../account/profile.html" class="nav-item" data-tooltip="Profile">
+                <div class="nav-item-icon"><i data-lucide="user"></i></div>
+                <span class="nav-item-label">Profile</span>
+            </a>
+
+            <a href="../account/settings.html" class="nav-item" data-tooltip="Settings">
+                <div class="nav-item-icon"><i data-lucide="settings"></i></div>
+                <span class="nav-item-label">Settings</span>
+            </a>
+
+            <span class="nav-section-label">More</span>
+
+            <a href="../buyer-landing/buyer-landing.html" class="nav-item" data-tooltip="Home">
+                <div class="nav-item-icon"><i data-lucide="home"></i></div>
+                <span class="nav-item-label">Home</span>
+            </a>
+
+            <a href="../../public/shop/shop.html" class="nav-item" data-tooltip="Browse Shop">
+                <div class="nav-item-icon"><i data-lucide="shopping-bag"></i></div>
+                <span class="nav-item-label">Browse Shop</span>
+            </a>
+
+            <a href="../../public/info/faq.html" class="nav-item" data-tooltip="Help & FAQ">
+                <div class="nav-item-icon"><i data-lucide="help-circle"></i></div>
+                <span class="nav-item-label">Help & FAQ</span>
+            </a>
+
+        </nav>
+
+        <!-- Footer -->
+        <div class="sidebar-footer">
+            <div class="sidebar-user">
+                <div class="sidebar-avatar" id="sidebar-avatar"></div>
+                <div class="sidebar-user-info">
+                    <p class="sidebar-user-name" id="sidebar-name"></p>
+                    <p class="sidebar-user-role">Buyer</p>
+                </div>
+                <a href="../../auth/logout.html" class="sidebar-logout" aria-label="Log out">
+                    <i data-lucide="log-out"></i>
+                </a>
+            </div>
+        </div>
+
+    </aside>
+
+    <!-- Sidebar overlay (mobile) -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+
+    <!-- ═══════════════════════════════════════════
+         TOP NAV
+    ═══════════════════════════════════════════ -->
+    <header class="topnav" id="topnav">
+
+        <button class="topnav-hamburger" id="topnav-hamburger" aria-label="Open menu">
+            <i data-lucide="menu"></i>
+        </button>
+
+        <div class="topnav-title">
+            <h1>Dashboard</h1>
+            <p id="topnav-greeting"></p>
+        </div>
+
+        <div class="topnav-search">
+            <i data-lucide="search"></i>
+            <input type="search" placeholder="Search orders, products…" aria-label="Search">
+        </div>
+
+        <div class="topnav-actions">
+
+            <!-- Notifications -->
+            <div style="position:relative;">
+                <button class="topnav-btn" id="notif-btn" aria-label="Notifications">
+                    <i data-lucide="bell"></i>
+                    <span class="topnav-badge" id="notif-badge" style="display:none"></span>
+                </button>
+
+                <div class="notif-panel" id="notif-panel">
+                    <div class="notif-header">
+                        <h3>Notifications</h3>
+                        <button class="notif-mark-read" id="mark-read">Mark all read</button>
+                    </div>
+                    <div class="notif-list"></div>
+                    <div class="notif-footer">
+                        <a href="../notifications/notifications.html">View all notifications</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User dropdown -->
+            <div style="position:relative;">
+                <div class="topnav-user" id="topnav-user">
+                    <div class="topnav-avatar" id="topnav-avatar"></div>
+                    <span class="topnav-username" id="topnav-username"></span>
+                    <i data-lucide="chevron-down" class="topnav-chevron"></i>
+                </div>
+
+                <div class="topnav-dropdown" id="topnav-dropdown">
+                    <a href="../account/profile.html" class="dropdown-item">
+                        <i data-lucide="user"></i> My Profile
+                    </a>
+                    <a href="../orders/orders.html" class="dropdown-item">
+                        <i data-lucide="package"></i> My Orders
+                    </a>
+                    <a href="../account/settings.html" class="dropdown-item">
+                        <i data-lucide="settings"></i> Settings
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a href="../../public/home.html" class="dropdown-item">
+                        <i data-lucide="globe"></i> Public Site
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a href="../../auth/logout.html" class="dropdown-item dropdown-item--danger">
+                        <i data-lucide="log-out"></i> Log Out
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </header>
+
+
+    <!-- ═══════════════════════════════════════════
+         MAIN CONTENT
+    ═══════════════════════════════════════════ -->
+    <div class="buyer-main" id="buyer-main">
+        <div class="page-content">
+
+
+            <!-- ── STATS ── -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon"><i data-lucide="package"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value">0</div>
+                        <div class="stat-label">Total Orders</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon stat-icon--warning"><i data-lucide="clock"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value">0</div>
+                        <div class="stat-label">Pending Delivery</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon stat-icon--success"><i data-lucide="check-circle"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value">0</div>
+                        <div class="stat-label">Delivered</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon stat-icon--pink"><i data-lucide="heart"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value">0</div>
+                        <div class="stat-label">Wishlist Items</div>
+                    </div>
+                </div>
+                <div class="stat-card stat-card--follows" id="stat-card-follows">
+                    <div class="stat-icon stat-icon--purple"><i data-lucide="heart"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="stat-following-count">0</div>
+                        <div class="stat-label">Followed Sellers</div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- ── FOLLOWED SELLERS ── -->
+            <div class="card" id="followed-sellers-card">
+                <div class="card-header">
+                    <div>
+                        <h2>Followed Sellers</h2>
+                        <p>Sellers you're keeping up with</p>
+                    </div>
+                    <a href="../../public/stores/stores.html" class="btn btn-ghost btn-sm">Browse more</a>
+                </div>
+                <div class="followed-grid" id="followed-grid"></div>
+                <div class="empty-state hidden" id="followed-empty">
+                    <div class="empty-icon"><i data-lucide="heart"></i></div>
+                    <h3>No followed sellers yet</h3>
+                    <p>Explore the marketplace and follow sellers you like.</p>
+                    <a href="../../public/stores/stores.html" class="btn btn-primary btn-sm" style="margin-top:0.5rem;">Discover Sellers</a>
+                </div>
+            </div>
+
+
+            <!-- ── RECENT ORDERS + QUICK ACTIONS ── -->
+            <div class="dashboard-grid">
+
+                <!-- Recent Orders -->
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h2>Recent Orders</h2>
+                            <p>Latest orders</p>
+                        </div>
+                        <a href="../orders/orders.html" class="btn btn-ghost btn-sm">View all</a>
+                    </div>
+
+                    <div class="orders-list"></div>
+                </div>
+
+                <!-- Quick Actions + Profile Completion -->
+                <div class="dashboard-side">
+
+                    <!-- Quick Actions -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div><h2>Quick Actions</h2></div>
+                        </div>
+                        <div class="quick-actions">
+                            <a href="../../public/home.html" class="qa-item">
+                                <div class="qa-icon"><i data-lucide="home"></i></div>
+                                <span>Main Home</span>
+                            </a>
+                            <a href="../../public/shop/shop.html" class="qa-item">
+                                <div class="qa-icon"><i data-lucide="shopping-bag"></i></div>
+                                <span>Browse Shop</span>
+                            </a>
+                            <a href="../orders/orders.html" class="qa-item">
+                                <div class="qa-icon"><i data-lucide="package"></i></div>
+                                <span>Track Order</span>
+                            </a>
+                            <a href="../shopping/wishlist.html" class="qa-item">
+                                <div class="qa-icon"><i data-lucide="heart"></i></div>
+                                <span>Wishlist</span>
+                            </a>
+                            <a href="../../public/contact/contact.html" class="qa-item">
+                                <div class="qa-icon"><i data-lucide="headphones"></i></div>
+                                <span>Support</span>
+                            </a>
+                        </div>
+                    </div>
+
+                     <!-- Profile Completion -->
+                     <div class="card profile-card">
+                         <div class="card-header">
+                             <div>
+                                 <h2>Profile Completion</h2>
+                                 <p>Complete your profile for a better experience</p>
+                             </div>
+                             <span class="completion-pct">0%</span>
+                         </div>
+                         <div class="completion-bar-wrap">
+                             <div class="completion-bar" style="width: 0%"></div>
+                         </div>
+                         <div class="completion-list">
+                             <div class="completion-item">
+                                 <i data-lucide="circle"></i><span>Email verified</span>
+                             </div>
+                             <div class="completion-item">
+                                 <i data-lucide="circle"></i><span>Phone number added</span>
+                             </div>
+                             <div class="completion-item">
+                                 <i data-lucide="circle"></i><span>Profile photo added</span>
+                             </div>
+                             <div class="completion-item">
+                                 <i data-lucide="circle"></i><span>Delivery address added</span>
+                             </div>
+                         </div>
+                         <a href="../account/profile.html" class="btn btn-primary btn-sm" style="margin-top:1rem;width:100%;justify-content:center;">
+                             Complete Profile
+                         </a>
+                     </div>
+
+                </div>
+
+            </div>
+
+
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script>lucide.createIcons();</script>
+    <script src="../shared/js/polling.js"></script>
+    <script src="../shared/js/sidebar.js"></script>
+    <script src="../shared/js/topnav.js"></script>
+    <script src="../assets/js/dashboard.js"></script>
+
+</body>
+</html>

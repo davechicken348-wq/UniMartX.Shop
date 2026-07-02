@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications — Admin — UnimartX</title>
+    <script src="../../../config.js"></script>
+    <script>
+      if (localStorage.getItem("seller_sidebar_collapsed") === "true") {
+        document.documentElement.classList.add("no-transition");
+      }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../shared/admin-base.css">
+    <link rel="stylesheet" href="../shared/sidebar.css">
+    <link rel="stylesheet" href="../shared/topnav.css">
+    <link rel="stylesheet" href="../assets/css/notifications.css">
+</head>
+<body>
+
+    <!-- ── SIDEBAR ── -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-icon"><i data-lucide="store"></i></div>
+            <span class="sidebar-logo-text">Unimart<span>X</span></span>
+        </div>
+        <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
+            <i data-lucide="chevron-left"></i>
+        </button>
+        <nav class="sidebar-nav">
+            <span class="nav-section-label">Main</span>
+            <a href="../dashboard/dashboard.html" class="nav-item" data-tooltip="Dashboard">
+                <div class="nav-item-icon"><i data-lucide="layout-dashboard"></i></div>
+                <span class="nav-item-label">Dashboard</span>
+            </a>
+            <a href="../users/users.html" class="nav-item">
+                <div class="nav-item-icon"><i data-lucide="users"></i></div>
+                <span class="nav-item-label">Users</span>
+                <span class="nav-item-badge" id="sidebar-users-count"></span>
+            </a>
+            <a href="../orders/orders.html" class="nav-item">
+                <div class="nav-item-icon"><i data-lucide="shopping-bag"></i></div>
+                <span class="nav-item-label">Orders</span>
+                <span class="nav-item-badge badge-warning" id="sidebar-orders-count"></span>
+            </a>
+            <a href="../products/products.html" class="nav-item">
+                <div class="nav-item-icon"><i data-lucide="package"></i></div>
+                <span class="nav-item-label">Products</span>
+            </a>
+            <span class="nav-section-label">Moderation</span>
+             <a href="../refunds/refunds.html" class="nav-item">
+                <div class="nav-item-icon"><i data-lucide="rotate-ccw"></i></div>
+                <span class="nav-item-label">Refunds & Disputes</span>
+            </a>
+            <a href="../seller-verification/seller-verification.html" class="nav-item">
+                <div class="nav-item-icon"><i data-lucide="user-check"></i></div>
+                <span class="nav-item-label">Sellers</span>
+                <span class="nav-item-badge badge-danger" id="sidebar-sellers-count"></span>
+            </a>
+            <a href="../notifications/notifications.html" class="nav-item active">
+                <div class="nav-item-icon"><i data-lucide="bell"></i></div>
+                <span class="nav-item-label">Alerts</span>
+                <span class="nav-item-badge" id="sidebar-notif-count"></span>
+            </a>
+            <span class="nav-section-label">Config</span>
+            <a href="../settings/settings.html" class="nav-item" data-tooltip="Settings">
+                <div class="nav-item-icon"><i data-lucide="settings"></i></div>
+                <span class="nav-item-label">Settings</span>
+            </a>
+            <a href="../admin-landing/admin-landing.html" class="nav-item" data-tooltip="Admin Home">
+                <div class="nav-item-icon"><i data-lucide="home"></i></div>
+                <span class="nav-item-label">Admin Home</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="sidebar-user">
+                <div class="sidebar-avatar" id="sidebar-avatar">AD</div>
+                <div class="sidebar-user-info">
+                    <div class="sidebar-user-name" id="sidebar-name">Admin</div>
+                    <div class="sidebar-user-role" id="sidebar-role">Super Admin</div>
+                </div>
+                <a href="../../auth/logout.html" class="sidebar-logout" aria-label="Log out">
+                    <i data-lucide="log-out"></i>
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- ── TOPNAV ── -->
+    <header class="topnav" id="topnav">
+        <button class="topnav-hamburger" id="topnav-hamburger" aria-label="Open menu">
+            <i data-lucide="menu"></i>
+        </button>
+        <div class="topnav-title">
+            <h1>Notifications</h1>
+            <p>Platform alerts and activity feed</p>
+        </div>
+        <div class="topnav-search">
+            <i data-lucide="search"></i>
+            <input type="text" placeholder="Search notifications…" id="topnav-search-input">
+        </div>
+        <div class="topnav-actions">
+            <button class="topnav-btn" id="notif-btn" aria-label="Notifications">
+                <i data-lucide="bell"></i>
+                <span class="topnav-badge" id="notif-badge" style="display:none"></span>
+            </button>
+            <div class="topnav-user" id="topnav-user">
+                <div class="topnav-avatar" id="topnav-avatar">AD</div>
+                <span class="topnav-username" id="topnav-username">Admin</span>
+                <i data-lucide="chevron-down" class="topnav-chevron"></i>
+                <div class="topnav-dropdown" id="topnav-dropdown">
+                    <a href="../settings/settings.html" class="dropdown-item"><i data-lucide="settings"></i> Settings</a>
+                    <div class="dropdown-divider"></div>
+                    <a href="../../auth/logout.html" class="dropdown-item dropdown-item--danger"><i data-lucide="log-out"></i> Log out</a>
+                </div>
+            </div>
+        </div>
+        <div class="notif-panel" id="notif-panel">
+            <div class="notif-header">
+                <h3>Notifications</h3>
+                <button class="notif-mark-read" id="mark-read">Mark all read</button>
+            </div>
+            <div class="notif-list" id="notif-list">
+                <div class="notif-empty">No new notifications</div>
+            </div>
+            <div class="notif-footer">
+                <a href="notifications.html">View all</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ── MAIN ── -->
+    <main class="admin-main" id="admin-main">
+        <div class="page-content">
+
+            <!-- Page header -->
+            <div class="page-header">
+                <div>
+                    <h1>Notifications</h1>
+                    <p>Platform alerts, system events, and activity updates</p>
+                </div>
+                <div class="header-actions">
+                    <button class="hdr-btn hdr-btn--ghost" id="mark-all-btn">
+                        <i data-lucide="check-check"></i> Mark all read
+                    </button>
+                    <button class="hdr-btn hdr-btn--danger" id="clear-btn">
+                        <i data-lucide="trash-2"></i> Clear all
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon"><i data-lucide="bell"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="stat-total">0</div>
+                        <div class="stat-label">Total</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon stat-icon--danger"><i data-lucide="bell-ring"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="stat-unread">0</div>
+                        <div class="stat-label">Unread</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon stat-icon--warning"><i data-lucide="zap"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="stat-high">0</div>
+                        <div class="stat-label">High Priority</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon stat-icon--success"><i data-lucide="check-circle"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="stat-read">0</div>
+                        <div class="stat-label">Read</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Two-column layout -->
+            <div class="notif-layout">
+
+                <!-- ── Feed column ── -->
+                <div class="notif-feed-col">
+
+                    <div class="toolbar">
+                        <div class="filter-pills" id="filter-pills">
+                            <button class="pill active" data-read="">All</button>
+                            <button class="pill pill--unread" data-read="false">Unread</button>
+                            <button class="pill" data-read="true">Read</button>
+                        </div>
+                        <div class="toolbar-search">
+                            <i data-lucide="search"></i>
+                            <input type="text" id="search-input" placeholder="Search…">
+                        </div>
+                    </div>
+
+                    <div class="card feed-card">
+                        <div class="feed-list" id="feed-list">
+                            <div class="skel-notif"></div>
+                            <div class="skel-notif"></div>
+                            <div class="skel-notif"></div>
+                            <div class="skel-notif"></div>
+                        </div>
+                        <div class="load-more-wrap" id="load-more-wrap" style="display:none">
+                            <button class="load-more-btn" id="load-more-btn">
+                                <i data-lucide="chevron-down"></i> Load more
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- ── Side column ── -->
+                <div class="notif-side-col">
+
+                    <div class="card side-card">
+                        <div class="side-card-title">Quick Actions</div>
+                        <div class="quick-links">
+                            <a href="../seller-verification/seller-verification.html" class="quick-link">
+                                <div class="ql-icon ql-icon--warning"><i data-lucide="user-check"></i></div>
+                                <div class="ql-text">
+                                    <span>Pending Sellers</span>
+                                    <small id="ql-pending">—</small>
+                                </div>
+                                <i data-lucide="arrow-right" class="ql-arrow"></i>
+                            </a>
+                            <a href="../orders/orders.html" class="quick-link">
+                                <div class="ql-icon ql-icon--blue"><i data-lucide="shopping-bag"></i></div>
+                                <div class="ql-text">
+                                    <span>All Orders</span>
+                                    <small>View transactions</small>
+                                </div>
+                                <i data-lucide="arrow-right" class="ql-arrow"></i>
+                            </a>
+                            <a href="../products/products.html" class="quick-link">
+                                <div class="ql-icon ql-icon--amber"><i data-lucide="package"></i></div>
+                                <div class="ql-text">
+                                    <span>Products</span>
+                                    <small>Moderate listings</small>
+                                </div>
+                                <i data-lucide="arrow-right" class="ql-arrow"></i>
+                            </a>
+                            <a href="../users/users.html" class="quick-link">
+                                <div class="ql-icon ql-icon--indigo"><i data-lucide="users"></i></div>
+                                <div class="ql-text">
+                                    <span>Users</span>
+                                    <small>Manage accounts</small>
+                                </div>
+                                <i data-lucide="arrow-right" class="ql-arrow"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="card side-card">
+                        <div class="side-card-title">By Type</div>
+                        <div id="type-breakdown">
+                            <div class="skel-line"></div>
+                            <div class="skel-line" style="margin-top:0.5rem"></div>
+                            <div class="skel-line short" style="margin-top:0.5rem"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script src="../shared/polling.js"></script>
+    <script src="../shared/sidebar.js"></script>
+    <script src="../shared/topnav.js"></script>
+    <script src="../assets/js/auth-utils.js"></script>
+    <script src="../assets/js/notifications.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Become a seller on UnimartX and start growing your campus business today.">
+    <meta name="theme-color" content="#0a0a0f">
+    <title>Become a Seller — UnimartX</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/seller-register.css">
+</head>
+<body>
+    <div class="bg-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+        <div class="shape shape-4"></div>
+        <div class="shape shape-5"></div>
+    </div>
+
+    <div class="page">
+        <a href="../../public/home.html" class="logo">
+            <span class="logo-icon">🛍️</span> Unimart<span>X</span>
+        </a>
+
+        <div class="container">
+            <div class="main-layout">
+            <div class="card">
+                <div class="card-header">
+                <h1>open your store</h1>
+                <p>start selling in minutes</p>
+            </div>
+
+            <div id="alert-success" class="alert alert-success" role="alert">
+                <i data-lucide="check-circle" class="alert-icon"></i>
+                <span>Store created! Redirecting to your dashboard...</span>
+            </div>
+            <div id="alert-error" class="alert alert-error" role="alert">
+                <i data-lucide="alert-circle" class="alert-icon"></i>
+                <span id="error-text"></span>
+            </div>
+
+            <div class="card-body">
+                <form id="register-form" novalidate class="form-main">
+
+                    <!-- STEP 1: Account -->
+                    <div class="form-step active" id="step-1">
+                        <div class="step-indicator">
+                            <div class="step active" data-step="1">
+                                <div class="step-circle"><i data-lucide="user"></i></div>
+                                <span>Account</span>
+                            </div>
+                            <div class="step-line"></div>
+                            <div class="step" data-step="2">
+                                <div class="step-circle"><i data-lucide="users"></i></div>
+                                <span>Seller Type</span>
+                            </div>
+                            <div class="step-line"></div>
+                            <div class="step" data-step="3">
+                                <div class="step-circle"><i data-lucide="store"></i></div>
+                                <span>Store</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="name">Full Name</label>
+                            <div class="input-wrapper">
+                                <i data-lucide="user" class="input-icon"></i>
+                                <input type="text" id="name" name="name" placeholder="Enter your full name" required minlength="2" autocomplete="name" aria-describedby="name-error">
+                                <div class="input-glow"></div>
+                            </div>
+                            <div id="name-error" class="error-message" role="alert"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <div class="input-wrapper">
+                                <i data-lucide="mail" class="input-icon"></i>
+                                <input type="email" id="email" name="email" placeholder="you@st.university.edu.gh" required autocomplete="email" aria-describedby="email-error">
+                                <div class="input-glow"></div>
+                            </div>
+                            <div id="email-error" class="error-message" role="alert"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <div class="input-wrapper">
+                                <i data-lucide="phone" class="input-icon"></i>
+                                <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required autocomplete="tel" aria-describedby="phone-error">
+                                <div class="input-glow"></div>
+                            </div>
+                            <div id="phone-error" class="error-message" role="alert"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <div class="input-wrapper">
+                                <i data-lucide="lock" class="input-icon"></i>
+                                <input type="password" id="password" name="password" placeholder="Create a password" required minlength="8" autocomplete="new-password" aria-describedby="password-error">
+                                <button type="button" class="password-toggle" id="toggle-password" aria-label="Show password">
+                                    <i data-lucide="eye" class="eye-icon"></i>
+                                </button>
+                                <div class="input-glow"></div>
+                            </div>
+                            <div id="password-error" class="error-message" role="alert"></div>
+                            <div class="password-strength">
+                                <div id="strength-bar" class="password-strength-bar"></div>
+                            </div>
+                            <div class="strength-label" id="strength-label"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirm-password">Confirm Password</label>
+                            <div class="input-wrapper">
+                                <i data-lucide="lock" class="input-icon"></i>
+                                <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm your password" required autocomplete="new-password" aria-describedby="confirm-password-error">
+                                <button type="button" class="password-toggle" id="toggle-confirm" aria-label="Show password">
+                                    <i data-lucide="eye" class="eye-icon"></i>
+                                </button>
+                                <div class="input-glow"></div>
+                            </div>
+                            <div id="confirm-password-error" class="error-message" role="alert"></div>
+                        </div>
+
+                        <button type="button" class="auth-btn next-btn" id="next-1">
+                            <span class="btn-text">Next: Seller Type <i data-lucide="arrow-right" style="width:18px;height:18px;display:inline-block;vertical-align:middle;"></i></span>
+                            <div class="spinner"></div>
+                        </button>
+                    </div>
+
+                    <!-- STEP 2: Seller Type -->
+                    <div class="form-step" id="step-2">
+                        <div class="step-indicator">
+                            <div class="step completed" data-step="1">
+                                <div class="step-circle"><i data-lucide="user"></i></div>
+                                <span>Account</span>
+                            </div>
+                            <div class="step-line completed"></div>
+                            <div class="step active" data-step="2">
+                                <div class="step-circle"><i data-lucide="users"></i></div>
+                                <span>Seller Type</span>
+                            </div>
+                            <div class="step-line"></div>
+                            <div class="step" data-step="3">
+                                <div class="step-circle"><i data-lucide="store"></i></div>
+                                <span>Store</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="seller-type">How would you describe yourself as a seller?</label>
+                            <div class="persona-grid">
+                                <label class="persona-card" for="type-campus">
+                                    <input type="radio" id="type-campus" name="seller-type" value="campus">
+                                    <div class="persona-body">
+                                        <span class="persona-icon"><i data-lucide="graduation-cap"></i></span>
+                                        <span class="persona-title">Campus Seller</span>
+                                        <span class="persona-desc">Student or staff selling within a university</span>
+                                    </div>
+                                </label>
+                                <label class="persona-card" for="type-independent">
+                                    <input type="radio" id="type-independent" name="seller-type" value="independent">
+                                    <div class="persona-body">
+                                        <span class="persona-icon"><i data-lucide="briefcase"></i></span>
+                                        <span class="persona-title">Independent Seller</span>
+                                        <span class="persona-desc">Selling outside campus — WhatsApp, social media, or a physical shop</span>
+                                    </div>
+                                </label>
+                            </div>
+                            <div id="seller-type-error" class="error-message" role="alert"></div>
+                        </div>
+
+                        <div class="type-fields" id="campus-fields">
+                            <div class="form-group">
+                                <label for="university">University / Institution</label>
+                                <div class="input-wrapper">
+                                    <i data-lucide="building-2" class="input-icon"></i>
+                                    <input type="text" id="university" name="university" placeholder="Enter your university name" aria-describedby="university-error">
+                                    <div class="input-glow"></div>
+                                </div>
+                                <div id="university-error" class="error-message" role="alert"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="student-id">Student / Staff ID <span class="optional">(optional)</span></label>
+                                <div class="input-wrapper">
+                                    <i data-lucide="credit-card" class="input-icon"></i>
+                                    <input type="text" id="student-id" name="student-id" placeholder="Enter your student/staff ID">
+                                    <div class="input-glow"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="type-fields" id="independent-fields">
+                            <div class="form-group">
+                                <label for="biz-type">Business Type</label>
+                                <div class="input-wrapper select-wrapper">
+                                    <i data-lucide="user-check" class="input-icon"></i>
+                                    <select id="biz-type" name="biz-type" aria-describedby="biz-type-error">
+                                        <option value="" disabled selected>Select type</option>
+                                        <option value="individual">Individual / Solo seller</option>
+                                        <option value="small-business">Small Business</option>
+                                    </select>
+                                    <i data-lucide="chevron-down" class="select-chevron"></i>
+                                </div>
+                                <div id="biz-type-error" class="error-message" role="alert"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="current-platform">Where do you currently sell? <span class="optional">(optional)</span></label>
+                                <div class="input-wrapper select-wrapper">
+                                    <i data-lucide="share-2" class="input-icon"></i>
+                                    <select id="current-platform" name="current-platform">
+                                        <option value="" disabled selected>Select platform</option>
+                                        <option value="whatsapp">WhatsApp</option>
+                                        <option value="instagram">Instagram</option>
+                                        <option value="facebook">Facebook</option>
+                                        <option value="physical">Physical Shop</option>
+                                        <option value="other">Other</option>
+                                        <option value="none">Not selling yet</option>
+                                    </select>
+                                    <i data-lucide="chevron-down" class="select-chevron"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="step-nav">
+                            <button type="button" class="auth-btn ghost-btn" id="back-1">
+                                <i data-lucide="arrow-left" style="width:18px;height:18px;"></i> Back
+                            </button>
+                            <button type="button" class="auth-btn next-btn" id="next-2">
+                                <span class="btn-text">Next: Store Info <i data-lucide="arrow-right" style="width:18px;height:18px;display:inline-block;vertical-align:middle;"></i></span>
+                                <div class="spinner"></div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 3: Store -->
+                    <div class="form-step" id="step-3">
+                        <div class="step-indicator">
+                            <div class="step completed" data-step="1">
+                                <div class="step-circle"><i data-lucide="user"></i></div>
+                                <span>Account</span>
+                            </div>
+                            <div class="step-line completed"></div>
+                            <div class="step completed" data-step="2">
+                                <div class="step-circle"><i data-lucide="users"></i></div>
+                                <span>Seller Type</span>
+                            </div>
+                            <div class="step-line completed"></div>
+                            <div class="step active" data-step="3">
+                                <div class="step-circle"><i data-lucide="store"></i></div>
+                                <span>Store</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="store-name">Store Name</label>
+                            <div class="input-wrapper">
+                                <i data-lucide="store" class="input-icon"></i>
+                                <input type="text" id="store-name" name="store-name" placeholder="Enter your store name" required aria-describedby="store-name-error">
+                                <div class="input-glow"></div>
+                            </div>
+                            <div id="store-name-error" class="error-message" role="alert"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="category">Store Category</label>
+                            <div class="input-wrapper select-wrapper">
+                                <i data-lucide="tag" class="input-icon"></i>
+                                <select id="category" name="category" required aria-describedby="category-error">
+                                    <option value="" disabled selected>Select a category</option>
+                                    <option value="electronics">Electronics</option>
+                                    <option value="fashion">Fashion &amp; Apparel</option>
+                                    <option value="home">Home &amp; Living</option>
+                                    <option value="beauty">Beauty &amp; Health</option>
+                                    <option value="sports">Sports &amp; Outdoors</option>
+                                    <option value="books">Books &amp; Stationery</option>
+                                    <option value="food">Food &amp; Snacks</option>
+                                    <option value="other">Other</option>
+                                </select>
+                                <i data-lucide="chevron-down" class="select-chevron"></i>
+                            </div>
+                            <div id="category-error" class="error-message" role="alert"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="store-desc">Store Description</label>
+                            <div class="input-wrapper">
+                                <i data-lucide="file-text" class="input-icon textarea-icon"></i>
+                                <textarea id="store-desc" name="store-desc" placeholder="Describe your store and what you sell" required minlength="20" maxlength="300" aria-describedby="store-desc-error"></textarea>
+                            </div>
+                            <div class="char-count"><span id="desc-count">0</span> / 300</div>
+                            <div id="store-desc-error" class="error-message" role="alert"></div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="country">Country</label>
+                                <div class="input-wrapper">
+                                    <i data-lucide="globe" class="input-icon"></i>
+                                    <input type="text" id="country" name="country" placeholder="Enter your country" required aria-describedby="country-error">
+                                    <div class="input-glow"></div>
+                                </div>
+                                <div id="country-error" class="error-message" role="alert"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="city">City</label>
+                                <div class="input-wrapper">
+                                    <i data-lucide="map-pin" class="input-icon"></i>
+                                    <input type="text" id="city" name="city" placeholder="Enter your city" required aria-describedby="city-error">
+                                    <div class="input-glow"></div>
+                                </div>
+                                <div id="city-error" class="error-message" role="alert"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-check">
+                            <input type="checkbox" id="terms" name="terms" required>
+                            <label for="terms">
+                                I agree to the <a href="../../public/info/terms.html" target="_blank" rel="noopener">Terms of Service</a>, <a href="../../public/info/privacy.html" target="_blank" rel="noopener">Privacy Policy</a>, and <a href="../../public/info/seller-policy.html" target="_blank" rel="noopener">Seller Policy</a>
+                            </label>
+                        </div>
+                        <div id="terms-error" class="error-message" role="alert"></div>
+
+                        <div class="step-nav">
+                            <button type="button" class="auth-btn ghost-btn" id="back-2">
+                                <i data-lucide="arrow-left" style="width:18px;height:18px;"></i> Back
+                            </button>
+                            <button type="submit" class="auth-btn" id="submit-btn">
+                                <span class="btn-text">Create Store 🏪</span>
+                                <div class="spinner"></div>
+                            </button>
+                        </div>
+                    </div>
+
+                </form>
+
+            </div>
+
+            <div class="auth-footer">
+                already have an account? <a href="../login.html">log in</a>
+            </div>
+        </div>
+
+        <!-- LIVE REVIEW SIDEBAR (outside .card) -->
+        <aside class="review-sidebar" id="review-sidebar">
+            <div class="review-sidebar-header">
+                <i data-lucide="clipboard-check"></i>
+                <span>Your Summary</span>
+            </div>
+            <div class="review-section">
+                <div class="review-block">
+                    <div class="review-block-header">
+                        <i data-lucide="user"></i>
+                        <span>Account</span>
+                    </div>
+                    <div class="review-row"><span>Name</span><strong id="r-name">—</strong></div>
+                    <div class="review-row"><span>Email</span><strong id="r-email">—</strong></div>
+                    <div class="review-row"><span>Phone</span><strong id="r-phone">—</strong></div>
+                </div>
+                <div class="review-block">
+                    <div class="review-block-header">
+                        <i data-lucide="users"></i>
+                        <span>Seller Type</span>
+                    </div>
+                    <div class="review-row"><span>Type</span><strong id="r-seller-type">—</strong></div>
+                    <div class="review-row" id="r-row-university"><span>University</span><strong id="r-university">—</strong></div>
+                    <div class="review-row" id="r-row-biz-type"><span>Business Type</span><strong id="r-biz-type">—</strong></div>
+                    <div class="review-row" id="r-row-platform"><span>Currently Sells On</span><strong id="r-platform">—</strong></div>
+                </div>
+                <div class="review-block">
+                    <div class="review-block-header">
+                        <i data-lucide="store"></i>
+                        <span>Store</span>
+                    </div>
+                    <div class="review-row"><span>Store Name</span><strong id="r-store-name">—</strong></div>
+                    <div class="review-row"><span>Category</span><strong id="r-category">—</strong></div>
+                    <div class="review-row"><span>Location</span><strong id="r-location">—</strong></div>
+                    <div class="review-row desc-row"><span>Description</span><strong id="r-desc">—</strong></div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <script src="../../../config.js"></script>
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script src="../js/seller-register.js"></script>
+</body>
+</html>

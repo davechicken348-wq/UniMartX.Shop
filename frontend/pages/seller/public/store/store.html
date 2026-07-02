@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store | UniMartX</title>
+    <meta name="description" content="Browse products from this student entrepreneur on UniMartX — the platform that helps students build professional online businesses.">
+    <meta property="og:title" content="Student Shop | UniMartX">
+    <meta property="og:description" content="Discover this student entrepreneur's shop on UniMartX. Professional storefront, unique products, built without a website.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.unimartx.com/seller/public/store/store.html">
+    <meta property="og:image" content="https://www.unimartx.com/assets/images/og-store.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:site_name" content="UnimartX">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="canonical" href="https://www.unimartx.com/seller/public/store/store.html">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/store.css">
+</head>
+<body>
+
+    <nav class="navbar" id="navbar">
+        <div class="nav-inner">
+            <a href="../../../public/home.html" class="nav-logo">Unimart<span>X</span></a>
+            <div class="nav-search">
+                <i data-lucide="search"></i>
+                <input type="search" id="nav-search-input" placeholder="Search products, stores…" aria-label="Search">
+                <button class="search-btn" id="nav-search-btn">Search</button>
+            </div>
+            <div class="nav-actions">
+                <a href="../../../public/shop/cart.html" class="nav-icon-btn" aria-label="Cart">
+                    <i data-lucide="shopping-cart"></i>
+                    <span class="badge" id="cart-count">0</span>
+                </a>
+                <a href="../../../auth/login.html" class="nav-btn nav-btn-ghost">Log In</a>
+                <a href="../../../auth/buyer/register.html" class="nav-btn nav-btn-primary">Sign Up</a>
+            </div>
+            <button class="nav-hamburger" id="nav-hamburger" aria-label="Open menu">
+                <i data-lucide="menu"></i>
+            </button>
+        </div>
+        <div class="nav-mobile" id="nav-mobile">
+            <div class="nav-mobile-search">
+                <i data-lucide="search"></i>
+                <input type="search" placeholder="Search…" aria-label="Search">
+            </div>
+            <a href="../../../public/home.html">Home</a>
+            <a href="../../../public/shop/shop.html">Shop</a>
+            <a href="../../../public/shop/cart.html">Cart</a>
+            <a href="../../../auth/login.html">Log In</a>
+            <a href="../../../auth/buyer/register.html" class="nav-btn nav-btn-primary">Sign Up</a>
+        </div>
+    </nav>
+
+    <section class="store-hero">
+        <div class="store-hero-bg">
+            <img src="" alt="" id="hero-banner-img" style="display:none;">
+        </div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <div class="hero-inner">
+                <div class="store-identity">
+                    <div class="store-avatar-wrap">
+                        <div class="store-avatar" id="store-avatar"></div>
+                        <div class="store-verified" title="Verified Seller">
+                            <i data-lucide="badge-check"></i>
+                        </div>
+                    </div>
+                    <div class="store-meta">
+                        <div class="store-meta-top">
+                            <h1 class="store-name" id="store-name"></h1>
+                            <span class="store-category-badge" id="store-category"></span>
+                        </div>
+                        <p class="store-bio" id="store-bio"></p>
+                        <div class="store-info-row">
+                            <span><i data-lucide="map-pin"></i> <span id="store-location"></span></span>
+                            <span><i data-lucide="calendar"></i> Joined <span id="store-joined"></span></span>
+                            <span><i data-lucide="package"></i> <span id="store-product-count"></span> products</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="store-actions">
+                    <a href="../profile/profile.html" class="btn-ghost-link" id="view-profile-btn" aria-label="View profile">
+                        <i data-lucide="user"></i> View Profile
+                    </a>
+                    <button class="btn-primary-link" id="contact-btn" aria-label="Contact seller">
+                        <i data-lucide="message-circle"></i>
+                    </button>
+                    <button class="btn-copy-link" id="copy-link-btn" aria-label="Share shop">
+                        <i data-lucide="share-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="stats-section">
+        <div class="stats-inner">
+            <div class="stat-item">
+                <strong id="stat-sales"></strong>
+                <span>Total Sales</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <strong><span class="stars-filled" id="stat-stars"></span> <span id="stat-rating"></span></strong>
+                <span>Avg Rating</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <strong id="stat-followers"></strong>
+                <span>Followers</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="reviews-section" id="reviews">
+        <div class="section-inner">
+            <div class="section-header">
+                <div>
+                    <h2>Customer <span>Reviews</span></h2>
+                </div>
+                <a href="../profile/profile.html?sellerId=" class="btn-ghost-link see-all-reviews-link" id="see-all-reviews-link">
+                    See all reviews <i data-lucide="arrow-right"></i>
+                </a>
+            </div>
+            <div class="reviews-marquee-wrap" id="reviews-marquee-wrap">
+                <div class="reviews-marquee" id="reviews-marquee">
+                    <div class="reviews-marquee-track" id="reviews-marquee-track"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="products-section" id="products">
+        <div class="section-inner">
+            <div class="section-header">
+                <div>
+                    <div class="section-label">
+                        <i data-lucide="package"></i>
+                        Browse
+                    </div>
+                    <h2>All <span>Products</span></h2>
+                </div>
+            </div>
+
+            <div class="store-toolbar">
+                <div class="store-filter-tabs" id="store-filter-tabs">
+                    <button class="store-tab active" data-filter="all">All <span class="tab-num" id="tab-count-all">0</span></button>
+                </div>
+                <div class="toolbar-right">
+                    <div class="store-search-wrap">
+                        <i data-lucide="search"></i>
+                        <input type="search" id="store-search" placeholder="Search this store…">
+                    </div>
+                    <div class="view-toggle" role="group" aria-label="Product layout">
+                        <button class="view-btn active" id="btn-grid" aria-label="Grid view" aria-pressed="true">
+                            <i data-lucide="grid-2x2"></i>
+                        </button>
+                        <button class="view-btn" id="btn-list" aria-label="List view" aria-pressed="false">
+                            <i data-lucide="list"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="empty-state hidden" id="no-results">
+                <div class="empty-icon"><i data-lucide="search-x"></i></div>
+                <h3>No products found</h3>
+                <p>Try a different search or category.</p>
+            </div>
+
+            <div class="store-products grid-view" id="store-products"></div>
+            <div class="loading-skeleton" id="loading-skeleton" aria-hidden="true">
+                <div class="skeleton-card" style="animation-delay:0s"></div>
+                <div class="skeleton-card" style="animation-delay:.1s"></div>
+                <div class="skeleton-card" style="animation-delay:.2s"></div>
+                <div class="skeleton-card" style="animation-delay:.3s"></div>
+                <div class="skeleton-card" style="animation-delay:.4s"></div>
+                <div class="skeleton-card" style="animation-delay:.5s"></div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <a href="../../../public/home.html" class="nav-logo">Unimart<span>X</span></a>
+                <p>The platform that helps student entrepreneurs build professional online businesses — without building their own websites.</p>
+            </div>
+            <div class="footer-links">
+                <div class="footer-col">
+                    <h4>Shop</h4>
+                    <a href="../../../public/shop/shop.html">Browse Products</a>
+                    <a href="../../../public/shop/cart.html">Your Cart</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Sell</h4>
+                    <a href="../../../auth/seller/register.html" class="footer-seller-link">Become a Seller</a>
+                    <a href="../../../public/info/seller-policy.html">Seller Policy</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <a href="../../../public/info/about.html">About</a>
+                    <a href="../../../public/contact/contact.html">Contact</a>
+                    <a href="../../../public/info/faq.html">FAQ</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <a href="../../../public/info/terms.html">Terms</a>
+                    <a href="../../../public/info/privacy.html">Privacy</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span id="current-year">&copy; 2026 UnimartX. All rights reserved.</span>
+        </div>
+    </footer>
+
+    <div class="modal-overlay hidden" id="contact-modal" role="dialog" aria-modal="true" aria-labelledby="modal-header-text">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modal-header-text">Contact <span id="contact-modal-store-name">Seller</span></h3>
+                <button class="modal-close" id="modal-close" aria-label="Close dialog"><i data-lucide="x"></i></button>
+            </div>
+            <p class="modal-sub">Send a message to this seller. They typically respond within 1 hour.</p>
+            <textarea id="contact-msg" rows="4" placeholder="Hi, I'm interested in…"></textarea>
+            <div class="modal-actions">
+                <button class="btn-ghost-link" id="modal-cancel">Cancel</button>
+                <button class="btn-primary-link" id="modal-send">
+                    <i data-lucide="send"></i> Send Message
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../../../config.js"></script>
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script>
+      if (window.lucide && lucide.createIcons) {
+        lucide.createIcons();
+      }
+    </script>
+    <script src="../assets/js/store.js"></script>
+    <script src="../../../shared/js/cart.js"></script>
+    <script src="../assets/js/store-page.js"></script>
+    <script src="../../../shared/js/public-nav.js"></script>
+    <script>
+      (function () {
+        var y = document.getElementById('current-year');
+        if (y) y.textContent = '\u00A9 ' + new Date().getFullYear() + ' UnimartX. All rights reserved.';
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', function () {
+            if (window.lucide && lucide.createIcons) lucide.createIcons();
+          });
+        } else if (window.lucide && lucide.createIcons) {
+          lucide.createIcons();
+        }
+      })();
+    </script>
+</body>
+</html>

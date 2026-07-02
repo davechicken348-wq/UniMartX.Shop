@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings — Admin — UnimartX</title>
+    <script src="../../../config.js"></script>
+    <script>
+      if (localStorage.getItem("seller_sidebar_collapsed") === "true") {
+        document.documentElement.classList.add("no-transition");
+      }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../shared/admin-base.css">
+    <link rel="stylesheet" href="../shared/sidebar.css">
+    <link rel="stylesheet" href="../shared/topnav.css">
+    <link rel="stylesheet" href="../assets/css/settings.css">
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-icon"><i data-lucide="store"></i></div>
+            <span class="sidebar-logo-text">Unimart<span>X</span></span>
+        </div>
+        <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
+            <i data-lucide="chevron-left"></i>
+        </button>
+        <nav class="sidebar-nav">
+            <span class="nav-section-label">Main</span>
+            <a href="../dashboard/dashboard.html" class="nav-item" data-tooltip="Dashboard">
+                <div class="nav-item-icon"><i data-lucide="layout-dashboard"></i></div>
+                <span class="nav-item-label">Dashboard</span>
+            </a>
+            <a href="../users/users.html" class="nav-item">
+                <div class="nav-item-icon"><i data-lucide="users"></i></div>
+                <span class="nav-item-label">Users</span>
+                <span class="nav-item-badge" id="sidebar-users-count"></span>
+            </a>
+            <a href="../orders/orders.html" class="nav-item">
+                <div class="nav-item-icon"><i data-lucide="shopping-bag"></i></div>
+                <span class="nav-item-label">Orders</span>
+                <span class="nav-item-badge badge-warning" id="sidebar-orders-count"></span>
+            </a>
+            <a href="../products/products.html" class="nav-item">
+                <div class="nav-item-icon"><i data-lucide="package"></i></div>
+                <span class="nav-item-label">Products</span>
+            </a>
+            <span class="nav-section-label">Moderation</span>
+            <a href="../refunds/refunds.html" class="nav-item">
+                <div class="nav-item-icon"><i data-lucide="rotate-ccw"></i></div>
+                <span class="nav-item-label">Refunds & Disputes</span>
+            </a>
+            <a href="../seller-verification/seller-verification.html" class="nav-item">
+                <div class="nav-item-icon"><i data-lucide="user-check"></i></div>
+                <span class="nav-item-label">Sellers</span>
+                <span class="nav-item-badge badge-danger" id="sidebar-sellers-count"></span>
+            </a>
+            <a href="../notifications/notifications.html" class="nav-item" data-tooltip="Notifications">
+                <div class="nav-item-icon"><i data-lucide="bell"></i></div>
+                <span class="nav-item-label">Alerts</span>
+                <span class="nav-item-badge" id="sidebar-notif-count"></span>
+            </a>
+            <span class="nav-section-label">Config</span>
+            <a href="settings.html" class="nav-item active" data-tooltip="Settings">
+                <div class="nav-item-icon"><i data-lucide="settings"></i></div>
+                <span class="nav-item-label">Settings</span>
+            </a>
+            <a href="../admin-landing/admin-landing.html" class="nav-item" data-tooltip="Admin Home">
+                <div class="nav-item-icon"><i data-lucide="home"></i></div>
+                <span class="nav-item-label">Admin Home</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="sidebar-user">
+                <div class="sidebar-avatar" id="sidebar-avatar">AD</div>
+                <div class="sidebar-user-info">
+                    <div class="sidebar-user-name" id="sidebar-name">Admin</div>
+                    <div class="sidebar-user-role" id="sidebar-role">Super Admin</div>
+                </div>
+                <a href="../../auth/logout.html" class="sidebar-logout" aria-label="Log out">
+                    <i data-lucide="log-out"></i>
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- TOPNAV -->
+    <header class="topnav" id="topnav">
+        <button class="topnav-hamburger" id="topnav-hamburger" aria-label="Open menu">
+            <i data-lucide="menu"></i>
+        </button>
+        <div class="topnav-title">
+            <h1>Settings</h1>
+            <p>Account profile and security settings</p>
+        </div>
+        <div class="topnav-actions">
+            <div class="topnav-user" id="topnav-user">
+                <div class="topnav-avatar" id="topnav-avatar">AD</div>
+                <span class="topnav-username" id="topnav-username">Admin</span>
+                <i data-lucide="chevron-down" class="topnav-chevron"></i>
+                <div class="topnav-dropdown" id="topnav-dropdown">
+                    <a href="settings.html" class="dropdown-item"><i data-lucide="settings"></i> Settings</a>
+                    <div class="dropdown-divider"></div>
+                    <a href="../../auth/logout.html" class="dropdown-item dropdown-item--danger"><i data-lucide="log-out"></i> Log out</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN -->
+    <main class="admin-main" id="admin-main">
+        <div class="page-content">
+            <div class="settings-layout">
+                <aside class="settings-nav" id="settings-nav">
+                    <div class="settings-nav-section">
+                        <span class="settings-nav-label">Account</span>
+                        <button class="settings-nav-item active" data-section="profile">
+                            <i data-lucide="user"></i><span>Profile</span>
+                        </button>
+                        <button class="settings-nav-item" data-section="security">
+                            <i data-lucide="shield"></i><span>Security</span>
+                        </button>
+                        <button class="settings-nav-item" data-section="two-factor">
+                            <i data-lucide="smartphone"></i><span>Two-Factor Auth</span>
+                        </button>
+                    </div>
+                </aside>
+
+                <div class="settings-content">
+                    <!-- Profile Section -->
+                    <section class="settings-section active" id="profile-section" data-section="profile">
+                        <div class="settings-section-header">
+                            <div class="settings-section-icon"><i data-lucide="user"></i></div>
+                            <div>
+                                <h2>Profile</h2>
+                                <p>Your personal information and admin identity</p>
+                            </div>
+                        </div>
+
+                        <div class="settings-block">
+                            <div class="avatar-row">
+                                <div class="avatar-preview" id="avatar-preview">AD</div>
+                                <div class="avatar-meta">
+                                    <span class="avatar-name" id="profile-display-name">Admin</span>
+                                    <span class="avatar-role" id="profile-display-role">Super Admin</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="settings-block">
+                            <div class="block-title">Personal Info</div>
+                            <div class="form-grid">
+                                <div class="form-field">
+                                    <label for="profile-name">Full Name</label>
+                                    <input type="text" id="profile-name" placeholder="Your full name">
+                                </div>
+                                <div class="form-field">
+                                    <label for="profile-email">Email Address</label>
+                                    <div class="input-with-badge">
+                                        <input type="email" id="profile-email" readonly>
+                                        <span class="input-badge input-badge--verified">
+                                            <i data-lucide="check"></i> Verified
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="form-field">
+                                    <label for="profile-phone">Phone Number</label>
+                                    <input type="tel" id="profile-phone" placeholder="+233 XXX XXX XXXX">
+                                </div>
+                                <div class="form-field">
+                                    <label for="profile-role">Role</label>
+                                    <input type="text" id="profile-role" readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="settings-footer">
+                            <button class="btn-primary save-btn" data-section="profile" type="button">
+                                <i data-lucide="save"></i> Save Changes
+                            </button>
+                        </div>
+                    </section>
+
+                    <!-- Security Section -->
+                    <section class="settings-section" id="security-section" data-section="security">
+                        <div class="settings-section-header">
+                            <div class="settings-section-icon"><i data-lucide="shield"></i></div>
+                            <div>
+                                <h2>Security</h2>
+                                <p>Change your admin password</p>
+                            </div>
+                        </div>
+
+                        <div class="settings-block">
+                            <div class="block-title">Password</div>
+                            <div class="form-grid">
+                                <div class="form-field form-field--full">
+                                    <label for="current-pass">Current Password</label>
+                                    <div class="input-reveal">
+                                        <input type="password" placeholder="Enter current password" id="current-pass">
+                                        <button class="reveal-btn" type="button" data-target="current-pass" aria-label="Show password">
+                                            <i data-lucide="eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="form-field">
+                                    <label for="new-pass">New Password</label>
+                                    <div class="input-reveal">
+                                        <input type="password" placeholder="New password" id="new-pass">
+                                        <button class="reveal-btn" type="button" data-target="new-pass" aria-label="Show password">
+                                            <i data-lucide="eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="form-field">
+                                    <label for="confirm-pass">Confirm Password</label>
+                                    <div class="input-reveal">
+                                        <input type="password" placeholder="Confirm new password" id="confirm-pass">
+                                        <button class="reveal-btn" type="button" data-target="confirm-pass" aria-label="Show password">
+                                            <i data-lucide="eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="settings-footer">
+                            <button class="btn-primary save-btn" data-section="security" type="button">
+                                <i data-lucide="save"></i> Save Changes
+                            </button>
+                        </div>
+                    </section>
+
+                    <!-- Two-Factor Auth Section -->
+                    <section class="settings-section" id="two-factor-section" data-section="two-factor">
+                        <div class="settings-section-header">
+                            <div class="settings-section-icon"><i data-lucide="smartphone"></i></div>
+                            <div>
+                                <h2>Two-Factor Authentication</h2>
+                                <p>Add an extra layer of security to your admin account</p>
+                            </div>
+                        </div>
+
+                        <div class="settings-block">
+                            <div id="two-factor-panel">
+                                <div class="status-row">
+                                    <span class="status-label">2FA Status</span>
+                                    <span class="badge-status badge-status--pending" id="two-factor-badge">Loading</span>
+                                </div>
+                                <p class="block-hint">Two-factor authentication adds an extra layer of security by requiring a verification code from your phone in addition to your password.</p>
+
+                                <div id="two-factor-setup">
+                                    <div class="form-group">
+                                        <button class="btn-primary" id="start-two-factor-btn" type="button">
+                                            <i data-lucide="shield"></i> Enable Two-Factor Authentication
+                                        </button>
+                                    </div>
+                                    <div id="qr-step" class="hidden">
+                                        <div class="form-group">
+                                            <label class="form-label"><span class="step-num">1</span> Scan QR Code</label>
+                                            <div class="qr-wrapper" id="qr-wrapper">
+                                                <img id="qr-image" src="" alt="QR Code" style="max-width: 200px; border-radius: 8px;">
+                                            </div>
+                                            <p class="form-hint">Scan this QR code with Google Authenticator, Authy, or any TOTP app.</p>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="form-label" for="two-factor-token"><span class="step-num">2</span> Enter Verification Code</label>
+                                            <input class="twofa-token-input" type="text" id="two-factor-token" placeholder="000 000" maxlength="6" inputmode="numeric" pattern="[0-9]*">
+                                            <p class="form-hint">Enter the 6-digit code from your authenticator app to confirm setup.</p>
+                                        </div>
+
+                                        <div class="form-actions">
+                                            <button class="btn-primary" id="confirm-two-factor-btn" type="button">
+                                                <i data-lucide="check"></i> Enable 2FA
+                                            </button>
+                                            <button class="btn btn-ghost" id="cancel-two-factor-btn" type="button">Cancel</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="two-factor-enabled" class="hidden">
+                                    <div class="backup-notice">
+                                        <i data-lucide="info"></i>
+                                        <div>
+                                            <strong>2FA is enabled</strong>
+                                            <p>Save your backup codes in a safe place. You can use them to access your account if you lose your phone.</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="form-label">Backup Codes</label>
+                                        <div class="backup-codes-grid" id="backup-codes-grid"></div>
+                                        <button class="btn btn-ghost btn-sm" id="show-backup-btn" type="button" style="margin-top: 0.5rem;">
+                                            <i data-lucide="eye"></i> Show Backup Codes
+                                        </button>
+                                    </div>
+
+                                    <div class="form-actions">
+                                        <button class="btn-danger" id="disable-two-factor-btn" type="button">
+                                            <i data-lucide="x-circle"></i> Disable 2FA
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script src="../shared/polling.js"></script>
+    <script src="../shared/sidebar.js"></script>
+    <script src="../shared/topnav.js"></script>
+    <script src="../assets/js/auth-utils.js"></script>
+    <script src="../assets/js/settings.js"></script>
+</body>
+</html>

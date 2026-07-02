@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store Studio - UnimartX Seller</title>
+    <script src="../../../../config.js"></script>
+    <script>
+      if (localStorage.getItem("seller_sidebar_collapsed") === "true") {
+        document.documentElement.classList.add("no-transition");
+      }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../shared/seller-base.css">
+    <link rel="stylesheet" href="../shared/sidebar.css">
+    <link rel="stylesheet" href="../shared/topnav.css">
+    <link rel="stylesheet" href="../assets/css/customize-store.css">
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-icon"><i data-lucide="store"></i></div>
+            <span class="sidebar-logo-text">Unimart<span>X</span></span>
+        </div>
+        <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
+            <i data-lucide="chevron-left"></i>
+        </button>
+        <nav class="sidebar-nav">
+            <span class="nav-section-label">Main</span>
+            <a href="../dashboard/overview.html" class="nav-item" data-tooltip="Dashboard">
+                <div class="nav-item-icon"><i data-lucide="layout-dashboard"></i></div>
+                <span class="nav-item-label">Dashboard</span>
+            </a>
+            <a href="../orders/order-list.html" class="nav-item" data-tooltip="Orders">
+                <div class="nav-item-icon"><i data-lucide="shopping-bag"></i></div>
+                <span class="nav-item-label">Orders</span>
+                <span class="nav-item-badge" id="sidebar-orders-count"></span>
+            </a>
+            <a href="../products/product-list.html" class="nav-item" data-tooltip="Products">
+                <div class="nav-item-icon"><i data-lucide="package"></i></div>
+                <span class="nav-item-label">Products</span>
+            </a>
+            <span class="nav-section-label">Store</span>
+            <a href="../products/add-product.html" class="nav-item" data-tooltip="Add Product">
+                <div class="nav-item-icon"><i data-lucide="plus-circle"></i></div>
+                <span class="nav-item-label">Add Product</span>
+            </a>
+            <a href="customize-store.html" class="nav-item active" data-tooltip="My Store">
+                <div class="nav-item-icon"><i data-lucide="store"></i></div>
+                <span class="nav-item-label">My Store</span>
+            </a>
+            <a href="customize-profile.html" class="nav-item" data-tooltip="Profile">
+                <div class="nav-item-icon"><i data-lucide="user"></i></div>
+                <span class="nav-item-label">Profile</span>
+            </a>
+            <a href="account-settings.html" class="nav-item" data-tooltip="Settings">
+                <div class="nav-item-icon"><i data-lucide="settings"></i></div>
+                <span class="nav-item-label">Settings</span>
+            </a>
+            <span class="nav-section-label">More</span>
+            <a href="../notifications.html" class="nav-item" data-tooltip="Notifications">
+                <div class="nav-item-icon"><i data-lucide="bell"></i></div>
+                <span class="nav-item-label">Notifications</span>
+                <span class="nav-item-badge" id="sidebar-notif-count"></span>
+            </a>
+            <a href="../../../public/home.html" class="nav-item" data-tooltip="Home">
+                <div class="nav-item-icon"><i data-lucide="home"></i></div>
+                <span class="nav-item-label">Home</span>
+            </a>
+            <a href="../../public/info/faq.html" class="nav-item" data-tooltip="Help">
+                <div class="nav-item-icon"><i data-lucide="help-circle"></i></div>
+                <span class="nav-item-label">Help & FAQ</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="sidebar-user">
+                <div class="sidebar-avatar" id="sidebar-avatar"></div>
+                <div class="sidebar-user-info">
+                    <p class="sidebar-user-name" id="sidebar-name"></p>
+                    <p class="sidebar-user-role" id="sidebar-store"></p>
+                </div>
+                <a href="../../../auth/logout.html" class="sidebar-logout" aria-label="Log out">
+                    <i data-lucide="log-out"></i>
+                </a>
+            </div>
+        </div>
+    </aside>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- TOPNAV -->
+    <header class="topnav" id="topnav">
+        <button class="topnav-hamburger" id="topnav-hamburger" aria-label="Open menu">
+            <i data-lucide="menu"></i>
+        </button>
+        <div class="topnav-title">
+            <h1>Store Studio</h1>
+            <p>Customize your storefront</p>
+        </div>
+        <div class="topnav-actions">
+            <div style="position:relative;">
+                <button class="topnav-btn" id="notif-btn" aria-label="Notifications">
+                    <i data-lucide="bell"></i>
+                    <span class="topnav-badge" id="notif-badge"></span>
+                </button>
+                <div class="notif-panel" id="notif-panel">
+                    <div class="notif-header">
+                        <h3>Notifications</h3>
+                        <button class="notif-mark-read" id="mark-read">Mark all read</button>
+                    </div>
+                    <div class="notif-list"></div>
+                    <div class="notif-footer"><a href="../../notifications.html">View all</a></div>
+                </div>
+            </div>
+            <div style="position:relative;">
+                <div class="topnav-user" id="topnav-user" tabindex="0" role="button" aria-haspopup="true" aria-expanded="false">
+                    <div class="topnav-avatar" id="topnav-avatar"></div>
+                    <span class="topnav-username" id="topnav-username"></span>
+                    <i data-lucide="chevron-down" class="topnav-chevron"></i>
+                </div>
+                <div class="topnav-dropdown" id="topnav-dropdown" role="menu">
+                    <a href="customize-profile.html" class="dropdown-item" role="menuitem"><i data-lucide="user"></i> My Profile</a>
+                    <a href="customize-store.html" class="dropdown-item" role="menuitem"><i data-lucide="store"></i> My Store</a>
+                    <a href="account-settings.html" class="dropdown-item" role="menuitem"><i data-lucide="settings"></i> Settings</a>
+                    <div class="dropdown-divider"></div>
+                    <a href="../../../auth/logout.html" class="dropdown-item dropdown-item--danger" role="menuitem"><i data-lucide="log-out"></i> Log Out</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- STUDIO SHELL -->
+    <div class="seller-main studio-main" id="seller-main">
+        <div class="studio-body">
+
+            <!-- ── LEFT: Editor Panel ── -->
+            <div class="studio-editor" id="studio-editor">
+
+                <!-- Editor header -->
+                <div class="editor-header">
+                    <div class="editor-header-top">
+                        <span class="editor-title">Store Studio</span>
+                        <a href="../../public/store/store.html" id="view-store-btn" target="_blank" rel="noopener noreferrer" class="editor-open-btn" title="Open live store">
+                            <i data-lucide="external-link"></i>
+                        </a>
+                    </div>
+
+                    <!-- Unsaved banner -->
+                    <div class="unsaved-banner hidden" id="unsaved-banner">
+                        <i data-lucide="alert-triangle"></i>
+                        <span>Unsaved changes</span>
+                        <button class="btn btn-ghost btn-xs" id="discard-changes">Discard</button>
+                        <button class="btn btn-primary btn-xs" id="save-now">Save</button>
+                    </div>
+
+                    <!-- Section nav -->
+                    <nav class="section-nav" aria-label="Store sections">
+                        <button class="section-btn settings-nav-item active" data-target="general">
+                            <i data-lucide="store"></i> Info
+                        </button>
+                        <button class="section-btn settings-nav-item" data-target="branding">
+                            <i data-lucide="image"></i> Branding
+                        </button>
+                        <button class="section-btn settings-nav-item" data-target="colors">
+                            <i data-lucide="palette"></i> Colors
+                        </button>
+                        <button class="section-btn settings-nav-item" data-target="fulfillment">
+                            <i data-lucide="truck"></i> Delivery
+                        </button>
+                    </nav>
+                </div>
+
+                <!-- Editor body (scrollable) -->
+                <div class="editor-body">
+
+                    <!-- GENERAL -->
+                    <div class="editor-section settings-section active" id="general" data-section="general">
+                        <form id="store-general-form" novalidate autocomplete="on">
+                            <div class="field">
+                                <label for="store-name">Store Name <span class="req">*</span></label>
+                                <input type="text" id="store-name" name="storeName" placeholder="e.g. Kwame's Gadgets" required minlength="2" maxlength="100">
+                                <div class="field-error" id="store-name-error" role="alert"></div>
+                            </div>
+                            <div class="field">
+                                <label for="store-category">Category <span class="req">*</span></label>
+                                <select id="store-category" name="category" required>
+                                    <option value="">Select a category</option>
+                                    <option value="electronics">Electronics & Gadgets</option>
+                                    <option value="fashion">Fashion & Apparel</option>
+                                    <option value="home">Home & Living</option>
+                                    <option value="beauty">Beauty & Health</option>
+                                    <option value="sports">Sports & Outdoors</option>
+                                    <option value="books">Books & Stationery</option>
+                                    <option value="food">Food & Snacks</option>
+                                    <option value="services">Other Services</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="field">
+                                <label for="store-description">Description <span class="req">*</span></label>
+                                <textarea id="store-description" name="storeDescription" rows="4" placeholder="Tell customers what makes your store unique..." required minlength="20" maxlength="300"></textarea>
+                                <div class="field-footer">
+                                    <div class="field-error" id="store-description-error" role="alert"></div>
+                                    <span class="char-counter" id="description-count" role="status" aria-live="polite">0/300</span>
+                                </div>
+                                <div class="char-progress"><div class="char-progress-bar" id="description-progress"></div></div>
+                            </div>
+                            <div class="field-row">
+                                <div class="field">
+                                    <label for="store-country">Country <span class="req">*</span></label>
+                                    <input type="text" id="store-country" name="country" placeholder="e.g. Ghana" required maxlength="100">
+                                </div>
+                                <div class="field">
+                                    <label for="store-city">City <span class="req">*</span></label>
+                                    <input type="text" id="store-city" name="city" placeholder="e.g. Sunyani" required maxlength="100">
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-ghost btn-sm" id="general-reset"><i data-lucide="rotate-ccw"></i> Reset</button>
+                                <button type="submit" class="btn btn-primary btn-sm" id="general-save"><i data-lucide="save"></i> Save</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- BRANDING -->
+                    <div class="editor-section settings-section" id="branding" data-section="branding">
+                        <form id="store-branding-form" novalidate>
+                            <input type="file" id="banner-input" name="store_banner" accept="image/jpeg,image/png,image/webp" hidden>
+                            <input type="file" id="avatar-input" name="store_avatar" accept="image/jpeg,image/png,image/webp" hidden>
+
+                            <div class="field">
+                                <label>Store Banner <span class="field-hint-inline">1200×300px · Max 2MB</span></label>
+                                <div class="upload-drop-zone" id="banner-zone" role="button" tabindex="0" aria-label="Upload store banner">
+                                    <div class="drop-empty" id="banner-empty">
+                                        <i data-lucide="upload-cloud"></i>
+                                        <span>Drop image or <strong>browse</strong></span>
+                                    </div>
+                                    <div class="drop-preview hidden" id="banner-preview">
+                                        <img src="" alt="Banner preview" id="banner-img">
+                                        <div class="drop-preview-overlay">
+                                            <button type="button" class="overlay-btn" id="banner-btn"><i data-lucide="pencil"></i> Change</button>
+                                            <button type="button" class="overlay-btn overlay-btn--danger" id="banner-remove"><i data-lucide="trash-2"></i> Remove</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="upload-file-info hidden" id="banner-file-info">
+                                    <i data-lucide="file-image"></i>
+                                    <span class="upload-file-name" id="banner-file-name"></span>
+                                    <span class="upload-file-size" id="banner-file-size"></span>
+                                    <button type="button" class="btn btn-ghost btn-sm" id="banner-reupload"><i data-lucide="refresh-cw"></i></button>
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <label>Store Logo <span class="field-hint-inline">Square · Max 2MB</span></label>
+                                <div class="logo-row">
+                                    <div class="avatar-circle-wrap">
+                                        <div class="avatar-circle" id="avatar-preview">
+                                            <div class="avatar-inner" id="avatar-inner"></div>
+                                            <div class="avatar-circle-overlay" id="avatar-overlay">
+                                                <button type="button" class="overlay-btn" id="avatar-btn"><i data-lucide="pencil"></i></button>
+                                            </div>
+                                        </div>
+                                        <button type="button" class="avatar-remove-btn hidden" id="avatar-remove"><i data-lucide="x"></i></button>
+                                    </div>
+                                    <div class="logo-info">
+                                        <p>Shown on your store page and in search results.</p>
+                                        <button type="button" class="btn btn-ghost btn-sm" id="avatar-btn-secondary"><i data-lucide="upload"></i> Upload Logo</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary btn-sm" id="branding-save"><i data-lucide="save"></i> Save Branding</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- COLORS -->
+                    <div class="editor-section settings-section" id="colors" data-section="colors">
+                        <form id="store-colors-form" novalidate>
+                            <p class="section-desc">Pick a brand color shown across your store page.</p>
+                            <div id="color-presets" class="color-presets" role="radiogroup" aria-label="Color presets"></div>
+                            <div class="custom-color-picker">
+                                <label class="color-picker-label" for="custom-color">Custom</label>
+                                <input type="color" id="custom-color" value="#f59e0b">
+                                <div class="color-value-display">
+                                    <span class="color-code" id="color-code-display">#f59e0b</span>
+                                    <input type="hidden" id="store-color" name="primaryColor" value="">
+                                </div>
+                            </div>
+                            <div class="contrast-check">
+                                <div class="contrast-bar">
+                                    <span class="contrast-label">Contrast</span>
+                                    <span class="contrast-indicator" id="contrast-indicator"></span>
+                                    <span class="contrast-hint" id="contrast-hint"></span>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-ghost btn-sm" id="colors-reset"><i data-lucide="rotate-ccw"></i> Reset</button>
+                                <button type="button" class="btn btn-ghost btn-sm" id="random-color-btn"><i data-lucide="shuffle"></i> Random</button>
+                                <button type="submit" class="btn btn-primary btn-sm" id="colors-save"><i data-lucide="save"></i> Save</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- DELIVERY -->
+                    <div class="editor-section settings-section" id="fulfillment" data-section="fulfillment">
+                        <form id="store-fulfillment-form" novalidate>
+                            <div class="field">
+                                <label for="delivery-fee">Delivery Fee (GH₵)</label>
+                                <input type="number" id="delivery-fee" name="deliveryFee" placeholder="e.g. 5.00" min="0" step="0.01">
+                                <span class="field-hint">Set 0 for free delivery. Leave blank to hide.</span>
+                            </div>
+                            <div class="field">
+                                <label for="pickup-address">Pickup Address</label>
+                                <input type="text" id="pickup-address" name="pickupAddress" placeholder="e.g. Block C, Room 12, Legon Hall" maxlength="200">
+                                <span class="field-hint">Shown to buyers at checkout.</span>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary btn-sm" id="fulfillment-save"><i data-lucide="save"></i> Save</button>
+                            </div>
+                        </form>
+                    </div>
+
+                </div><!-- end editor-body -->
+            </div><!-- end studio-editor -->
+
+            <!-- ── RIGHT: Live Preview ── -->
+            <div class="studio-preview">
+                <!-- Browser chrome bar -->
+                <div class="preview-chrome">
+                    <div class="chrome-dots">
+                        <span></span><span></span><span></span>
+                    </div>
+                    <div class="chrome-url">
+                        <i data-lucide="lock"></i>
+                        <span>unimartx.com/store/<span id="preview-store-slug">your-store</span></span>
+                    </div>
+                    <a href="../../public/store/store.html" id="preview-open-btn" target="_blank" rel="noopener" class="chrome-open" title="Open in new tab">
+                        <i data-lucide="external-link"></i>
+                    </a>
+                </div>
+
+                <!-- Live store preview -->
+                <div class="store-preview" id="store-preview">
+
+                    <!-- Hero / Banner -->
+                    <div class="sp-hero" id="sp-hero">
+                        <div class="sp-hero-bg">
+                            <img src="" alt="" id="mock-banner-img" class="hidden">
+                            <div class="sp-hero-empty" id="mock-banner-empty"><i data-lucide="image"></i></div>
+                        </div>
+                        <div class="sp-hero-overlay"></div>
+                        <div class="sp-hero-content">
+                            <div class="sp-identity">
+                                <div class="sp-avatar" id="mock-avatar">
+                                    <span id="mock-avatar-initials"></span>
+                                </div>
+                                <div class="sp-meta">
+                                    <div class="sp-name-row">
+                                        <span class="sp-store-name" id="preview-store-name">Your Store</span>
+                                        <span class="sp-badge" id="preview-category"></span>
+                                    </div>
+                                    <p class="sp-bio" id="preview-bio">Your store description will appear here</p>
+                                    <div class="sp-location" id="preview-location">
+                                        <i data-lucide="map-pin"></i> Location
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="sp-actions">
+                                <button class="sp-btn-ghost">Message</button>
+                                <button class="sp-btn-primary" id="sp-follow-btn">Follow</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stats bar -->
+                    <div class="sp-stats">
+                        <div class="sp-stat"><strong>0</strong><span>Products</span></div>
+                        <div class="sp-stat-div"></div>
+                        <div class="sp-stat"><strong>0</strong><span>Sales</span></div>
+                        <div class="sp-stat-div"></div>
+                        <div class="sp-stat"><strong>★ 5.0</strong><span>Rating</span></div>
+                        <div class="sp-stat-div"></div>
+                        <div class="sp-stat"><strong>0</strong><span>Followers</span></div>
+                    </div>
+
+                    <!-- Fulfillment bar -->
+                    <div class="sp-fulfillment" id="sp-fulfillment" style="display:none;">
+                        <span id="mock-delivery-row" style="display:none;"><i data-lucide="truck"></i> <span id="mock-delivery-text"></span></span>
+                        <span id="mock-pickup-row" style="display:none;"><i data-lucide="map-pin"></i> <span id="mock-pickup-text"></span></span>
+                    </div>
+
+                    <!-- Products grid -->
+                    <div class="sp-products">
+                        <div class="sp-products-header">
+                            <div class="sp-tabs">
+                                <span class="sp-tab active">All</span>
+                                <span class="sp-tab">Featured</span>
+                            </div>
+                        </div>
+                        <div class="sp-grid">
+                            <div class="sp-card"><div class="sp-card-img"></div><div class="sp-card-body"><p>Sample Product</p><strong id="sp-price-1">GH₵ 0.00</strong></div></div>
+                            <div class="sp-card"><div class="sp-card-img"></div><div class="sp-card-body"><p>Sample Product</p><strong id="sp-price-2">GH₵ 0.00</strong></div></div>
+                            <div class="sp-card"><div class="sp-card-img"></div><div class="sp-card-body"><p>Sample Product</p><strong id="sp-price-3">GH₵ 0.00</strong></div></div>
+                            <div class="sp-card"><div class="sp-card-img"></div><div class="sp-card-body"><p>Sample Product</p><strong id="sp-price-4">GH₵ 0.00</strong></div></div>
+                        </div>
+                    </div>
+
+                </div><!-- end store-preview -->
+
+                <div class="preview-footer">
+                    <span class="live-dot"></span> Live preview — changes appear as you type
+                </div>
+            </div><!-- end studio-preview -->
+
+        </div><!-- end studio-body -->
+    </div><!-- end studio-main -->
+
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script>lucide.createIcons();</script>
+    <script src="../shared/polling.js"></script>
+    <script src="../shared/sidebar.js"></script>
+    <script src="../shared/topnav.js"></script>
+    <script src="../assets/js/customize-store.js"></script>
+    <script>
+        window.Toast = {
+            show(message, type = 'success', duration = 3500) {
+                const toast = document.createElement('div');
+                toast.style.cssText = `
+                    position:fixed;bottom:24px;right:24px;z-index:9999;
+                    background:${type === 'error' ? '#ef4444' : 'var(--bg-2)'};
+                    color:${type === 'error' ? '#fff' : 'var(--text)'};
+                    border:1px solid ${type === 'error' ? 'transparent' : 'var(--border)'};
+                    border-radius:var(--radius);padding:0.8rem 1.1rem;
+                    display:flex;align-items:center;gap:0.6rem;
+                    font-family:'Quicksand',sans-serif;font-weight:600;font-size:0.85rem;
+                    box-shadow:0 8px 32px rgba(0,0,0,0.35);max-width:340px;
+                    animation:toastIn 0.3s cubic-bezier(0.4,0,0.2,1);
+                `;
+                toast.textContent = message;
+                document.body.appendChild(toast);
+                setTimeout(() => {
+                    toast.style.animation = 'toastOut 0.25s ease forwards';
+                    setTimeout(() => toast.remove(), 250);
+                }, duration);
+            }
+        };
+        const s = document.createElement('style');
+        s.textContent = `
+            @keyframes toastIn  { from{opacity:0;transform:translateY(12px) scale(0.96)} to{opacity:1;transform:translateY(0) scale(1)} }
+            @keyframes toastOut { from{opacity:1} to{opacity:0;transform:translateY(6px)} }
+        `;
+        document.head.appendChild(s);
+
+        // Sync store name to URL slug in preview chrome
+        document.addEventListener('DOMContentLoaded', () => {
+            const nameInput = document.getElementById('store-name');
+            const slugEl = document.getElementById('preview-store-slug');
+            if (nameInput && slugEl) {
+                const update = () => {
+                    slugEl.textContent = nameInput.value.trim()
+                        .toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') || 'your-store';
+                };
+                nameInput.addEventListener('input', update);
+                update();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1008 @@
+/* ═══════════════════════════════════════════
+   ORDER DETAILS PAGE
+══════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════
+   CARD BASE STYLES
+══════════════════════════════════════════ */
+.order-details-grid > .card { display: flex; flex-direction: column; }
+.order-details-side > .card { display: flex; flex-direction: column; }
+
+/* ═══════════════════════════════════════════
+   LAYOUT GRID
+══════════════════════════════════════════ */
+.order-details-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.25rem;
+}
+
+@media (min-width: 1024px) {
+    .order-details-grid {
+        grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+        gap: 1rem;
+        align-items: start;
+    }
+
+    .order-left-col { grid-column: 1; display: flex; flex-direction: column; gap: 1rem; }
+    .order-details-side { grid-column: 2; }
+}
+
+@media (max-width: 1023px) {
+    .order-details-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ═══════════════════════════════════════════
+   LEFT COLUMN WRAPPER
+══════════════════════════════════════════ */
+.order-left-col {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE SIDE PANEL CARDS
+══════════════════════════════════════════ */
+.order-details-side {
+    overflow: visible;
+}
+
+@media (min-width: 1024px) {
+    .order-details-side {
+        grid-template-columns: 1fr;
+    }
+
+    .order-details-side .card {
+        padding: 1.25rem;
+    }
+}
+
+@media (min-width: 1280px) {
+    .order-details-side {
+        gap: 1.25rem;
+    }
+
+    .order-details-side .card {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 1023px) {
+    .order-details-side {
+        grid-template-columns: 1fr;
+    }
+
+    .order-details-side .card {
+        padding: 1.15rem;
+    }
+}
+
+@media (max-width: 520px) {
+    .order-details-side {
+        grid-template-columns: 1fr;
+    }
+
+    .order-details-side .card {
+        padding: 1rem;
+    }
+}
+
+/* ═══════════════════════════════════════════
+   MAIN CONTENT WRAPPER
+══════════════════════════════════════════ */
+#order-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+@media (max-width: 480px) {
+    #order-content {
+        gap: 1rem;
+    }
+}
+
+/* ═══════════════════════════════════════════
+   BACK LINK
+══════════════════════════════════════════ */
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-2);
+    transition: color 0.2s;
+}
+
+.back-link svg {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+}
+
+.back-link:hover {
+    color: var(--primary);
+}
+
+/* ═══════════════════════════════════════════
+   ORDER HEADER CARD
+══════════════════════════════════════════ */
+.order-header-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.5rem;
+    margin-bottom: 0;
+}
+
+.order-header-left {
+    display: flex;
+    align-items: center;
+    gap: 2.5rem;
+    flex-wrap: wrap;
+}
+
+.order-header-left > div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.order-header-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-3);
+}
+
+.order-header-ref {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+}
+
+.order-header-val {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-2);
+}
+
+@media (max-width: 640px) {
+    .order-header-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .order-header-left {
+        gap: 1.25rem;
+    }
+
+    .order-header-ref {
+        font-size: 1.15rem;
+    }
+}
+
+/* ═══════════════════════════════════════════
+   ACTIONS + REFUND CARDS
+══════════════════════════════════════════ */
+#refund-card {
+    margin-top: 1.25rem;
+    animation: slideDown 0.25s ease;
+}
+
+@media (max-width: 480px) {
+    #refund-card {
+        padding: 1rem;
+        margin-top: 1rem;
+    }
+}
+/* ═══════════════════════════════════════════
+   ORDER ITEMS LIST
+   ══════════════════════════════════════════ */
+.order-items-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+
+.order-item-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem;
+    background: var(--bg-3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    transition: border-color 0.2s;
+}
+
+.order-item-row:hover {
+    border-color: var(--border-2);
+}
+
+.order-item-img {
+    width: 64px;
+    height: 64px;
+    border-radius: var(--radius);
+    flex-shrink: 0;
+    background-color: var(--bg-3);
+    background-size: cover;
+    background-position: center;
+}
+
+.order-item-img.shimmer {
+    background-image: none;
+    animation: shimmer 2s ease-in-out infinite;
+}
+
+.order-item-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.order-item-store {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.order-item-name {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.order-item-meta {
+    font-size: 0.78rem;
+    color: var(--text-2);
+    font-weight: 500;
+}
+
+.order-item-price {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text);
+    flex-shrink: 0;
+    text-align: right;
+}
+
+@media (max-width: 480px) {
+    .order-item-img {
+        width: 52px;
+        height: 52px;
+    }
+
+    .order-item-name {
+        white-space: normal;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .order-item-meta {
+        font-size: 0.72rem;
+    }
+
+    .order-item-price {
+        font-size: 0.88rem;
+    }
+}
+
+/* ═══════════════════════════════════════════
+   ORDER SUMMARY LINES
+══════════════════════════════════════════ */
+.order-summary-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border);
+}
+
+.summary-line {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    font-size: 0.88rem;
+    color: var(--text-2);
+}
+
+.summary-line span {
+    font-weight: 600;
+}
+
+.summary-line strong {
+    font-weight: 700;
+    color: var(--text);
+}
+
+.summary-line--total {
+    font-size: 0.95rem;
+    color: var(--text);
+    padding-top: 0.75rem;
+    border-top: 1px dashed var(--border);
+    margin-top: 0.25rem;
+}
+
+.summary-line--total strong {
+    font-size: 1.05rem;
+    color: var(--primary);
+}
+
+/* ═══════════════════════════════════════════
+   ORDER ITEMS CARD
+══════════════════════════════════════════ */
+.order-items-card {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+@media (max-width: 480px) {
+    .order-items-card {
+        padding: 1rem;
+    }
+}
+
+/* ═══════════════════════════════════════════
+   TRACKING TIMELINE
+══════════════════════════════════════════ */
+.tracking-timeline {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 0;
+    position: relative;
+    overflow-x: auto;
+    padding-bottom: 0.25rem;
+}
+
+.track-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.65rem;
+    position: relative;
+    flex: 1 1 0;
+    min-width: 100px;
+}
+
+.track-step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 18px;
+    left: calc(50% + 20px);
+    right: calc(-50% + 20px);
+    height: 1.5px;
+    background: var(--border);
+    z-index: 0;
+}
+
+.track-step.done:not(:last-child)::after {
+    background: var(--primary-l);
+}
+
+.track-icon {
+    position: relative;
+    z-index: 1;
+}
+
+.track-line {
+    display: none;
+}
+
+.track-info {
+    align-items: center;
+    text-align: center;
+}
+
+.track-info span {
+    font-size: 0.72rem;
+}
+
+@media (max-width: 640px) {
+    .tracking-timeline {
+        gap: 0;
+    }
+
+    .track-step {
+        min-width: 80px;
+    }
+
+    .track-info strong {
+        font-size: 0.78rem;
+    }
+
+    .track-info span {
+        font-size: 0.68rem;
+    }
+}
+
+/* Done step */
+.track-step.done .track-icon {
+    background: var(--primary-l);
+    border-color: var(--border-2);
+}
+
+.track-step.done .track-icon svg {
+    stroke: var(--primary);
+}
+
+.track-step.done .track-line {
+    background: var(--primary-l);
+}
+
+.track-step.done .track-info strong {
+    color: var(--text);
+}
+
+.track-step.done .track-info span {
+    color: var(--text-2);
+    opacity: 1;
+}
+
+/* Active step */
+.track-step.active .track-icon {
+    background: var(--primary);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px var(--primary-l);
+}
+
+.track-step.active .track-icon svg {
+    stroke: #fff;
+}
+
+.track-step.active .track-line {
+    background: var(--border);
+}
+
+.track-step.active .track-info strong {
+    color: var(--text);
+    font-size: 0.9rem;
+}
+
+.track-step.active .track-info span {
+    color: var(--primary);
+    opacity: 1;
+    font-weight: 600;
+}
+
+@media (max-width: 480px) {
+    .track-icon {
+        width: 30px;
+        height: 30px;
+    }
+
+    .track-icon svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    .track-line {
+        top: 15px;
+        left: 14px;
+    }
+
+    .track-info strong {
+        font-size: 0.82rem;
+    }
+
+    .track-info span {
+        font-size: 0.72rem;
+    }
+}
+
+/* ═══════════════════════════════════════════
+   INFO ROWS (Delivery + Payment)
+══════════════════════════════════════════ */
+.info-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.info-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.85rem;
+    padding: 0.85rem;
+    background: var(--bg-3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    transition: border-color 0.2s;
+}
+
+.info-row:hover {
+    border-color: var(--border-2);
+}
+
+.info-row i {
+    width: 20px;
+    height: 20px;
+    stroke: var(--primary);
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.info-row > div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.info-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-3);
+}
+
+.info-val {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.5;
+}
+
+.info-val--success {
+    color: var(--success);
+}
+
+@media (max-width: 480px) {
+    .info-row {
+        padding: 0.75rem;
+        gap: 0.65rem;
+    }
+
+    .info-val {
+        font-size: 0.82rem;
+    }
+}
+
+/* ═══════════════════════════════════════════
+   ORDER ACTIONS
+══════════════════════════════════════════ */
+.order-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.order-actions .btn {
+    flex: 1 1 auto;
+    min-width: 160px;
+    justify-content: center;
+}
+
+@media (max-width: 640px) {
+    .order-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .order-actions .btn {
+        flex: 1 1 auto;
+        width: 100%;
+        min-width: 0;
+    }
+}
+
+/* ═══════════════════════════════════════════
+   REFUND FORM
+══════════════════════════════════════════ */
+.refund-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.form-label {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text-2);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.form-select,
+.form-textarea {
+    width: 100%;
+    background: var(--bg-3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: 'Quicksand', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 500;
+    padding: 0.65rem 0.85rem;
+    transition: border-color 0.2s;
+    resize: vertical;
+}
+
+.form-select:focus,
+.form-textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-l);
+}
+
+.form-select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px;
+    padding-right: 2.5rem;
+}
+
+.form-textarea {
+    min-height: 100px;
+    line-height: 1.5;
+}
+
+.form-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.form-hint {
+    font-size: 0.76rem;
+    color: var(--text-3);
+    font-style: italic;
+}
+
+.evidence-upload-row {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+}
+.evidence-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 1rem;
+    background: var(--bg-3);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+    color: var(--text-2);
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 600;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+.evidence-btn:hover { border-color: var(--border-2); color: var(--text); background: var(--bg-2); }
+.evidence-btn svg { width: 15px; height: 15px; stroke: currentColor; }
+.evidence-previews {
+    display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.35rem;
+}
+.evidence-preview {
+    width: 72px; height: 72px; border-radius: 8px;
+    background-size: cover; background-position: center;
+    background-color: var(--bg-3); border: 1px solid var(--border);
+    position: relative;
+}
+.evidence-remove {
+    position: absolute; top: -6px; right: -6px;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: var(--danger); color: #fff; border: none;
+    font-size: 14px; line-height: 1; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0.85; transition: opacity 0.15s;
+}
+.evidence-remove:hover { opacity: 1; }
+
+/* ── DANGER BUTTON VARIANT
+══════════════════════════════════════════ */
+.btn-danger {
+    background: transparent;
+    color: var(--danger);
+    border: 1px solid rgba(239,68,68,0.2);
+}
+
+.btn-danger:hover {
+    background: rgba(239,68,68,0.1);
+    border-color: rgba(239,68,68,0.4);
+    color: var(--danger);
+}
+
+/* ═══════════════════════════════════════════
+   EMPTY & LOADING STATES
+══════════════════════════════════════════ */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 3rem 1.5rem;
+    gap: 1rem;
+}
+
+.empty-state-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--primary-l);
+    border: 1px solid var(--border-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+}
+
+.empty-state-icon svg {
+    width: 28px;
+    height: 28px;
+    stroke: currentColor;
+}
+
+.empty-state h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.empty-state p {
+    font-size: 0.88rem;
+    color: var(--text-2);
+    max-width: 320px;
+    line-height: 1.6;
+}
+
+/* ═══════════════════════════════════════════
+   SHIMMER
+══════════════════════════════════════════ */
+.shimmer {
+    background: linear-gradient(135deg, var(--bg-3) 0%, var(--bg-2) 50%, var(--bg-3) 100%);
+    background-size: 200% 200%;
+    animation: shimmer 2s ease-in-out infinite;
+    border-radius: var(--radius);
+}
+
+@keyframes shimmer {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* ═══════════════════════════════════════════
+   ANIMATIONS
+══════════════════════════════════════════ */
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes dropIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══════════════════════════════════════════
+   UTILITIES
+══════════════════════════════════════════ */
+.hidden { display: none !important; }
+
+/* ═══════════════════════════════════════════
+   TRACKING CARD
+══════════════════════════════════════════ */
+.tracking-card {
+    /* Card with scrolling horizontal timeline */
+}
+
+/* ═══════════════════════════════════════════
+   ORDER ACTIONS CARD
+══════════════════════════════════════════ */
+.order-actions-card {
+    /* Container for action buttons and refund panels */
+}
+
+/* ═══════════════════════════════════════════
+   DELIVERY CARD
+══════════════════════════════════════════ */
+.delivery-card {
+    /* Delivery info side card */
+}
+
+/* ═══════════════════════════════════════════
+   PAYMENT CARD
+══════════════════════════════════════════ */
+.payment-card {
+    margin-top: 1.25rem;
+}
+
+/* ═══════════════════════════════════════════
+   REFUND STATUS CARD
+══════════════════════════════════════════ */
+.refund-status-card {
+    padding: 1.5rem;
+    margin-top: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    animation: slideDown 0.25s ease;
+}
+
+#refund-status {
+    align-self: flex-start;
+}
+
+#refund-status-msg {
+    font-size: 0.88rem;
+    color: var(--text-2);
+    line-height: 1.6;
+}
+
+.refund-details {
+    background: var(--bg-3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.refund-details-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.88rem;
+}
+
+.refund-details-row .info-label {
+    font-weight: 600;
+    color: var(--text-3);
+    flex-shrink: 0;
+}
+
+.refund-details-row .info-val {
+    font-weight: 700;
+    color: var(--text);
+    text-align: right;
+}
+
+#refund-details .info-row {
+    margin-bottom: 0;
+}
+
+@media (max-width: 480px) {
+    .refund-status-card {
+        padding: 1rem;
+    }
+
+    .refund-details {
+        padding: 0.85rem;
+    }
+
+    .refund-details-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+
+    .refund-details-row .info-val {
+        text-align: left;
+    }
+}
+
+#refund-status {
+    align-self: flex-start;
+}
+
+#refund-status-msg {
+    font-size: 0.88rem;
+    color: var(--text-2);
+    line-height: 1.6;
+}
+
+.refund-details {
+    background: var(--bg-3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.refund-details-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.refund-details-row .info-label {
+    flex-shrink: 0;
+}
+
+.refund-details-row .info-val {
+    text-align: right;
+}
+
+/* ═══════════════════════════════════════════
+   TRACKING TIMELINE BASE ELEMENTS
+══════════════════════════════════════════ */
+.track-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background: var(--bg-3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+    transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+.track-icon svg {
+    width: 16px;
+    height: 16px;
+    stroke: var(--text-3);
+    transition: stroke 0.2s;
+}
+
+.track-line {
+    position: absolute;
+    top: 18px;
+    height: 1.5px;
+    background: var(--border);
+    z-index: 0;
+}
+
+.track-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.2rem;
+}
+
+.track-info strong {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text-3);
+}
+
+.track-info span {
+    font-size: 0.72rem;
+    color: var(--text-3);
+    opacity: 0.7;
+}

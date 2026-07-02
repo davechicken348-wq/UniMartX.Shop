@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniMartX — Build Your Student Business</title>
+    <meta name="description" content="UniMartX helps student entrepreneurs build professional online stores — without building a website. Get your own shop, share one link, and grow your brand.">
+    <link rel="canonical" href="https://unimartx.com/">
+    <meta property="og:title" content="UniMartX — Build Your Student Business">
+    <meta property="og:description" content="The platform for student entrepreneurs. Create your online storefront, list products, and reach customers across campus.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://unimartx.com/">
+    <meta property="og:image" content="https://unimartx.com/assets/og-home.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800;900&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://api.unimartx.com">
+    <link rel="stylesheet" href="assets/css/public.css">
+    <link rel="stylesheet" href="assets/css/home.css">
+    <style>
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0a0a0f; }
+        ::-webkit-scrollbar-thumb { background: #1f1f2e; border-radius: 4px; }
+        .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.22, 1, 0.36, 1); }
+        .reveal.in-view { opacity: 1; transform: translateY(0); }
+        .delay-100 { transition-delay: 100ms; }
+        .delay-200 { transition-delay: 200ms; }
+        .delay-300 { transition-delay: 300ms; }
+        .delay-400 { transition-delay: 400ms; }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="visually-hidden">Skip to main content</a>
+
+    <!-- ═══════════════════════════════════════════
+         NAVBAR
+    ═══════════════════════════════════════════ -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-inner">
+
+            <a href="home.html" class="nav-logo">Unimart<span>X</span></a>
+
+            <form class="nav-search" action="shop/shop.html" method="get">
+                <i data-lucide="search"></i>
+                <input type="search" name="search" placeholder="Search products, stores, categories…" aria-label="Search">
+                <button type="submit" class="search-btn">Search</button>
+            </form>
+
+            <div class="nav-actions">
+                <a href="shop/cart.html" class="nav-icon-btn" aria-label="Cart">
+                    <i data-lucide="shopping-cart"></i>
+                    <span class="badge" id="cart-count">0</span>
+                </a>
+                <a href="../auth/login.html" class="nav-btn nav-btn-ghost">Log In</a>
+                <a href="../auth/buyer/register.html" class="nav-btn nav-btn-primary">Sign Up</a>
+            </div>
+
+            <button class="nav-hamburger" id="nav-hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="nav-mobile">
+                <i data-lucide="menu" aria-hidden="true"></i>
+            </button>
+        </div>
+
+        <!-- Mobile menu -->
+        <div class="nav-mobile" id="nav-mobile">
+            <div class="nav-mobile-search">
+                <i data-lucide="search"></i>
+                <input type="search" placeholder="Search…" aria-label="Search">
+            </div>
+            <a href="shop/shop.html">Browse</a>
+            <a href="stores/stores.html">Student Shops</a>
+            <a href="shop/cart.html">Cart</a>
+            <a href="../auth/login.html">Log In</a>
+            <a href="../auth/buyer/register.html" class="nav-btn nav-btn-primary">Sign Up</a>
+        </div>
+    </nav>
+
+
+    <!-- ═══════════════════════════════════════════
+         HERO
+    ═══════════════════════════════════════════ -->
+    <section class="hero" id="main-content">
+        <div class="hero-bg">
+        </div>
+        <div class="hero-inner">
+            <div class="hero-content">
+                <div class="hero-badge hero-anim hero-anim-1">
+                    <i data-lucide="zap"></i>
+                    Built for student entrepreneurs
+                </div>
+                <h1 class="hero-title">
+                    <span class="hero-title-line1 hero-anim hero-anim-2">Build your</span><br>
+                    <span class="hero-title-line2 hero-anim hero-anim-3">student business.</span>
+                </h1>
+                <p class="hero-sub hero-anim hero-anim-4">
+                    Create your own professional storefront without building a website. Share one link. Manage products. Receive orders. Reach students across campus.
+                </p>
+            <div class="hero-ctas hero-anim hero-anim-5" id="hero-cta">
+                <div class="chat-dialog">
+                    <div class="chat-msg chat-msg--left">
+                        <div class="chat-avatar">S</div>
+                        <div class="chat-bubble">
+                            <div class="chat-msg-text">
+                                <p class="chat-question">How do I start selling on campus?</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-msg chat-msg--right">
+                        <div class="chat-bubble">
+                            <div class="chat-msg-text">
+                                <p class="chat-question">Where can I discover student shops?</p>
+                            </div>
+                        </div>
+                        <div class="chat-avatar chat-avatar--primary">U</div>
+                    </div>
+                    <div class="chat-msg chat-msg--left">
+                        <div class="chat-avatar">S</div>
+                        <div class="chat-bubble">
+                            <div class="chat-msg-text">
+                            <a href="../auth/seller/register.html" class="chat-cta chat-cta--accent">
+                                <span class="chat-cta-text">
+                                    <strong>Create My Shop</strong>
+                                    <span>Launch your online storefront in minutes.</span>
+                                </span>
+                            </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-msg chat-msg--right">
+                        <div class="chat-bubble">
+                            <div class="chat-msg-text">
+                                <a href="stores/stores.html" class="chat-cta chat-cta--accent">
+                                    <span class="chat-cta-text">
+                                        <strong>Explore Student Shops</strong>
+                                        <span>Discover businesses built by student entrepreneurs.</span>
+                                    </span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="chat-avatar chat-avatar--primary">U</div>
+                    </div>
+                </div>
+            </div>
+                <div class="hero-stats hero-anim hero-anim-6">
+                    <div class="stat">
+                        <strong id="hero-products">—</strong>
+                        <span>Products</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat">
+                        <strong id="hero-sellers">—</strong>
+                        <span>Student Shops</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat">
+                        <strong id="hero-buyers">—</strong>
+                        <span>Buyers</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-showcase hero-anim hero-anim-5">
+                <div class="hero-store-grid">
+                    <div class="hero-store-card hero-store-card--1">
+                        <img src="assets/images/home_images/home1.webp" alt="Student store showcase" loading="lazy">
+                    </div>
+                    <div class="hero-store-card hero-store-card--2">
+                        <img src="assets/images/home_images/home2.webp" alt="Student store showcase" loading="lazy">
+                    </div>
+                    <div class="hero-store-card hero-store-card--3">
+                        <img src="assets/images/home_images/home3.webp" alt="Student store showcase" loading="lazy">
+                    </div>
+                    <div class="hero-store-card hero-store-card--4">
+                        <img src="assets/images/home_images/home4.webp" alt="Student store showcase" loading="lazy">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════
+         WHY UNIMARTX
+    ═══════════════════════════════════════════ -->
+    <section class="section why-section">
+        <div class="container">
+            <div class="section-header centered">
+                <h2>Why UniMartX</h2>
+                <p>Your business deserves more than WhatsApp Status.</p>
+            </div>
+            <div class="why-grid">
+                <div class="why-card">
+                    <div class="why-icon"><i data-lucide="message-circle-x"></i></div>
+                    <h3>WhatsApp Status</h3>
+                    <p>Disappears in 24 hours. No permanent presence, no easy discovery.</p>
+                </div>
+                <div class="why-card">
+                    <div class="why-icon"><i data-lucide="instagram"></i></div>
+                    <h3>Instagram</h3>
+                    <p>Algorithm changes bury your posts. Managing orders in DMs is chaotic.</p>
+                </div>
+                <div class="why-card">
+                    <div class="why-icon"><i data-lucide="send"></i></div>
+                    <h3>Telegram</h3>
+                    <p>Scattered groups. No catalog. Hard for new customers to find you.</p>
+                </div>
+                <div class="why-card">
+                    <div class="why-icon"><i data-lucide="users"></i></div>
+                    <h3>Word of Mouth</h3>
+                    <p>Limited reach. Hard to scale. No way to showcase your full brand.</p>
+                </div>
+            </div>
+            <div class="why-solution">
+                <div class="why-solution-badge">With UniMartX</div>
+                <p>Every student seller gets a permanent, professional online storefront — <strong>unimartx.com/shop/your-brand</strong> — that never disappears.</p>
+            </div>
+        </div>
+    </section>
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════
+         BENEFITS
+    ═══════════════════════════════════════════ -->
+    <section class="section benefits-section">
+        <div class="container">
+            <div class="section-header centered">
+                <h2>Everything you need to run your shop</h2>
+                <p>Tools that make student entrepreneurship simple.</p>
+            </div>
+            <div class="benefits-grid">
+                <div class="benefit-item">
+                    <div class="benefit-check"><i data-lucide="check"></i></div>
+                    <span>Personal storefront</span>
+                </div>
+                <div class="benefit-item">
+                    <div class="benefit-check"><i data-lucide="check"></i></div>
+                    <span>Shareable shop link</span>
+                </div>
+                <div class="benefit-item">
+                    <div class="benefit-check"><i data-lucide="check"></i></div>
+                    <span>Product management</span>
+                </div>
+                <div class="benefit-item">
+                    <div class="benefit-check"><i data-lucide="check"></i></div>
+                    <span>Inventory tracking</span>
+                </div>
+                <div class="benefit-item">
+                    <div class="benefit-check"><i data-lucide="check"></i></div>
+                    <span>Customer reviews</span>
+                </div>
+                <div class="benefit-item">
+                    <div class="benefit-check"><i data-lucide="check"></i></div>
+                    <span>Campus visibility</span>
+                </div>
+                <div class="benefit-item">
+                    <div class="benefit-check"><i data-lucide="check"></i></div>
+                    <span>Secure payments</span>
+                </div>
+                <div class="benefit-item">
+                    <div class="benefit-check"><i data-lucide="check"></i></div>
+                    <span>Order management</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════
+         FEATURED STUDENT SHOPS
+    ═══════════════════════════════════════════ -->
+    <section class="section stores-section" id="stores-section">
+        <div class="container">
+            <div class="section-header">
+                <div>
+                    <h2>Featured Student Shops</h2>
+                    <p class="section-sub">Real businesses. Real students.</p>
+                </div>
+                <a href="stores/stores.html" class="see-all">Browse all shops <i data-lucide="arrow-right"></i></a>
+            </div>
+            <div class="stores-grid" id="stores-grid"></div>
+        </div>
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════
+         HOW IT WORKS
+    ═══════════════════════════════════════════ -->
+    <section class="section how-section">
+        <div class="container">
+            <div class="section-header centered">
+                <h2>How It Works</h2>
+                <p>From zero to open shop in minutes.</p>
+            </div>
+            <div class="how-grid">
+                <div class="how-card">
+                    <div class="how-step">01</div>
+                    <div class="how-icon"><i data-lucide="user-plus"></i></div>
+                    <h3>Create your shop</h3>
+                    <p>Sign up as a student seller and set up your storefront in under a minute.</p>
+                </div>
+                <div class="how-connector"><i data-lucide="arrow-right"></i></div>
+                <div class="how-card">
+                    <div class="how-step">02</div>
+                    <div class="how-icon"><i data-lucide="package-plus"></i></div>
+                    <h3>List your products</h3>
+                    <p>Add your products with photos, prices, and descriptions. Manage inventory with ease.</p>
+                </div>
+                <div class="how-connector"><i data-lucide="arrow-right"></i></div>
+                <div class="how-card">
+                    <div class="how-step">03</div>
+                    <div class="how-icon"><i data-lucide="share-2"></i></div>
+                    <h3>Share your shop</h3>
+                    <p>Get your unique shop link and share it across campus. One link does it all.</p>
+                </div>
+                <div class="how-connector"><i data-lucide="arrow-right"></i></div>
+                <div class="how-card">
+                    <div class="how-step">04</div>
+                    <div class="how-icon"><i data-lucide="package-check"></i></div>
+                    <h3>Receive orders</h3>
+                    <p>Get notified instantly when orders come in. Track and manage every order.</p>
+                </div>
+                <div class="how-connector"><i data-lucide="arrow-right"></i></div>
+                <div class="how-card">
+                    <div class="how-step">05</div>
+                    <div class="how-icon"><i data-lucide="trending-up"></i></div>
+                    <h3>Grow your business</h3>
+                    <p>Collect reviews, build followers, and expand your reach across campus.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════
+         DISCOVER PRODUCTS
+    ═══════════════════════════════════════════ -->
+    <section class="section products-section">
+        <div class="container">
+            <div class="section-header">
+                <div>
+                    <h2>Discover Products</h2>
+                    <p class="section-sub">From student shops across campus.</p>
+                </div>
+                <a href="shop/shop.html" class="see-all">Browse all <i data-lucide="arrow-right"></i></a>
+            </div>
+            <div class="products-grid" id="products-grid"></div>
+        </div>
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════
+         FOOTER
+    ═══════════════════════════════════════════ -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <a href="home.html" class="nav-logo">Unimart<span>X</span></a>
+                <p>The platform that helps student entrepreneurs build professional online businesses — without building their own websites.</p>
+            </div>
+            <div class="footer-links">
+                <div class="footer-col">
+                    <h4>Start</h4>
+                    <a href="stores/stores.html">Explore Student Shops</a>
+                    <a href="shop/shop.html">Browse Products</a>
+                    <a href="shop/cart.html">Your Cart</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Sell</h4>
+                    <a href="../auth/seller/register.html">Create My Shop</a>
+                    <a href="../auth/seller/register.html">Seller Sign Up</a>
+                    <a href="info/seller-policy.html">Seller Policy</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <a href="info/about.html">About</a>
+                    <a href="contact/contact.html">Contact</a>
+                    <a href="info/faq.html">FAQ</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <a href="info/terms.html">Terms</a>
+                    <a href="info/privacy.html">Privacy</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>&copy; 2026 UnimartX. All rights reserved.</span>
+        </div>
+    </footer>
+
+
+    <script src="../../config.js"></script>
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script src="../shared/js/cart.js"></script>
+    <script src="assets/js/home.js"></script>
+    <script src="../shared/js/public-nav.js"></script>
+
+</body>
+</html>

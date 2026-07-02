@@ -1,0 +1,583 @@
+/* ═══════════════════════════════════════════
+   ADMIN ORDER DETAILS — Page-specific styles
+   ═══════════════════════════════════════════ */
+
+/* Utilities */
+.hidden { display: none !important; }
+
+/* Order details grid */
+.order-details-grid {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 1.5rem;
+}
+
+/* Section spacing */
+.order-details-main .card + .card,
+.order-details-side .card + .card {
+    margin-top: 1.5rem;
+}
+
+/* Back link */
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--text-2);
+    font-size: 0.88rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    transition: color 0.15s;
+}
+.back-link:hover {
+    color: var(--primary);
+}
+.back-link i { width: 16px; height: 16px; stroke: currentColor; }
+
+/* Order header */
+.order-header-card {
+    margin-bottom: 1.5rem;
+}
+.order-header-meta {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+.order-header-sub {
+    color: var(--text-2);
+    font-size: 0.85rem;
+}
+.order-header-success {
+    color: var(--success);
+    font-size: 0.85rem;
+}
+.header-icon {
+    width: 14px;
+    height: 14px;
+    stroke: currentColor;
+    display: inline;
+    vertical-align: middle;
+    margin-right: 0.25rem;
+}
+.order-header-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+.order-status-badge {
+    font-size: 0.85rem;
+    padding: 0.4rem 1rem;
+}
+
+/* Buttons */
+.btn-full {
+    width: 100%;
+    justify-content: center;
+}
+
+/* Order header layout */
+.card .order-header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+.order-header-label {
+    font-size: 0.72rem;
+    color: var(--text-3);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.2rem;
+}
+.order-header-ref {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.02em;
+}
+.order-header-val {
+    font-weight: 600;
+    color: var(--text);
+}
+.order-header-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.75rem;
+}
+
+/* Status select */
+.status-select {
+    background: var(--bg-3);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 0.5rem 2.5rem 0.5rem 0.75rem;
+    border-radius: var(--radius);
+    cursor: pointer;
+    appearance: none;
+    background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23a09f9c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"%3E%3Cpath d="m6 9 6 6 6-6"/%3E%3C/svg%3E');
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+}
+.status-select:focus {
+    outline: none;
+    border-color: var(--border-2);
+}
+
+/* Order items list */
+.order-items-list {
+    display: flex;
+    flex-direction: column;
+}
+.order-item-row {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border);
+}
+.order-item-row:last-child {
+    border-bottom: none;
+}
+.order-item-row h4 {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.2rem;
+}
+.order-item-row p {
+    font-size: 0.82rem;
+    color: var(--text-2);
+}
+.order-item-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: var(--primary);
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+.order-item-link:hover { text-decoration: underline; }
+
+/* Order summary lines */
+.order-summary-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+}
+.summary-line {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.88rem;
+}
+.summary-line--total {
+    padding-top: 0.75rem;
+    margin-top: 0.25rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.95rem;
+}
+.fee-deduct {
+    color: var(--danger);
+}
+
+/* Timeline (horizontal) */
+.timeline {
+    display: flex;
+    flex-direction: row;
+    gap: 0;
+    position: relative;
+    padding-top: 2.2rem;
+    align-items: flex-start;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 0.5rem;
+}
+.timeline::before {
+    content: '';
+    position: absolute;
+    top: 1.35rem;
+    left: 1.5rem;
+    right: 1.5rem;
+    height: 3px;
+    background: linear-gradient(to right, var(--border) 0%, var(--border) 100%);
+    z-index: 0;
+    border-radius: 2px;
+}
+.timeline-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.65rem;
+    flex: 1;
+    min-width: 7rem;
+    position: relative;
+    z-index: 1;
+    justify-content: flex-start;
+}
+.timeline-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--bg-1);
+    border: 2.5px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    transition: all 0.2s ease;
+}
+.timeline-icon i {
+    width: 15px;
+    height: 15px;
+    stroke-width: 2px;
+}
+.timeline-item--done .timeline-icon {
+    background: var(--success);
+    border-color: var(--success);
+    color: #fff;
+    box-shadow: 0 3px 10px rgba(34, 197, 94, 0.25);
+}
+.timeline-item--done .timeline-icon i {
+    color: #fff;
+    stroke: #fff;
+}
+.timeline-item--danger .timeline-icon {
+    background: var(--danger);
+    border-color: var(--danger);
+    color: #fff;
+    box-shadow: 0 3px 10px rgba(239, 68, 68, 0.25);
+}
+.timeline-item--danger .timeline-icon i {
+    color: #fff;
+    stroke: #fff;
+}
+.timeline-item--warning .timeline-icon {
+    background: var(--warning);
+    border-color: var(--warning);
+    color: #fff;
+    box-shadow: 0 3px 10px rgba(245, 158, 11, 0.25);
+}
+.timeline-item--warning .timeline-icon i {
+    color: #fff;
+    stroke: #fff;
+}
+.timeline-body {
+    text-align: center;
+    max-width: 8rem;
+}
+.timeline-label {
+    font-weight: 700;
+    font-size: 0.86rem;
+    color: var(--text);
+    margin: 0;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+}
+.timeline-date {
+    font-size: 0.75rem;
+    color: var(--text-2);
+    margin: 0.2rem 0 0;
+    font-weight: 500;
+    line-height: 1.3;
+}
+}
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 0.4rem;
+    top: 0.75rem;
+    bottom: 0.75rem;
+    width: 2px;
+    background: var(--border);
+}
+.timeline-item {
+    display: flex;
+    gap: 0.85rem;
+    position: relative;
+    align-items: flex-start;
+}
+.timeline-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--bg-2);
+    border: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+}
+.timeline-icon i {
+    width: 14px;
+    height: 14px;
+}
+.timeline-item--done .timeline-icon {
+    background: var(--success);
+    border-color: var(--success);
+    color: #fff;
+}
+.timeline-item--done .timeline-icon i {
+    color: #fff;
+    stroke: #fff;
+}
+.timeline-item--danger .timeline-icon {
+    background: var(--danger);
+    border-color: var(--danger);
+    color: #fff;
+}
+.timeline-item--danger .timeline-icon i {
+    color: #fff;
+    stroke: #fff;
+}
+.timeline-item--warning .timeline-icon {
+    background: var(--warning);
+    border-color: var(--warning);
+    color: #fff;
+}
+.timeline-item--warning .timeline-icon i {
+    color: #fff;
+    stroke: #fff;
+}
+.timeline-body {
+    flex: 1;
+    min-width: 0;
+}
+.timeline-label {
+    font-weight: 600;
+    font-size: 0.88rem;
+    color: var(--text);
+    margin: 0;
+    line-height: 1.3;
+}
+.timeline-date {
+    font-size: 0.78rem;
+    color: var(--text-2);
+    margin: 0.15rem 0 0;
+}
+
+/* Info rows (buyer/seller/refund) */
+.info-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+.info-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    font-size: 0.88rem;
+}
+.info-row i {
+    width: 15px;
+    height: 15px;
+    stroke: var(--text-3);
+    flex-shrink: 0;
+    margin-top: 0.15rem;
+}
+.info-row > div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    min-width: 0;
+}
+.info-label {
+    font-size: 0.72rem;
+    color: var(--text-3);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.info-val {
+    color: var(--text);
+    font-weight: 600;
+    word-break: break-word;
+}
+
+/* Order actions */
+.order-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+/* Payout card */
+.payout-card {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 1px var(--border-2) !important;
+}
+.payout-card .card-header div h2 {
+    color: var(--primary);
+}
+.payout-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+.payout-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.88rem;
+}
+.payout-row--total {
+    padding-top: 0.75rem;
+    margin-top: 0.5rem;
+    border-top: 1px solid var(--border);
+    font-size: 1rem;
+    font-weight: 700;
+}
+.payout-note {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.82rem;
+    color: var(--text-2);
+    margin-top: 0.75rem;
+    padding: 0.6rem 0.75rem;
+    background: var(--bg-3);
+    border-radius: var(--radius);
+    line-height: 1.4;
+}
+.payout-note i { width: 14px; height: 14px; color: var(--info); flex-shrink: 0; }
+
+/* Platform Revenue */
+.platform-revenue-card {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 1px var(--border-2) !important;
+}
+.platform-revenue-card .card-header div h2 {
+    color: var(--primary);
+}
+
+/* Form elements */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+.form-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-2);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+.form-textarea {
+    font-family: 'Quicksand', sans-serif;
+    background: var(--bg-3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.75rem 1rem;
+    color: var(--text);
+    font-size: 0.92rem;
+    font-weight: 500;
+    resize: vertical;
+    transition: border-color 0.2s;
+}
+.form-textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+.form-textarea::placeholder {
+    color: var(--text-3);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .order-details-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Refund Arbitration card */
+#admin-refund-card {
+    border-color: var(--info) !important;
+    box-shadow: 0 0 0 1px rgba(56,189,248,0.15) !important;
+}
+#admin-refund-card .card-header {
+    align-items: center;
+}
+#admin-refund-card .card-header div h2 {
+    color: var(--info);
+}
+#admin-refund-card .form-group {
+    margin-top: 1rem;
+}
+#admin-refund-card .order-actions {
+    margin-top: 1rem;
+}
+
+/* Evidence gallery (refund images) */
+.evidence-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+.evidence-thumb {
+    width: 72px;
+    height: 72px;
+    border-radius: var(--radius);
+    background-size: cover;
+    background-position: center;
+    background-color: var(--bg-3);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: block;
+}
+.evidence-thumb:hover {
+    border-color: var(--border-2);
+    transform: scale(1.05);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+}
+
+@media (max-width: 768px) {
+    .card {
+        padding: 1.25rem;
+    }
+    .order-header-left {
+        gap: 0.75rem;
+    }
+    .order-header-right {
+        align-items: flex-start;
+        width: 100%;
+    }
+    .status-select {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    #update-status-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-content {
+        padding: 1rem 0.75rem;
+    }
+    .order-item-row {
+        flex-wrap: wrap;
+    }
+    .order-item-row > div:first-child {
+        flex: 0 0 auto;
+    }
+    .order-item-row > div:nth-child(2) {
+        flex: 1 1 100%;
+        min-width: 200px;
+    }
+    .order-item-info h4 {
+        font-size: 0.88rem;
+    }
+}

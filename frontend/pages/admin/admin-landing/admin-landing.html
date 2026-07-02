@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin — UnimartX</title>
+    <link rel="canonical" href="https://unimartx.com/admin/home">
+    <meta property="og:title" content="Admin — UnimartX">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://unimartx.com/admin/home">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800;900&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://api.unimartx.com">
+    <link rel="stylesheet" href="../shared/admin-base.css">
+    <link rel="stylesheet" href="../assets/css/admin-landing.css">
+</head>
+<body>
+    <a href="#main-content" class="visually-hidden">Skip to main content</a>
+
+    <nav class="navbar" id="navbar">
+        <div class="nav-inner">
+            <a href="../../../public/home.html" class="nav-logo">Unimart<span>X</span></a>
+            <div class="nav-actions">
+                <a href="../notifications/notifications.html" class="nav-icon-btn" aria-label="Notifications" id="nav-notif-btn">
+                    <i data-lucide="bell"></i>
+                    <span class="dot-badge" id="nav-notif-dot"></span>
+                </a>
+                <div class="nav-user" id="nav-user">
+                    <div class="nav-avatar" id="nav-avatar">A</div>
+                    <span class="nav-username" id="nav-username">Admin</span>
+                    <i data-lucide="chevron-down" class="nav-chevron"></i>
+                    <div class="nav-dropdown" id="nav-dropdown">
+                        <a href="../settings/settings.html"><i data-lucide="settings"></i> Settings</a>
+                        <div class="nav-dropdown-divider"></div>
+                        <a href="../../auth/logout.html" class="nav-dropdown-logout"><i data-lucide="log-out"></i> Log Out</a>
+                    </div>
+                </div>
+                <a href="../../auth/logout.html" class="nav-logout-btn" aria-label="Log out">
+                    <i data-lucide="log-out"></i>
+                </a>
+                <button class="nav-hamburger" id="nav-hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="nav-mobile">
+                    <i data-lucide="menu"></i>
+                </button>
+            </div>
+        </div>
+        <div class="nav-mobile" id="nav-mobile">
+            <a href="../dashboard/dashboard.html"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+            <a href="../users/users.html"><i data-lucide="users"></i> Users</a>
+            <a href="../orders/orders.html"><i data-lucide="shopping-bag"></i> Orders</a>
+            <a href="../products/products.html"><i data-lucide="package"></i> Products</a>
+            <a href="../seller-verification/seller-verification.html"><i data-lucide="user-check"></i> Seller Verification</a>
+            <a href="../notifications/notifications.html"><i data-lucide="bell"></i> Notifications</a>
+            <a href="../settings/settings.html"><i data-lucide="settings"></i> Settings</a>
+            <a href="../../auth/logout.html" class="mobile-logout"><i data-lucide="log-out"></i> Log Out</a>
+        </div>
+    </nav>
+
+    <main id="main-content">
+        <section class="hero" aria-labelledby="hero-heading">
+        <div class="hero-bg" aria-hidden="true">
+            <img class="hero-bg-img" src="../assets/images/landing-wallpaper/admin-1.webp" alt="" loading="eager" fetchpriority="high">
+            <div class="hero-overlay"></div>
+            <div class="hero-grid-pattern"></div>
+            <div class="hero-glow"></div>
+        </div>
+            <div class="hero-center">
+                <div class="hero-content">
+                    <div class="hero-eyebrow">
+                        <i data-lucide="shield-check"></i>
+                        Platform admin
+                    </div>
+
+                    <h1 id="hero-heading">
+                        Welcome back,<br>
+                        <span id="hero-name">Admin</span>.
+                    </h1>
+
+                    <p class="hero-sub">
+                        Users, orders, sellers, and platform health — all in one calm place. What needs your attention?
+                    </p>
+
+                    <div class="hero-stats">
+                        <div class="hero-stat">
+                            <strong id="hs-users">—</strong>
+                            <span>Users</span>
+                        </div>
+                        <div class="hero-stat-divider"></div>
+                        <div class="hero-stat">
+                            <strong id="hs-orders">—</strong>
+                            <span>Orders</span>
+                        </div>
+                        <div class="hero-stat-divider"></div>
+                        <div class="hero-stat">
+                            <strong id="hs-sellers">—</strong>
+                            <span>Sellers</span>
+                        </div>
+                        <div class="hero-stat-divider"></div>
+                        <div class="hero-stat">
+                            <strong id="hs-pending">—</strong>
+                            <span>Pending</span>
+                        </div>
+                    </div>
+
+                    <div class="hero-ctas">
+                        <a href="../seller-verification/seller-verification.html" class="hero-cta-link hero-cta-link--seller">
+                            <span class="cta-text-block">
+                                <strong>Review Sellers</strong>
+                                <span>Verify new seller applications.</span>
+                            </span>
+                        </a>
+                        <a href="../dashboard/dashboard.html" class="hero-cta-link hero-cta-link--buyer">
+                            <span class="cta-text-block">
+                                <strong>Open Dashboard</strong>
+                                <span>Platform analytics and reports.</span>
+                            </span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="quicklinks-section section" aria-labelledby="ql-heading">
+            <div class="container">
+                <header class="section-header centered">
+                    <h2 id="ql-heading">Platform control, <span>one click away.</span></h2>
+                    <p class="section-subtitle">Jump straight to what matters.</p>
+                </header>
+
+                <div class="quicklinks-grid">
+                    <a href="../users/users.html" class="ql-card" data-color="blue">
+                        <div class="ql-card-top">
+                            <div class="ql-icon"><i data-lucide="users"></i></div>
+                            <div class="ql-arrow"><i data-lucide="arrow-right"></i></div>
+                        </div>
+                        <h3>Users</h3>
+                        <p>View, search, and manage all platform users.</p>
+                    </a>
+
+                    <a href="../orders/orders.html" class="ql-card" data-color="green">
+                        <div class="ql-card-top">
+                            <div class="ql-icon"><i data-lucide="shopping-bag"></i></div>
+                            <div class="ql-arrow"><i data-lucide="arrow-right"></i></div>
+                        </div>
+                        <h3>Orders</h3>
+                        <p>Monitor transactions and update statuses.</p>
+                    </a>
+
+                    <a href="../products/products.html" class="ql-card" data-color="yellow">
+                        <div class="ql-card-top">
+                            <div class="ql-icon"><i data-lucide="package"></i></div>
+                            <div class="ql-arrow"><i data-lucide="arrow-right"></i></div>
+                        </div>
+                        <h3>Products</h3>
+                        <p>Review listings, toggle active status, remove violations.</p>
+                    </a>
+
+                    <a href="../seller-verification/seller-verification.html" class="ql-card" data-color="pink">
+                        <div class="ql-card-top">
+                            <div class="ql-icon"><i data-lucide="user-check"></i></div>
+                            <div class="ql-arrow"><i data-lucide="arrow-right"></i></div>
+                        </div>
+                        <h3>Seller Verification</h3>
+                        <p>Approve or reject seller applications.</p>
+                    </a>
+
+                    <a href="../notifications/notifications.html" class="ql-card" data-color="amber">
+                        <div class="ql-card-top">
+                            <div class="ql-icon"><i data-lucide="bell"></i></div>
+                            <div class="ql-arrow"><i data-lucide="arrow-right"></i></div>
+                        </div>
+                        <h3>Notifications</h3>
+                        <p>Platform alerts, escalations, and announcements.</p>
+                    </a>
+
+                    <a href="../settings/settings.html" class="ql-card" data-color="indigo">
+                        <div class="ql-card-top">
+                            <div class="ql-icon"><i data-lucide="settings"></i></div>
+                            <div class="ql-arrow"><i data-lucide="arrow-right"></i></div>
+                        </div>
+                        <h3>Settings</h3>
+                        <p>Security, 2FA, profile, and maintenance mode.</p>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <footer class="footer" role="contentinfo">
+            <div class="footer-inner">
+                <div class="footer-brand">
+                    <a href="../../../public/home.html" class="nav-logo">Unimart<span>X</span></a>
+                    <p>Admin control panel for the UnimartX campus marketplace.</p>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-col">
+                        <h4>Operations</h4>
+                        <a href="../users/users.html">Users</a>
+                        <a href="../orders/orders.html">Orders</a>
+                        <a href="../products/products.html">Products</a>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Governance</h4>
+                        <a href="../seller-verification/seller-verification.html">Verify Sellers</a>
+                        <a href="../notifications/notifications.html">Notifications</a>
+                        <a href="../dashboard/dashboard.html">Dashboard</a>
+                    </div>
+                    <div class="footer-col">
+                        <h4>System</h4>
+                        <a href="../settings/settings.html">Settings</a>
+                        <a href="../../auth/logout.html">Log Out</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>&copy; 2026 UnimartX. All rights reserved.</span>
+                <a href="../../auth/logout.html" class="logout-link"><i data-lucide="log-out"></i> Log Out</a>
+            </div>
+        </footer>
+    </main>
+
+    <script src="../../../config.js"></script>
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script src="../assets/js/auth-utils.js"></script>
+    <script src="../assets/js/admin-landing.js"></script>
+</body>
+</html>

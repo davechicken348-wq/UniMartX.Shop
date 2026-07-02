@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome — UnimartX</title>
+    <meta name="description" content="Your personal buyer hub — orders, wishlist, and more.">
+    <meta name="theme-color" content="#080d14">
+    <link rel="canonical" href="https://unimartx.com/buyer/home">
+    <meta property="og:title" content="Welcome — UnimartX">
+    <meta property="og:description" content="Your personal buyer hub — orders, wishlist, and more.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://unimartx.com/buyer/home">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800;900&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://api.unimartx.com">
+    <link rel="stylesheet" href="../shared/css/buyer-base.css">
+    <link rel="stylesheet" href="../assets/css/buyer-landing.css">
+</head>
+<body>
+
+    <a href="#main-content" class="visually-hidden">Skip to main content</a>
+
+    <!-- ═══════════════════════════════════════════
+         NAVBAR
+    ═══════════════════════════════════════════ -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-inner">
+            <a href="../../public/home.html" class="nav-logo">Unimart<span>X</span></a>
+            <div class="nav-actions">
+                <a href="../../public/shop/cart.html" class="nav-icon-btn" aria-label="Cart">
+                    <i data-lucide="shopping-cart"></i>
+                    <span class="badge" id="cart-badge">0</span>
+                </a>
+                <div class="nav-user" id="nav-user">
+                    <div class="nav-avatar" id="nav-avatar">U</div>
+                    <span class="nav-username" id="nav-username">User</span>
+                    <i data-lucide="chevron-down" class="nav-chevron"></i>
+                    <div class="nav-dropdown" id="nav-dropdown">
+                        <a href="../account/profile.html" class="nav-dropdown-item"><i data-lucide="user"></i> Profile</a>
+                        <a href="../account/settings.html" class="nav-dropdown-item"><i data-lucide="settings"></i> Settings</a>
+                        <div class="nav-dropdown-divider"></div>
+                        <a href="../../auth/logout.html" class="nav-dropdown-item nav-dropdown-logout"><i data-lucide="log-out"></i> Log Out</a>
+                    </div>
+                </div>
+            </div>
+            <button class="nav-hamburger" id="nav-hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="nav-mobile">
+                <i data-lucide="menu"></i>
+            </button>
+        </div>
+        <div class="nav-mobile" id="nav-mobile">
+            <a href="../dashboard/dashboard.html"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+            <a href="../orders/orders.html"><i data-lucide="package"></i> My Orders</a>
+            <a href="../shopping/wishlist.html"><i data-lucide="heart"></i> Wishlist</a>
+            <a href="../notifications/notifications.html"><i data-lucide="bell"></i> Notifications</a>
+            <a href="../account/profile.html"><i data-lucide="user"></i> Profile</a>
+            <a href="../account/settings.html"><i data-lucide="settings"></i> Settings</a>
+            <a href="../../public/shop/shop.html"><i data-lucide="shopping-bag"></i> Browse Shop</a>
+            <a href="../../auth/logout.html" class="nav-logout"><i data-lucide="log-out"></i> Log Out</a>
+        </div>
+    </nav>
+
+
+    <!-- ═══════════════════════════════════════════
+         HERO
+    ═══════════════════════════════════════════ -->
+    <section class="hero" id="main-content" aria-labelledby="hero-heading">
+        <div class="hero-bg" aria-hidden="true">
+            <img class="hero-bg-img" src="../assets/images/shared-wallpaper/shared-6.webp" alt="" loading="eager" fetchpriority="high">
+            <div class="hero-overlay"></div>
+            <div class="hero-grid-pattern"></div>
+            <div class="hero-glow"></div>
+        </div>
+        <div class="hero-center">
+            <div class="hero-content">
+                <div class="hero-eyebrow reveal">
+                    <i data-lucide="sparkles"></i>
+                    <span>Your personal marketplace</span>
+                </div>
+
+                <h1 id="hero-heading" class="reveal delay-100">
+                    Welcome back,<br>
+                    <span id="hero-name">User</span>. 👋
+                </h1>
+
+                <p class="hero-sub reveal delay-200">
+                    Your orders, wishlist, and account — all in one place. Where would you like to go?
+                </p>
+
+                <div class="hero-stats reveal delay-300">
+                    <div class="hero-stat">
+                        <strong id="hs-orders">—</strong>
+                        <span>Orders</span>
+                    </div>
+                    <div class="hero-stat-divider"></div>
+                    <div class="hero-stat">
+                        <strong id="hs-wishlist">—</strong>
+                        <span>Wishlist</span>
+                    </div>
+                    <div class="hero-stat-divider"></div>
+                    <div class="hero-stat">
+                        <strong id="hs-notif">—</strong>
+                        <span>Notifications</span>
+                    </div>
+                </div>
+
+                <div class="hero-ctas reveal delay-400">
+                    <a href="../../public/shop/shop.html" class="hero-cta-link hero-cta-link--buyer">
+                        <span class="cta-text-block">
+                            <strong>Start Shopping</strong>
+                            <span>Browse thousands of products from verified sellers.</span>
+                        </span>
+                    </a>
+                    <a href="../dashboard/dashboard.html" class="hero-cta-link hero-cta-link--seller">
+                        <span class="cta-text-block">
+                            <strong>My Dashboard</strong>
+                            <span>Track orders, manage wishlist, and see your activity.</span>
+                        </span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════
+         QUICK LINKS
+    ═══════════════════════════════════════════ -->
+    <section class="quicklinks-section section" aria-labelledby="ql-heading">
+        <div class="container">
+            <header class="section-header centered reveal">
+                <h2 id="ql-heading">Everything in your account, <span>one click away.</span></h2>
+                <p class="section-subtitle">Jump straight to what you need.</p>
+            </header>
+
+            <div class="quicklinks-grid">
+                <a href="../dashboard/dashboard.html" class="ql-card reveal delay-100" data-color="blue">
+                    <div class="ql-card-top">
+                        <div class="ql-icon"><i data-lucide="layout-dashboard"></i></div>
+                        <div class="ql-arrow"><i data-lucide="arrow-right"></i></div>
+                    </div>
+                    <h3>Dashboard</h3>
+                    <p>Your activity, recent orders, and account summary at a glance.</p>
+                </a>
+
+                <a href="../orders/orders.html" class="ql-card reveal delay-200" data-color="green">
+                    <div class="ql-card-top">
+                        <div class="ql-icon"><i data-lucide="package"></i></div>
+                        <div class="ql-arrow"><i data-lucide="arrow-right"></i></div>
+                    </div>
+                    <h3>My Orders</h3>
+                    <p>Track deliveries, view receipts, and manage returns.</p>
+                </a>
+
+                <a href="../shopping/wishlist.html" class="ql-card reveal delay-300" data-color="pink">
+                    <div class="ql-card-top">
+                        <div class="ql-icon"><i data-lucide="heart"></i></div>
+                        <div class="ql-arrow"><i data-lucide="arrow-right"></i></div>
+                    </div>
+                    <h3>Wishlist</h3>
+                    <p>Items you saved while browsing. Grab them before they're gone.</p>
+                </a>
+
+                <a href="../notifications/notifications.html" class="ql-card reveal delay-400" data-color="yellow">
+                    <div class="ql-card-top">
+                        <div class="ql-icon"><i data-lucide="bell"></i></div>
+                        <div class="ql-arrow"><i data-lucide="arrow-right"></i></div>
+                    </div>
+                    <h3>Notifications</h3>
+                    <p>Order updates, seller replies, and platform announcements.</p>
+                </a>
+
+                <a href="../../public/shop/shop.html" class="ql-card ql-card--shop reveal delay-400" data-color="green">
+                    <div class="ql-card-top">
+                        <div class="ql-icon"><i data-lucide="shopping-bag"></i></div>
+                        <span class="ql-shop-tag">Explore</span>
+                    </div>
+                    <h3>Browse the Shop</h3>
+                    <p>Thousands of products from verified campus and independent sellers.</p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════
+         RECENT ORDERS PREVIEW
+    ═══════════════════════════════════════════ -->
+    <section class="recent-section section" aria-labelledby="recent-heading">
+        <div class="container">
+            <header class="section-header reveal">
+                <div>
+                    <h2 id="recent-heading">Recent <span>Orders</span></h2>
+                    <p class="section-subtitle">Your latest purchases at a glance.</p>
+                </div>
+                <a href="../orders/orders.html" class="see-all-btn">View all <i data-lucide="arrow-right"></i></a>
+            </header>
+
+            <div class="recent-list" id="recent-list">
+                <div class="empty-state" id="empty-state">
+                    <div class="empty-icon"><i data-lucide="package"></i></div>
+                    <h3>No orders yet</h3>
+                    <p>Start shopping to see your orders here.</p>
+                    <a href="../../public/shop/shop.html" class="btn-primary btn-sm" style="margin-top:0.75rem;">
+                        <i data-lucide="shopping-bag"></i> Browse Shop
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════
+         FOOTER
+    ═══════════════════════════════════════════ -->
+    <footer class="footer" role="contentinfo">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <a href="../../public/home.html" class="nav-logo">Unimart<span>X</span></a>
+                <p>The campus marketplace built for buyers and sellers who mean business.</p>
+            </div>
+            <div class="footer-links">
+                <div class="footer-col">
+                    <h4>Shop</h4>
+                    <a href="../../public/shop/shop.html">Browse Products</a>
+                    <a href="../../public/shop/cart.html">Your Cart</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Account</h4>
+                    <a href="../dashboard/dashboard.html">Dashboard</a>
+                    <a href="../orders/orders.html">My Orders</a>
+                    <a href="../account/profile.html">Profile</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Help</h4>
+                    <a href="../../public/info/faq.html">FAQ</a>
+                    <a href="../../public/contact/contact.html">Contact Support</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>&copy; 2026 UnimartX. All rights reserved.</span>
+            <a href="../../auth/logout.html" class="logout-link"><i data-lucide="log-out"></i> Log Out</a>
+        </div>
+    </footer>
+
+    <script src="../../../config.js"></script>
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script defer src="../assets/js/buyer-landing.js"></script>
+</body>
+</html>

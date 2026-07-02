@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details — Admin — UnimartX</title>
+    <script src="../../../config.js"></script>
+    <script>
+      if (localStorage.getItem("seller_sidebar_collapsed") === "true") {
+        document.documentElement.classList.add("no-transition");
+      }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../shared/admin-base.css">
+    <link rel="stylesheet" href="../shared/sidebar.css">
+    <link rel="stylesheet" href="../shared/topnav.css">
+    <link rel="stylesheet" href="../assets/css/order-details.css">
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-icon">
+                <i data-lucide="store"></i>
+            </div>
+            <span class="sidebar-logo-text">Unimart<span>X</span></span>
+        </div>
+
+        <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
+            <i data-lucide="chevron-left"></i>
+        </button>
+
+        <nav class="sidebar-nav">
+            <span class="nav-section-label">Main</span>
+            <a href="../dashboard/dashboard.html" class="nav-item">
+                <div class="nav-item-icon"><i data-lucide="layout-dashboard"></i></div>
+                <span class="nav-item-label">Dashboard</span>
+            </a>
+            <a href="../users/users.html" class="nav-item">
+                <div class="nav-item-icon"><i data-lucide="users"></i></div>
+                <span class="nav-item-label">Users</span>
+                <span class="nav-item-badge" id="sidebar-users-count"></span>
+            </a>
+            <a href="../orders/orders.html" class="nav-item active">
+                <div class="nav-item-icon"><i data-lucide="shopping-bag"></i></div>
+                <span class="nav-item-label">Orders</span>
+                <span class="nav-item-badge badge-warning" id="sidebar-orders-count"></span>
+            </a>
+            <a href="../products/products.html" class="nav-item">
+                <div class="nav-item-icon"><i data-lucide="package"></i></div>
+                <span class="nav-item-label">Products</span>
+            </a>
+
+            <span class="nav-section-label">Moderation</span>
+             <a href="../refunds/refunds.html" class="nav-item">
+                <div class="nav-item-icon"><i data-lucide="rotate-ccw"></i></div>
+                <span class="nav-item-label">Refunds & Disputes</span>
+            </a>
+            <a href="../seller-verification/seller-verification.html" class="nav-item">
+                <div class="nav-item-icon"><i data-lucide="user-check"></i></div>
+                <span class="nav-item-label">Sellers</span>
+                <span class="nav-item-badge badge-danger" id="sidebar-sellers-count"></span>
+            </a>
+            <a href="../notifications/notifications.html" class="nav-item" data-tooltip="Notifications">
+                <div class="nav-item-icon"><i data-lucide="bell"></i></div>
+                <span class="nav-item-label">Alerts</span>
+                <span class="nav-item-badge" id="sidebar-notif-count"></span>
+            </a>
+             <span class="nav-section-label">Config</span>
+            <a href="../settings/settings.html" class="nav-item" data-tooltip="Settings">
+                <div class="nav-item-icon"><i data-lucide="settings"></i></div>
+                <span class="nav-item-label">Settings</span>
+            </a>
+            <a href="../admin-landing/admin-landing.html" class="nav-item" data-tooltip="Admin Home">
+                <div class="nav-item-icon"><i data-lucide="home"></i></div>
+                <span class="nav-item-label">Admin Home</span>
+            </a>
+
+        </nav>
+        <div class="sidebar-footer">
+            <div class="sidebar-user">
+                <div class="sidebar-avatar" id="sidebar-avatar">AD</div>
+                <div class="sidebar-user-info">
+                    <p class="sidebar-user-name" id="sidebar-name">Admin</p>
+                    <p class="sidebar-user-role">Admin</p>
+                </div>
+                <a href="../../auth/logout.html" class="sidebar-logout" aria-label="Log out">
+                    <i data-lucide="log-out"></i>
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- TOPNAV -->
+    <header class="topnav" id="topnav">
+        <button class="topnav-hamburger" id="topnav-hamburger" aria-label="Open menu">
+            <i data-lucide="menu"></i>
+        </button>
+
+        <div class="topnav-title">
+            <h1>Order #<span id="topnav-order-ref">...</span></h1>
+            <p id="topnav-order-subtitle">Order details and management</p>
+        </div>
+
+        <div class="topnav-actions">
+            <button class="topnav-btn" id="notif-btn" aria-label="Notifications">
+                <i data-lucide="bell"></i>
+                <span class="topnav-badge" id="notif-badge">0</span>
+            </button>
+
+            <div class="topnav-user" id="topnav-user">
+                <div class="topnav-avatar" id="topnav-avatar">AD</div>
+                <span class="topnav-username" id="topnav-username">Admin User</span>
+                <i data-lucide="chevron-down" class="topnav-chevron"></i>
+
+                <div class="topnav-dropdown" id="topnav-dropdown">
+                    <a href="../settings/settings.html" class="dropdown-item">
+                        <i data-lucide="settings"></i> Settings
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a href="../../auth/logout.html" class="dropdown-item dropdown-item--danger">
+                        <i data-lucide="log-out"></i> Log out
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notifications Panel -->
+        <div class="notif-panel" id="notif-panel">
+            <div class="notif-header">
+                <h3>Notifications</h3>
+                <button class="notif-mark-read" id="mark-read">Mark all read</button>
+            </div>
+            <div class="notif-list" id="notif-list">
+                <div style="padding:1.25rem;text-align:center;font-size:0.82rem;color:var(--text-3)">No notifications</div>
+            </div>
+            <div class="notif-footer">
+                <a href="../notifications/notifications.html">View all notifications</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="admin-main" id="admin-main">
+        <div class="page-content">
+
+            <!-- Back link -->
+            <a href="orders.html" class="back-link">
+                <i data-lucide="arrow-left"></i> Back to Orders
+            </a>
+
+            <!-- Order header card -->
+            <div class="card order-header-card">
+                <div class="order-header-left">
+                    <div>
+                        <p class="order-header-label">Order Reference</p>
+                        <h2 class="order-header-ref" id="header-order-ref">#...</h2>
+                    </div>
+                    <div class="order-header-meta">
+                        <div>
+                            <p class="order-header-label">Placed</p>
+                            <p class="order-header-val" id="header-order-date">—</p>
+                            <p class="order-header-sub" id="header-order-time">—</p>
+                        </div>
+                        <div>
+                            <p class="order-header-label">Payment</p>
+                            <p class="order-header-val" id="header-payment-method">—</p>
+                            <p class="order-header-success" id="header-payment-amount"><i data-lucide="check-circle" class="header-icon"></i> —</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="order-header-right">
+                    <span class="badge-status badge-status--pending order-status-badge" id="order-status-badge">—</span>
+                    <div class="order-header-actions">
+                        <select id="status-select" class="status-select">
+                            <option value="pending">Pending</option>
+                            <option value="processing">Processing</option>
+                            <option value="shipped">Shipped</option>
+                            <option value="delivered">Delivered</option>
+                            <option value="cancelled">Cancelled</option>
+                            <option value="refund_requested">Refund Requested</option>
+                            <option value="refunded">Refunded</option>
+                            <option value="refund_denied">Refund Denied</option>
+                            <option value="disputed">Disputed</option>
+                        </select>
+                        <button class="btn-primary" id="update-status-btn">
+                            <i data-lucide="check"></i> Update
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Two column layout -->
+            <div class="order-details-grid">
+
+                <!-- Left: Items + Summary + Timeline -->
+                <div class="order-details-main">
+
+                    <!-- Order Items -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h2>Order Items</h2>
+                                <p id="items-count">0 items</p>
+                            </div>
+                        </div>
+                        <div class="order-items-list" id="order-items-list"></div>
+                        <div class="order-summary-lines" id="order-summary"></div>
+                    </div>
+
+                    <!-- Order Timeline -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div><h2>Order Timeline</h2></div>
+                        </div>
+                        <div class="timeline" id="order-timeline"></div>
+                    </div>
+
+                    <!-- Admin Actions -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div><h2>Admin Actions</h2></div>
+                        </div>
+                        <div class="order-actions">
+                            <button class="btn btn-primary btn-full" id="admin-hold-btn">
+                                <i data-lucide="pause-circle"></i> Place on Hold
+                            </button>
+                            <button class="btn btn-ghost btn-full" id="admin-contact-buyer-btn">
+                                <i data-lucide="message-circle"></i> Contact Buyer
+                            </button>
+                            <button class="btn btn-ghost btn-full" id="admin-contact-seller-btn">
+                                <i data-lucide="message-square"></i> Contact Seller
+                            </button>
+                            <button class="btn btn-danger btn-full" id="admin-cancel-btn">
+                                <i data-lucide="x-circle"></i> Cancel Order
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Right sidebar: Platform Revenue, Buyer, Seller, Refund Arbitration -->
+                <div class="order-details-side">
+
+                    <!-- Platform Revenue -->
+                    <div class="card platform-revenue-card">
+                        <div class="card-header">
+                            <div><h2>Platform Revenue</h2></div>
+                        </div>
+                        <div id="platform-revenue"></div>
+                    </div>
+
+                    <!-- Buyer Information -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div><h2>Buyer</h2></div>
+                        </div>
+                        <div class="info-rows" id="buyer-info"></div>
+                    </div>
+
+                    <!-- Seller Information -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div><h2>Seller</h2></div>
+                        </div>
+                        <div class="info-rows" id="seller-info"></div>
+                    </div>
+
+                    <!-- Refund Arbitration -->
+                    <div class="card hidden" id="admin-refund-card">
+                        <div class="card-header">
+                            <div><h2>Refund Arbitration</h2></div>
+                            <span class="badge-status badge-status--pending" id="admin-refund-badge">Review</span>
+                        </div>
+                        <div class="info-rows" id="admin-refund-info"></div>
+                        <div class="form-group">
+                            <label for="admin-refund-note" class="form-label">Admin decision note</label>
+                            <textarea id="admin-refund-note" class="form-textarea" rows="4" placeholder="Explain your decision..."></textarea>
+                        </div>
+                        <div class="order-actions">
+                            <button class="btn btn-primary btn-full" id="approve-refund-btn">
+                                <i data-lucide="check-circle"></i> Approve Refund
+                            </button>
+                            <button class="btn btn-ghost btn-danger btn-full" id="deny-refund-btn">
+                                <i data-lucide="x-circle"></i> Deny Refund
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script src="../shared/polling.js"></script>
+    <script src="../shared/sidebar.js"></script>
+    <script src="../shared/topnav.js"></script>
+    <script src="../assets/js/order-details.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — Admin — UnimartX</title>
+    <script src="../../../config.js"></script>
+    <script>
+      if (localStorage.getItem("seller_sidebar_collapsed") === "true") {
+        document.documentElement.classList.add("no-transition");
+      }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../shared/admin-base.css">
+    <link rel="stylesheet" href="../shared/sidebar.css">
+    <link rel="stylesheet" href="../shared/topnav.css">
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
+</head>
+<body>
+
+    <!-- ── SIDEBAR ── -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-icon"><i data-lucide="store"></i></div>
+            <span class="sidebar-logo-text">Unimart<span>X</span></span>
+        </div>
+        <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
+            <i data-lucide="chevron-left"></i>
+        </button>
+        <nav class="sidebar-nav">
+            <span class="nav-section-label">Main</span>
+            <a href="dashboard.html" class="nav-item active" data-tooltip="Dashboard">
+                <div class="nav-item-icon"><i data-lucide="layout-dashboard"></i></div>
+                <span class="nav-item-label">Dashboard</span>
+            </a>
+            <a href="../users/users.html" class="nav-item">
+                <div class="nav-item-icon"><i data-lucide="users"></i></div>
+                <span class="nav-item-label">Users</span>
+                <span class="nav-item-badge" id="sidebar-users-count"></span>
+            </a>
+            <a href="../orders/orders.html" class="nav-item">
+                <div class="nav-item-icon"><i data-lucide="shopping-bag"></i></div>
+                <span class="nav-item-label">Orders</span>
+                <span class="nav-item-badge badge-warning" id="sidebar-orders-count"></span>
+            </a>
+            <a href="../products/products.html" class="nav-item">
+                <div class="nav-item-icon"><i data-lucide="package"></i></div>
+                <span class="nav-item-label">Products</span>
+            </a>
+
+            <span class="nav-section-label">Moderation</span>
+             <a href="../refunds/refunds.html" class="nav-item">
+                <div class="nav-item-icon"><i data-lucide="rotate-ccw"></i></div>
+                <span class="nav-item-label">Refunds & Disputes</span>
+            </a>
+            <a href="../seller-verification/seller-verification.html" class="nav-item">
+                <div class="nav-item-icon"><i data-lucide="user-check"></i></div>
+                <span class="nav-item-label">Sellers</span>
+                <span class="nav-item-badge badge-danger" id="sidebar-sellers-count"></span>
+            </a>
+            <a href="../notifications/notifications.html" class="nav-item" data-tooltip="Notifications">
+                <div class="nav-item-icon"><i data-lucide="bell"></i></div>
+                <span class="nav-item-label">Alerts</span>
+                <span class="nav-item-badge" id="sidebar-notif-count"></span>
+            </a>
+            <span class="nav-section-label">Config</span>
+            <a href="../settings/settings.html" class="nav-item" data-tooltip="Settings">
+                <div class="nav-item-icon"><i data-lucide="settings"></i></div>
+                <span class="nav-item-label">Settings</span>
+            </a>
+            <a href="../admin-landing/admin-landing.html" class="nav-item" data-tooltip="Admin Home">
+                <div class="nav-item-icon"><i data-lucide="home"></i></div>
+                <span class="nav-item-label">Admin Home</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="sidebar-user">
+                <div class="sidebar-avatar" id="sidebar-avatar">AD</div>
+                <div class="sidebar-user-info">
+                <div class="sidebar-user-name" id="sidebar-name">Admin</div>
+                <div class="sidebar-user-role" id="sidebar-role">Super Admin</div>
+                </div>
+                <a href="../../auth/logout.html" class="sidebar-logout" aria-label="Log out">
+                    <i data-lucide="log-out"></i>
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- ── TOPNAV ── -->
+    <header class="topnav" id="topnav">
+        <button class="topnav-hamburger" id="topnav-hamburger" aria-label="Open menu">
+            <i data-lucide="menu"></i>
+        </button>
+        <div class="topnav-title">
+            <h1>Dashboard</h1>
+            <p>Platform overview &amp; key metrics</p>
+        </div>
+        <div class="topnav-search">
+            <i data-lucide="search"></i>
+            <input type="text" placeholder="Search anything…" id="topnav-search-input">
+        </div>
+        <div class="topnav-actions">
+            <button class="topnav-btn" id="notif-btn" aria-label="Notifications">
+                <i data-lucide="bell"></i>
+                <span class="topnav-badge" id="notif-badge" style="display:none"></span>
+            </button>
+            <div class="topnav-user" id="topnav-user">
+                <div class="topnav-avatar" id="topnav-avatar">AD</div>
+                <span class="topnav-username" id="topnav-username">Admin</span>
+                <i data-lucide="chevron-down" class="topnav-chevron"></i>
+                <div class="topnav-dropdown" id="topnav-dropdown">
+                    <a href="../settings/settings.html" class="dropdown-item"><i data-lucide="settings"></i> Settings</a>
+                    <div class="dropdown-divider"></div>
+                    <a href="../../auth/logout.html" class="dropdown-item dropdown-item--danger"><i data-lucide="log-out"></i> Log out</a>
+                </div>
+            </div>
+        </div>
+        <div class="notif-panel" id="notif-panel">
+            <div class="notif-header">
+                <h3>Notifications</h3>
+                <button class="notif-mark-read" id="mark-read">Mark all read</button>
+            </div>
+            <div class="notif-list" id="notif-list">
+                <div class="notif-empty">No new notifications</div>
+            </div>
+            <div class="notif-footer">
+                <a href="../notifications/notifications.html">View all notifications</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ── MAIN ── -->
+    <main class="admin-main" id="admin-main">
+        <div class="page-content">
+
+            <!-- Page header -->
+            <div class="dash-header">
+                <div>
+                    <h1>Good <span id="time-greeting">morning</span>, <span id="dash-user-name">Admin</span> 👋</h1>
+                    <p id="dash-date">Loading…</p>
+                </div>
+                <a href="../seller-verification/seller-verification.html" class="dash-action-btn" id="pending-cta" style="display:none">
+                    <i data-lucide="user-check"></i>
+                    <span id="pending-cta-label">Pending sellers</span>
+                </a>
+            </div>
+
+            <!-- KPI Row -->
+            <div class="kpi-grid">
+
+                <div class="kpi-card">
+                    <div class="kpi-top">
+                        <div class="kpi-icon kpi-icon--indigo"><i data-lucide="users"></i></div>
+                        <span class="kpi-trend kpi-trend--up" id="kpi-users-trend" style="display:none">
+                            <i data-lucide="trending-up"></i><span></span>
+                        </span>
+                    </div>
+                    <div class="kpi-value" id="kpi-users"><span class="skel skel-val"></span></div>
+                    <div class="kpi-label">Total Users</div>
+                    <div class="kpi-sub" id="kpi-users-sub"></div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-top">
+                        <div class="kpi-icon kpi-icon--green"><i data-lucide="store"></i></div>
+                    </div>
+                    <div class="kpi-value" id="kpi-sellers"><span class="skel skel-val"></span></div>
+                    <div class="kpi-label">Active Sellers</div>
+                    <div class="kpi-sub" id="kpi-sellers-sub"></div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-top">
+                        <div class="kpi-icon kpi-icon--blue"><i data-lucide="shopping-bag"></i></div>
+                    </div>
+                    <div class="kpi-value" id="kpi-orders"><span class="skel skel-val"></span></div>
+                    <div class="kpi-label">Total Orders</div>
+                    <div class="kpi-sub" id="kpi-orders-sub"></div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-top">
+                        <div class="kpi-icon kpi-icon--amber"><i data-lucide="package"></i></div>
+                    </div>
+                    <div class="kpi-value" id="kpi-products"><span class="skel skel-val"></span></div>
+                    <div class="kpi-label">Products Listed</div>
+                    <div class="kpi-sub" id="kpi-products-sub"></div>
+                </div>
+
+                <div class="kpi-card kpi-card--alert" id="kpi-pending-card">
+                    <div class="kpi-top">
+                        <div class="kpi-icon kpi-icon--rose"><i data-lucide="user-check"></i></div>
+                        <span class="kpi-alert-dot"></span>
+                    </div>
+                    <div class="kpi-value" id="kpi-pending"><span class="skel skel-val"></span></div>
+                    <div class="kpi-label">Pending Verification</div>
+                    <a href="../seller-verification/seller-verification.html" class="kpi-link">Review now <i data-lucide="arrow-right"></i></a>
+                </div>
+
+            </div>
+
+            <!-- Middle row: orders + sellers -->
+            <div class="mid-grid">
+
+                <!-- Recent Orders -->
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h2>Recent Orders</h2>
+                            <p>Latest transactions across the platform</p>
+                        </div>
+                        <a href="../orders/orders.html" class="card-link">View all <i data-lucide="arrow-right"></i></a>
+                    </div>
+                    <div class="table-wrap">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Order</th>
+                                    <th>Buyer</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="orders-tbody">
+                                <tr><td colspan="5" class="table-loading">Loading orders…</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Right column -->
+                <div class="right-col">
+
+                    <!-- Pending Sellers -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h2>Pending Sellers</h2>
+                                <p>Awaiting your approval</p>
+                            </div>
+                            <a href="../seller-verification/seller-verification.html" class="card-link">View all <i data-lucide="arrow-right"></i></a>
+                        </div>
+                        <div id="pending-sellers-list" class="seller-list">
+                            <div class="list-loading">Loading…</div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h2>Quick Actions</h2>
+                                <p>Jump to key admin areas</p>
+                            </div>
+                        </div>
+                        <div class="quick-grid">
+                            <a href="../users/users.html" class="quick-btn">
+                                <div class="quick-icon quick-icon--indigo"><i data-lucide="users"></i></div>
+                                <span>Users</span>
+                            </a>
+                            <a href="../orders/orders.html" class="quick-btn">
+                                <div class="quick-icon quick-icon--blue"><i data-lucide="shopping-bag"></i></div>
+                                <span>Orders</span>
+                            </a>
+                            <a href="../products/products.html" class="quick-btn">
+                                <div class="quick-icon quick-icon--amber"><i data-lucide="package"></i></div>
+                                <span>Products</span>
+                            </a>
+                            <a href="../seller-verification/seller-verification.html" class="quick-btn">
+                                <div class="quick-icon quick-icon--green"><i data-lucide="user-check"></i></div>
+                                <span>Verify</span>
+                            </a>
+                            <a href="../notifications/notifications.html" class="quick-btn">
+                                <div class="quick-icon quick-icon--rose"><i data-lucide="bell"></i></div>
+                                <span>Alerts</span>
+                            </a>
+                            <a href="../settings/settings.html" class="quick-btn">
+                                <div class="quick-icon quick-icon--slate"><i data-lucide="settings"></i></div>
+                                <span>Settings</span>
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Bottom row: activity + top products -->
+            <div class="bottom-grid">
+
+                <!-- Recent Activity -->
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h2>Recent Activity</h2>
+                            <p>Platform events from the last 24 h</p>
+                        </div>
+                    </div>
+                    <div class="activity-feed" id="activity-feed">
+                        <div class="list-loading">Loading…</div>
+                    </div>
+                </div>
+
+                <!-- Top Sellers -->
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h2>Top Sellers</h2>
+                            <p>By total products listed</p>
+                        </div>
+                        <a href="../users/users.html" class="card-link">View all <i data-lucide="arrow-right"></i></a>
+                    </div>
+                    <div class="top-sellers-list" id="top-sellers-list">
+                        <div class="list-loading">Loading…</div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script src="../shared/polling.js"></script>
+    <script src="../shared/sidebar.js"></script>
+    <script src="../shared/topnav.js"></script>
+    <script src="../assets/js/auth-utils.js"></script>
+    <script src="../assets/js/dashboard.js"></script>
+
+</body>
+</html>

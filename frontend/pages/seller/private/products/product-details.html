@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details - UnimartX Seller</title>
+    <script src="../../../../config.js"></script>
+    <script>
+      if (localStorage.getItem("seller_sidebar_collapsed") === "true") {
+        document.documentElement.classList.add("no-transition");
+      }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../shared/seller-base.css">
+    <link rel="stylesheet" href="../shared/sidebar.css">
+    <link rel="stylesheet" href="../shared/topnav.css">
+    <link rel="stylesheet" href="../assets/css/product-details.css">
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-icon"><i data-lucide="store"></i></div>
+            <span class="sidebar-logo-text">Unimart<span>X</span></span>
+        </div>
+        <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
+            <i data-lucide="chevron-left"></i>
+        </button>
+        <nav class="sidebar-nav">
+            <span class="nav-section-label">Main</span>
+            <a href="../dashboard/overview.html" class="nav-item" data-tooltip="Dashboard">
+                <div class="nav-item-icon"><i data-lucide="layout-dashboard"></i></div>
+                <span class="nav-item-label">Dashboard</span>
+            </a>
+            <a href="../orders/order-list.html" class="nav-item" data-tooltip="Orders">
+                <div class="nav-item-icon"><i data-lucide="shopping-bag"></i></div>
+                <span class="nav-item-label">Orders</span>
+                <span class="nav-item-badge" id="sidebar-orders-count"></span>
+            </a>
+            <a href="product-list.html" class="nav-item active" data-tooltip="Products">
+                <div class="nav-item-icon"><i data-lucide="package"></i></div>
+                <span class="nav-item-label">Products</span>
+            </a>
+            <span class="nav-section-label">Store</span>
+            <a href="add-product.html" class="nav-item" data-tooltip="Add Product">
+                <div class="nav-item-icon"><i data-lucide="plus-circle"></i></div>
+                <span class="nav-item-label">Add Product</span>
+            </a>
+            <a href="../profile/customize-store.html" class="nav-item" data-tooltip="My Store">
+                <div class="nav-item-icon"><i data-lucide="store"></i></div>
+                <span class="nav-item-label">My Store</span>
+            </a>
+            <a href="../profile/customize-profile.html" class="nav-item" data-tooltip="Profile">
+                <div class="nav-item-icon"><i data-lucide="user"></i></div>
+                <span class="nav-item-label">Profile</span>
+            </a>
+            <a href="../profile/account-settings.html" class="nav-item" data-tooltip="Settings">
+                <div class="nav-item-icon"><i data-lucide="settings"></i></div>
+                <span class="nav-item-label">Settings</span>
+            </a>
+            <span class="nav-section-label">More</span>
+            <a href="../notifications.html" class="nav-item" data-tooltip="Notifications">
+                <div class="nav-item-icon"><i data-lucide="bell"></i></div>
+                <span class="nav-item-label">Notifications</span>
+                <span class="nav-item-badge" id="sidebar-notif-count"></span>
+            </a>
+            <a href="../../../public/home.html" class="nav-item" data-tooltip="Home">
+                <div class="nav-item-icon"><i data-lucide="home"></i></div>
+                <span class="nav-item-label">Home</span>
+            </a>
+            <a href="../../../public/info/faq.html" class="nav-item" data-tooltip="Help">
+                <div class="nav-item-icon"><i data-lucide="help-circle"></i></div>
+                <span class="nav-item-label">Help & FAQ</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="sidebar-user">
+                <div class="sidebar-avatar" id="sidebar-avatar"></div>
+                <div class="sidebar-user-info">
+                    <p class="sidebar-user-name" id="sidebar-name"></p>
+                    <p class="sidebar-user-role" id="sidebar-store"></p>
+                </div>
+                <a href="../../../auth/logout.html" class="sidebar-logout" aria-label="Log out">
+                    <i data-lucide="log-out"></i>
+                </a>
+            </div>
+        </div>
+    </aside>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+
+    <!-- TOPNAV -->
+    <header class="topnav" id="topnav">
+        <button class="topnav-hamburger" id="topnav-hamburger" aria-label="Open menu">
+            <i data-lucide="menu"></i>
+        </button>
+        <div class="topnav-title">
+            <h1 id="page-title"></h1>
+            <p>Product Details</p>
+        </div>
+        <div class="topnav-actions">
+            <a href="add-product.html" id="edit-product-btn" class="topnav-add-btn">
+                <i data-lucide="pencil"></i>
+                <span>Edit Product</span>
+            </a>
+            <div style="position:relative;">
+                <button class="topnav-btn" id="notif-btn" aria-label="Notifications">
+                    <i data-lucide="bell"></i>
+                    <span class="topnav-badge" id="notif-badge"></span>
+                </button>
+                <div class="notif-panel" id="notif-panel">
+                    <div class="notif-header">
+                        <h3>Notifications</h3>
+                        <button class="notif-mark-read" id="mark-read">Mark all read</button>
+                    </div>
+                    <div class="notif-list">
+                    </div>
+                    <div class="notif-footer"><a href="../notifications.html">View all</a></div>
+                </div>
+            </div>
+            <div style="position:relative;">
+                <div class="topnav-user" id="topnav-user">
+                    <div class="topnav-avatar" id="topnav-avatar"></div>
+                    <span class="topnav-username" id="topnav-username"></span>
+                    <i data-lucide="chevron-down" class="topnav-chevron"></i>
+                </div>
+                <div class="topnav-dropdown" id="topnav-dropdown">
+                    <a href="../profile/customize-profile.html" class="dropdown-item"><i data-lucide="user"></i> My Profile</a>
+                    <a href="../profile/customize-store.html" class="dropdown-item"><i data-lucide="store"></i> My Store</a>
+                    <a href="../profile/account-settings.html" class="dropdown-item"><i data-lucide="settings"></i> Settings</a>
+                    <div class="dropdown-divider"></div>
+                    <a href="../../../auth/logout.html" class="dropdown-item dropdown-item--danger"><i data-lucide="log-out"></i> Log Out</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <!-- MAIN -->
+    <div class="seller-main" id="seller-main">
+        <div class="page-content">
+
+            <!-- Back link -->
+            <a href="product-list.html" class="back-link">
+                <i data-lucide="arrow-left"></i>
+                Back to Products
+            </a>
+
+            <!-- Page header -->
+            <div class="page-header">
+                <div>
+                    <h1 id="pd-name" style="margin:0 0 0.25rem 0;"></h1>
+                    <p style="margin:0;color:var(--text-2);font-size:0.9rem;"></p>
+                </div>
+            </div>
+
+            <!-- Top row: image + info + actions -->
+            <div class="pd-top-grid">
+
+                <!-- Image -->
+                <div class="pd-image-wrap">
+                    <div class="pd-main-img-wrap">
+                        <div class="pd-main-img-placeholder">
+                            <i data-lucide="image" class="ph-icon"></i>
+                        </div>
+                    </div>
+                    <div class="pd-image-thumbs" id="pd-thumbs-list">
+                        <div class="pd-thumb active">
+                            <div class="shimmer" style="width:100%;height:100%;border-radius:inherit;"></div>
+                        </div>
+                        <div class="pd-thumb">
+                            <div class="shimmer" style="width:100%;height:100%;border-radius:inherit;"></div>
+                        </div>
+                        <div class="pd-thumb">
+                            <div class="shimmer" style="width:100%;height:100%;border-radius:inherit;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Info -->
+                <div class="pd-info card">
+                    <div class="card-header">
+                        <div>
+                            <p class="pd-category" id="pd-category"></p>
+                            <h2 class="pd-name" id="pd-name"></h2>
+                        </div>
+                        <span class="badge-status badge-status--active" id="pd-status"></span>
+                    </div>
+                    <p class="pd-price" id="pd-price"></p>
+                    <p class="pd-desc" id="pd-desc"></p>
+                    <div class="pd-meta-grid">
+                        <div class="pd-meta-item">
+                            <span>Category</span>
+                            <strong id="meta-category"></strong>
+                        </div>
+                        <div class="pd-meta-item">
+                            <span>Condition</span>
+                            <strong id="meta-condition"></strong>
+                        </div>
+                        <div class="pd-meta-item">
+                            <span>Listed</span>
+                            <strong id="meta-listed"></strong>
+                        </div>
+                        <div class="pd-meta-item">
+                            <span>Last Updated</span>
+                            <strong id="meta-updated"></strong>
+                        </div>
+                    </div>
+                    <div class="pd-actions">
+                        <a href="add-product.html" id="edit-product-btn-card" class="btn btn-primary">
+                            <i data-lucide="pencil"></i> Edit Product
+                        </a>
+                        <button class="btn btn-ghost" id="toggle-status-btn">
+                            <i data-lucide="eye-off"></i> Unpublish
+                        </button>
+                    </div>
+                    <div class="pd-actions-danger">
+                        <div class="danger-warning">
+                            <i data-lucide="alert-triangle"></i>
+                            <span>Deleting this product is irreversible</span>
+                        </div>
+                        <button class="btn btn-danger" id="delete-product-btn">
+                            <i data-lucide="alert-triangle"></i>
+                            <span>Delete Product</span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- Performance stats -->
+            <div class="pd-stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon"><i data-lucide="eye"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="stat-views"></div>
+                        <div class="stat-label">Total Views</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon stat-icon--success"><i data-lucide="shopping-bag"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="stat-sold"></div>
+                        <div class="stat-label">Units Sold</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon stat-icon--amber"><i data-lucide="wallet"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="stat-revenue"></div>
+                        <div class="stat-label">Revenue (GH₵)</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon stat-icon--blue"><i data-lucide="percent"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="stat-conversion"></div>
+                        <div class="stat-label">Conversion Rate</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon stat-icon--pink"><i data-lucide="heart"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="stat-saves"></div>
+                        <div class="stat-label">Saves</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon stat-icon--warning"><i data-lucide="star"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="stat-rating"></div>
+                        <div class="stat-label">Avg Rating</div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Bottom grid: orders + reviews -->
+            <div class="pd-bottom-grid">
+
+                <!-- Recent orders for this product -->
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h2>Recent Orders</h2>
+                            <p>Orders containing this product</p>
+                        </div>
+                        <a href="../orders/order-list.html" class="btn btn-ghost btn-sm">View all</a>
+                    </div>
+                    <div class="pd-orders-list" id="pd-orders-list"></div>
+                </div>
+
+                <!-- Buyer reviews -->
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h2>Buyer Reviews</h2>
+                            <p id="reviews-summary"></p>
+                        </div>
+                    </div>
+                    <div class="pd-reviews" id="pd-reviews"></div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Delete confirmation modal -->
+    <div class="modal-overlay hidden" id="delete-modal">
+        <div class="modal">
+            <div class="modal-icon"><i data-lucide="alert-triangle"></i></div>
+            <h3>Delete this product?</h3>
+            <p>This will permanently remove <strong id="delete-product-name"></strong> from your store. This cannot be undone.</p>
+            <div class="modal-actions">
+                <button class="btn btn-ghost" id="modal-cancel">Cancel</button>
+                <button class="btn btn-danger" id="modal-confirm">
+                    <i data-lucide="trash-2"></i>
+                    <span>Delete</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script>lucide.createIcons();</script>
+    <script src="../shared/polling.js"></script>
+    <script src="../shared/sidebar.js"></script>
+    <script src="../shared/topnav.js"></script>
+    <script src="../assets/js/product-details.js?v=2"></script>
+
+</body>
+</html>

@@ -1,0 +1,17 @@
+const SHOP_API_BASE = (() => {
+    const meta = document.querySelector('meta[name="shop-api-base"]');
+    if (meta && meta.content) return meta.content.replace(/\/$/, '');
+    const host = window.location.hostname;
+    if (host && host !== 'localhost' && host !== '127.0.0.1') return window.location.origin;
+    return 'http://localhost:5000';
+})();
+
+async function apiFetch(path, opts = {}) {
+    const res = await fetch(`${SHOP_API_BASE}${path}`, {
+        ...opts,
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json', ...(opts.headers || {}) },
+    });
+    if (!res.ok && res.status !== 404) throw new Error(`API ${res.status}: ${res.statusText}`);
+    return res;
+}

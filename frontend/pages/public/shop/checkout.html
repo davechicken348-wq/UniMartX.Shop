@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - UnimartX</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/public.css">
+    <link rel="stylesheet" href="../assets/css/checkout.css">
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-inner">
+            <a href="../home.html" class="nav-logo">Unimart<span>X</span></a>
+            <div class="nav-actions">
+                <a href="cart.html" class="nav-icon-btn" aria-label="Cart">
+                    <i data-lucide="shopping-cart"></i>
+                    <span class="badge" id="cart-badge">0</span>
+                </a>
+                <a href="../../auth/login.html" class="nav-btn nav-btn-ghost" id="nav-login-btn">Log In</a>
+            </div>
+        </div>
+    </nav>
+
+
+    <!-- PROGRESS -->
+    <div class="checkout-progress">
+        <div class="progress-inner">
+            <div class="progress-step done">
+                <div class="step-circle"><i data-lucide="shopping-cart"></i></div>
+                <span>Cart</span>
+            </div>
+            <div class="progress-line done"></div>
+            <div class="progress-step active">
+                <div class="step-circle"><i data-lucide="credit-card"></i></div>
+                <span>Checkout</span>
+            </div>
+            <div class="progress-line"></div>
+            <div class="progress-step">
+                <div class="step-circle"><i data-lucide="package-check"></i></div>
+                <span>Confirmation</span>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- CHECKOUT LAYOUT -->
+    <div class="checkout-layout" id="checkout-main">
+
+        <!-- ── LEFT: FORM ── -->
+        <div class="checkout-form-col">
+
+            <!-- Login nudge -->
+            <div class="login-nudge" id="login-nudge">
+                <i data-lucide="user"></i>
+                <p>Already have an account? <a href="../../auth/login.html">Log in</a> to autofill your details.</p>
+                <button class="nudge-close" id="nudge-close" aria-label="Dismiss"><i data-lucide="x"></i></button>
+            </div>
+
+
+            <!-- ── STEP 1: Fulfillment per seller ── -->
+            <div class="checkout-card" id="step-fulfillment">
+                <div class="checkout-card-header">
+                    <div class="card-num">1</div>
+                    <div>
+                        <h2>How to Receive Your Order</h2>
+                        <p>Each seller may offer different options.</p>
+                    </div>
+                </div>
+
+                <!-- JS renders one .seller-group per seller in the cart -->
+                <div id="seller-groups"></div>
+            </div>
+
+
+            <!-- ── STEP 2: Delivery Address (only shown if any item needs delivery) ── -->
+            <div class="checkout-card" id="step-delivery" data-hidden-when-no-delivery>
+                <div class="checkout-card-header">
+                    <div class="card-num">2</div>
+                    <div>
+                        <h2>Delivery Address</h2>
+                        <p>Where should we send your order?</p>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="full-name">Full Name</label>
+                        <div class="input-wrap">
+                            <i data-lucide="user"></i>
+                            <input type="text" id="full-name" placeholder="John Doe" autocomplete="name" required>
+                        </div>
+                        <div class="field-error" id="full-name-error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <div class="input-wrap">
+                            <i data-lucide="phone"></i>
+                            <input type="tel" id="phone" placeholder="+233 24 000 0000" autocomplete="tel" required>
+                        </div>
+                        <div class="field-error" id="phone-error"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="address">Delivery Address</label>
+                    <div class="input-wrap">
+                        <i data-lucide="map-pin"></i>
+                        <input type="text" id="address" placeholder="House / Flat number, Street name" autocomplete="street-address" required>
+                    </div>
+                    <div class="field-error" id="address-error"></div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="city">City</label>
+                        <div class="input-wrap">
+                            <i data-lucide="building-2"></i>
+                            <input type="text" id="city" placeholder="Sunyani" autocomplete="address-level2" required>
+                        </div>
+                        <div class="field-error" id="city-error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="region">Region</label>
+                        <div class="input-wrap input-wrap--select">
+                            <i data-lucide="map"></i>
+                            <select id="region" autocomplete="address-level1" required>
+                                <option value="" disabled selected>Select region</option>
+                                <option>Bono</option>
+                                <option>Bono East</option>
+                                <option>Ahafo</option>
+                                <option>Ashanti</option>
+                                <option>Western</option>
+                                <option>Central</option>
+                                <option>Eastern</option>
+                                <option>Northern</option>
+                                <option>Upper East</option>
+                                <option>Upper West</option>
+                                <option>Volta</option>
+                                <option>Oti</option>
+                                <option>Savannah</option>
+                                <option>North East</option>
+                                <option>Western North</option>
+                            </select>
+                            <i data-lucide="chevron-down" class="select-chevron"></i>
+                        </div>
+                        <div class="field-error" id="region-error"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="notes">Delivery Notes <span class="optional">(optional)</span></label>
+                    <div class="input-wrap input-wrap--textarea">
+                        <i data-lucide="file-text"></i>
+                        <textarea id="notes" rows="3" placeholder="Landmark, gate colour, special instructions…"></textarea>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- ── STEP 3: Payment ── -->
+            <div class="checkout-card" id="step-payment">
+                <div class="checkout-card-header">
+                    <div class="card-num" id="payment-step-num">3</div>
+                    <div>
+                        <h2>Payment Method</h2>
+                        <p>All transactions are secure and encrypted.</p>
+                    </div>
+                </div>
+
+                <div class="payment-methods">
+
+                    <label class="payment-card active" for="pay-momo">
+                        <input type="radio" id="pay-momo" name="payment" value="momo">
+                        <div class="payment-card-header">
+                            <div class="payment-icon payment-icon--momo"><i data-lucide="smartphone"></i></div>
+                            <strong>Mobile Money</strong>
+                            <span class="payment-tag">MTN · Vodafone · AirtelTigo</span>
+                        </div>
+                        <div class="payment-fields" id="fields-momo">
+                            <div class="form-group">
+                                <label for="momo-network">Network</label>
+                                <div class="input-wrap input-wrap--select">
+                                    <i data-lucide="wifi"></i>
+                                    <select id="momo-network" required>
+                                        <option value="" disabled selected>Select network</option>
+                                        <option>MTN MoMo</option>
+                                        <option>Vodafone Cash</option>
+                                        <option>AirtelTigo Money</option>
+                                    </select>
+                                    <i data-lucide="chevron-down" class="select-chevron"></i>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="momo-number">Mobile Money Number</label>
+                                <div class="input-wrap">
+                                    <i data-lucide="phone"></i>
+                                    <input type="tel" id="momo-number" placeholder="024 000 0000" required>
+                                </div>
+                                <div class="field-error" id="momo-number-error"></div>
+                            </div>
+                        </div>
+                    </label>
+
+                    <label class="payment-card" for="pay-cod">
+                        <input type="radio" id="pay-cod" name="payment" value="cod">
+                        <div class="payment-card-header">
+                            <div class="payment-icon payment-icon--cod"><i data-lucide="banknote"></i></div>
+                            <strong>Pay on Delivery</strong>
+                            <span class="payment-tag">Cash only · Refund handled on return/cancellation</span>
+                        </div>
+                        <div class="payment-fields hidden" id="fields-cod">
+                            <div class="cod-notice">
+                                <i data-lucide="alert-triangle"></i>
+                                <p>Pay on delivery refunds are handled by cancelling before dispatch or returning the item at delivery. Post-delivery MoMo disputes are mediated by UnimartX.</p>
+                            </div>
+                        </div>
+                    </label>
+
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- ── RIGHT: ORDER SUMMARY ── -->
+        <aside class="checkout-summary" id="checkout-summary">
+            <h2>Order Summary</h2>
+
+            <div class="summary-items" id="summary-items">
+                <!-- JS populates from cart -->
+            </div>
+
+            <div class="summary-lines">
+                <div class="summary-line">
+                    <span>Subtotal</span>
+                    <strong id="summary-subtotal">GH₵ 0.00</strong>
+                </div>
+                <div class="summary-line" id="summary-delivery-line">
+                    <span>Delivery</span>
+                    <strong id="summary-delivery">GH₵ 0.00</strong>
+                </div>
+                <div class="summary-line summary-line--total">
+                    <span>Total</span>
+                    <strong id="summary-total">GH₵ 0.00</strong>
+                </div>
+            </div>
+
+            <button class="place-order-btn" id="place-order-btn">
+                <span class="btn-text">
+                    <i data-lucide="lock"></i>
+                    Place Order
+                </span>
+                <div class="spinner"></div>
+            </button>
+
+            <div class="summary-trust">
+                <span><i data-lucide="shield-check"></i> Secure & encrypted</span>
+                <span><i data-lucide="refresh-ccw"></i> Easy returns</span>
+            </div>
+
+            <a href="cart.html" class="back-to-cart">
+                <i data-lucide="arrow-left"></i>
+                Back to Cart
+            </a>
+        </aside>
+
+    </div>
+
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-bottom">
+            <span>&copy; 2026 UnimartX. All rights reserved. · <a href="../info/terms.html">Terms</a> · <a href="../info/privacy.html">Privacy</a></span>
+        </div>
+    </footer>
+
+    <script src="../../../config.js"></script>
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script src="../../shared/js/cart.js"></script>
+    <script src="../assets/js/checkout.js"></script>
+    <script src="../../shared/js/public-nav.js"></script>
+
+</body>
+</html>

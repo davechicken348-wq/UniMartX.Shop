@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seller Profile | UnimartX</title>
+    <meta name="description" content="View this seller's profile, products, and reviews on UnimartX — the campus marketplace built for buyers and sellers who mean business.">
+    <meta property="og:title" content="Seller Profile | UnimartX">
+    <meta property="og:description" content="View this seller's profile, products, and reviews on UnimartX.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="https://www.unimartx.com/assets/images/og-profile.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:site_name" content="UnimartX">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="canonical" href="">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/profile.css">
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-inner">
+            <a href="../../../public/home.html" class="nav-logo">Unimart<span>X</span></a>
+            <div class="nav-search">
+                <i data-lucide="search"></i>
+                <input type="search" placeholder="Search products, stores…" aria-label="Search">
+                <button class="search-btn">Search</button>
+            </div>
+            <div class="nav-actions">
+                <a href="../../../public/shop/cart.html" class="nav-icon-btn" aria-label="Cart">
+                    <i data-lucide="shopping-cart"></i>
+                    <span class="badge" id="cart-count">0</span>
+                </a>
+                <a href="../../../auth/login.html" class="nav-btn nav-btn-ghost">Log In</a>
+                <a href="../../../auth/buyer/register.html" class="nav-btn nav-btn-primary">Sign Up</a>
+            </div>
+            <button class="nav-hamburger" id="nav-hamburger" aria-label="Open menu">
+                <i data-lucide="menu"></i>
+            </button>
+        </div>
+        <div class="nav-mobile" id="nav-mobile">
+            <div class="nav-mobile-search">
+                <i data-lucide="search"></i>
+                <input type="search" placeholder="Search…" aria-label="Search">
+            </div>
+            <a href="../../../public/home.html">Home</a>
+            <a href="../../../public/shop/shop.html">Shop</a>
+            <a href="../../../public/shop/cart.html">Cart</a>
+            <a href="../../../auth/login.html">Log In</a>
+            <a href="../../../auth/buyer/register.html" class="nav-btn nav-btn-primary">Sign Up</a>
+        </div>
+    </nav>
+
+    <!-- ═══════════════════════════════════════════
+         PROFILE HEADER
+    ═══════════════════════════════════════════ -->
+    <section class="profile-header">
+        <div class="profile-header-inner">
+            <div class="profile-header-left">
+                <div class="profile-avatar-wrap">
+                    <div class="profile-avatar" id="profile-avatar"></div>
+                    <div class="profile-verified" title="Verified Seller">
+                        <i data-lucide="badge-check"></i>
+                    </div>
+                </div>
+                <div class="profile-header-meta">
+                    <h1 class="profile-name" id="profile-name"></h1>
+                    <div class="profile-location">
+                        <i data-lucide="map-pin"></i>
+                        <span id="profile-location">Location not set</span>
+                    </div>
+                    <div class="profile-tags">
+                        <span class="profile-tag"><i data-lucide="calendar"></i> Joined <span id="profile-joined">—</span></span>
+                        <span class="profile-tag"><i data-lucide="package"></i> <span id="profile-product-count">0</span> products</span>
+                    </div>
+                </div>
+            </div>
+            <div class="profile-header-right">
+                <div class="profile-stats-row">
+                    <div class="profile-stat">
+                        <strong id="profile-stat-sales">—</strong>
+                        <span>Happy buyers</span>
+                    </div>
+                    <div class="profile-stat">
+                        <strong><span id="profile-stat-stars"></span> <span id="profile-stat-rating">—</span></strong>
+                        <span>Seller rating</span>
+                    </div>
+                    <div class="profile-stat">
+                        <strong id="profile-stat-reviews">—</strong>
+                        <span>Reviews</span>
+                    </div>
+                </div>
+                <div class="profile-actions">
+                    <button class="btn-ghost-link" id="follow-btn">
+                        <i data-lucide="heart"></i> <span id="follow-btn-text">Follow</span>
+                        <span class="follow-meta">
+                            <span class="follow-sep">·</span>
+                            <span id="follower-count">0 followers</span>
+                        </span>
+                    </button>
+                    <button class="btn-primary-link" id="contact-btn" aria-label="Contact seller">
+                        <i data-lucide="message-circle"></i> Contact
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         ABOUT SECTION
+    ═══════════════════════════════════════════ -->
+    <section class="about-section" id="about">
+        <div class="about-inner">
+            <div class="section-label">
+                <i data-lucide="user"></i>
+                Seller Bio
+            </div>
+            <h2 id="about-headline">About the seller</h2>
+            <p id="about-body">No bio provided.</p>
+
+            <div class="trust-badges">
+                <div class="trust-badge"><i data-lucide="truck"></i> Same-day campus delivery</div>
+                <div class="trust-badge"><i data-lucide="shield-check"></i> Verified seller</div>
+                <div class="trust-badge"><i data-lucide="rotate-ccw"></i> Easy returns</div>
+                <div class="trust-badge"><i data-lucide="headphones"></i> 24/7 support</div>
+            </div>
+
+            <div class="about-footer">
+                <div class="social-links" id="social-links"></div>
+                <div class="about-founded">
+                    <i data-lucide="calendar"></i>
+                    Founded <strong id="about-founded">—</strong>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         FEATURED PRODUCTS
+    ═══════════════════════════════════════════ -->
+    <section class="products-section" id="products">
+        <div class="section-inner">
+            <div class="section-header">
+                <div>
+                    <div class="section-label">
+                        <i data-lucide="package"></i>
+                        Featured Products
+                    </div>
+                    <h2>What They <span>Sell</span></h2>
+                </div>
+                <a href="../store/store.html" class="btn-ghost-link view-all-link" id="view-all-btn">
+                    View All Products <i data-lucide="arrow-right"></i>
+                </a>
+            </div>
+
+            <!-- Seller preview grid (toolbar hidden via CSS) -->
+            <div class="store-toolbar hidden">
+                <div class="store-filter-tabs hidden" id="store-filter-tabs">
+                    <button class="store-tab active" data-filter="all">All <span class="tab-num" id="tab-count-all">0</span></button>
+                </div>
+                <div class="toolbar-right hidden">
+                    <div class="store-search-wrap hidden">
+                        <i data-lucide="search"></i>
+                        <input type="search" id="store-search" placeholder="Search this store…">
+                    </div>
+                    <div class="view-toggle hidden">
+                        <button class="view-btn active" id="btn-grid" aria-label="Grid view"><i data-lucide="grid-2x2"></i></button>
+                        <button class="view-btn" id="btn-list" aria-label="List view"><i data-lucide="list"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="store-products grid-view" id="store-products"></div>
+
+            <div class="empty-state hidden" id="no-results">
+                <div class="empty-icon"><i data-lucide="search-x"></i></div>
+                <h3>No products found</h3>
+                <p>Try a different search or category.</p>
+            </div>
+
+            <a href="../store/store.html" class="view-all-link centered" id="view-all-btn-2">
+                Browse all products <i data-lucide="arrow-right"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         REVIEWS SECTION
+    ═══════════════════════════════════════════ -->
+    <section class="reviews-section" id="reviews">
+        <div class="section-inner">
+            <div class="section-header">
+                <div>
+                    <div class="section-label">
+                        <i data-lucide="message-square"></i>
+                        What buyers say
+                    </div>
+                    <h2>Customer <span>Reviews</span></h2>
+                </div>
+            </div>
+
+            <div class="reviews-summary">
+                <div class="reviews-score">
+                    <span class="score-big" id="score-big">—</span>
+                    <div class="stars-filled score-stars" id="score-stars">☆☆☆☆☆</div>
+                    <span class="score-sub" id="reviews-count-sub">0 reviews</span>
+                </div>
+                <div class="reviews-bars" id="reviews-bars"></div>
+            </div>
+
+            <div class="reviews-list" id="reviews-list"></div>
+
+            <button class="load-more-btn" id="load-more-reviews">
+                Load More Reviews <i data-lucide="chevron-down"></i>
+            </button>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         CTA BANNER
+    ═══════════════════════════════════════════ -->
+    <section class="cta-section">
+        <div class="cta-inner">
+            <div class="section-label">
+                <i data-lucide="store"></i>
+                Ready to shop?
+            </div>
+            <h2>Browse all their products</h2>
+            <p>See their full inventory, filter by category, and find exactly what you need.</p>
+            <div class="cta-btns">
+                <a href="../store/store.html" class="btn-primary-link" id="cta-view-all-btn">
+                    <i data-lucide="shopping-bag"></i>
+                    Visit Full Store
+                </a>
+                <button class="btn-ghost-link" id="cta-contact-btn">
+                    <i data-lucide="message-circle"></i>
+                    Contact Seller
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <a href="../../../public/home.html" class="nav-logo">Unimart<span>X</span></a>
+                <p>The campus marketplace built for buyers and sellers who mean business.</p>
+            </div>
+            <div class="footer-links">
+                <div class="footer-col">
+                    <h4>Shop</h4>
+                    <a href="../../../public/shop/shop.html">Browse Products</a>
+                    <a href="../../../public/shop/cart.html">Your Cart</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Sell</h4>
+                    <a href="../../../auth/seller/register.html" class="footer-seller-link">Become a Seller</a>
+                    <a href="../../../public/info/seller-policy.html">Seller Policy</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <a href="../../../public/info/about.html">About</a>
+                    <a href="../../../public/contact/contact.html">Contact</a>
+                    <a href="../../../public/info/faq.html">FAQ</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <a href="../../../public/info/terms.html">Terms</a>
+                    <a href="../../../public/info/privacy.html">Privacy</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span id="current-year">&copy; 2026 UnimartX. All rights reserved.</span>
+        </div>
+    </footer>
+
+    <!-- Contact Modal -->
+    <div class="modal-overlay hidden" id="contact-modal" role="dialog" aria-modal="true" aria-labelledby="modal-header-text">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modal-header-text">Contact <span id="contact-modal-store-name">Seller</span></h3>
+                <button class="modal-close" id="modal-close" aria-label="Close dialog"><i data-lucide="x"></i></button>
+            </div>
+            <p class="modal-sub">Send a message to this seller. They typically respond within 1 hour.</p>
+            <textarea id="contact-msg" rows="4" placeholder="Hi, I'm interested in…"></textarea>
+            <div class="modal-actions">
+                <button class="btn-ghost-link" id="modal-cancel">Cancel</button>
+                <button class="btn-primary-link" id="modal-send">
+                    <i data-lucide="send"></i> Send Message
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Follow Modal -->
+    <div class="modal-overlay hidden" id="follow-modal" role="dialog" aria-modal="true" aria-labelledby="follow-modal-title">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="follow-modal-title">Follow Seller</h3>
+                <button class="modal-close" id="follow-modal-close" aria-label="Close dialog"><i data-lucide="x"></i></button>
+            </div>
+            <p class="modal-sub">Get notified when new products are listed and when we run promotions.</p>
+            <div class="modal-actions">
+                <button class="btn-ghost-link" id="follow-cancel">Maybe Later</button>
+                <button class="btn-primary-link" id="follow-confirm">
+                    <i data-lucide="bell"></i> Follow Store
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../../../config.js"></script>
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script src="../assets/js/store.js"></script>
+    <script src="../../../shared/js/cart.js"></script>
+    <script src="../assets/js/profile.js"></script>
+    <script src="../../../shared/js/public-nav.js"></script>
+    <script>
+      (function () {
+        var y = document.getElementById('current-year');
+        if (y) y.textContent = '\u00A9 ' + new Date().getFullYear() + ' UnimartX. All rights reserved.';
+        var url = window.location.href;
+        var canonical = document.querySelector('link[rel="canonical"]');
+        var ogUrl = document.querySelector('meta[property="og:url"]');
+        if (canonical) canonical.setAttribute('href', url);
+        if (ogUrl) ogUrl.setAttribute('content', url);
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', function () {
+            if (window.lucide && lucide.createIcons) lucide.createIcons();
+          });
+        } else if (window.lucide && lucide.createIcons) {
+          lucide.createIcons();
+        }
+      })();
+    </script>
+
+</body>
+</html>

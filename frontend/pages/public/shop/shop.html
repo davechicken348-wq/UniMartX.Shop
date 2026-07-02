@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop — UnimartX Campus Marketplace</title>
+    <meta name="description" content="Browse products from campus and independent sellers on UnimartX. Electronics, fashion, books, food, and more.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://unimartx.com/shop">
+
+    <meta property="og:title" content="Shop — UnimartX Campus Marketplace">
+    <meta property="og:description" content="Discover products from verified campus and independent sellers.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://unimartx.com/shop">
+    <meta property="og:image" content="https://unimartx.com/assets/og-shop.png">
+
+    <link rel="preconnect" href="https://api.unimartx.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/public.css">
+    <link rel="stylesheet" href="../assets/css/shop.css">
+    <style>
+        .noscript-fallback {
+            max-width: 640px;
+            margin: 5rem auto;
+            padding: 2rem;
+            text-align: center;
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.75rem;
+        }
+    </style>
+</head>
+<body>
+    <a href="#shop-main" class="visually-hidden">Skip to main content</a>
+    <noscript>
+        <div class="noscript-fallback">
+            <p>JavaScript is required to browse and filter products. Please enable JavaScript in your browser settings to continue.</p>
+        </div>
+    </noscript>
+    <div id="filter-announcements" class="visually-hidden" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- ═══════════════════════════════════════════
+         NAVBAR
+    ═══════════════════════════════════════════ -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-inner">
+            <a href="../home.html" class="nav-logo">Unimart<span>X</span></a>
+    <div class="nav-search" role="search">
+        <i data-lucide="search"></i>
+        <input type="search" id="nav-search-input" placeholder="Search products, stores, categories…" aria-label="Search">
+        <button class="search-btn" id="nav-search-btn" type="button">Search</button>
+    </div>
+            <div class="nav-actions">
+                <a href="cart.html" class="nav-icon-btn" aria-label="Cart">
+                    <i data-lucide="shopping-cart"></i>
+                    <span class="badge" id="cart-count">0</span>
+                </a>
+                <a href="../../auth/login.html" class="nav-btn nav-btn-ghost">Log In</a>
+                <a href="../../auth/buyer/register.html" class="nav-btn nav-btn-primary">Sign Up</a>
+            </div>
+            <button class="nav-hamburger" id="nav-hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="nav-mobile">
+                <i data-lucide="menu" aria-hidden="true"></i>
+            </button>
+        </div>
+        <div class="nav-mobile" id="nav-mobile">
+            <div class="nav-mobile-search">
+                <i data-lucide="search"></i>
+                <input type="search" placeholder="Search…" aria-label="Search">
+            </div>
+            <a href="../home.html">Home</a>
+            <a href="cart.html">Cart</a>
+            <a href="../../auth/login.html">Log In</a>
+            <a href="../../auth/buyer/register.html" class="nav-btn nav-btn-primary">Sign Up</a>
+        </div>
+    </nav>
+
+
+    <!-- ═══════════════════════════════════════════
+         PAGE HEADER
+    ═══════════════════════════════════════════ -->
+    <div class="shop-header">
+        <div class="shop-header-inner">
+            <div>
+                <h1>Shop</h1>
+                <p class="breadcrumb">
+                    <a href="../home.html">Home</a>
+                    <i data-lucide="chevron-right"></i>
+                    <span>Shop</span>
+                </p>
+            </div>
+            <!-- Mobile filter trigger -->
+            <button class="filter-trigger" id="filter-trigger" type="button" aria-expanded="false" aria-controls="sidebar">
+                <i data-lucide="sliders-horizontal"></i>
+                Filters
+                <span class="filter-count hidden" id="filter-count">0</span>
+            </button>
+        </div>
+    </div>
+
+
+    <!-- SHOP LAYOUT -->
+    <div class="shop-layout">
+
+        <!-- SIDEBAR OVERLAY (mobile) -->
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+        <!-- ── SIDEBAR ── -->
+        <aside class="sidebar" id="sidebar">
+
+            <div class="sidebar-header">
+                <h2>Filters</h2>
+                <button class="sidebar-close" id="sidebar-close" aria-label="Close filters" type="button">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+
+            <!-- Active filters -->
+            <div class="active-filters" id="active-filters"></div>
+
+            <!-- Category -->
+            <div class="filter-group">
+                <h3 class="filter-title">Category</h3>
+                <div class="filter-options">
+                    <label class="filter-option"><input type="radio" name="category" value="all" checked><span>All Categories</span></label>
+                    <label class="filter-option"><input type="radio" name="category" value="electronics"><span>Electronics</span></label>
+                    <label class="filter-option"><input type="radio" name="category" value="fashion"><span>Fashion</span></label>
+                    <label class="filter-option"><input type="radio" name="category" value="home"><span>Home & Living</span></label>
+                    <label class="filter-option"><input type="radio" name="category" value="beauty"><span>Beauty</span></label>
+                    <label class="filter-option"><input type="radio" name="category" value="books"><span>Books</span></label>
+                    <label class="filter-option"><input type="radio" name="category" value="food"><span>Food & Snacks</span></label>
+                    <label class="filter-option"><input type="radio" name="category" value="art"><span>Art & Crafts</span></label>
+                    <label class="filter-option"><input type="radio" name="category" value="sports"><span>Sports</span></label>
+                    <label class="filter-option"><input type="radio" name="category" value="other"><span>Other</span></label>
+                </div>
+            </div>
+
+            <!-- Subcategory (populated by JS when a category is selected) -->
+            <div class="filter-group hidden" id="subcategory-group">
+                <h3 class="filter-title">Subcategory</h3>
+                <div class="filter-options" id="subcategory-options"></div>
+            </div>
+
+            <!-- Price Range -->
+            <div class="filter-group">
+                <h3 class="filter-title">Price Range</h3>
+                <div class="price-range">
+                    <div class="price-inputs">
+                        <div class="price-input-wrap">
+                            <span>GH₵</span>
+                            <input type="number" id="price-min" placeholder="Min" min="0" step="any" aria-label="Minimum price" required>
+                        </div>
+                    <span class="price-sep">—</span>
+                        <div class="price-input-wrap">
+                            <span>GH₵</span>
+                            <input type="number" id="price-max" placeholder="Max" min="0" step="any" aria-label="Maximum price" required>
+                        </div>
+                    </div>
+                    <div class="price-slider-wrap">
+                        <div class="price-track">
+                            <div class="price-fill" id="price-fill"></div>
+                        </div>
+                        <input type="range" id="range-min" class="range-input" min="0" max="1000" value="0" step="10">
+                        <input type="range" id="range-max" class="range-input" min="0" max="1000" value="1000" step="10">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seller Type -->
+            <div class="filter-group">
+                <h3 class="filter-title">Seller Type</h3>
+                <div class="filter-options">
+                    <label class="filter-option">
+                        <input type="radio" name="seller-type" value="all" checked>
+                        <span>All Sellers</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="radio" name="seller-type" value="campus">
+                        <span>Campus Sellers</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="radio" name="seller-type" value="independent">
+                        <span>Independent Sellers</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Rating -->
+            <div class="filter-group">
+                <h3 class="filter-title">Minimum Rating</h3>
+                <div class="filter-options">
+                    <label class="filter-option">
+                        <input type="radio" name="rating" value="0" checked>
+                        <span>Any Rating</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="radio" name="rating" value="4.5">
+                        <span class="stars">★★★★★ <em>4.5+</em></span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="radio" name="rating" value="4">
+                        <span class="stars">★★★★☆ <em>4.0+</em></span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="radio" name="rating" value="3">
+                        <span class="stars">★★★☆☆ <em>3.0+</em></span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Condition -->
+            <div class="filter-group">
+                <h3 class="filter-title">Condition</h3>
+                <div class="filter-options">
+                    <label class="filter-option"><input type="radio" name="condition" value="all" checked><span>Any Condition</span></label>
+                    <label class="filter-option"><input type="radio" name="condition" value="new"><span>New</span></label>
+                    <label class="filter-option"><input type="radio" name="condition" value="like-new"><span>Like New</span></label>
+                    <label class="filter-option"><input type="radio" name="condition" value="good"><span>Good</span></label>
+                    <label class="filter-option"><input type="radio" name="condition" value="fair"><span>Fair</span></label>
+                </div>
+            </div>
+
+            <!-- In Stock -->
+            <div class="filter-group">
+                <h3 class="filter-title">Availability</h3>
+                <label class="filter-toggle">
+                    <span>In Stock Only</span>
+                    <input type="checkbox" id="in-stock-toggle">
+                    <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                </label>
+            </div>
+
+            <button class="clear-filters-btn" id="clear-filters" type="button">
+                <i data-lucide="x"></i>
+                Clear All Filters
+            </button>
+
+        </aside>
+
+
+        <!-- ── MAIN CONTENT ── -->
+        <main class="shop-main" id="shop-main">
+
+            <!-- Sort & Toggle Bar -->
+            <div class="shop-toolbar">
+                <p class="results-count" id="results-count">Showing <strong>0</strong> products</p>
+
+                <div class="toolbar-right">
+                    <!-- Active filter chips (desktop) -->
+                    <div class="filter-chips" id="filter-chips"></div>
+
+                    <!-- Sort -->
+                    <div class="sort-wrap">
+                        <i data-lucide="arrow-up-down"></i>
+                        <select id="sort-select" aria-label="Sort products">
+                            <option value="newest">Newest</option>
+                            <option value="price-asc">Price: Low to High</option>
+                            <option value="price-desc">Price: High to Low</option>
+                            <option value="popular">Most Popular</option>
+                            <option value="rating">Top Rated</option>
+                        </select>
+                    </div>
+
+                    <!-- View toggle -->
+                    <div class="view-toggle">
+                        <button class="view-btn active" id="btn-grid" aria-label="Grid view">
+                            <i data-lucide="grid-2x2"></i>
+                        </button>
+                        <button class="view-btn" id="btn-list" aria-label="List view">
+                            <i data-lucide="list"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="products-wrap grid-view" id="products-wrap"></div>
+
+            <!-- Empty state -->
+            <div class="empty-state hidden" id="empty-state">
+                <i data-lucide="package-open"></i>
+                <h3>No products found</h3>
+                <p>Try adjusting your filters or check back later.</p>
+                <button class="clear-filters-btn" id="empty-clear-filters" type="button">
+                    <i data-lucide="x"></i>
+                    Clear Filters
+                </button>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination hidden" id="pagination">
+                <button class="page-btn" id="prev-page" type="button" disabled>
+                    <i data-lucide="chevron-left"></i>
+                </button>
+                <div class="page-numbers" id="page-numbers"></div>
+                <button class="page-btn" id="next-page" type="button">
+                    <i data-lucide="chevron-right"></i>
+                </button>
+            </div>
+
+        </main>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════════
+         FOOTER
+    ═══════════════════════════════════════════ -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+               <a href="../home.html" class="nav-logo">Unimart<span>X</span></a>
+                <p>The platform that helps student entrepreneurs build professional online businesses — without building their own websites.</p>
+            </div>
+            <div class="footer-links">
+                <div class="footer-col">
+                    <h4>Shop</h4>
+                    <a href="../stores/stores.html">Explore Student Shops</a>
+                    <a href="shop.html">Browse Products</a>
+                    <a href="cart.html">Your Cart</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Sell</h4>
+                    <a href="../../auth/seller/register.html">Create My Shop</a>
+                    <a href="../../auth/seller/register.html">Seller Sign Up</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <a href="../info/about.html">About</a>
+                    <a href="../contact/contact.html">Contact</a>
+                    <a href="../info/faq.html">FAQ</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <a href="../info/terms.html">Terms</a>
+                    <a href="../info/privacy.html">Privacy</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>&copy; <span id="copyright-year">2026</span> UnimartX. All rights reserved.</span>
+        </div>
+    </footer>
+
+    <script src="../../../config.js"></script>
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js" defer></script>
+    <script src="../../shared/js/cart.js" defer></script>
+    <script src="../../shared/js/wishlist-api.js" defer></script>
+    <script src="../assets/js/shop.js" defer></script>
+    <script src="../../shared/js/public-nav.js" defer></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.lucide && typeof lucide.createIcons === 'function') {
+                lucide.createIcons();
+            }
+            const yearEl = document.getElementById('copyright-year');
+            if (yearEl) yearEl.textContent = new Date().getFullYear().toString();
+        });
+    </script>
+
+</body>
+</html>

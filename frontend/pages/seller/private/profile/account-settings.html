@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Settings - UnimartX Seller</title>
+    <script src="../../../../config.js"></script>
+    <script>
+      if (localStorage.getItem("seller_sidebar_collapsed") === "true") {
+        document.documentElement.classList.add("no-transition");
+      }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../shared/seller-base.css">
+    <link rel="stylesheet" href="../shared/sidebar.css">
+    <link rel="stylesheet" href="../shared/topnav.css">
+    <link rel="stylesheet" href="../assets/css/account-settings.css">
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-icon"><i data-lucide="store"></i></div>
+            <span class="sidebar-logo-text">Unimart<span>X</span></span>
+        </div>
+        <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
+            <i data-lucide="chevron-left"></i>
+        </button>
+        <nav class="sidebar-nav">
+            <span class="nav-section-label">Main</span>
+            <a href="../dashboard/overview.html" class="nav-item" data-tooltip="Dashboard">
+                <div class="nav-item-icon"><i data-lucide="layout-dashboard"></i></div>
+                <span class="nav-item-label">Dashboard</span>
+            </a>
+            <a href="../orders/order-list.html" class="nav-item" data-tooltip="Orders">
+                <div class="nav-item-icon"><i data-lucide="shopping-bag"></i></div>
+                <span class="nav-item-label">Orders</span>
+                <span class="nav-item-badge" id="sidebar-orders-count"></span>
+            </a>
+            <a href="../products/product-list.html" class="nav-item" data-tooltip="Products">
+                <div class="nav-item-icon"><i data-lucide="package"></i></div>
+                <span class="nav-item-label">Products</span>
+            </a>
+            <span class="nav-section-label">Store</span>
+            <a href="../products/add-product.html" class="nav-item" data-tooltip="Add Product">
+                <div class="nav-item-icon"><i data-lucide="plus-circle"></i></div>
+                <span class="nav-item-label">Add Product</span>
+            </a>
+            <a href="customize-store.html" class="nav-item" data-tooltip="My Store">
+                <div class="nav-item-icon"><i data-lucide="store"></i></div>
+                <span class="nav-item-label">My Store</span>
+            </a>
+            <a href="customize-profile.html" class="nav-item" data-tooltip="Profile">
+                <div class="nav-item-icon"><i data-lucide="user"></i></div>
+                <span class="nav-item-label">Profile</span>
+            </a>
+            <a href="account-settings.html" class="nav-item active" data-tooltip="Settings">
+                <div class="nav-item-icon"><i data-lucide="settings"></i></div>
+                <span class="nav-item-label">Settings</span>
+            </a>
+            <span class="nav-section-label">More</span>
+            <a href="../notifications.html" class="nav-item" data-tooltip="Notifications">
+                <div class="nav-item-icon"><i data-lucide="bell"></i></div>
+                <span class="nav-item-label">Notifications</span>
+                <span class="nav-item-badge" id="sidebar-notif-count"></span>
+            </a>
+            <a href="../../../public/home.html" class="nav-item" data-tooltip="Home">
+                <div class="nav-item-icon"><i data-lucide="home"></i></div>
+                <span class="nav-item-label">Home</span>
+            </a>
+            <a href="../../public/info/faq.html" class="nav-item" data-tooltip="Help">
+                <div class="nav-item-icon"><i data-lucide="help-circle"></i></div>
+                <span class="nav-item-label">Help & FAQ</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="sidebar-user">
+                <div class="sidebar-avatar" id="sidebar-avatar"></div>
+                <div class="sidebar-user-info">
+                    <p class="sidebar-user-name" id="sidebar-name"></p>
+                    <p class="sidebar-user-role" id="sidebar-store"></p>
+                </div>
+                <a href="../../../auth/logout.html" class="sidebar-logout" aria-label="Log out">
+                    <i data-lucide="log-out"></i>
+                </a>
+            </div>
+        </div>
+    </aside>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- TOPNAV -->
+    <header class="topnav" id="topnav">
+        <button class="topnav-hamburger" id="topnav-hamburger" aria-label="Open menu">
+            <i data-lucide="menu"></i>
+        </button>
+        <div class="topnav-title">
+            <h1>Account Settings</h1>
+            <p>Manage your account preferences</p>
+        </div>
+        <div class="topnav-actions">
+            <div style="position:relative;">
+                <button class="topnav-btn" id="notif-btn" aria-label="Notifications">
+                    <i data-lucide="bell"></i>
+                </button>
+                <div class="notif-panel" id="notif-panel">
+                    <div class="notif-header">
+                        <h3>Notifications</h3>
+                        <button class="notif-mark-read" id="mark-read">Mark all read</button>
+                    </div>
+                    <div class="notif-list"></div>
+                    <div class="notif-footer"><a href="../../notifications.html">View all</a></div>
+                </div>
+            </div>
+            <div style="position:relative;">
+                <div class="topnav-user" id="topnav-user">
+                    <div class="topnav-avatar" id="topnav-avatar"></div>
+                    <span class="topnav-username" id="topnav-username"></span>
+                    <i data-lucide="chevron-down" class="topnav-chevron"></i>
+                </div>
+                <div class="topnav-dropdown" id="topnav-dropdown">
+                    <a href="customize-profile.html" class="dropdown-item"><i data-lucide="user"></i> My Profile</a>
+                    <a href="customize-store.html" class="dropdown-item"><i data-lucide="store"></i> My Store</a>
+                    <a href="account-settings.html" class="dropdown-item"><i data-lucide="settings"></i> Settings</a>
+                    <div class="dropdown-divider"></div>
+                    <a href="../../../auth/logout.html" class="dropdown-item dropdown-item--danger"><i data-lucide="log-out"></i> Log Out</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN -->
+    <div class="seller-main" id="seller-main">
+        <div class="page-content">
+            <div class="settings-layout">
+                <!-- Settings Nav -->
+                <nav class="settings-nav" id="settings-nav">
+                    <a href="#notifications" class="settings-nav-item active" data-target="notifications">
+                        <i data-lucide="bell"></i><span>Notifications</span>
+                    </a>
+                    <a href="#password" class="settings-nav-item" data-target="password">
+                        <i data-lucide="lock"></i><span>Change Password</span>
+                    </a>
+                    <a href="#activity" class="settings-nav-item" data-target="activity">
+                        <i data-lucide="monitor"></i><span>Account Activity</span>
+                    </a>
+                    <a href="#delete" class="settings-nav-item danger" data-target="delete">
+                        <i data-lucide="trash-2"></i><span>Delete Account</span>
+                    </a>
+                </nav>
+
+                <!-- Content Area -->
+                <div class="settings-content" id="settings-content">
+                    <!-- NOTIFICATIONS SECTION -->
+                    <div class="settings-section" id="notifications">
+                        <div class="card">
+                            <div class="card-header">
+                                <div>
+                                    <h2><i data-lucide="bell"></i> Notification Preferences</h2>
+                                    <p>Choose how you receive updates about your account</p>
+                                </div>
+                            </div>
+                            <div class="settings-list">
+                                <div class="settings-item">
+                                    <div class="settings-item-info">
+                                        <h4>New Orders</h4>
+                                        <p>Get notified when you receive a new order</p>
+                                    </div>
+                                    <label class="toggle-switch">
+                                         <input type="checkbox" checked id="notif-orders" data-preference-field="orderUpdates">
+                                        <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                                    </label>
+                                </div>
+
+                                <div class="settings-item">
+                                    <div class="settings-item-info">
+                                        <h4>New Reviews</h4>
+                                        <p>Get notified when a buyer reviews one of your products</p>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked id="notif-reviews" data-preference-field="reviewNotifications">
+                                        <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                                    </label>
+                                </div>
+
+                                <div class="settings-item">
+                                    <div class="settings-item-info">
+                                        <h4>Wishlist Saves</h4>
+                                        <p>Get notified when a buyer saves one of your products to their wishlist</p>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked id="notif-wishlist" data-preference-field="wishlistAlerts">
+                                        <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                                    </label>
+                                </div>
+
+                                <div class="settings-item">
+                                    <div class="settings-item-info">
+                                        <h4>Low Stock Alerts</h4>
+                                        <p>Alert when product stock is running low</p>
+                                    </div>
+                                    <label class="toggle-switch">
+                                         <input type="checkbox" checked id="notif-low-stock" data-preference-field="lowStockAlerts">
+                                        <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                                    </label>
+                                </div>
+                                <div class="settings-item">
+                                    <div class="settings-item-info">
+                                        <h4>Payment Notifications</h4>
+                                        <p>Get updates about your earnings and payouts</p>
+                                    </div>
+                                    <label class="toggle-switch">
+                                         <input type="checkbox" checked id="notif-payments" data-preference-field="paymentNotifications">
+                                        <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                                    </label>
+                                </div>
+                                <div class="settings-item">
+                                    <div class="settings-item-info">
+                                        <h4>Marketing Emails</h4>
+                                        <p>Receive tips, feature updates, and promotions</p>
+                                    </div>
+                                    <label class="toggle-switch">
+                                         <input type="checkbox" id="notif-marketing" data-preference-field="promotions">
+                                        <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PASSWORD SECTION -->
+                    <div class="settings-section" id="password">
+                        <div class="card">
+                            <div class="card-header">
+                                <div>
+                                    <h2><i data-lucide="lock"></i> Change Password</h2>
+                                    <p>Update your password to keep your account secure</p>
+                                </div>
+                            </div>
+                            <form id="password-form" novalidate>
+                                <div class="form-grid">
+                                    <div class="field field--full">
+                                        <label for="current-password">Current Password <span class="req">*</span></label>
+                                        <div class="input-icon-wrap">
+                                            <i data-lucide="key" class="input-icon"></i>
+                                            <input type="password" id="current-password" name="current_password" placeholder="Enter current password" required>
+                                            <button type="button" class="pw-toggle" tabindex="-1"><i data-lucide="eye"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <label for="new-password">New Password <span class="req">*</span></label>
+                                        <div class="input-icon-wrap">
+                                            <i data-lucide="key" class="input-icon"></i>
+                                            <input type="password" id="new-password" name="new_password" placeholder="Enter new password" minlength="8" required>
+                                            <button type="button" class="pw-toggle" tabindex="-1"><i data-lucide="eye"></i></button>
+                                        </div>
+                                        <span class="field-hint">Min. 8 characters</span>
+                                    </div>
+                                    <div class="field">
+                                        <label for="confirm-password">Confirm Password <span class="req">*</span></label>
+                                        <div class="input-icon-wrap">
+                                            <i data-lucide="key" class="input-icon"></i>
+                                            <input type="password" id="confirm-password" name="confirm_password" placeholder="Confirm new password" minlength="8" required>
+                                            <button type="button" class="pw-toggle" tabindex="-1"><i data-lucide="eye"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-primary"><i data-lucide="save"></i> Update Password</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- ACCOUNT MONITORING SECTION -->
+                    <div class="settings-section" id="activity">
+                        <div class="card">
+                            <div class="card-header">
+                                <div>
+                                    <h2><i data-lucide="monitor"></i> Account Activity</h2>
+                                    <p>Monitor recent login activity and active sessions</p>
+                                </div>
+                            </div>
+                            <div class="activity-list">
+                                <div class="activity-empty">Loading recent account activity...</div>
+                            </div>
+                            <div class="activity-actions">
+                                <button type="button" class="btn btn-ghost" id="logout-all-btn">
+                                    <i data-lucide="log-out"></i> Log Out All Other Devices
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- DANGER ZONE SECTION -->
+                    <div class="settings-section" id="delete">
+                        <div class="card card--danger">
+                            <div class="card-header">
+                                <div>
+                                    <h2><i data-lucide="alert-triangle"></i> Delete Account</h2>
+                                    <p>Permanently delete your account and all associated data</p>
+                                </div>
+                            </div>
+                            <div class="danger-content">
+                                <p><strong>Warning:</strong> This action cannot be undone. All your products, orders, and store data will be permanently deleted.</p>
+                                <button class="btn btn-danger" id="delete-account-btn"><i data-lucide="trash-2"></i> Delete Account</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirm Delete Modal -->
+    <div class="modal-overlay hidden" id="delete-modal">
+        <div class="modal">
+            <div class="modal-icon"><i data-lucide="alert-triangle"></i></div>
+            <h3>Delete Account?</h3>
+            <p>This action cannot be undone. All your data including products, orders, and store will be permanently deleted.</p>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-ghost" id="cancel-delete">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirm-delete"><i data-lucide="trash-2"></i> Delete Account</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script>lucide.createIcons();</script>
+    <script src="../shared/polling.js"></script>
+    <script src="../shared/sidebar.js"></script>
+    <script src="../shared/topnav.js"></script>
+    <script src="../assets/js/account-settings.js"></script>
+</body>
+</html>

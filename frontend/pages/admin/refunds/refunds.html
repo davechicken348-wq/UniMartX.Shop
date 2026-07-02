@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Refunds & Disputes — Admin — UnimartX</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../shared/admin-base.css">
+    <link rel="stylesheet" href="../shared/sidebar.css">
+    <link rel="stylesheet" href="../shared/topnav.css">
+    <link rel="stylesheet" href="../assets/css/refunds.css">
+</head>
+<body>
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-icon"><i data-lucide="store"></i></div>
+            <span class="sidebar-logo-text">Unimart<span>X</span></span>
+        </div>
+        <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
+            <i data-lucide="chevron-left"></i>
+        </button>
+        <nav class="sidebar-nav">
+            <span class="nav-section-label">Main</span>
+            <a href="../dashboard/dashboard.html" class="nav-item" data-tooltip="Dashboard">
+                <div class="nav-item-icon"><i data-lucide="layout-dashboard"></i></div>
+                <span class="nav-item-label">Dashboard</span>
+            </a>
+            <a href="../users/users.html" class="nav-item">
+                <div class="nav-item-icon"><i data-lucide="users"></i></div>
+                <span class="nav-item-label">Users</span>
+                <span class="nav-item-badge" id="sidebar-users-count"></span>
+            </a>
+            <a href="../orders/orders.html" class="nav-item">
+                <div class="nav-item-icon"><i data-lucide="shopping-bag"></i></div>
+                <span class="nav-item-label">Orders</span>
+                <span class="nav-item-badge badge-warning" id="sidebar-orders-count"></span>
+            </a>
+            <a href="../products/products.html" class="nav-item">
+                <div class="nav-item-icon"><i data-lucide="package"></i></div>
+                <span class="nav-item-label">Products</span>
+            </a>
+
+            <span class="nav-section-label">Moderation</span>
+             <a href="../refunds/refunds.html" class="nav-item active">
+                <div class="nav-item-icon"><i data-lucide="rotate-ccw"></i></div>
+                <span class="nav-item-label">Refunds & Disputes</span>
+            </a>
+            <a href="../seller-verification/seller-verification.html" class="nav-item">
+                <div class="nav-item-icon"><i data-lucide="user-check"></i></div>
+                <span class="nav-item-label">Sellers</span>
+                <span class="nav-item-badge badge-danger" id="sidebar-sellers-count"></span>
+            </a>
+            <a href="../notifications/notifications.html" class="nav-item" data-tooltip="Notifications">
+                <div class="nav-item-icon"><i data-lucide="bell"></i></div>
+                <span class="nav-item-label">Alerts</span>
+                <span class="nav-item-badge" id="sidebar-notif-count"></span>
+            </a>
+            <span class="nav-section-label">Config</span>
+            <a href="../settings/settings.html" class="nav-item" data-tooltip="Settings">
+                <div class="nav-item-icon"><i data-lucide="settings"></i></div>
+                <span class="nav-item-label">Settings</span>
+            </a>
+            <a href="../admin-landing/admin-landing.html" class="nav-item" data-tooltip="Home">
+                <div class="nav-item-icon"><i data-lucide="home"></i></div>
+                <span class="nav-item-label">Admin Home</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="sidebar-user">
+                <div class="sidebar-avatar" id="sidebar-avatar">AD</div>
+                <div class="sidebar-user-info">
+                    <div class="sidebar-user-name" id="sidebar-name">Admin</div>
+                    <div class="sidebar-user-role" id="sidebar-role">Super Admin</div>
+                </div>
+                <a href="../../auth/logout.html" class="sidebar-logout" aria-label="Log out">
+                    <i data-lucide="log-out"></i>
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- TOPNAV -->
+    <header class="topnav" id="topnav">
+        <button class="topnav-hamburger" id="topnav-hamburger" aria-label="Open menu">
+            <i data-lucide="menu"></i>
+        </button>
+        <div class="topnav-title">
+            <h1>Refunds & Disputes</h1>
+            <p>Review and resolve refund requests</p>
+        </div>
+        <div class="topnav-actions">
+            <div class="topnav-user" id="topnav-user">
+                <div class="topnav-avatar" id="topnav-avatar">AD</div>
+                <span class="topnav-username" id="topnav-username">Admin</span>
+                <i data-lucide="chevron-down" class="topnav-chevron"></i>
+                <div class="topnav-dropdown" id="topnav-dropdown">
+                    <a href="../settings/settings.html" class="dropdown-item"><i data-lucide="settings"></i> Settings</a>
+                    <div class="dropdown-divider"></div>
+                    <a href="../../auth/logout.html" class="dropdown-item dropdown-item--danger"><i data-lucide="log-out"></i> Log out</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN -->
+    <main class="admin-main" id="admin-main">
+        <div class="page-content">
+            <div class="page-header">
+                <div>
+                    <h1>Refunds & Disputes</h1>
+                    <p>Review and resolve refund requests</p>
+                </div>
+            </div>
+            <!-- Filters -->
+            <div class="toolbar">
+                <div class="pill-group" id="filter-pills">
+                    <button class="pill active" data-filter="disputed">Disputed</button>
+                    <button class="pill" data-filter="pending">Pending</button>
+                    <button class="pill" data-filter="resolved">Resolved</button>
+                    <button class="pill" data-filter="all">All Refunds</button>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="card">
+                <div class="table-wrap">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Order</th>
+                                <th>Buyer</th>
+                                <th>Seller</th>
+                                <th>Amount</th>
+                                <th>Reason</th>
+                                <th>Status</th>
+                                <th>Requested</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="refunds-tbody">
+                            <tr class="skel-row"><td colspan="8"><div class="skel-line"></div></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="empty-state hidden" id="empty-state">
+                    <div class="empty-icon"><i data-lucide="inbox"></i></div>
+                    <h3>No refund requests</h3>
+                    <p>There are no refund requests matching this filter.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Drawer -->
+    <div class="drawer-overlay" id="drawer-overlay"></div>
+    <div class="drawer" id="drawer">
+        <div class="drawer-header">
+            <h3>Refund Details</h3>
+            <button class="drawer-close" id="drawer-close"><i data-lucide="x"></i></button>
+        </div>
+        <div class="drawer-body" id="drawer-body"></div>
+    </div>
+
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="../../../config.js"></script>
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script src="../shared/polling.js"></script>
+    <script src="../shared/sidebar.js"></script>
+    <script src="../shared/topnav.js"></script>
+    <script src="../assets/js/auth-utils.js"></script>
+    <script src="../assets/js/refunds.js"></script>
+</body>
+</html>

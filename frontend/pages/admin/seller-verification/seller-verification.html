@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seller Verification — Admin — UnimartX</title>
+    <script src="../../../config.js"></script>
+    <script>
+      if (localStorage.getItem("seller_sidebar_collapsed") === "true") {
+        document.documentElement.classList.add("no-transition");
+      }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../shared/admin-base.css">
+    <link rel="stylesheet" href="../shared/sidebar.css">
+    <link rel="stylesheet" href="../shared/topnav.css">
+    <link rel="stylesheet" href="../assets/css/seller-verification.css">
+</head>
+<body>
+
+    <!-- ── SIDEBAR ── -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-icon"><i data-lucide="store"></i></div>
+            <span class="sidebar-logo-text">Unimart<span>X</span></span>
+        </div>
+        <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
+            <i data-lucide="chevron-left"></i>
+        </button>
+        <nav class="sidebar-nav">
+            <span class="nav-section-label">Main</span>
+            <a href="../dashboard/dashboard.html" class="nav-item" data-tooltip="Dashboard">
+                <div class="nav-item-icon"><i data-lucide="layout-dashboard"></i></div>
+                <span class="nav-item-label">Dashboard</span>
+            </a>
+            <a href="../users/users.html" class="nav-item">
+                <div class="nav-item-icon"><i data-lucide="users"></i></div>
+                <span class="nav-item-label">Users</span>
+                <span class="nav-item-badge" id="sidebar-users-count"></span>
+            </a>
+            <a href="../orders/orders.html" class="nav-item">
+                <div class="nav-item-icon"><i data-lucide="shopping-bag"></i></div>
+                <span class="nav-item-label">Orders</span>
+                <span class="nav-item-badge badge-warning" id="sidebar-orders-count"></span>
+            </a>
+            <a href="../products/products.html" class="nav-item">
+                <div class="nav-item-icon"><i data-lucide="package"></i></div>
+                <span class="nav-item-label">Products</span>
+            </a>
+            <span class="nav-section-label">Moderation</span>
+             <a href="../refunds/refunds.html" class="nav-item">
+                <div class="nav-item-icon"><i data-lucide="rotate-ccw"></i></div>
+                <span class="nav-item-label">Refunds & Disputes</span>
+            </a>
+            <a href="../seller-verification/seller-verification.html" class="nav-item active">
+                <div class="nav-item-icon"><i data-lucide="user-check"></i></div>
+                <span class="nav-item-label">Sellers</span>
+                <span class="nav-item-badge badge-danger" id="sidebar-sellers-count"></span>
+            </a>
+            <a href="../notifications/notifications.html" class="nav-item" data-tooltip="Notifications">
+                <div class="nav-item-icon"><i data-lucide="bell"></i></div>
+                <span class="nav-item-label">Alerts</span>
+                <span class="nav-item-badge" id="sidebar-notif-count"></span>
+            </a>
+            <span class="nav-section-label">Config</span>
+            <a href="../settings/settings.html" class="nav-item" data-tooltip="Settings">
+                <div class="nav-item-icon"><i data-lucide="settings"></i></div>
+                <span class="nav-item-label">Settings</span>
+            </a>
+            <a href="../admin-landing/admin-landing.html" class="nav-item" data-tooltip="Admin Home">
+                <div class="nav-item-icon"><i data-lucide="home"></i></div>
+                <span class="nav-item-label">Admin Home</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="sidebar-user">
+                <div class="sidebar-avatar" id="sidebar-avatar">AD</div>
+                <div class="sidebar-user-info">
+                    <div class="sidebar-user-name" id="sidebar-name">Admin</div>
+                    <div class="sidebar-user-role" id="sidebar-role">Super Admin</div>
+                </div>
+                <a href="../../auth/logout.html" class="sidebar-logout" aria-label="Log out">
+                    <i data-lucide="log-out"></i>
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- ── TOPNAV ── -->
+    <header class="topnav" id="topnav">
+        <button class="topnav-hamburger" id="topnav-hamburger" aria-label="Open menu">
+            <i data-lucide="menu"></i>
+        </button>
+        <div class="topnav-title">
+            <h1>Seller Verification</h1>
+            <p>Review and approve seller applications</p>
+        </div>
+        <div class="topnav-search">
+            <i data-lucide="search"></i>
+            <input type="text" placeholder="Search by store or seller name…" id="topnav-search-input">
+        </div>
+        <div class="topnav-actions">
+            <button class="topnav-btn" id="notif-btn" aria-label="Notifications">
+                <i data-lucide="bell"></i>
+                <span class="topnav-badge" id="notif-badge" style="display:none"></span>
+            </button>
+            <div class="topnav-user" id="topnav-user">
+                <div class="topnav-avatar" id="topnav-avatar">AD</div>
+                <span class="topnav-username" id="topnav-username">Admin</span>
+                <i data-lucide="chevron-down" class="topnav-chevron"></i>
+                <div class="topnav-dropdown" id="topnav-dropdown">
+                    <a href="../settings/settings.html" class="dropdown-item"><i data-lucide="settings"></i> Settings</a>
+                    <div class="dropdown-divider"></div>
+                    <a href="../../auth/logout.html" class="dropdown-item dropdown-item--danger"><i data-lucide="log-out"></i> Log out</a>
+                </div>
+            </div>
+        </div>
+        <div class="notif-panel" id="notif-panel">
+            <div class="notif-header">
+                <h3>Notifications</h3>
+                <button class="notif-mark-read" id="mark-read">Mark all read</button>
+            </div>
+            <div class="notif-list" id="notif-list">
+                <div class="notif-empty">No new notifications</div>
+            </div>
+            <div class="notif-footer">
+                <a href="../notifications/notifications.html">View all notifications</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ── MAIN ── -->
+    <main class="admin-main" id="admin-main">
+        <div class="page-content">
+
+            <!-- Page header -->
+            <div class="page-header">
+                <div>
+                    <h1>Seller Verification</h1>
+                    <p>Review applications, approve trusted sellers, and keep the marketplace safe</p>
+                </div>
+                <button class="export-btn" id="export-btn">
+                    <i data-lucide="download"></i>
+                    Export CSV
+                </button>
+            </div>
+
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon"><i data-lucide="store"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="stat-total">—</div>
+                        <div class="stat-label">Total Sellers</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon stat-icon--warning"><i data-lucide="clock"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="stat-pending">—</div>
+                        <div class="stat-label">Pending Review</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon stat-icon--success"><i data-lucide="badge-check"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="stat-approved">—</div>
+                        <div class="stat-label">Approved</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon stat-icon--danger"><i data-lucide="x-circle"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="stat-rejected">—</div>
+                        <div class="stat-label">Rejected</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pending alert banner -->
+            <div class="pending-banner" id="pending-banner" style="display:none">
+                <div class="pending-banner-icon"><i data-lucide="alert-triangle"></i></div>
+                <div class="pending-banner-text">
+                    <strong id="pending-banner-count"></strong> seller applications are waiting for your review.
+                </div>
+                <button class="pending-banner-btn" id="pending-filter-btn">
+                    Show pending only
+                </button>
+            </div>
+
+            <!-- Toolbar -->
+            <div class="toolbar">
+                <div class="filter-pills" id="filter-pills">
+                    <button class="pill active" data-status="">All</button>
+                    <button class="pill pill--warning" data-status="pending">Pending</button>
+                    <button class="pill pill--success" data-status="approved">Approved</button>
+                    <button class="pill pill--danger"  data-status="rejected">Rejected</button>
+                </div>
+                <div class="toolbar-search">
+                    <i data-lucide="search"></i>
+                    <input type="text" id="search-input" placeholder="Search store or seller name…">
+                </div>
+            </div>
+
+            <!-- Table card -->
+            <div class="card table-card">
+                <div class="table-scroll">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Seller</th>
+                                <th>Store</th>
+                                <th>Business Type</th>
+                                <th>Category</th>
+                                <th>Location</th>
+                                <th>Status</th>
+                                <th>Applied</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="sellers-tbody">
+                            <tr class="skel-row"><td colspan="8"><div class="skel-line"></div></td></tr>
+                            <tr class="skel-row"><td colspan="8"><div class="skel-line"></div></td></tr>
+                            <tr class="skel-row"><td colspan="8"><div class="skel-line"></div></td></tr>
+                            <tr class="skel-row"><td colspan="8"><div class="skel-line"></div></td></tr>
+                            <tr class="skel-row"><td colspan="8"><div class="skel-line"></div></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination" id="pagination">
+                    <div class="page-info" id="page-info"></div>
+                    <div class="page-btns">
+                        <button class="page-btn" id="prev-btn" disabled><i data-lucide="chevron-left"></i></button>
+                        <div class="page-numbers" id="page-numbers"></div>
+                        <button class="page-btn" id="next-btn" disabled><i data-lucide="chevron-right"></i></button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- ── REVIEW DRAWER ── -->
+    <div class="drawer-overlay" id="drawer-overlay"></div>
+    <aside class="drawer" id="seller-drawer">
+        <div class="drawer-header">
+            <h2>Seller Application</h2>
+            <button class="drawer-close" id="drawer-close" aria-label="Close">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+        <div class="drawer-body" id="drawer-body"></div>
+    </aside>
+
+    <!-- ── REJECT REASON MODAL ── -->
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="modal" id="reject-modal">
+            <div class="modal-header">
+                <h3>Reject Application</h3>
+                <button class="modal-close" id="modal-close"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-desc">Provide a reason for rejection. This will be visible to the seller.</p>
+                <textarea class="modal-textarea" id="reject-reason" placeholder="e.g. Insufficient documentation, store policy violation…" rows="4"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn--ghost" id="modal-cancel">Cancel</button>
+                <button class="modal-btn modal-btn--danger" id="modal-confirm">Reject Seller</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── TOAST ── -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script src="../shared/polling.js"></script>
+    <script src="../shared/sidebar.js"></script>
+    <script src="../shared/topnav.js"></script>
+    <script src="../assets/js/auth-utils.js"></script>
+    <script src="../assets/js/seller-verification.js"></script>
+
+</body>
+</html>

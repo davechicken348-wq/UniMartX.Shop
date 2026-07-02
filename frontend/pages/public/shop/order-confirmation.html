@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmed - UnimartX</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/public.css">
+    <link rel="stylesheet" href="../assets/css/order-confirmation.css">
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-inner">
+            <a href="../home.html" class="nav-logo">Unimart<span>X</span></a>
+            <div class="nav-actions">
+                <a href="../home.html" class="nav-btn nav-btn-ghost">Back to Home</a>
+                <a href="shop.html" class="nav-btn nav-btn-primary">
+                    <i data-lucide="shopping-bag"></i>
+                    Keep Shopping
+                </a>
+            </div>
+        </div>
+    </nav>
+
+
+    <!-- PROGRESS -->
+    <div class="checkout-progress">
+        <div class="progress-inner">
+            <div class="progress-step done">
+                <div class="step-circle"><i data-lucide="shopping-cart"></i></div>
+                <span>Cart</span>
+            </div>
+            <div class="progress-line done"></div>
+            <div class="progress-step done">
+                <div class="step-circle"><i data-lucide="credit-card"></i></div>
+                <span>Checkout</span>
+            </div>
+            <div class="progress-line done"></div>
+            <div class="progress-step active">
+                <div class="step-circle"><i data-lucide="package-check"></i></div>
+                <span>Confirmation</span>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- MAIN -->
+    <main class="confirmation-main">
+
+        <!-- ── HERO ── -->
+        <div class="confirmation-hero">
+            <div class="confirmation-glow"></div>
+            <div class="confirmation-hero-inner">
+
+                <div class="check-wrap">
+                    <svg class="check-ring" viewBox="0 0 120 120" fill="none">
+                        <circle class="ring-track" cx="60" cy="60" r="54" stroke-width="3"/>
+                        <circle class="ring-fill"  cx="60" cy="60" r="54" stroke-width="3"/>
+                    </svg>
+                    <svg class="check-mark" viewBox="0 0 120 120" fill="none">
+                        <polyline class="check-stroke" points="34,62 52,80 86,44"
+                            stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+                    </svg>
+                </div>
+
+                <div class="confirmation-text">
+                    <h1 id="conf-title">Order Confirmed!</h1>
+                    <p id="conf-subtitle">Your order has been placed successfully.</p>
+                <div class="order-ref">
+                    <span>Order Reference</span>
+                    <strong id="order-ref">#UMX-2026-00000</strong>
+                    <button class="copy-btn" id="copy-btn" aria-label="Copy order reference">
+                        <i data-lucide="copy"></i>
+                    </button>
+                </div>
+                <p class="email-sent-hint" id="email-sent-hint" style="display:none; margin-top:10px; font-size:0.82rem; color:var(--text-3);">
+                    <i data-lucide="mail" style="width:14px;height:14px;"></i>
+                    Confirmation emails sent to you and the seller.
+                </p>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- ── CONTENT GRID ── -->
+        <div class="confirmation-grid">
+
+            <!-- Order Details -->
+            <div class="conf-card" id="order-details">
+                <div class="conf-card-header">
+                    <div class="conf-card-icon"><i data-lucide="package"></i></div>
+                    <div>
+                        <h2>Order Details</h2>
+                        <p id="order-meta">What you ordered</p>
+                    </div>
+                </div>
+
+                <div class="order-items" id="order-items"></div>
+
+                <div id="seller-groups" class="seller-groups"></div>
+
+                <div class="order-totals" id="order-totals">
+                    <div class="total-line">
+                        <span>Subtotal</span>
+                        <strong id="order-subtotal">GH₵ 0.00</strong>
+                    </div>
+                    <div class="total-line" id="order-delivery-row">
+                        <span>Delivery</span>
+                        <strong id="order-delivery">GH₵ 0.00</strong>
+                    </div>
+                    <div class="total-line total-line--grand">
+                        <span>Total Paid</span>
+                        <strong id="order-total">GH₵ 0.00</strong>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Delivery Info -->
+            <div class="conf-card" id="delivery-card">
+                <div class="conf-card-header">
+                    <div class="conf-card-icon"><i data-lucide="map-pin"></i></div>
+                    <div>
+                        <h2>Delivery Information</h2>
+                        <p>Where your order is going</p>
+                    </div>
+                </div>
+                <div class="delivery-info" id="delivery-info">
+                    <!-- Populated by JS -->
+                </div>
+                <div class="delivery-info" id="payment-info">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+
+            <!-- What happens next -->
+            <div class="conf-card conf-card--steps">
+                <div class="conf-card-header">
+                    <div class="conf-card-icon"><i data-lucide="list-checks"></i></div>
+                    <div>
+                        <h2>What Happens Next</h2>
+                        <p>Here's what to expect</p>
+                    </div>
+                </div>
+                <div class="next-steps">
+                    <div class="next-step active">
+                        <div class="next-step-dot"></div>
+                        <div class="next-step-line"></div>
+                        <div class="next-step-content">
+                            <strong>Order Confirmed</strong>
+                            <span>Your payment was received and your order is confirmed.</span>
+                        </div>
+                    </div>
+                    <div class="next-step">
+                        <div class="next-step-dot"></div>
+                        <div class="next-step-line"></div>
+                        <div class="next-step-content">
+                            <strong>Seller Packs Your Order</strong>
+                            <span>The seller will pack and dispatch your items within 1–3 business days.</span>
+                        </div>
+                    </div>
+                    <div class="next-step">
+                        <div class="next-step-dot"></div>
+                        <div class="next-step-line"></div>
+                        <div class="next-step-content">
+                            <strong>Out for Delivery</strong>
+                            <span>You'll receive a notification when your order is on its way.</span>
+                        </div>
+                    </div>
+                    <div class="next-step">
+                        <div class="next-step-dot"></div>
+                        <div class="next-step-line last"></div>
+                        <div class="next-step-content">
+                            <strong>Delivered</strong>
+                            <span>Confirm receipt in your account to release payment to the seller.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Need help -->
+            <div class="conf-card conf-card--help">
+                <div class="conf-card-icon"><i data-lucide="help-circle"></i></div>
+                <div>
+                    <h3>Need help with your order?</h3>
+                    <p>If you have any issues, our support team is here for you.</p>
+                </div>
+                <a href="../contact/contact.html" class="help-btn">
+                    <i data-lucide="message-circle"></i>
+                    Contact Support
+                </a>
+            </div>
+
+        </div>
+
+
+        <!-- CTAs -->
+        <div class="confirmation-ctas">
+            <a href="shop.html" class="btn-primary-link">
+                <i data-lucide="shopping-bag"></i>
+                Continue Shopping
+            </a>
+            <a href="../home.html" class="btn-ghost-link">
+                <i data-lucide="home"></i>
+                Back to Home
+            </a>
+        </div>
+
+    </main>
+
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-bottom">
+            <span>&copy; 2026 UnimartX. All rights reserved. · <a href="../info/terms.html">Terms</a> · <a href="../info/privacy.html">Privacy</a></span>
+        </div>
+    </footer>
+
+    <script src="../../../config.js"></script>
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script src="../assets/js/order-confirmation.js"></script>
+    <script src="../../shared/js/public-nav.js"></script>
+
+</body>
+</html>

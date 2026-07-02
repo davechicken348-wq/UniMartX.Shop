@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - UnimartX</title>
+    <script src="../../../config.js"></script>
+    <script>
+      if (localStorage.getItem('buyer_sidebar_collapsed') === 'true') {
+        document.documentElement.classList.add('no-transition');
+      }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../shared/css/buyer-base.css">
+    <link rel="stylesheet" href="../shared/css/sidebar.css">
+    <link rel="stylesheet" href="../shared/css/topnav.css">
+    <link rel="stylesheet" href="../assets/css/settings.css">
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-icon"><i data-lucide="shopping-bag"></i></div>
+            <span class="sidebar-logo-text">Unimart<span>X</span></span>
+        </div>
+        <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
+            <i data-lucide="chevron-left"></i>
+        </button>
+        <nav class="sidebar-nav">
+            <span class="nav-section-label">Main</span>
+            <a href="../dashboard/dashboard.html" class="nav-item" data-tooltip="Dashboard">
+                <div class="nav-item-icon"><i data-lucide="layout-dashboard"></i></div>
+                <span class="nav-item-label">Dashboard</span>
+            </a>
+            <a href="../orders/orders.html" class="nav-item" data-tooltip="My Orders">
+                <div class="nav-item-icon"><i data-lucide="package"></i></div>
+                <span class="nav-item-label">My Orders</span>
+                <span class="nav-item-badge" id="sidebar-orders-count" style="display:none"></span>
+            </a>
+            <a href="../shopping/wishlist.html" class="nav-item" data-tooltip="Wishlist">
+                <div class="nav-item-icon"><i data-lucide="heart"></i></div>
+                <span class="nav-item-label">Wishlist</span>
+                <span class="nav-item-badge" id="sidebar-wishlist-count" style="display:none"></span>
+            </a>
+            <a href="../notifications/notifications.html" class="nav-item" data-tooltip="Notifications">
+                <div class="nav-item-icon"><i data-lucide="bell"></i></div>
+                <span class="nav-item-label">Notifications</span>
+                <span class="nav-item-badge" id="sidebar-notif-count" style="display:none"></span>
+            </a>
+                        <span class="nav-section-label">Account</span>
+            <a href="profile.html" class="nav-item" data-tooltip="Profile">
+                <div class="nav-item-icon"><i data-lucide="user"></i></div>
+                <span class="nav-item-label">Profile</span>
+            </a>
+            <a href="settings.html" class="nav-item active" data-tooltip="Settings">
+                <div class="nav-item-icon"><i data-lucide="settings"></i></div>
+                <span class="nav-item-label">Settings</span>
+            </a>
+            <span class="nav-section-label">More</span>
+                        <a href="../buyer-landing/buyer-landing.html" class="nav-item" data-tooltip="Home">
+                <div class="nav-item-icon"><i data-lucide="home"></i></div>
+                <span class="nav-item-label">Home</span>
+            </a>
+            <a href="../../public/shop/shop.html" class="nav-item" data-tooltip="Browse Shop">
+                <div class="nav-item-icon"><i data-lucide="shopping-bag"></i></div>
+                <span class="nav-item-label">Browse Shop</span>
+            </a>
+            <a href="../../public/info/faq.html" class="nav-item" data-tooltip="Help & FAQ">
+                <div class="nav-item-icon"><i data-lucide="help-circle"></i></div>
+                <span class="nav-item-label">Help & FAQ</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="sidebar-user">
+                <div class="sidebar-avatar" id="sidebar-avatar"></div>
+                <div class="sidebar-user-info">
+                    <p class="sidebar-user-name" id="sidebar-name"></p>
+                    <p class="sidebar-user-role">Buyer</p>
+                </div>
+                <a href="../../auth/logout.html" class="sidebar-logout" aria-label="Log out">
+                    <i data-lucide="log-out"></i>
+                </a>
+            </div>
+        </div>
+    </aside>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+
+    <!-- TOP NAV -->
+    <header class="topnav" id="topnav">
+        <button class="topnav-hamburger" id="topnav-hamburger" aria-label="Open menu">
+            <i data-lucide="menu"></i>
+        </button>
+        <div class="topnav-title">
+            <h1>Settings</h1>
+            <p>Manage your account preferences</p>
+        </div>
+        <div class="topnav-actions">
+            <div style="position:relative;">
+                <button class="topnav-btn" id="notif-btn" aria-label="Notifications">
+                    <i data-lucide="bell"></i>
+                    <span class="topnav-badge" id="notif-badge" style="display:none"></span>
+                </button>
+                <div class="notif-panel" id="notif-panel">
+                    <div class="notif-header">
+                        <h3>Notifications</h3>
+                        <button class="notif-mark-read" id="mark-read">Mark all read</button>
+                    </div>
+                    <div class="notif-list">
+                    </div>
+                    <div class="notif-footer"><a href="../notifications/notifications.html">View all</a></div>
+                </div>
+            </div>
+            <div style="position:relative;">
+                <div class="topnav-user" id="topnav-user">
+                    <div class="topnav-avatar" id="topnav-avatar"></div>
+                    <span class="topnav-username" id="topnav-username"></span>
+                    <i data-lucide="chevron-down" class="topnav-chevron"></i>
+                </div>
+                <div class="topnav-dropdown" id="topnav-dropdown">
+                    <a href="profile.html" class="dropdown-item"><i data-lucide="user"></i> My Profile</a>
+                    <a href="../orders/orders.html" class="dropdown-item"><i data-lucide="package"></i> My Orders</a>
+                    <a href="settings.html" class="dropdown-item"><i data-lucide="settings"></i> Settings</a>
+                    <div class="dropdown-divider"></div>
+                    <a href="../../public/home.html" class="dropdown-item"><i data-lucide="globe"></i> Public Site</a>
+                    <div class="dropdown-divider"></div>
+                    <a href="../../auth/logout.html" class="dropdown-item dropdown-item--danger"><i data-lucide="log-out"></i> Log Out</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <!-- MAIN -->
+    <div class="buyer-main" id="buyer-main">
+        <div class="page-content">
+
+            <div class="settings-layout">
+
+                <!-- ── Settings nav ── -->
+                <nav class="settings-nav" id="settings-nav">
+                    <a href="#security" class="settings-nav-item active" data-section="security">
+                        <i data-lucide="lock"></i> Security
+                    </a>
+                    <a href="#notifications" class="settings-nav-item" data-section="notifications">
+                        <i data-lucide="bell"></i> Notifications
+                    </a>
+                    <a href="#privacy" class="settings-nav-item" data-section="privacy">
+                        <i data-lucide="shield"></i> Privacy
+                    </a>
+                    <a href="#danger" class="settings-nav-item settings-nav-item--danger" data-section="danger">
+                        <i data-lucide="alert-triangle"></i> Danger Zone
+                    </a>
+                </nav>
+
+                <!-- ── Settings content ── -->
+                <div class="settings-content">
+
+                    <!-- Security -->
+                    <div class="settings-section card" id="section-security">
+                        <div class="card-header">
+                            <div>
+                                <h2>Security</h2>
+                                <p>Manage your password and account access</p>
+                            </div>
+                        </div>
+
+                        <div class="settings-group">
+                            <div class="settings-group-label">Change Password</div>
+                            <form id="password-form" novalidate>
+                                <div class="form-group">
+                                    <label for="current-password">Current Password</label>
+                                    <div class="input-wrap">
+                                        <i data-lucide="lock"></i>
+                                        <input type="password" id="current-password" placeholder="Enter your current password">
+                                        <button type="button" class="pw-toggle" data-target="current-password">
+                                            <i data-lucide="eye"></i>
+                                        </button>
+                                    </div>
+                                    <div class="field-error" id="current-pw-error"></div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="new-password">New Password</label>
+                                    <div class="input-wrap">
+                                        <i data-lucide="lock"></i>
+                                        <input type="password" id="new-password" placeholder="Enter a new password">
+                                        <button type="button" class="pw-toggle" data-target="new-password">
+                                            <i data-lucide="eye"></i>
+                                        </button>
+                                    </div>
+                                    <div class="pw-strength-wrap">
+                                        <div class="pw-strength-bar" id="pw-strength-bar"></div>
+                                    </div>
+                                    <div class="field-error" id="new-pw-error"></div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="confirm-password">Confirm New Password</label>
+                                    <div class="input-wrap">
+                                        <i data-lucide="lock"></i>
+                                        <input type="password" id="confirm-password" placeholder="Confirm your new password">
+                                        <button type="button" class="pw-toggle" data-target="confirm-password">
+                                            <i data-lucide="eye"></i>
+                                        </button>
+                                    </div>
+                                    <div class="field-error" id="confirm-pw-error"></div>
+                                </div>
+                                <button type="submit" class="btn btn-primary" id="save-password-btn">
+                                    <i data-lucide="save"></i>
+                                    Update Password
+                                    <div class="btn-spinner"></div>
+                                </button>
+                            </form>
+                        </div>
+
+                        <div class="divider"></div>
+
+                        <div class="settings-group">
+                            <div class="settings-group-label">Active Sessions</div>
+                            <div class="sessions-list" id="sessions-list">
+                                <!-- Sessions will be populated by JavaScript -->
+                            </div>
+                            <div class="sessions-loading hidden" id="sessions-loading">
+                                <i data-lucide="loader-2" class="spin"></i> Loading sessions...
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notifications -->
+                    <div class="settings-section card" id="section-notifications">
+                        <div class="card-header">
+                            <div>
+                                <h2>Notifications</h2>
+                                <p>Choose what you want to be notified about</p>
+                            </div>
+                        </div>
+                        <div class="toggle-list">
+                            <div class="toggle-item">
+                                <div class="toggle-info">
+                                    <strong>Order updates</strong>
+                                    <span>Confirmations, shipping, and delivery alerts</span>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" class="notification-toggle" data-notification="orderUpdates">
+                                    <span class="toggle-track"></span>
+                                </label>
+                            </div>
+                             <div class="toggle-item">
+                                 <div class="toggle-info">
+                                     <strong>Wishlist alerts</strong>
+                                     <span>Price drops and back-in-stock for saved items</span>
+                                 </div>
+                                 <label class="toggle-switch">
+                                     <input type="checkbox" class="notification-toggle" data-notification="wishlistAlerts">
+                                     <span class="toggle-track"></span>
+                                 </label>
+                             </div>
+                             <div class="toggle-item">
+                                 <div class="toggle-info">
+                                     <strong>Promotions & deals</strong>
+                                     <span>Sales, discount codes, and special offers</span>
+                                 </div>
+                                 <label class="toggle-switch">
+                                     <input type="checkbox" class="notification-toggle" data-notification="promotions">
+                                     <span class="toggle-track"></span>
+                                 </label>
+                             </div>
+                             <div class="toggle-item">
+                                 <div class="toggle-info">
+                                     <strong>Account activity</strong>
+                                     <span>Login alerts and security notifications</span>
+                                 </div>
+                                 <label class="toggle-switch">
+                                     <input type="checkbox" class="notification-toggle" data-notification="accountActivity">
+                                     <span class="toggle-track"></span>
+                                 </label>
+                             </div>
+                             <div class="toggle-item">
+                                 <div class="toggle-info">
+                                     <strong>Email notifications</strong>
+                                     <span>Receive all notifications via email as well</span>
+                                 </div>
+                                 <label class="toggle-switch">
+                                     <input type="checkbox" class="notification-toggle" data-notification="emailNotifications">
+                                     <span class="toggle-track"></span>
+                                 </label>
+                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Privacy -->
+                    <div class="settings-section card" id="section-privacy">
+                        <div class="card-header">
+                            <div>
+                                <h2>Privacy</h2>
+                                <p>Control your data and privacy preferences</p>
+                            </div>
+                        </div>
+                        <div class="toggle-list">
+                             <div class="toggle-item">
+                                 <div class="toggle-info">
+                                     <strong>Order history visibility</strong>
+                                     <span>Allow sellers to see your order history with them</span>
+                                 </div>
+                                 <label class="toggle-switch">
+                                     <input type="checkbox" class="privacy-toggle" data-privacy="orderHistoryVisibility">
+                                     <span class="toggle-track"></span>
+                                 </label>
+                             </div>
+                             <div class="toggle-item">
+                                 <div class="toggle-info">
+                                     <strong>Personalised recommendations</strong>
+                                     <span>Use your browsing data to suggest relevant products</span>
+                                 </div>
+                                 <label class="toggle-switch">
+                                     <input type="checkbox" class="privacy-toggle" data-privacy="personalizedRecommendations">
+                                     <span class="toggle-track"></span>
+                                 </label>
+                             </div>
+                        </div>
+                        <div class="divider"></div>
+                        <div class="settings-group">
+                            <div class="settings-group-label">Your Data</div>
+                            <div class="data-actions">
+                                <button class="btn btn-ghost btn-sm" id="download-data-btn">
+                                    <i data-lucide="download"></i>
+                                    Download My Data
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Danger Zone -->
+                    <div class="settings-section card danger-card" id="section-danger">
+                        <div class="card-header">
+                            <div>
+                                <h2>Danger Zone</h2>
+                                <p>Irreversible actions — proceed with caution</p>
+                            </div>
+                        </div>
+                        <div class="danger-item">
+                            <div class="danger-info">
+                                <strong>Log out of all devices</strong>
+                                <span>End all active sessions except this one.</span>
+                            </div>
+                            <button class="btn btn-ghost btn-sm" id="logout-all-btn">
+                                <i data-lucide="log-out"></i>
+                                Log Out All
+                            </button>
+                        </div>
+                        <div class="danger-item">
+                            <div class="danger-info">
+                                <strong>Delete Account</strong>
+                                <span>Permanently delete your account and all associated data. This cannot be undone.</span>
+                            </div>
+                            <button class="btn btn-danger-solid btn-sm" id="delete-account-btn">
+                                <i data-lucide="trash-2"></i>
+                                Delete Account
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Delete confirmation modal -->
+    <div class="modal-overlay hidden" id="delete-modal">
+        <div class="modal">
+            <div class="modal-icon"><i data-lucide="alert-triangle"></i></div>
+            <h3>Delete your account?</h3>
+            <p>This will permanently delete your account, order history, and all saved data. This action <strong>cannot be undone</strong>.</p>
+            <div class="form-group" style="text-align: left;">
+                <label for="delete-account-password">Confirm your password</label>
+                <div class="input-wrap">
+                    <i data-lucide="lock"></i>
+                    <input type="password" id="delete-account-password" placeholder="Enter your password">
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-ghost" id="modal-cancel">Cancel</button>
+                <button class="btn btn-danger-solid" id="modal-confirm">
+                    <i data-lucide="trash-2"></i> Yes, Delete
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script>lucide.createIcons();</script>
+    <script src="../shared/js/polling.js"></script>
+    <script src="../shared/js/sidebar.js"></script>
+    <script src="../shared/js/topnav.js"></script>
+    <script src="../assets/js/settings.js"></script>
+
+</body>
+</html>

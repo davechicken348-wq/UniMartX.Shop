@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders - UnimartX Seller</title>
+    <script src="../../../../config.js"></script>
+    <script>if(localStorage.getItem('seller_sidebar_collapsed')==='true')document.documentElement.classList.add('no-transition')</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../shared/seller-base.css">
+    <link rel="stylesheet" href="../shared/sidebar.css">
+    <link rel="stylesheet" href="../shared/topnav.css">
+    <link rel="stylesheet" href="../assets/css/order-list.css">
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-icon"><i data-lucide="store"></i></div>
+            <span class="sidebar-logo-text">Unimart<span>X</span></span>
+        </div>
+        <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
+            <i data-lucide="chevron-left"></i>
+        </button>
+        <nav class="sidebar-nav">
+            <span class="nav-section-label">Main</span>
+            <a href="../dashboard/overview.html" class="nav-item" data-tooltip="Dashboard">
+                <div class="nav-item-icon"><i data-lucide="layout-dashboard"></i></div>
+                <span class="nav-item-label">Dashboard</span>
+            </a>
+            <a href="order-list.html" class="nav-item active" data-tooltip="Orders">
+                <div class="nav-item-icon"><i data-lucide="shopping-bag"></i></div>
+                <span class="nav-item-label">Orders</span>
+                <span class="nav-item-badge" id="sidebar-orders-count"></span>
+            </a>
+            <a href="../products/product-list.html" class="nav-item" data-tooltip="Products">
+                <div class="nav-item-icon"><i data-lucide="package"></i></div>
+                <span class="nav-item-label">Products</span>
+            </a>
+            <span class="nav-section-label">Store</span>
+            <a href="../products/add-product.html" class="nav-item" data-tooltip="Add Product">
+                <div class="nav-item-icon"><i data-lucide="plus-circle"></i></div>
+                <span class="nav-item-label">Add Product</span>
+            </a>
+            <a href="../profile/customize-store.html" class="nav-item" data-tooltip="My Store">
+                <div class="nav-item-icon"><i data-lucide="store"></i></div>
+                <span class="nav-item-label">My Store</span>
+            </a>
+            <a href="../profile/customize-profile.html" class="nav-item" data-tooltip="Profile">
+                <div class="nav-item-icon"><i data-lucide="user"></i></div>
+                <span class="nav-item-label">Profile</span>
+            </a>
+            <a href="../profile/account-settings.html" class="nav-item" data-tooltip="Settings">
+                <div class="nav-item-icon"><i data-lucide="settings"></i></div>
+                <span class="nav-item-label">Settings</span>
+            </a>
+            <span class="nav-section-label">More</span>
+            <a href="../notifications.html" class="nav-item" data-tooltip="Notifications">
+                <div class="nav-item-icon"><i data-lucide="bell"></i></div>
+                <span class="nav-item-label">Notifications</span>
+                <span class="nav-item-badge" id="sidebar-notif-count"></span>
+            </a>
+            <a href="../../../public/home.html" class="nav-item" data-tooltip="Home">
+                <div class="nav-item-icon"><i data-lucide="home"></i></div>
+                <span class="nav-item-label">Home</span>
+            </a>
+            <a href="../../../public/info/faq.html" class="nav-item" data-tooltip="Help">
+                <div class="nav-item-icon"><i data-lucide="help-circle"></i></div>
+                <span class="nav-item-label">Help & FAQ</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="sidebar-user">
+                <div class="sidebar-avatar" id="sidebar-avatar">SO</div>
+                <div class="sidebar-user-info">
+                    <p class="sidebar-user-name" id="sidebar-name">Store Owner</p>
+                    <p class="sidebar-user-role" id="sidebar-store">My Store</p>
+                </div>
+                <a href="../../../auth/logout.html" class="sidebar-logout" aria-label="Log out">
+                    <i data-lucide="log-out"></i>
+                </a>
+            </div>
+        </div>
+    </aside>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+
+    <!-- TOPNAV -->
+    <header class="topnav" id="topnav">
+        <button class="topnav-hamburger" id="topnav-hamburger" aria-label="Open menu">
+            <i data-lucide="menu"></i>
+        </button>
+        <div class="topnav-title">
+            <h1>Orders</h1>
+            <p>Manage and fulfil buyer orders</p>
+        </div>
+        <div class="topnav-search">
+            <i data-lucide="search"></i>
+            <input type="search" id="order-search" placeholder="Search by order # or buyer…" aria-label="Search orders">
+        </div>
+        <div class="topnav-actions">
+            <div style="position:relative;">
+                <button class="topnav-btn" id="notif-btn" aria-label="Notifications">
+                    <i data-lucide="bell"></i>
+                    <span class="topnav-badge" id="notif-badge">0</span>
+                </button>
+                <div class="notif-panel" id="notif-panel">
+                    <div class="notif-header">
+                        <h3>Notifications</h3>
+                        <button class="notif-mark-read" id="mark-read">Mark all read</button>
+                    </div>
+                    <div class="notif-list" id="notif-list">
+                        <div style="padding:1.25rem;text-align:center;font-size:0.82rem;color:var(--text-3)">No notifications</div>
+                    </div>
+                    <div class="notif-footer"><a href="../notifications.html">View all</a></div>
+                </div>
+            </div>
+            <div style="position:relative;">
+                <div class="topnav-user" id="topnav-user">
+                    <div class="topnav-avatar" id="topnav-avatar">SO</div>
+                    <span class="topnav-username" id="topnav-username">Store Owner</span>
+                    <i data-lucide="chevron-down" class="topnav-chevron"></i>
+                </div>
+                <div class="topnav-dropdown" id="topnav-dropdown">
+                    <a href="../profile/customize-profile.html" class="dropdown-item"><i data-lucide="user"></i> My Profile</a>
+                    <a href="../profile/customize-store.html" class="dropdown-item"><i data-lucide="store"></i> My Store</a>
+                    <a href="../profile/account-settings.html" class="dropdown-item"><i data-lucide="settings"></i> Settings</a>
+                    <div class="dropdown-divider"></div>
+                    <a href="../../../auth/logout.html" class="dropdown-item dropdown-item--danger"><i data-lucide="log-out"></i> Log Out</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <!-- MAIN -->
+    <div class="seller-main" id="seller-main">
+        <div class="page-content">
+
+            <!-- Toolbar -->
+            <div class="orders-toolbar">
+                <div class="filter-tabs" id="filter-tabs">
+                    <button class="filter-tab active" data-filter="all">All <span class="tab-num" id="count-all">0</span></button>
+                    <button class="filter-tab" data-filter="pending">Pending <span class="tab-num" id="count-pending">0</span></button>
+                    <button class="filter-tab" data-filter="shipped">Shipped <span class="tab-num" id="count-shipped">0</span></button>
+                    <button class="filter-tab" data-filter="delivered">Delivered <span class="tab-num" id="count-delivered">0</span></button>
+                    <button class="filter-tab" data-filter="cancelled">Cancelled <span class="tab-num" id="count-cancelled">0</span></button>
+                </div>
+                <div class="orders-search-mobile">
+                    <i data-lucide="search"></i>
+                    <input type="search" id="order-search-mobile" placeholder="Search orders…">
+                </div>
+            </div>
+
+            <!-- Empty state -->
+            <div class="empty-state hidden" id="no-results">
+                <div class="empty-state-icon"><i data-lucide="shopping-bag"></i></div>
+                <h3>No orders found</h3>
+                <p>Try a different filter or search term.</p>
+            </div>
+            <div class="empty-state hidden" id="no-orders">
+                <div class="empty-state-icon"><i data-lucide="shopping-bag"></i></div>
+                <h3>No orders yet</h3>
+                <p>Orders will appear here when customers place them.</p>
+            </div>
+
+            <!-- Orders table -->
+            <div class="card orders-card">
+                <div class="orders-table-head">
+                    <span>Order</span>
+                    <span>Buyer</span>
+                    <span>Product</span>
+                    <span>Amount</span>
+                    <span>Type</span>
+                    <span>Date</span>
+                    <span>Status</span>
+                    <span></span>
+                </div>
+
+                <div id="orders-list"></div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="orders-pagination" id="pagination-container">
+                <button class="page-btn" id="prev-page" disabled><i data-lucide="chevron-left"></i></button>
+                <div id="page-buttons"></div>
+                <button class="page-btn" id="next-page"><i data-lucide="chevron-right"></i></button>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script>lucide.createIcons();</script>
+    <script src="../shared/polling.js"></script>
+    <script src="../shared/sidebar.js"></script>
+    <script src="../shared/topnav.js"></script>
+    <script src="../assets/js/order-list.js"></script>
+
+</body>
+</html>

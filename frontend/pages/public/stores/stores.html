@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discover Student Shops — UniMartX</title>
+    <meta name="description" content="Discover student entrepreneurs and their unique online shops on UniMartX. Fashion, food, tech, beauty, and more — built by students, for students.">
+    <link rel="canonical" href="https://unimartx.com/stores">
+    <meta property="og:title" content="Discover Student Shops — UniMartX">
+    <meta property="og:description" content="Discover student entrepreneurs and their unique online shops. Fashion, food, tech, beauty, and more — built by students, for students.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://unimartx.com/stores">
+    <meta property="og:image" content="https://unimartx.com/assets/og-stores.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://api.unimartx.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/stores.css">
+</head>
+
+<body>
+    <a href="#main-content" class="visually-hidden">Skip to main content</a>
+
+    <!-- NAVBAR -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-inner">
+            <a href="../home.html" class="nav-logo">Unimart<span>X</span></a>
+            <form class="nav-search" action="../shop/shop.html" method="get">
+                <i data-lucide="search"></i>
+                <input type="search" name="search" placeholder="Search products, stores, categories…" aria-label="Search">
+                <button type="submit" class="search-btn">Search</button>
+            </form>
+            <div class="nav-actions">
+                <a href="../../auth/login.html" class="nav-btn nav-btn-ghost">Log In</a>
+                <a href="../../auth/seller/register.html" class="nav-btn nav-btn-primary">Start Selling</a>
+            </div>
+            <button class="nav-hamburger" id="nav-hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="nav-mobile">
+                <i data-lucide="menu" aria-hidden="true"></i>
+            </button>
+        </div>
+        <div class="nav-mobile" id="nav-mobile">
+            <div class="nav-mobile-search">
+                <i data-lucide="search"></i>
+                <input type="search" placeholder="Search…" aria-label="Search">
+            </div>
+            <a href="../home.html">Home</a>
+            <a href="../shop/shop.html">Shop</a>
+            <a href="../shop/cart.html">Cart</a>
+            <a href="../../auth/login.html">Log In</a>
+            <a href="../../auth/buyer/register.html" class="nav-btn nav-btn-primary">Sign Up</a>
+        </div>
+    </nav>
+
+
+    <!-- ═══════════════════════════════════════════
+         HERO
+    ═══════════════════════════════════════════ -->
+    <section class="stores-hero">
+        <div class="hero-bg" aria-hidden="true">
+            <div class="hero-grid-pattern"></div>
+            <div class="hero-glow"></div>
+        </div>
+
+        <div class="hero-inner">
+            <div class="hero-text">
+                <div class="hero-eyebrow">
+                    <i data-lucide="store"></i>
+                    <span>Student Seller Marketplace</span>
+                </div>
+
+                <h1>Your gateway to <span>student sellers.</span></h1>
+                <p id="hero-subtitle">Discover unique shops built by student entrepreneurs across campus. From fashion and food to tech and tutoring — find what you need, directly from the people who make it. UniMartX connects you with verified student sellers in one place.</p>
+
+                <div class="hero-search">
+                    <i data-lucide="search"></i>
+                    <input type="search" id="hero-search-input" placeholder="Search by store name, category…"
+                        autocomplete="off">
+                    <button id="hero-search-btn"><i data-lucide="arrow-right"></i></button>
+                </div>
+
+                <div class="hero-stats">
+                <div class="hero-stat">
+                    <strong id="hero-stat-sellers">—</strong>
+                    <span>Student Shops</span>
+                </div>
+                <div class="hero-stat-divider"></div>
+                <div class="hero-stat">
+                    <strong id="hero-stat-products">—</strong>
+                    <span>Products</span>
+                </div>
+                <div class="hero-stat-divider"></div>
+                <div class="hero-stat">
+                    <strong id="hero-stat-rating">—</strong>
+                    <span>Avg. Store Rating</span>
+                </div>
+                <div class="hero-stat-divider"></div>
+                <div class="hero-stat">
+                    <strong id="hero-stat-verified">—</strong>
+                    <span>Verified Stores</span>
+                </div>
+                </div>
+            </div>
+
+            <div class="hero-images" aria-hidden="true">
+                <div class="hero-img-main">
+                    <img src="../assets/images/stores-hero/profile-6.webp" alt="Student seller with products" loading="eager" />
+                </div>
+                <div class="hero-img-float hero-img-1">
+                    <img src="../assets/images/stores-hero/profile-9.webp" alt="Student shop display" loading="eager" />
+                </div>
+                <div class="hero-img-float hero-img-2">
+                    <img src="../assets/images/stores-hero/profile-11.webp" alt="Campus entrepreneur" loading="eager" />
+                </div>
+                <div class="hero-img-float hero-img-3">
+                    <img src="../assets/images/stores-hero/profile-13.webp" alt="Student business owner" loading="eager" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Live store ticker — populated by stores.js -->
+        <div class="hero-ticker" aria-hidden="true">
+            <div class="ticker-track" id="ticker-track"></div>
+        </div>
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════
+         CATEGORY RAIL
+    ═══════════════════════════════════════════ -->
+    <div class="category-rail-wrap">
+        <div class="category-rail" id="category-rail">
+            <button class="cat-pill active" data-cat="all"><i data-lucide="grid-2x2"></i> All Stores</button>
+            <button class="cat-pill" data-cat="electronics"><i data-lucide="cpu"></i> Electronics</button>
+            <button class="cat-pill" data-cat="fashion"><i data-lucide="shirt"></i> Fashion</button>
+            <button class="cat-pill" data-cat="books"><i data-lucide="book-open"></i> Books</button>
+            <button class="cat-pill" data-cat="beauty"><i data-lucide="sparkles"></i> Beauty</button>
+            <button class="cat-pill" data-cat="food"><i data-lucide="utensils"></i> Food &amp; Snacks</button>
+            <button class="cat-pill" data-cat="sports"><i data-lucide="dumbbell"></i> Sports</button>
+            <button class="cat-pill" data-cat="home"><i data-lucide="sofa"></i> Home &amp; Living</button>
+            <button class="cat-pill" data-cat="other"><i data-lucide="more-horizontal"></i> Other</button>
+        </div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════════
+         MAIN
+    ═══════════════════════════════════════════ -->
+    <main class="stores-main" id="main-content">
+        <div class="stores-container">
+
+            <!-- Marketplace gateway banner -->
+            <div class="marketplace-banner">
+                <div class="mp-banner-bg" aria-hidden="true">
+                    <img src="../assets/images/stores-hero/profile-15.webp" alt="" loading="lazy" />
+                </div>
+                <div class="mp-banner-overlay" aria-hidden="true"></div>
+                <div class="mp-banner-content">
+                    <div class="mp-eyebrow">
+                        <i data-lucide="store"></i>
+                        Student Seller Marketplace
+                    </div>
+                    <h2>The gateway to <span>student businesses.</span></h2>
+                    <p>Every shop on UniMartX is built and run by a real student entrepreneur. Browse their products, read reviews from other students, and support campus businesses — all in one place.</p>
+                    <div class="mp-stats-row">
+                        <div class="mp-stat">
+                            <strong id="mp-stat-sellers">0</strong>
+                            <span>Active Shops</span>
+                        </div>
+                        <div class="mp-stat">
+                            <strong id="mp-stat-products">0</strong>
+                            <span>Products</span>
+                        </div>
+                        <div class="mp-stat">
+                            <strong id="mp-stat-reviews">0</strong>
+                            <span>Reviews</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Toolbar -->
+            <div class="stores-toolbar">
+                <p class="results-label">Showing <strong id="results-count">0</strong> stores</p>
+                <div class="toolbar-right">
+                    <div class="sort-wrap">
+                        <i data-lucide="arrow-up-down"></i>
+                        <select id="sort-select" aria-label="Sort stores">
+                            <option value="featured">Featured</option>
+                            <option value="rating">Top Rated</option>
+                            <option value="products">Most Products</option>
+                            <option value="newest">Newest</option>
+                            <option value="az">A → Z</option>
+                        </select>
+                    </div>
+                    <div class="view-toggle">
+                        <button class="view-btn active" id="btn-grid" aria-label="Grid view"><i
+                                data-lucide="layout-grid"></i></button>
+                        <button class="view-btn" id="btn-list" aria-label="List view"><i
+                                data-lucide="list"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Spotlight top 3 -->
+            <div class="spotlight-section" id="spotlight-section">
+                <div class="spotlight-label"><i data-lucide="flame"></i> Featured Student Shops</div>
+                <div class="spotlight-grid" id="spotlight-grid"></div>
+            </div>
+
+            <!-- Why buy from student sellers -->
+            <div class="seller-value-section" aria-label="Why buy from student sellers">
+                <div class="svs-header">
+                    <h3>Built by students, for students.</h3>
+                    <p>When you buy from a student shop, you're supporting real campus entrepreneurs.</p>
+                </div>
+                <div class="svs-grid">
+                    <div class="svs-card">
+                        <div class="svs-icon-wrap"><i data-lucide="shield-check"></i></div>
+                        <div class="svs-text">
+                            <h4>Verified sellers</h4>
+                            <p>Every seller is verified through their student account. Shop with confidence.</p>
+                        </div>
+                    </div>
+                    <div class="svs-card">
+                        <div class="svs-icon-wrap"><i data-lucide="message-circle"></i></div>
+                        <div class="svs-text">
+                            <h4>Direct connection</h4>
+                            <p>Message sellers directly, ask questions, and get personalized support.</p>
+                        </div>
+                    </div>
+                    <div class="svs-card">
+                        <div class="svs-icon-wrap"><i data-lucide="heart-handshake"></i></div>
+                        <div class="svs-text">
+                            <h4>Support campus</h4>
+                            <p>Your purchase goes directly to a student entrepreneur — no middlemen, no big corporations.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- All stores -->
+            <div class="stores-grid grid-view" id="stores-grid"></div>
+
+            <!-- Empty state -->
+            <div class="empty-state hidden" id="empty-state">
+                <div class="empty-icon"><i data-lucide="store"></i></div>
+                <h3>No stores found</h3>
+                <p>Try a different search or category.</p>
+                <button class="empty-reset" id="empty-reset">Clear filters</button>
+            </div>
+
+            <!-- Load more -->
+            <div class="load-more-wrap hidden" id="load-more-wrap">
+                <button class="load-more-btn" id="load-more-btn">
+                    Load More Stores <i data-lucide="chevron-down"></i>
+                </button>
+            </div>
+
+        </div>
+    </main>
+
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <a href="../home.html" class="nav-logo">Unimart<span>X</span></a>
+                <p>The platform that helps student entrepreneurs build professional online businesses — without building their own websites.</p>
+            </div>
+            <div class="footer-links">
+                <div class="footer-col">
+                    <h4>Shop</h4>
+                    <a href="../shop/shop.html">Browse Products</a>
+                    <a href="stores.html">Browse Stores</a>
+                    <a href="../shop/cart.html">Your Cart</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Sell</h4>
+                    <a href="../info/seller-policy.html">Seller Policy</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <a href="../info/about.html">About</a>
+                    <a href="../contact/contact.html">Contact</a>
+                    <a href="../info/faq.html">FAQ</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <a href="../info/terms.html">Terms</a>
+                    <a href="../info/privacy.html">Privacy</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>&copy; 2026 UnimartX. All rights reserved.</span>
+        </div>
+    </footer>
+
+    <script src="../../../config.js"></script>
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script src="../../shared/js/cart.js"></script>
+    <script src="../assets/js/stores.js"></script>
+    <script src="../../shared/js/public-nav.js"></script>
+
+</body>
+
+</html>

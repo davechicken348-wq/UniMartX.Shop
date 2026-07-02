@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - UnimartX Seller</title>
+    <script src="../../../../config.js"></script>
+    <script>
+      if (localStorage.getItem("seller_sidebar_collapsed") === "true") {
+        document.documentElement.classList.add("no-transition");
+      }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../shared/seller-base.css">
+    <link rel="stylesheet" href="../shared/sidebar.css">
+    <link rel="stylesheet" href="../shared/topnav.css">
+    <link rel="stylesheet" href="../assets/css/customize-profile.css">
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-icon"><i data-lucide="store"></i></div>
+            <span class="sidebar-logo-text">Unimart<span>X</span></span>
+        </div>
+        <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
+            <i data-lucide="chevron-left"></i>
+        </button>
+        <nav class="sidebar-nav">
+            <span class="nav-section-label">Main</span>
+            <a href="../dashboard/overview.html" class="nav-item" data-tooltip="Dashboard">
+                <div class="nav-item-icon"><i data-lucide="layout-dashboard"></i></div>
+                <span class="nav-item-label">Dashboard</span>
+            </a>
+            <a href="../orders/order-list.html" class="nav-item" data-tooltip="Orders">
+                <div class="nav-item-icon"><i data-lucide="shopping-bag"></i></div>
+                <span class="nav-item-label">Orders</span>
+                <span class="nav-item-badge" id="sidebar-orders-count"></span>
+            </a>
+            <a href="../products/product-list.html" class="nav-item" data-tooltip="Products">
+                <div class="nav-item-icon"><i data-lucide="package"></i></div>
+                <span class="nav-item-label">Products</span>
+            </a>
+            <span class="nav-section-label">Store</span>
+            <a href="../products/add-product.html" class="nav-item" data-tooltip="Add Product">
+                <div class="nav-item-icon"><i data-lucide="plus-circle"></i></div>
+                <span class="nav-item-label">Add Product</span>
+            </a>
+            <a href="customize-store.html" class="nav-item" data-tooltip="My Store">
+                <div class="nav-item-icon"><i data-lucide="store"></i></div>
+                <span class="nav-item-label">My Store</span>
+            </a>
+            <a href="customize-profile.html" class="nav-item active" data-tooltip="Profile">
+                <div class="nav-item-icon"><i data-lucide="user"></i></div>
+                <span class="nav-item-label">Profile</span>
+            </a>
+            <a href="account-settings.html" class="nav-item" data-tooltip="Settings">
+                <div class="nav-item-icon"><i data-lucide="settings"></i></div>
+                <span class="nav-item-label">Settings</span>
+            </a>
+            <span class="nav-section-label">More</span>
+            <a href="../notifications.html" class="nav-item" data-tooltip="Notifications">
+                <div class="nav-item-icon"><i data-lucide="bell"></i></div>
+                <span class="nav-item-label">Notifications</span>
+                <span class="nav-item-badge" id="sidebar-notif-count"></span>
+            </a>
+            <a href="../../../public/home.html" class="nav-item" data-tooltip="Home">
+                <div class="nav-item-icon"><i data-lucide="home"></i></div>
+                <span class="nav-item-label">Home</span>
+            </a>
+            <a href="../../public/info/faq.html" class="nav-item" data-tooltip="Help">
+                <div class="nav-item-icon"><i data-lucide="help-circle"></i></div>
+                <span class="nav-item-label">Help & FAQ</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="sidebar-user">
+                <div class="sidebar-avatar" id="sidebar-avatar"></div>
+                <div class="sidebar-user-info">
+                    <p class="sidebar-user-name" id="sidebar-name"></p>
+                    <p class="sidebar-user-role" id="sidebar-store"></p>
+                </div>
+                <a href="../../../auth/logout.html" class="sidebar-logout" aria-label="Log out">
+                    <i data-lucide="log-out"></i>
+                </a>
+            </div>
+        </div>
+    </aside>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- TOPNAV -->
+    <header class="topnav" id="topnav">
+        <button class="topnav-hamburger" id="topnav-hamburger" aria-label="Open menu">
+            <i data-lucide="menu"></i>
+        </button>
+        <div class="topnav-title">
+            <h1>My Profile</h1>
+            <p>Manage your seller identity and public profile</p>
+        </div>
+        <div class="topnav-actions">
+            <div style="position:relative;">
+                <button class="topnav-btn" id="notif-btn" aria-label="Notifications">
+                    <i data-lucide="bell"></i>
+                    <span class="topnav-badge" id="notif-badge">0</span>
+                </button>
+                <div class="notif-panel" id="notif-panel">
+                    <div class="notif-header">
+                        <h3>Notifications</h3>
+                        <button class="notif-mark-read" id="mark-read">Mark all read</button>
+                    </div>
+                    <div class="notif-list"></div>
+                    <div class="notif-footer"><a href="../../notifications.html">View all</a></div>
+                </div>
+            </div>
+            <div style="position:relative;">
+                <div class="topnav-user" id="topnav-user">
+                    <div class="topnav-avatar" id="topnav-avatar"></div>
+                    <span class="topnav-username" id="topnav-username"></span>
+                    <i data-lucide="chevron-down" class="topnav-chevron"></i>
+                </div>
+                <div class="topnav-dropdown" id="topnav-dropdown">
+                    <a href="customize-profile.html" class="dropdown-item"><i data-lucide="user"></i> My Profile</a>
+                    <a href="customize-store.html" class="dropdown-item"><i data-lucide="store"></i> My Store</a>
+                    <a href="account-settings.html" class="dropdown-item"><i data-lucide="settings"></i> Settings</a>
+                    <div class="dropdown-divider"></div>
+                    <a href="../../../auth/logout.html" class="dropdown-item dropdown-item--danger"><i data-lucide="log-out"></i> Log Out</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN -->
+    <div class="seller-main" id="seller-main">
+        <div class="page-content">
+
+            <!-- Unsaved Banner -->
+            <div class="unsaved-banner hidden" id="unsaved-banner">
+                <i data-lucide="alert-triangle"></i>
+                <span>You have unsaved changes</span>
+                <button class="btn btn-ghost btn-sm" id="discard-changes">Discard</button>
+                <button class="btn btn-primary btn-sm" id="save-now">Save Now</button>
+            </div>
+
+            <!-- Page Header -->
+            <div class="page-header">
+                <div>
+                    <h1>My Profile</h1>
+                    <p>Changes here update your public profile page</p>
+                </div>
+                <a href="../../public/profile/profile.html" id="view-public-profile-btn" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-sm">
+                    <i data-lucide="external-link"></i> View Profile
+                </a>
+            </div>
+
+            <div class="profile-grid">
+
+                <!-- Avatar Card -->
+                <div class="card avatar-card">
+                    <div class="avatar-wrap" id="avatar-wrap">
+                        <div class="avatar-display" id="avatar-display">
+                            <div class="avatar-initials" id="avatar-initials"></div>
+                            <img src="" alt="Profile photo" id="avatar-img" class="avatar-img">
+                        </div>
+                        <button type="button" class="avatar-edit-btn" id="avatar-edit-btn" aria-label="Change photo">
+                            <i data-lucide="camera"></i>
+                        </button>
+                    </div>
+                    <input type="file" id="avatar-input" accept="image/jpeg,image/png,image/webp" hidden>
+
+                    <p class="avatar-name" id="avatar-name-preview"></p>
+                    <span class="avatar-role">Seller</span>
+
+                    <div class="avatar-actions">
+                        <button type="button" class="btn btn-ghost btn-sm" id="avatar-upload-btn">
+                            <i data-lucide="upload"></i> Upload
+                        </button>
+                        <button type="button" class="btn btn-ghost btn-sm danger" id="avatar-remove-btn" style="display:none;">
+                            <i data-lucide="trash-2"></i> Remove
+                        </button>
+                    </div>
+                    <p class="avatar-hint">JPG, PNG or WebP · Max 2MB</p>
+                </div>
+
+                <!-- Forms -->
+                <div class="profile-forms">
+
+                    <!-- General -->
+                    <div class="card">
+                        <h2 class="card-title"><i data-lucide="user"></i> General Info</h2>
+                        <form id="form-general" novalidate autocomplete="on">
+                            <div class="field">
+                                <label for="profile-name">Display Name <span class="req">*</span></label>
+                                <input type="text" id="profile-name" name="profile_name" placeholder="e.g. Kwame Asante" required maxlength="50">
+                                <div class="field-error" id="err-name" role="alert"></div>
+                            </div>
+                            <div class="field">
+                                <label for="profile-bio">Bio <span class="req">*</span></label>
+                                <textarea id="profile-bio" name="profile_bio" rows="4" placeholder="Tell buyers about yourself..." required maxlength="300"></textarea>
+                                <div class="field-footer">
+                                    <div class="field-error" id="err-bio" role="alert"></div>
+                                    <span class="char-counter" id="bio-count" role="status" aria-live="polite">0/300</span>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label for="profile-location">Location <span class="req">*</span></label>
+                                <div class="input-icon">
+                                    <i data-lucide="map-pin"></i>
+                                    <input type="text" id="profile-location" name="profile_location" placeholder="e.g. STU Main Campus, Sunyani" required maxlength="100">
+                                </div>
+                                <div class="field-error" id="err-location" role="alert"></div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-ghost btn-sm" id="general-reset"><i data-lucide="rotate-ccw"></i> Reset</button>
+                                <button type="submit" class="btn btn-primary btn-sm"><i data-lucide="save"></i> Save</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Contact -->
+                    <div class="card">
+                        <h2 class="card-title"><i data-lucide="phone"></i> Contact Info</h2>
+                        <form id="form-contact" novalidate autocomplete="on">
+                            <div class="field">
+                                <label for="profile-email">Email <span class="req">*</span></label>
+                                <div class="input-icon">
+                                    <i data-lucide="mail"></i>
+                                    <input type="email" id="profile-email" name="profile_email" placeholder="your@email.com" required readonly>
+                                </div>
+                                <div class="field-error" id="err-email" role="alert"></div>
+                            </div>
+                            <div class="field-row">
+                                <div class="field">
+                                    <label for="profile-phone">Phone</label>
+                                    <div class="input-icon">
+                                        <i data-lucide="phone"></i>
+                                        <input type="tel" id="profile-phone" name="profile_phone" placeholder="+233 24 000 0000" maxlength="15">
+                                    </div>
+                                    <div class="field-error" id="err-phone" role="alert"></div>
+                                </div>
+                                <div class="field">
+                                    <label for="profile-whatsapp">WhatsApp</label>
+                                    <div class="input-icon">
+                                        <i data-lucide="message-circle"></i>
+                                        <input type="tel" id="profile-whatsapp" name="profile_whatsapp" placeholder="+233 24 000 0000" maxlength="15">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label for="profile-address">Pickup Address</label>
+                                <div class="input-icon input-icon--top">
+                                    <i data-lucide="map-pin"></i>
+                                    <textarea id="profile-address" name="profile_address" rows="2" placeholder="e.g. STU Library Entrance" maxlength="200"></textarea>
+                                </div>
+                                <span class="field-hint">Shown to buyers after order confirmation</span>
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-ghost btn-sm" id="contact-reset"><i data-lucide="rotate-ccw"></i> Reset</button>
+                                <button type="submit" class="btn btn-primary btn-sm"><i data-lucide="save"></i> Save</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Social -->
+                    <div class="card">
+                        <h2 class="card-title"><i data-lucide="share-2"></i> Social Links</h2>
+                        <form id="form-social" novalidate>
+                            <div class="field">
+                                <label for="social-instagram">Instagram</label>
+                                <div class="input-icon">
+                                    <i data-lucide="instagram"></i>
+                                    <input type="url" id="social-instagram" name="social_instagram" placeholder="https://instagram.com/yourhandle">
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label for="social-twitter">X / Twitter</label>
+                                <div class="input-icon">
+                                    <i data-lucide="twitter"></i>
+                                    <input type="url" id="social-twitter" name="social_twitter" placeholder="https://x.com/yourhandle">
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label for="social-tiktok">TikTok</label>
+                                <div class="input-icon">
+                                    <i data-lucide="video"></i>
+                                    <input type="url" id="social-tiktok" name="social_tiktok" placeholder="https://tiktok.com/@yourhandle">
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label for="social-website">Website</label>
+                                <div class="input-icon">
+                                    <i data-lucide="globe"></i>
+                                    <input type="url" id="social-website" name="social_website" placeholder="https://yourwebsite.com">
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-ghost btn-sm" id="social-reset"><i data-lucide="rotate-ccw"></i> Reset</button>
+                                <button type="submit" class="btn btn-primary btn-sm"><i data-lucide="save"></i> Save</button>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Discard Modal -->
+    <div class="modal-overlay hidden" id="discard-modal" role="dialog" aria-modal="true">
+        <div class="modal">
+            <div class="modal-icon warn"><i data-lucide="alert-triangle"></i></div>
+            <h3>Discard changes?</h3>
+            <p>All unsaved changes will be lost.</p>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-ghost btn-sm" id="discard-cancel">Cancel</button>
+                <button type="button" class="btn btn-danger btn-sm" id="discard-confirm">Discard</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script>lucide.createIcons();</script>
+    <script src="../shared/polling.js"></script>
+    <script src="../shared/sidebar.js"></script>
+    <script src="../shared/topnav.js"></script>
+    <script src="../assets/js/customize-profile.js"></script>
+</body>
+</html>

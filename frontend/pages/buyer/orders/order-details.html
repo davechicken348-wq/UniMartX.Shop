@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details - UnimartX</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../shared/css/buyer-base.css">
+    <link rel="stylesheet" href="../shared/css/sidebar.css">
+    <link rel="stylesheet" href="../shared/css/topnav.css">
+    <link rel="stylesheet" href="../assets/css/order-details.css">
+</head>
+<body>
+
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-icon"><i data-lucide="shopping-bag"></i></div>
+            <span class="sidebar-logo-text">Unimart<span>X</span></span>
+        </div>
+        <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
+            <i data-lucide="chevron-left"></i>
+        </button>
+        <nav class="sidebar-nav">
+            <span class="nav-section-label">Main</span>
+            <a href="../dashboard/dashboard.html" class="nav-item" data-tooltip="Dashboard">
+                <div class="nav-item-icon"><i data-lucide="layout-dashboard"></i></div>
+                <span class="nav-item-label">Dashboard</span>
+            </a>
+            <a href="orders.html" class="nav-item active" data-tooltip="My Orders">
+                <div class="nav-item-icon"><i data-lucide="package"></i></div>
+                <span class="nav-item-label">My Orders</span>
+                <span class="nav-item-badge" id="sidebar-orders-count" style="display:none"></span>
+            </a>
+            <a href="../shopping/wishlist.html" class="nav-item" data-tooltip="Wishlist">
+                <div class="nav-item-icon"><i data-lucide="heart"></i></div>
+                <span class="nav-item-label">Wishlist</span>
+            </a>
+            <a href="../notifications/notifications.html" class="nav-item" data-tooltip="Notifications">
+                <div class="nav-item-icon"><i data-lucide="bell"></i></div>
+                <span class="nav-item-label">Notifications</span>
+                <span class="nav-item-badge" id="sidebar-notif-count" style="display:none"></span>
+            </a>
+            <span class="nav-section-label">Account</span>
+            <a href="../account/profile.html" class="nav-item" data-tooltip="Profile">
+                <div class="nav-item-icon"><i data-lucide="user"></i></div>
+                <span class="nav-item-label">Profile</span>
+            </a>
+            <a href="../account/settings.html" class="nav-item" data-tooltip="Settings">
+                <div class="nav-item-icon"><i data-lucide="settings"></i></div>
+                <span class="nav-item-label">Settings</span>
+            </a>
+            <span class="nav-section-label">More</span>
+            <a href="../buyer-landing/buyer-landing.html" class="nav-item" data-tooltip="Home">
+                <div class="nav-item-icon"><i data-lucide="home"></i></div>
+                <span class="nav-item-label">Home</span>
+            </a>
+            <a href="../../public/shop/shop.html" class="nav-item" data-tooltip="Browse Shop">
+                <div class="nav-item-icon"><i data-lucide="shopping-bag"></i></div>
+                <span class="nav-item-label">Browse Shop</span>
+            </a>
+            <a href="../../public/info/faq.html" class="nav-item" data-tooltip="Help & FAQ">
+                <div class="nav-item-icon"><i data-lucide="help-circle"></i></div>
+                <span class="nav-item-label">Help & FAQ</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="sidebar-user">
+                <div class="sidebar-avatar" id="sidebar-avatar"></div>
+                <div class="sidebar-user-info">
+                    <p class="sidebar-user-name" id="sidebar-name"></p>
+                    <p class="sidebar-user-role">Buyer</p>
+                </div>
+                <a href="../../auth/logout.html" class="sidebar-logout" aria-label="Log out">
+                    <i data-lucide="log-out"></i>
+                </a>
+            </div>
+        </div>
+    </aside>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- TOP NAV -->
+    <header class="topnav" id="topnav">
+        <button class="topnav-hamburger" id="topnav-hamburger" aria-label="Open menu">
+            <i data-lucide="menu"></i>
+        </button>
+        <div class="topnav-title">
+            <h1 id="order-title">Order #<span id="order-ref-fallback">—</span></h1>
+            <p id="order-date">Loading…</p>
+        </div>
+        <div class="topnav-actions">
+            <div style="position:relative;">
+                <button class="topnav-btn" id="notif-btn" aria-label="Notifications">
+                    <i data-lucide="bell"></i>
+                    <span class="topnav-badge" id="notif-badge" style="display:none"></span>
+                </button>
+                <div class="notif-panel" id="notif-panel">
+                    <div class="notif-header">
+                        <h3>Notifications</h3>
+                        <button class="notif-mark-read" id="mark-read">Mark all read</button>
+                    </div>
+                    <div class="notif-list" id="notif-list">
+                        <div style="padding:1.25rem;text-align:center;font-size:0.82rem;color:var(--text-3)">No notifications</div>
+                    </div>
+                    <div class="notif-footer"><a href="../notifications/notifications.html">View all</a></div>
+                </div>
+            </div>
+            <div style="position:relative;">
+                <div class="topnav-user" id="topnav-user">
+                    <div class="topnav-avatar" id="topnav-avatar"></div>
+                    <span class="topnav-username" id="topnav-username"></span>
+                    <i data-lucide="chevron-down" class="topnav-chevron"></i>
+                </div>
+                <div class="topnav-dropdown" id="topnav-dropdown">
+                    <a href="../account/profile.html" class="dropdown-item"><i data-lucide="user"></i> My Profile</a>
+                    <a href="orders.html" class="dropdown-item"><i data-lucide="package"></i> My Orders</a>
+                    <a href="../account/settings.html" class="dropdown-item"><i data-lucide="settings"></i> Settings</a>
+                    <div class="dropdown-divider"></div>
+                    <a href="../../auth/logout.html" class="dropdown-item dropdown-item--danger"><i data-lucide="log-out"></i> Log Out</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN -->
+    <div class="buyer-main" id="buyer-main">
+        <div class="page-content">
+
+            <!-- Loading state -->
+            <div class="hidden" id="loading-state">
+                <div class="empty-state">
+                    <div class="empty-state-icon"><i data-lucide="loader"></i></div>
+                    <h3>Loading order details…</h3>
+                </div>
+            </div>
+
+            <!-- Error state -->
+            <div class="hidden" id="error-state">
+                <div class="empty-state">
+                    <div class="empty-state-icon"><i data-lucide="alert-circle"></i></div>
+                    <h3>Failed to load order</h3>
+                    <p id="error-message">Please try again later.</p>
+                </div>
+            </div>
+
+            <!-- Order content -->
+            <div id="order-content" class="hidden">
+                <!-- Back link -->
+                <a href="orders.html" class="back-link">
+                    <i data-lucide="arrow-left"></i>
+                    Back to My Orders
+                </a>
+
+                <!-- Order header -->
+                <div class="order-header-card card">
+                    <div class="order-header-left">
+                        <div>
+                            <p class="order-header-label">Order Reference</p>
+                            <h2 class="order-header-ref" id="order-ref">#—</h2>
+                        </div>
+                        <div>
+                            <p class="order-header-label">Date Placed</p>
+                            <p class="order-header-val" id="order-date-card">—</p>
+                        </div>
+                        <div>
+                            <p class="order-header-label">Payment</p>
+                            <p class="order-header-val" id="order-payment">—</p>
+                        </div>
+                    </div>
+                    <span class="badge-status badge-status--pending" id="order-status-badge">—</span>
+                </div>
+
+                <!-- Tracking timeline -->
+                <div class="card tracking-card">
+                    <div class="card-header">
+                        <div>
+                            <h2>Order Tracking</h2>
+                            <p id="delivery-estimate">Loading…</p>
+                        </div>
+                    </div>
+                    <div class="tracking-timeline" id="order-timeline">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Content grid -->
+                <div class="order-details-grid">
+
+                    <div class="order-left-col">
+                        <!-- Items -->
+                        <div class="card order-items-card">
+                            <div class="card-header">
+                                <div><h2>Order Items</h2><p id="items-count">— items</p></div>
+                            </div>
+                            <div class="order-items-list" id="order-items-list">
+                                <!-- Populated dynamically -->
+                            </div>
+                            <div class="order-summary-lines" id="order-summary">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="card order-actions-card">
+                            <div class="card-header">
+                                <div><h2>Actions</h2></div>
+                            </div>
+                            <div class="order-actions">
+                                <a href="../../public/shop/shop.html" class="btn btn-primary">
+                                    <i data-lucide="shopping-bag"></i>
+                                    Continue Shopping
+                                </a>
+                                <button class="btn btn-primary" id="confirm-receipt-btn" style="display:none;">
+                                    <i data-lucide="check"></i>
+                                    Confirm Receipt
+                                </button>
+                                <button class="btn btn-ghost btn-danger" id="refund-dispute-btn" style="display:none;">
+                                    <i data-lucide="alert-circle"></i>
+                                    Dispute This Decision
+                                </button>
+                                <a href="#" class="btn btn-ghost" id="contact-email-btn">
+                                    <i data-lucide="mail"></i>
+                                    Email Seller
+                                </a>
+                                <a href="#" class="btn btn-ghost" id="contact-phone-btn" style="display:none;">
+                                    <i data-lucide="phone"></i>
+                                    Call Seller
+                                </a>
+                                <button class="btn btn-ghost btn-danger" id="refund-btn" type="button">
+                                    <i data-lucide="rotate-ccw"></i>
+                                    Request Refund
+                                </button>
+                                <span class="badge-status badge-status--pending hidden" id="refund-status" style="margin-left:auto;"></span>
+                            </div>
+                        </div>
+
+                        <div class="card order-actions-card hidden" id="refund-card">
+                            <div class="card-header">
+                                <div><h2>Request Refund</h2><p>Provide details for your refund request</p></div>
+                            </div>
+                            <form class="refund-form" id="refund-form">
+                                <div class="form-group">
+                                    <label for="refund-reason" class="form-label">Reason</label>
+                                    <select id="refund-reason" class="form-select" required>
+                                        <option value="">Select a reason</option>
+                                        <option value="item_not_received">Item not received</option>
+                                        <option value="item_damaged">Item damaged or faulty</option>
+                                        <option value="wrong_item">Wrong item received</option>
+                                        <option value="not_as_described">Not as described</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="refund-message" class="form-label">Additional details</label>
+                                    <textarea id="refund-message" class="form-textarea" rows="4" placeholder="Describe the issue..."></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Evidence (max 3 images)</label>
+                                    <div class="evidence-upload-row">
+                                        <input type="file" id="evidence-0" accept="image/*" class="evidence-input" style="display:none">
+                                        <input type="file" id="evidence-1" accept="image/*" class="evidence-input" style="display:none">
+                                        <input type="file" id="evidence-2" accept="image/*" class="evidence-input" style="display:none">
+                                        <button type="button" class="btn btn-ghost evidence-btn" id="evidence-btn">
+                                            <i data-lucide="image-plus"></i> Add Photo
+                                        </button>
+                                    </div>
+                                    <div class="evidence-previews" id="evidence-previews"></div>
+                                </div>
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i data-lucide="send"></i>
+                                        Submit Request
+                                    </button>
+                                    <button type="button" class="btn btn-ghost" id="refund-cancel-btn">
+                                        Cancel
+                                    </button>
+                                </div>
+                                <p class="form-hint">Refund requests are reviewed by the seller. You'll be notified once a decision is made.</p>
+                            </form>
+                        </div>
+
+                        <div class="card order-actions-card hidden" id="refund-status-card">
+                            <div class="card-header">
+                                <div><h2>Refund Status</h2></div>
+                                <span class="badge-status badge-status--pending" id="refund-status-badge">—</span>
+                            </div>
+                            <p id="refund-status-msg">—</p>
+                            <div id="refund-details" class="refund-details"></div>
+                        </div>
+                    </div>
+
+                    <!-- Side info -->
+                    <div class="order-details-side">
+                        <!-- Delivery info -->
+                        <div class="card delivery-card">
+                            <div class="card-header">
+                                <div><h2>Delivery Information</h2></div>
+                            </div>
+                            <div class="info-rows" id="delivery-info">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+
+                        <!-- Payment info -->
+                        <div class="card payment-card">
+                            <div class="card-header">
+                                <div><h2>Payment</h2></div>
+                            </div>
+                            <div class="info-rows" id="payment-info">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <script src="../../../config.js"></script>
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script>lucide.createIcons();</script>
+    <script src="../shared/js/polling.js"></script>
+    <script src="../shared/js/sidebar.js"></script>
+    <script src="../shared/js/topnav.js"></script>
+    <script src="../assets/js/order-details.js"></script>
+
+</body>
+</html>

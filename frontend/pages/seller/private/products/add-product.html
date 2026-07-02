@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product - UnimartX Seller</title>
+    <script src="../../../../config.js"></script>
+    <script>
+      if (localStorage.getItem("seller_sidebar_collapsed") === "true") {
+        document.documentElement.classList.add("no-transition");
+      }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../shared/seller-base.css">
+    <link rel="stylesheet" href="../shared/sidebar.css">
+    <link rel="stylesheet" href="../shared/topnav.css">
+    <link rel="stylesheet" href="../assets/css/add-product.css">
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-icon"><i data-lucide="store"></i></div>
+            <span class="sidebar-logo-text">Unimart<span>X</span></span>
+        </div>
+        <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
+            <i data-lucide="chevron-left"></i>
+        </button>
+        <nav class="sidebar-nav">
+            <span class="nav-section-label">Main</span>
+            <a href="../dashboard/overview.html" class="nav-item" data-tooltip="Dashboard">
+                <div class="nav-item-icon"><i data-lucide="layout-dashboard"></i></div>
+                <span class="nav-item-label">Dashboard</span>
+            </a>
+            <a href="../orders/order-list.html" class="nav-item" data-tooltip="Orders">
+                <div class="nav-item-icon"><i data-lucide="shopping-bag"></i></div>
+                <span class="nav-item-label">Orders</span>
+                <span class="nav-item-badge" id="sidebar-orders-count"></span>
+            </a>
+            <a href="product-list.html" class="nav-item" data-tooltip="Products">
+                <div class="nav-item-icon"><i data-lucide="package"></i></div>
+                <span class="nav-item-label">Products</span>
+            </a>
+            <span class="nav-section-label">Store</span>
+            <a href="add-product.html" class="nav-item active" data-tooltip="Add Product">
+                <div class="nav-item-icon"><i data-lucide="plus-circle"></i></div>
+                <span class="nav-item-label">Add Product</span>
+            </a>
+            <a href="../profile/customize-store.html" class="nav-item" data-tooltip="My Store">
+                <div class="nav-item-icon"><i data-lucide="store"></i></div>
+                <span class="nav-item-label">My Store</span>
+            </a>
+            <a href="../profile/customize-profile.html" class="nav-item" data-tooltip="Profile">
+                <div class="nav-item-icon"><i data-lucide="user"></i></div>
+                <span class="nav-item-label">Profile</span>
+            </a>
+            <a href="../profile/account-settings.html" class="nav-item" data-tooltip="Settings">
+                <div class="nav-item-icon"><i data-lucide="settings"></i></div>
+                <span class="nav-item-label">Settings</span>
+            </a>
+            <span class="nav-section-label">More</span>
+            <a href="../notifications.html" class="nav-item" data-tooltip="Notifications">
+                <div class="nav-item-icon"><i data-lucide="bell"></i></div>
+                <span class="nav-item-label">Notifications</span>
+                <span class="nav-item-badge" id="sidebar-notif-count"></span>
+            </a>
+            <a href="../../../public/home.html" class="nav-item" data-tooltip="Home">
+                <div class="nav-item-icon"><i data-lucide="home"></i></div>
+                <span class="nav-item-label">Home</span>
+            </a>
+            <a href="../../../public/info/faq.html" class="nav-item" data-tooltip="Help">
+                <div class="nav-item-icon"><i data-lucide="help-circle"></i></div>
+                <span class="nav-item-label">Help & FAQ</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="sidebar-user">
+                <div class="sidebar-avatar" id="sidebar-avatar"></div>
+                <div class="sidebar-user-info">
+                    <p class="sidebar-user-name" id="sidebar-name"></p>
+                    <p class="sidebar-user-role" id="sidebar-store"></p>
+                </div>
+                <a href="../../../auth/logout.html" class="sidebar-logout" aria-label="Log out">
+                    <i data-lucide="log-out"></i>
+                </a>
+            </div>
+        </div>
+    </aside>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+
+    <!-- TOPNAV -->
+    <header class="topnav" id="topnav">
+        <button class="topnav-hamburger" id="topnav-hamburger" aria-label="Open menu">
+            <i data-lucide="menu"></i>
+        </button>
+        <div class="topnav-title">
+            <h1>Add Product</h1>
+            <p>Create a new listing</p>
+        </div>
+        <div class="topnav-actions">
+            <div style="position:relative;">
+                <button class="topnav-btn" id="notif-btn" aria-label="Notifications">
+                    <i data-lucide="bell"></i>
+                    <span class="topnav-badge" id="notif-badge"></span>
+                </button>
+                <div class="notif-panel" id="notif-panel">
+                    <div class="notif-header">
+                        <h3>Notifications</h3>
+                        <button class="notif-mark-read" id="mark-read">Mark all read</button>
+                    </div>
+                    <div class="notif-list">
+                    </div>
+                    <div class="notif-footer"><a href="../notifications.html">View all</a></div>
+                </div>
+            </div>
+            <div style="position:relative;">
+                <div class="topnav-user" id="topnav-user">
+                    <div class="topnav-avatar" id="topnav-avatar"></div>
+                    <span class="topnav-username" id="topnav-username"></span>
+                    <i data-lucide="chevron-down" class="topnav-chevron"></i>
+                </div>
+                <div class="topnav-dropdown" id="topnav-dropdown">
+                    <a href="../profile/customize-profile.html" class="dropdown-item"><i data-lucide="user"></i> My Profile</a>
+                    <a href="../profile/customize-store.html" class="dropdown-item"><i data-lucide="store"></i> My Store</a>
+                    <a href="../profile/account-settings.html" class="dropdown-item"><i data-lucide="settings"></i> Settings</a>
+                    <div class="dropdown-divider"></div>
+                    <a href="../../../auth/logout.html" class="dropdown-item dropdown-item--danger"><i data-lucide="log-out"></i> Log Out</a>
+                        </div>
+                    </div>
+    </header>
+
+
+    <!-- MAIN -->
+    <div class="seller-main" id="seller-main">
+        <div class="page-content">
+
+            <!-- Progress steps -->
+            <div class="form-steps" id="form-steps">
+                <div class="step" data-step="1">
+                    <div class="step-circle"><i data-lucide="info"></i></div>
+                    <span class="step-label">Basic Info</span>
+                </div>
+                <div class="step-line"></div>
+                <!-- Details step indicator (in-between, shown conditionally) -->
+                <div class="step-details-indicator" id="details-indicator">
+                    <div class="step-circle step-circle--details"><i data-lucide="list"></i></div>
+                </div>
+                <div class="step-line step-line-details" id="details-line"></div>
+                <div class="step" data-step="2">
+                    <div class="step-circle"><i data-lucide="tag"></i></div>
+                    <span class="step-label">Pricing</span>
+                </div>
+                <div class="step-line"></div>
+                <div class="step" data-step="3" id="step-3-dot">
+                    <div class="step-circle"><i data-lucide="image"></i></div>
+                    <span class="step-label">Images</span>
+                </div>
+                <div class="step-line" id="step-line-3"></div>
+                <div class="step" data-step="4">
+                    <div class="step-circle"><i data-lucide="send"></i></div>
+                    <span class="step-label">Publish</span>
+                </div>
+            </div>
+
+            <form id="add-product-form" novalidate>
+
+                <!-- ── STEP 1: Basic Info ── -->
+                <div class="form-panel active" id="panel-1">
+                    <div class="panel-header">
+                        <h2>Basic Information</h2>
+                        <p>Tell buyers what you're selling</p>
+                    </div>
+                    <div class="form-grid">
+                        <div class="field field--full">
+                            <label for="product-name">Product Name <span class="req">*</span></label>
+                            <input type="text" id="product-name" name="product_name" placeholder="e.g. Wireless Earbuds Pro" maxlength="100" required>
+                            <span class="field-hint"><span id="name-count">0</span>/100</span>
+                        </div>
+                        <div class="field">
+                            <label for="category">Category <span class="req">*</span></label>
+                            <div class="select-wrap">
+                                <select id="category" name="category" required>
+                                    <option value="" disabled selected>Select category</option>
+                                    <option value="electronics">Electronics & Gadgets</option>
+                                    <option value="books">Books & Stationery</option>
+                                    <option value="fashion">Fashion & Clothing</option>
+                                    <option value="food">Food & Snacks</option>
+                                    <option value="beauty">Beauty & Personal Care</option>
+                                    <option value="sports">Sports & Fitness</option>
+                                <option value="home">Home & Dorm Essentials</option>
+                                <option value="art">Art & Crafts</option>
+                                <option value="other">Other</option>
+                                </select>
+                                <i data-lucide="chevron-down" class="select-icon"></i>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label for="subcategory">Subcategory</label>
+                            <div class="select-wrap">
+                                <select id="subcategory" name="subcategory" aria-optional="true">
+                                    <option value="" disabled selected>Select subcategory</option>
+                                </select>
+                                <i data-lucide="chevron-down" class="select-icon"></i>
+                            </div>
+                        </div>
+                        <div class="field field--full">
+                            <label for="description">Description <span class="req">*</span></label>
+                            <textarea id="description" name="description" rows="5" placeholder="Describe your product — condition, features, what's included…" maxlength="1000" required></textarea>
+                            <span class="field-hint"><span id="desc-count">0</span>/1000</span>
+                        </div>
+                        <div class="field" id="condition-field">
+                            <label for="condition">Condition <span class="req">*</span></label>
+                            <div class="condition-group" id="condition-group">
+                                <label class="condition-option">
+                                    <input type="radio" name="condition" value="new" required>
+                                    <div class="condition-card">
+                                        <i data-lucide="sparkles"></i>
+                                        <span>New</span>
+                                    </div>
+                                </label>
+                                <label class="condition-option">
+                                    <input type="radio" name="condition" value="like-new">
+                                    <div class="condition-card">
+                                        <i data-lucide="star"></i>
+                                        <span>Like New</span>
+                                    </div>
+                                </label>
+                                <label class="condition-option">
+                                    <input type="radio" name="condition" value="good">
+                                    <div class="condition-card">
+                                        <i data-lucide="thumbs-up"></i>
+                                        <span>Good</span>
+                                    </div>
+                                </label>
+                                <label class="condition-option">
+                                    <input type="radio" name="condition" value="fair">
+                                    <div class="condition-card">
+                                        <i data-lucide="minus-circle"></i>
+                                        <span>Fair</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="field" id="tags-field">
+                            <label for="tags">Tags <span class="field-optional">(optional)</span></label>
+                            <div class="tags-input-wrap" id="tags-wrap">
+                                <div class="tags-list" id="tags-list"></div>
+                                <input type="text" id="tags-input" placeholder="Type and press Enter…" maxlength="30" aria-optional="true">
+                            </div>
+                            <span class="field-hint">Up to 5 tags to help buyers find your product</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── STEP: Details (dynamic, inserted between 1 & 2) ── -->
+                <div class="form-panel" id="panel-details">
+                    <div class="panel-header">
+                        <h2>Product Details</h2>
+                        <p>Provide specific information about your item</p>
+                    </div>
+                    <div class="form-grid" id="details-grid">
+                        <!-- dynamic fields render here -->
+                    </div>
+                </div>
+
+                <!-- ── STEP 2: Pricing ── -->
+                <div class="form-panel" id="panel-2">
+                    <div class="panel-header">
+                        <h2>Pricing & Stock</h2>
+                        <p>Set your price and available quantity</p>
+                    </div>
+                    <div class="form-grid">
+                        <div class="field">
+                            <label for="price">Selling Price (GH₵) <span class="req">*</span></label>
+                            <div class="input-prefix-wrap">
+                                <span class="input-prefix">GH₵</span>
+                                <input type="number" id="price" name="price" placeholder="0.00" min="0" step="0.01" required>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label for="compare-price">Compare-at Price <span class="field-optional">(optional)</span></label>
+                            <div class="input-prefix-wrap">
+                                <span class="input-prefix">GH₵</span>
+                                <input type="number" id="compare-price" name="compare_price" placeholder="0.00" min="0" step="0.01" aria-optional="true">
+                            </div>
+                            <span class="field-hint">Shows a strikethrough "was" price to buyers</span>
+                        </div>
+                        <div class="field">
+                            <label for="cost-price">Cost Price (GH₵) <span class="field-optional">(private — calculator only)</span></label>
+                            <div class="input-prefix-wrap">
+                                <span class="input-prefix">GH₵</span>
+                                <input type="number" id="cost-price" name="cost_price" placeholder="0.00" min="0" step="0.01" aria-optional="true">
+                            </div>
+                            <span class="field-hint">What you paid to get this item. Never shown to buyers.</span>
+                        </div>
+                        <div class="field">
+                            <label for="quantity">Stock Quantity <span class="req">*</span></label>
+                            <div class="qty-wrap">
+                                <button type="button" class="qty-btn" id="qty-minus" aria-label="Decrease"><i data-lucide="minus"></i></button>
+                                <input type="number" id="quantity" name="quantity" value="1" min="1" max="999" required>
+                                <button type="button" class="qty-btn" id="qty-plus" aria-label="Increase"><i data-lucide="plus"></i></button>
+                            </div>
+                        </div>
+
+                        <!-- Calculator boxes -->
+                        <div class="field field--full">
+                            <div class="calc-boxes">
+
+                                <!-- Fee & Payout -->
+                                <div class="calc-box calc-box--fee">
+                                    <div class="calc-box-header">
+                                        <i data-lucide="percent"></i>
+                                        <span>Platform Fee</span>
+                                    </div>
+                                    <div class="calc-rows">
+                                        <div class="calc-row">
+                                            <span>Selling Price</span>
+                                            <span id="cr-selling">GH&#8373; —</span>
+                                        </div>
+                                        <div class="calc-row calc-row--deduct">
+                                            <span>Fee (0%)</span>
+                                            <span id="cr-fee">&#8722; GH&#8373; —</span>
+                                        </div>
+                                        <div class="calc-row calc-row--total">
+                                            <span>Your Payout</span>
+                                            <span id="cr-payout">GH&#8373; —</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Profit -->
+                                <div class="calc-box calc-box--profit">
+                                    <div class="calc-box-header">
+                                        <i data-lucide="trending-up"></i>
+                                        <span>Profit Calculator</span>
+                                    </div>
+                                    <div class="calc-rows">
+                                        <div class="calc-row">
+                                            <span>Payout</span>
+                                            <span id="cr-payout2">GH&#8373; —</span>
+                                        </div>
+                                        <div class="calc-row calc-row--deduct">
+                                            <span>Cost Price</span>
+                                            <span id="cr-cost">&#8722; GH&#8373; —</span>
+                                        </div>
+                                        <div class="calc-row calc-row--total">
+                                            <span>Net Profit</span>
+                                            <span id="cr-profit">GH&#8373; —</span>
+                                        </div>
+                                    </div>
+                                    <p class="calc-box-hint" id="profit-hint">Enter cost price to see your profit.</p>
+                                </div>
+
+                                <!-- Discount -->
+                                <div class="calc-box calc-box--discount hidden" id="discount-box">
+                                    <div class="calc-box-header">
+                                        <i data-lucide="tag"></i>
+                                        <span>Discount Summary</span>
+                                    </div>
+                                    <div class="calc-rows">
+                                        <div class="calc-row">
+                                            <span>Original Price</span>
+                                            <span id="cr-original">GH&#8373; —</span>
+                                        </div>
+                                        <div class="calc-row calc-row--deduct">
+                                            <span>Discount</span>
+                                            <span id="cr-discount-amt">&#8722; GH&#8373; —</span>
+                                        </div>
+                                        <div class="calc-row calc-row--total">
+                                            <span>Sale Price</span>
+                                            <span id="cr-sale">GH&#8373; —</span>
+                                        </div>
+                                    </div>
+                                    <div class="discount-badge-wrap">
+                                        <span class="discount-badge" id="discount-badge">0% OFF</span>
+                                        <span class="calc-box-hint">Buyers will see this discount</span>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── STEP 3: Images ── -->
+                <div class="form-panel" id="panel-3">
+                    <div class="panel-header">
+                        <h2>Product Images</h2>
+                        <p>Add up to 5 photos — first image is the cover</p>
+                    </div>
+                    <div class="images-section">
+                        <div class="images-grid" id="images-grid">
+                            <label class="img-upload-slot main-slot" id="main-slot" for="img-upload-0">
+                                <input type="file" id="img-upload-0" accept="image/*" class="img-file-input" data-index="0">
+                                <div class="img-slot-placeholder">
+                                    <i data-lucide="image-plus"></i>
+                                    <span>Cover Photo</span>
+                                    <p>Required</p>
+                                </div>
+                                <img class="img-slot-preview hidden" alt="Cover preview">
+                                <button type="button" class="img-remove-btn hidden" aria-label="Remove image"><i data-lucide="x"></i></button>
+                                <span class="img-slot-badge">Cover</span>
+                            </label>
+                            <label class="img-upload-slot" for="img-upload-1">
+                                <input type="file" id="img-upload-1" accept="image/*" class="img-file-input" data-index="1">
+                                <div class="img-slot-placeholder">
+                                    <i data-lucide="plus"></i>
+                                    <span>Photo 2</span>
+                                </div>
+                                <img class="img-slot-preview hidden" alt="Photo 2 preview">
+                                <button type="button" class="img-remove-btn hidden" aria-label="Remove image"><i data-lucide="x"></i></button>
+                            </label>
+                            <label class="img-upload-slot" for="img-upload-2">
+                                <input type="file" id="img-upload-2" accept="image/*" class="img-file-input" data-index="2">
+                                <div class="img-slot-placeholder">
+                                    <i data-lucide="plus"></i>
+                                    <span>Photo 3</span>
+                                </div>
+                                <img class="img-slot-preview hidden" alt="Photo 3 preview">
+                                <button type="button" class="img-remove-btn hidden" aria-label="Remove image"><i data-lucide="x"></i></button>
+                            </label>
+                            <label class="img-upload-slot" for="img-upload-3">
+                                <input type="file" id="img-upload-3" accept="image/*" class="img-file-input" data-index="3">
+                                <div class="img-slot-placeholder">
+                                    <i data-lucide="plus"></i>
+                                    <span>Photo 4</span>
+                                </div>
+                                <img class="img-slot-preview hidden" alt="Photo 4 preview">
+                                <button type="button" class="img-remove-btn hidden" aria-label="Remove image"><i data-lucide="x"></i></button>
+                            </label>
+                            <label class="img-upload-slot" for="img-upload-4">
+                                <input type="file" id="img-upload-4" accept="image/*" class="img-file-input" data-index="4">
+                                <div class="img-slot-placeholder">
+                                    <i data-lucide="plus"></i>
+                                    <span>Photo 5</span>
+                                </div>
+                                <img class="img-slot-preview hidden" alt="Photo 5 preview">
+                                <button type="button" class="img-remove-btn hidden" aria-label="Remove image"><i data-lucide="x"></i></button>
+                            </label>
+                        </div>
+                        <p class="images-hint"><i data-lucide="info"></i> JPG, PNG or WEBP · Max 5MB each · At least 1 image required</p>
+                    </div>
+                </div>
+
+                <!-- ── STEP 5: Publish ── -->
+                <div class="form-panel" id="panel-5">
+                    <div class="panel-header">
+                        <h2 id="publish-heading">Review & Publish</h2>
+                        <p id="publish-sub-heading">Check your listing before it goes live</p>
+                    </div>
+
+                    <!-- Summary card -->
+                    <div class="review-card" id="review-card">
+                        <div class="review-img-wrap">
+                            <div class="review-img-placeholder" id="review-img-placeholder"><i data-lucide="image"></i></div>
+                            <img id="review-img" class="hidden" alt="Product cover">
+                        </div>
+                        <div class="review-details">
+                            <p class="review-category" id="review-category">—</p>
+                            <h3 class="review-name" id="review-name">—</h3>
+                            <div class="review-meta">
+                                <span id="review-condition">—</span>
+                                <span class="review-dot">·</span>
+                                <span id="review-qty">—</span>
+                            </div>
+                            <p class="review-price" id="review-price">GH₵ —</p>
+                            <div class="review-badges">
+                                <span class="review-badge" id="review-fulfillment">—</span>
+                                <span class="review-badge" id="review-location-badge"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Visibility toggle -->
+                    <div class="visibility-section">
+                        <div class="visibility-info">
+                            <strong>Listing Visibility</strong>
+                            <p id="publish-vis-helper">Publish now to make it live, or save as draft to finish later.</p>
+                        </div>
+                        <div class="visibility-toggle-wrap">
+                            <span class="vis-label" id="vis-label">Draft</span>
+                            <label class="toggle-switch" aria-label="Toggle visibility">
+                                <input type="checkbox" id="visibility-toggle" name="visibility" value="active">
+                                <span class="toggle-track">
+                                    <span class="toggle-thumb"></span>
+                                </span>
+                            </label>
+                            <span class="vis-label vis-label--active" id="vis-label-active">Live</span>
+                        </div>
+                    </div>
+
+                    <!-- Edit links -->
+                    <div class="review-edit-links">
+                        <button type="button" class="edit-link" data-goto="1"><i data-lucide="pencil"></i> Edit Basic Info</button>
+                        <button type="button" class="edit-link" data-goto="details" id="edit-details-link" style="display:none;"><i data-lucide="pencil"></i> Edit Details</button>
+                        <button type="button" class="edit-link" data-goto="2"><i data-lucide="pencil"></i> Edit Pricing</button>
+                        <button type="button" class="edit-link" data-goto="3"><i data-lucide="pencil"></i> Edit Images</button>
+                    </div>
+                </div>
+
+                <!-- Form nav buttons -->
+                <div class="form-nav">
+                    <button type="button" class="btn btn-ghost" id="btn-back" style="display:none;">
+                        <i data-lucide="arrow-left"></i> Back
+                    </button>
+                    <div class="form-nav-right">
+                        <button type="button" class="btn btn-ghost" id="btn-save-draft">
+                            <i data-lucide="save"></i> Save Draft
+                        </button>
+                        <button type="button" class="btn btn-primary" id="btn-next">
+                            Next <i data-lucide="arrow-right"></i>
+                        </button>
+                        <button type="submit" class="btn btn-primary hidden" id="btn-submit">
+                            <i data-lucide="send"></i> <span id="submit-label">Publish Listing</span>
+                        </button>
+                    </div>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+    <!-- Success modal -->
+    <div class="modal-overlay hidden" id="success-modal"
+         role="dialog" aria-modal="true"
+         aria-labelledby="modal-title" aria-describedby="modal-msg">
+        <div class="modal">
+            <div class="modal-success-icon"><i data-lucide="check-circle"></i></div>
+            <h3 id="modal-title">Product Published!</h3>
+            <p id="modal-msg">Your listing is now live on UnimartX.</p>
+            <div class="modal-actions">
+                <a href="product-list.html" class="btn btn-ghost">View All Products</a>
+                <button type="button" class="btn btn-primary" id="modal-add-another">Add Another</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script>lucide.createIcons();</script>
+    <script src="../shared/polling.js"></script>
+    <script src="../shared/sidebar.js"></script>
+    <script src="../shared/topnav.js"></script>
+    <script src="../assets/js/add-product.js"></script>
+
+</body>
+</html>

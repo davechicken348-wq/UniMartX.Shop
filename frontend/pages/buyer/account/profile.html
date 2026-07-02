@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - UnimartX</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../shared/css/buyer-base.css">
+    <link rel="stylesheet" href="../shared/css/sidebar.css">
+    <link rel="stylesheet" href="../shared/css/topnav.css">
+    <link rel="stylesheet" href="../assets/css/profile.css">
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-icon"><i data-lucide="shopping-bag"></i></div>
+            <span class="sidebar-logo-text">Unimart<span>X</span></span>
+        </div>
+        <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
+            <i data-lucide="chevron-left"></i>
+        </button>
+        <nav class="sidebar-nav">
+            <span class="nav-section-label">Main</span>
+            <a href="../dashboard/dashboard.html" class="nav-item" data-tooltip="Dashboard">
+                <div class="nav-item-icon"><i data-lucide="layout-dashboard"></i></div>
+                <span class="nav-item-label">Dashboard</span>
+            </a>
+            <a href="../orders/orders.html" class="nav-item" data-tooltip="My Orders">
+                <div class="nav-item-icon"><i data-lucide="package"></i></div>
+                <span class="nav-item-label">My Orders</span>
+                <span class="nav-item-badge" id="sidebar-orders-count" style="display:none"></span>
+            </a>
+            <a href="../shopping/wishlist.html" class="nav-item" data-tooltip="Wishlist">
+                <div class="nav-item-icon"><i data-lucide="heart"></i></div>
+                <span class="nav-item-label">Wishlist</span>
+            </a>
+            <a href="../notifications/notifications.html" class="nav-item" data-tooltip="Notifications">
+                <div class="nav-item-icon"><i data-lucide="bell"></i></div>
+                <span class="nav-item-label">Notifications</span>
+                <span class="nav-item-badge" id="sidebar-notif-count" style="display:none"></span>
+            </a>
+                        <span class="nav-section-label">Account</span>
+            <a href="profile.html" class="nav-item active" data-tooltip="Profile">
+                <div class="nav-item-icon"><i data-lucide="user"></i></div>
+                <span class="nav-item-label">Profile</span>
+            </a>
+            <a href="settings.html" class="nav-item" data-tooltip="Settings">
+                <div class="nav-item-icon"><i data-lucide="settings"></i></div>
+                <span class="nav-item-label">Settings</span>
+            </a>
+            <span class="nav-section-label">More</span>
+                        <a href="../buyer-landing/buyer-landing.html" class="nav-item" data-tooltip="Home">
+                <div class="nav-item-icon"><i data-lucide="home"></i></div>
+                <span class="nav-item-label">Home</span>
+            </a>
+            <a href="../../public/shop/shop.html" class="nav-item" data-tooltip="Browse Shop">
+                <div class="nav-item-icon"><i data-lucide="shopping-bag"></i></div>
+                <span class="nav-item-label">Browse Shop</span>
+            </a>
+            <a href="../../public/info/faq.html" class="nav-item" data-tooltip="Help & FAQ">
+                <div class="nav-item-icon"><i data-lucide="help-circle"></i></div>
+                <span class="nav-item-label">Help & FAQ</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="sidebar-user">
+                <div class="sidebar-avatar" id="sidebar-avatar"></div>
+                <div class="sidebar-user-info">
+                    <p class="sidebar-user-name" id="sidebar-name"></p>
+                    <p class="sidebar-user-role">Buyer</p>
+                </div>
+                <a href="../../auth/logout.html" class="sidebar-logout" aria-label="Log out">
+                    <i data-lucide="log-out"></i>
+                </a>
+            </div>
+        </div>
+    </aside>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+
+    <!-- TOP NAV -->
+    <header class="topnav" id="topnav">
+        <button class="topnav-hamburger" id="topnav-hamburger" aria-label="Open menu">
+            <i data-lucide="menu"></i>
+        </button>
+        <div class="topnav-title">
+            <h1>My Profile</h1>
+            <p>Manage your personal information</p>
+        </div>
+        <div class="topnav-actions">
+            <div style="position:relative;">
+                <button class="topnav-btn" id="notif-btn" aria-label="Notifications">
+                    <i data-lucide="bell"></i>
+                    <span class="topnav-badge" id="notif-badge" style="display:none"></span>
+                </button>
+                <div class="notif-panel" id="notif-panel">
+                    <div class="notif-header">
+                        <h3>Notifications</h3>
+                        <button class="notif-mark-read" id="mark-read">Mark all read</button>
+                    </div>
+                    <div class="notif-list">
+                        <div class="notif-item empty">
+                            <div class="notif-body">
+                                <p>No new notifications.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="notif-footer"><a href="../notifications/notifications.html">View all</a></div>
+                </div>
+            </div>
+            <div style="position:relative;">
+                <div class="topnav-user" id="topnav-user">
+                    <div class="topnav-avatar" id="topnav-avatar"></div>
+                    <span class="topnav-username" id="topnav-username"></span>
+                    <i data-lucide="chevron-down" class="topnav-chevron"></i>
+                </div>
+                <div class="topnav-dropdown" id="topnav-dropdown">
+                    <a href="profile.html" class="dropdown-item"><i data-lucide="user"></i> My Profile</a>
+                    <a href="../orders/orders.html" class="dropdown-item"><i data-lucide="package"></i> My Orders</a>
+                    <a href="settings.html" class="dropdown-item"><i data-lucide="settings"></i> Settings</a>
+                    <div class="dropdown-divider"></div>
+                    <a href="../../public/home.html" class="dropdown-item"><i data-lucide="globe"></i> Public Site</a>
+                    <div class="dropdown-divider"></div>
+                    <a href="../../auth/logout.html" class="dropdown-item dropdown-item--danger"><i data-lucide="log-out"></i> Log Out</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <!-- MAIN -->
+    <div class="buyer-main" id="buyer-main">
+        <div class="page-content">
+
+            <!-- Toast notifications container -->
+            <div id="toast-container" class="toast-container"></div>
+
+            <!-- Profile load error banner -->
+            <div id="profile-error-banner" class="alert alert-error" style="display:none;margin-bottom:1rem;align-items:center;gap:0.6rem;padding:0.85rem 1rem;border-radius:10px;" role="alert">
+                <i data-lucide="alert-circle"></i>
+                <span id="profile-error-text"></span>
+            </div>
+
+            <div class="profile-layout">
+
+                <!-- ── LEFT: Avatar card ── -->
+                <div class="profile-side">
+
+                        <div class="avatar-card card">
+                        <div class="avatar-wrap">
+                            <div class="avatar-circle" id="avatar-circle"></div>
+                            <label class="avatar-upload-btn" for="avatar-input" aria-label="Upload photo">
+                                <i data-lucide="camera"></i>
+                            </label>
+                            <input type="file" id="avatar-input" accept="image/*" hidden>
+                        </div>
+                        <h2 class="avatar-name" id="avatar-name">Loading…</h2>
+                        <p class="avatar-email" id="avatar-email">Loading…</p>
+                        <span class="avatar-badge">
+                            <i data-lucide="shield-check"></i>
+                            Verified Buyer
+                        </span>
+                        <div class="avatar-stats">
+                            <div class="avatar-stat">
+                                <a href="../orders/orders.html" class="stat-link" title="View all orders"><strong>—</strong><span>Orders</span></a>
+                            </div>
+                            <div class="avatar-stat-div"></div>
+                            <div class="avatar-stat">
+                                <strong>—</strong>
+                                <span>Wishlist</span>
+                            </div>
+                            <div class="avatar-stat-div"></div>
+                            <div class="avatar-stat">
+                                <strong>—</strong>
+                                <span>Joined</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Completion -->
+                    <div class="card completion-card">
+                        <div class="card-header">
+                            <div><h2>Profile Completion</h2></div>
+                            <span class="completion-pct">0%</span>
+                        </div>
+                        <div class="completion-bar-wrap">
+                            <div class="completion-bar" style="width:75%"></div>
+                        </div>
+                        <div class="completion-list">
+                            <div class="completion-item" id="comp-email">
+                                <i data-lucide="check-circle"></i><span>Email verified</span>
+                            </div>
+                            <div class="completion-item" id="comp-phone">
+                                <i data-lucide="check-circle"></i><span>Phone number added</span>
+                            </div>
+                            <div class="completion-item" id="comp-avatar">
+                                <i data-lucide="check-circle"></i><span>Profile photo added</span>
+                            </div>
+                            <div class="completion-item" id="comp-address">
+                                <i data-lucide="check-circle"></i><span>Delivery address added</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Security -->
+                    <div class="card profile-section">
+                        <div class="card-header">
+                            <div>
+                                <h2>Security</h2>
+                                <p>Manage your password and account security</p>
+                            </div>
+                        </div>
+                        <div class="security-actions">
+                            <a href="../account/settings.html#security" class="btn btn-ghost">
+                                <i data-lucide="lock"></i> Change Password
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- ── RIGHT: Forms ── -->
+                <div class="profile-main">
+
+                    <!-- Personal info -->
+                    <div class="card profile-section" id="section-personal">
+                        <div class="card-header">
+                            <div>
+                                <h2>Personal Information</h2>
+                                <p>Update your name and contact details</p>
+                            </div>
+                            <div class="card-header-actions">
+                                <button class="edit-toggle-btn" id="edit-personal-btn" aria-expanded="false" aria-controls="personal-actions">
+                                    <i data-lucide="pencil"></i> Edit
+                                </button>
+                                <button class="cancel-toggle-btn hidden" id="cancel-personal-header-btn">
+                                    <i data-lucide="x"></i> Cancel
+                                </button>
+                            </div>
+                        </div>
+                        <form id="personal-form" novalidate>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="first-name">First Name</label>
+                                    <div class="input-wrap">
+                                        <i data-lucide="user"></i>
+                                        <input type="text" id="first-name" name="firstName" value="" placeholder="First name" disabled>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="last-name">Last Name</label>
+                                    <div class="input-wrap">
+                                        <i data-lucide="user"></i>
+                                        <input type="text" id="last-name" name="lastName" value="" placeholder="Last name" disabled>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email Address</label>
+                                <div class="input-wrap">
+                                    <i data-lucide="mail"></i>
+                                    <input type="email" id="email" name="email" value="" placeholder="you@example.com" disabled>
+                                    <span class="input-verified"><i data-lucide="check-circle"></i> Verified</span>
+                                </div>
+                            </div>
+                                <div class="form-group">
+                                    <label for="phone">Phone Number</label>
+                                    <div class="input-wrap">
+                                        <i data-lucide="phone"></i>
+                                        <input type="tel" id="phone" name="phone" value="" placeholder="+233 24 000 0000" pattern="[\+]?[0-9\s\-]{7,15}" disabled>
+                                    </div>
+                                </div>
+                            <div class="form-actions hidden" id="personal-actions">
+                                <button type="submit" class="btn btn-primary" id="save-personal-btn">
+                                    <i data-lucide="save"></i>
+                                    Save Changes
+                                    <div class="btn-spinner"></div>
+                                </button>
+                                <button type="button" class="btn btn-ghost" id="cancel-personal-btn">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Delivery address -->
+                    <div class="card profile-section" id="section-address">
+                        <div class="card-header">
+                            <div>
+                                <h2>Delivery Address</h2>
+                                <p>Your default delivery location</p>
+                            </div>
+                            <div class="card-header-actions">
+                                <button class="edit-toggle-btn" id="edit-address-btn" aria-expanded="false" aria-controls="address-actions">
+                                    <i data-lucide="pencil"></i> Edit
+                                </button>
+                                <button class="cancel-toggle-btn hidden" id="cancel-address-header-btn">
+                                    <i data-lucide="x"></i> Cancel
+                                </button>
+                            </div>
+                            </div>
+                        <form id="address-form" novalidate>
+                            <div class="form-group">
+                                <label for="address">Street Address</label>
+                                <div class="input-wrap">
+                                    <i data-lucide="map-pin"></i>
+                                    <input type="text" id="address" name="street" placeholder="House / Flat number, Street name" disabled>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="city">City</label>
+                                    <div class="input-wrap">
+                                        <i data-lucide="building-2"></i>
+                                        <input type="text" id="city" name="city" placeholder="Sunyani" disabled>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="region">Region</label>
+                                    <div class="input-wrap input-wrap--select">
+                                        <i data-lucide="map"></i>
+                                        <select id="region" name="state" disabled>
+                                            <option value="" disabled selected>Select region</option>
+                                            <option value="Bono">Bono</option>
+                                            <option value="Bono East">Bono East</option>
+                                            <option value="Ahafo">Ahafo</option>
+                                            <option value="Ashanti">Ashanti</option>
+                                            <option value="Western">Western</option>
+                                            <option value="Central">Central</option>
+                                            <option value="Eastern">Eastern</option>
+                                            <option value="Upper West">Upper West</option>
+                                            <option value="Northern">Northern</option>
+                                            <option value="Upper East">Upper East</option>
+                                            <option value="Volta">Volta</option>
+                                            <option value="Oti">Oti</option>
+                                            <option value="Savannah">Savannah</option>
+                                            <option value="North East">North East</option>
+                                            <option value="Western North">Western North</option>
+                                        </select>
+                                        <i data-lucide="chevron-down" class="select-chevron"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="notes">Delivery Notes <span class="optional">(optional)</span></label>
+                                <div class="input-wrap input-wrap--textarea">
+                                    <i data-lucide="file-text"></i>
+                                    <textarea id="notes" name="notes" rows="3" placeholder="Landmark, gate colour, special instructions…" disabled></textarea>
+                                </div>
+                            </div>
+                            <div class="form-actions hidden" id="address-actions">
+                                <button type="submit" class="btn btn-primary" id="save-address-btn">
+                                    <i data-lucide="save"></i>
+                                    Save Address
+                                    <div class="btn-spinner"></div>
+                                </button>
+                                <button type="button" class="btn btn-ghost" id="cancel-address-btn">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    </div>
+
+    <script src="../../../config.js"></script>
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script>lucide.createIcons();</script>
+    <script src="../shared/js/polling.js"></script>
+    <script src="../shared/js/sidebar.js"></script>
+    <script src="../shared/js/topnav.js"></script>
+    <script src="../assets/js/profile.js"></script>
+
+</body>
+</html>

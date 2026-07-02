@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Log in to your UnimartX account. Buy and sell with verified student sellers on campus.">
+    <meta name="theme-color" content="#0a0a0f">
+    <title>Log In - UnimartX</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+    <div class="bg-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+        <div class="shape shape-4"></div>
+        <div class="shape shape-5"></div>
+    </div>
+
+    <div class="page">
+        <a href="../public/home.html" class="logo">
+            <span class="logo-icon">🛍️</span> Unimart<span>X</span>
+        </a>
+
+        <div class="role-selector" aria-label="Select your role">
+            <button class="role-card role-buyer active" data-role="buyer">
+                <div class="role-icon-ring">
+                    <i data-lucide="shopping-bag"></i>
+                </div>
+                <span class="role-name">Buyer</span>
+                <span class="role-desc">Shop deals &amp; order</span>
+            </button>
+            <button class="role-card role-seller" data-role="seller">
+                <div class="role-icon-ring">
+                    <i data-lucide="store"></i>
+                </div>
+                <span class="role-name">Seller</span>
+                <span class="role-desc">Manage your store</span>
+            </button>
+            <button class="role-card role-admin" data-role="admin">
+                <div class="role-icon-ring">
+                    <i data-lucide="shield"></i>
+                </div>
+                <span class="role-name">Admin</span>
+                <span class="role-desc">Oversee the platform</span>
+            </button>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h1>welcome back</h1>
+                <p>sign in to your <span id="role-label">account</span></p>
+            </div>
+
+            <div id="alert-error" class="alert alert-error" role="alert">
+                <i data-lucide="alert-circle" class="alert-icon"></i>
+                <span id="error-text"></span>
+            </div>
+
+            <form id="login-form" novalidate>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <div class="input-wrapper">
+                        <i data-lucide="mail" class="input-icon"></i>
+                        <input type="email" id="email" name="email" placeholder="you@st.university.edu.gh" required autocomplete="email" aria-describedby="email-error">
+                        <div class="input-glow"></div>
+                    </div>
+                    <div id="email-error" class="error-message" role="alert"></div>
+                </div>
+
+                <div class="form-group">
+                    <div class="label-row">
+                        <label for="password">Password</label>
+                        <a href="forgot-password.html" class="forgot-link">forgot password?</a>
+                    </div>
+                    <div class="input-wrapper">
+                        <i data-lucide="lock" class="input-icon"></i>
+                        <input type="password" id="password" name="password" placeholder="enter your password" required autocomplete="current-password" aria-describedby="password-error">
+                        <button type="button" class="password-toggle" id="toggle-password" aria-label="Show password">
+                            <i data-lucide="eye" class="eye-icon"></i>
+                        </button>
+                        <div class="input-glow"></div>
+                    </div>
+                    <div id="password-error" class="error-message" role="alert"></div>
+                </div>
+
+                <div class="form-check">
+                    <input type="checkbox" id="remember" name="remember">
+                    <label for="remember">keep me signed in for 30 days</label>
+                </div>
+
+                <button type="submit" class="auth-btn" id="submit-btn">
+                    <span class="btn-text">Log In</span>
+                    <div class="spinner"></div>
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                no account yet? <a href="buyer/register.html">let's make one</a>
+            </div>
+
+            <div class="seller-cta">
+                <span>want to sell on UnimartX?</span>
+                <a href="seller/register.html">become a seller</a>
+            </div>
+        </div>
+
+        <footer class="copyright">made with love for the University of Ghana community</footer>
+    </div>
+
+    <script src="../../config.js"></script>
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script src="js/login.js"></script>
+</body>
+</html>

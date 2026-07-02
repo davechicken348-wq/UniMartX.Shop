@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users — Admin — UnimartX</title>
+    <script src="../../../config.js"></script>
+    <script>
+      if (localStorage.getItem("seller_sidebar_collapsed") === "true") {
+        document.documentElement.classList.add("no-transition");
+      }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../shared/admin-base.css">
+    <link rel="stylesheet" href="../shared/sidebar.css">
+    <link rel="stylesheet" href="../shared/topnav.css">
+    <link rel="stylesheet" href="../assets/css/users.css">
+</head>
+<body>
+
+    <!-- ── SIDEBAR ── -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-icon"><i data-lucide="store"></i></div>
+            <span class="sidebar-logo-text">Unimart<span>X</span></span>
+        </div>
+        <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
+            <i data-lucide="chevron-left"></i>
+        </button>
+        <nav class="sidebar-nav">
+            <span class="nav-section-label">Main</span>
+            <a href="../dashboard/dashboard.html" class="nav-item" data-tooltip="Dashboard">
+                <div class="nav-item-icon"><i data-lucide="layout-dashboard"></i></div>
+                <span class="nav-item-label">Dashboard</span>
+            </a>
+            <a href="users.html" class="nav-item active">
+                <div class="nav-item-icon"><i data-lucide="users"></i></div>
+                <span class="nav-item-label">Users</span>
+                <span class="nav-item-badge" id="sidebar-users-count"></span>
+            </a>
+            <a href="../orders/orders.html" class="nav-item">
+                <div class="nav-item-icon"><i data-lucide="shopping-bag"></i></div>
+                <span class="nav-item-label">Orders</span>
+                <span class="nav-item-badge badge-warning" id="sidebar-orders-count"></span>
+            </a>
+            <a href="../products/products.html" class="nav-item">
+                <div class="nav-item-icon"><i data-lucide="package"></i></div>
+                <span class="nav-item-label">Products</span>
+            </a>
+
+            <span class="nav-section-label">Moderation</span>
+             <a href="../refunds/refunds.html" class="nav-item">
+                <div class="nav-item-icon"><i data-lucide="rotate-ccw"></i></div>
+                <span class="nav-item-label">Refunds & Disputes</span>
+            </a>
+            <a href="../seller-verification/seller-verification.html" class="nav-item">
+                <div class="nav-item-icon"><i data-lucide="user-check"></i></div>
+                <span class="nav-item-label">Sellers</span>
+                <span class="nav-item-badge badge-danger" id="sidebar-sellers-count"></span>
+            </a>
+            <a href="../notifications/notifications.html" class="nav-item">
+                <div class="nav-item-icon"><i data-lucide="bell"></i></div>
+                <span class="nav-item-label">Alerts</span>
+                <span class="nav-item-badge" id="sidebar-notif-count"></span>
+            </a>
+            <span class="nav-section-label">Config</span>
+            <a href="../settings/settings.html" class="nav-item" data-tooltip="Settings">
+                <div class="nav-item-icon"><i data-lucide="settings"></i></div>
+                <span class="nav-item-label">Settings</span>
+            </a>
+            <a href="../admin-landing/admin-landing.html" class="nav-item" data-tooltip="Admin Home">
+                <div class="nav-item-icon"><i data-lucide="home"></i></div>
+                <span class="nav-item-label">Admin Home</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="sidebar-user">
+                <div class="sidebar-avatar" id="sidebar-avatar">AD</div>
+                <div class="sidebar-user-info">
+                    <div class="sidebar-user-name" id="sidebar-name">Admin</div>
+                    <div class="sidebar-user-role" id="sidebar-role">Super Admin</div>
+                </div>
+                <a href="../../auth/logout.html" class="sidebar-logout" aria-label="Log out">
+                    <i data-lucide="log-out"></i>
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- ── TOPNAV ── -->
+    <header class="topnav" id="topnav">
+        <button class="topnav-hamburger" id="topnav-hamburger" aria-label="Open menu">
+            <i data-lucide="menu"></i>
+        </button>
+        <div class="topnav-title">
+            <h1>Users</h1>
+            <p>Manage buyer and seller accounts</p>
+        </div>
+        <div class="topnav-search">
+            <i data-lucide="search"></i>
+            <input type="text" placeholder="Search by name or email…" id="topnav-search-input">
+        </div>
+        <div class="topnav-actions">
+            <button class="topnav-btn" id="notif-btn" aria-label="Notifications">
+                <i data-lucide="bell"></i>
+                <span class="topnav-badge" id="notif-badge" style="display:none"></span>
+            </button>
+            <div class="topnav-user" id="topnav-user">
+                <div class="topnav-avatar" id="topnav-avatar">AD</div>
+                <span class="topnav-username" id="topnav-username">Admin</span>
+                <i data-lucide="chevron-down" class="topnav-chevron"></i>
+                <div class="topnav-dropdown" id="topnav-dropdown">
+                    <a href="../settings/settings.html" class="dropdown-item"><i data-lucide="settings"></i> Settings</a>
+                    <div class="dropdown-divider"></div>
+                    <a href="../../auth/logout.html" class="dropdown-item dropdown-item--danger"><i data-lucide="log-out"></i> Log out</a>
+                </div>
+            </div>
+        </div>
+        <div class="notif-panel" id="notif-panel">
+            <div class="notif-header">
+                <h3>Notifications</h3>
+                <button class="notif-mark-read" id="mark-read">Mark all read</button>
+            </div>
+            <div class="notif-list" id="notif-list">
+                <div class="notif-empty">No new notifications</div>
+            </div>
+            <div class="notif-footer">
+                <a href="../notifications/notifications.html">View all notifications</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ── MAIN ── -->
+    <main class="admin-main" id="admin-main">
+        <div class="page-content">
+
+            <!-- Page header -->
+            <div class="page-header">
+                <div>
+                    <h1>Users</h1>
+                    <p>View and manage all registered accounts on the platform</p>
+                </div>
+                <button class="export-btn" id="export-btn">
+                    <i data-lucide="download"></i>
+                    Export CSV
+                </button>
+            </div>
+
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon"><i data-lucide="users"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="stat-total">—</div>
+                        <div class="stat-label">Total Users</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon stat-icon--blue"><i data-lucide="shopping-cart"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="stat-buyers">—</div>
+                        <div class="stat-label">Buyers</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon stat-icon--success"><i data-lucide="store"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="stat-sellers">—</div>
+                        <div class="stat-label">Sellers</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon stat-icon--warning"><i data-lucide="clock"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="stat-unverified">—</div>
+                        <div class="stat-label">Unverified</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Toolbar -->
+            <div class="toolbar">
+                <div class="filter-pills" id="filter-pills">
+                    <button class="pill active" data-role="">All</button>
+                    <button class="pill" data-role="buyer">Buyers</button>
+                    <button class="pill" data-role="seller">Sellers</button>
+                    <button class="pill" data-role="unverified">Unverified</button>
+                </div>
+                <div class="toolbar-search">
+                    <i data-lucide="search"></i>
+                    <input type="text" id="search-input" placeholder="Search name or email…">
+                </div>
+            </div>
+
+            <!-- Table card -->
+            <div class="card table-card">
+                <div class="table-scroll">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Verified</th>
+                                <th>Joined</th>
+                                <th>Orders</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-tbody">
+                            <!-- skeleton rows -->
+                            <tr class="skel-row"><td colspan="7"><div class="skel-line"></div></td></tr>
+                            <tr class="skel-row"><td colspan="7"><div class="skel-line"></div></td></tr>
+                            <tr class="skel-row"><td colspan="7"><div class="skel-line"></div></td></tr>
+                            <tr class="skel-row"><td colspan="7"><div class="skel-line"></div></td></tr>
+                            <tr class="skel-row"><td colspan="7"><div class="skel-line"></div></td></tr>
+                            <tr class="skel-row"><td colspan="7"><div class="skel-line"></div></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination" id="pagination">
+                    <div class="page-info" id="page-info"></div>
+                    <div class="page-btns">
+                        <button class="page-btn" id="prev-btn" disabled>
+                            <i data-lucide="chevron-left"></i>
+                        </button>
+                        <div class="page-numbers" id="page-numbers"></div>
+                        <button class="page-btn" id="next-btn" disabled>
+                            <i data-lucide="chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- ── USER DETAIL DRAWER ── -->
+    <div class="drawer-overlay" id="drawer-overlay"></div>
+    <aside class="drawer" id="user-drawer">
+        <div class="drawer-header">
+            <h2>User Details</h2>
+            <button class="drawer-close" id="drawer-close" aria-label="Close">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+        <div class="drawer-body" id="drawer-body">
+            <!-- injected by JS -->
+        </div>
+    </aside>
+
+    <!-- ── TOAST ── -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script src="../shared/polling.js"></script>
+    <script src="../shared/sidebar.js"></script>
+    <script src="../shared/topnav.js"></script>
+    <script src="../assets/js/auth-utils.js"></script>
+    <script src="../assets/js/users.js"></script>
+
+</body>
+</html>

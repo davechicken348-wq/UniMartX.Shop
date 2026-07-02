@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Not Found - UnimartX</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/public.css">
+    <link rel="stylesheet" href="assets/css/404.css">
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-inner">
+            <a href="home.html" class="nav-logo">Unimart<span>X</span></a>
+            <div class="nav-actions">
+                <a href="shop/cart.html" class="nav-icon-btn" aria-label="Cart">
+                    <i data-lucide="shopping-cart"></i>
+                    <span class="badge">0</span>
+                </a>
+                <a href="../auth/login.html" class="nav-btn nav-btn-ghost">Log In</a>
+                <a href="../auth/buyer/register.html" class="nav-btn nav-btn-primary">Sign Up</a>
+            </div>
+            <button class="nav-hamburger" id="nav-hamburger" aria-label="Open menu">
+                <i data-lucide="menu"></i>
+            </button>
+        </div>
+        <div class="nav-mobile" id="nav-mobile">
+            <a href="home.html">Home</a>
+            <a href="shop/shop.html">Shop</a>
+            <a href="../auth/login.html">Log In</a>
+            <a href="../auth/buyer/register.html" class="nav-btn nav-btn-primary">Sign Up</a>
+        </div>
+    </nav>
+
+
+    <!-- MAIN -->
+    <main class="not-found">
+
+        <div class="not-found-glow"></div>
+        <div class="particles" id="particles"></div>
+
+        <div class="not-found-inner">
+
+            <!-- Big 404 -->
+            <div class="four-o-four">
+                <span class="digit" id="d1">4</span>
+                <div class="zero-wrap">
+                    <div class="zero-ring"></div>
+                    <div class="zero-icon"><i data-lucide="search-x"></i></div>
+                </div>
+                <span class="digit" id="d2">4</span>
+            </div>
+
+            <!-- Text -->
+            <div class="not-found-text">
+                <h1>Lost in the marketplace.</h1>
+                <p>The page you're looking for doesn't exist, was moved, or never existed in the first place. But don't worry — there's plenty more to explore.</p>
+            </div>
+
+            <!-- Search -->
+            <div class="not-found-search">
+                <i data-lucide="search"></i>
+                <input type="search" id="search-input" placeholder="Search for products, stores…" aria-label="Search">
+                <button id="search-btn">Search</button>
+            </div>
+
+            <!-- Quick links -->
+            <div class="quick-links">
+                <a href="home.html" class="quick-link">
+                    <i data-lucide="home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="shop/shop.html" class="quick-link">
+                    <i data-lucide="shopping-bag"></i>
+                    <span>Shop</span>
+                </a>
+                <a href="info/about.html" class="quick-link">
+                    <i data-lucide="info"></i>
+                    <span>About</span>
+                </a>
+                <a href="info/faq.html" class="quick-link">
+                    <i data-lucide="help-circle"></i>
+                    <span>FAQ</span>
+                </a>
+                <a href="contact/contact.html" class="quick-link">
+                    <i data-lucide="mail"></i>
+                    <span>Contact</span>
+                </a>
+            </div>
+
+            <!-- CTA -->
+            <div class="not-found-ctas">
+                <a href="home.html" class="btn-primary-link">
+                    <i data-lucide="home"></i>
+                    Back to Home
+                </a>
+                <a href="shop/shop.html" class="btn-ghost-link">
+                    <i data-lucide="shopping-bag"></i>
+                    Browse Shop
+                </a>
+            </div>
+
+        </div>
+    </main>
+
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-bottom">
+            <span>&copy; 2026 UnimartX. · <a href="info/terms.html">Terms</a> · <a href="info/privacy.html">Privacy</a> · <a href="contact/contact.html">Contact</a></span>
+        </div>
+    </footer>
+
+    <script src="../../config.js"></script>
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script src="assets/js/404.js"></script>
+    <script src="../shared/js/public-nav.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart - UnimartX</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/public.css">
+    <link rel="stylesheet" href="../assets/css/cart.css">
+    <style>
+        .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
+        .reveal.in-view { opacity: 1; transform: translateY(0); }
+        .skel-bar { height: 12px; border-radius: 4px; background: linear-gradient(90deg, #e7e5e4 25%, #f5f5f4 50%, #e7e5e4 75%); background-size: 200% 100%; animation: skeleton-shimmer 1.4s infinite; }
+        .skel-bar.w-60 { width: 60%; }
+        .skel-bar.w-40 { width: 40%; }
+        .skel-bar.w-30 { width: 30%; }
+        .skel-bar.w-80 { width: 80%; }
+        .skel-circle { width: 56px; height: 56px; border-radius: 12px; flex-shrink: 0; background: linear-gradient(90deg, #e7e5e4 25%, #f5f5f4 50%, #e7e5e4 75%); background-size: 200% 100%; animation: skeleton-shimmer 1.4s infinite; }
+        @keyframes skeleton-shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        .cart-item { transition: opacity 0.3s ease, transform 0.3s ease; }
+    </style>
+</head>
+<body>
+
+    <!-- ═══════════════════════════════════════════
+         NAVBAR
+    ═══════════════════════════════════════════ -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-inner">
+            <a href="../home.html" class="nav-logo">Unimart<span>X</span></a>
+            <div class="nav-search">
+                <i data-lucide="search"></i>
+                <input type="search" placeholder="Search products, stores, categories…" aria-label="Search">
+                <button class="search-btn">Search</button>
+            </div>
+            <div class="nav-actions">
+                <a href="cart.html" class="nav-icon-btn active" aria-label="Cart">
+                    <i data-lucide="shopping-cart"></i>
+                    <span class="badge" id="cart-count">0</span>
+                </a>
+                <a href="../../auth/login.html" class="nav-btn nav-btn-ghost">Log In</a>
+                <a href="../../auth/buyer/register.html" class="nav-btn nav-btn-primary">Sign Up</a>
+            </div>
+            <button class="nav-hamburger" id="nav-hamburger" aria-label="Open menu">
+                <i data-lucide="menu"></i>
+            </button>
+        </div>
+        <div class="nav-mobile" id="nav-mobile">
+            <div class="nav-mobile-search">
+                <i data-lucide="search"></i>
+                <input type="search" placeholder="Search…" aria-label="Search">
+            </div>
+            <a href="../home.html">Home</a>
+            <a href="shop.html">Shop</a>
+            <a href="../../auth/login.html">Log In</a>
+            <a href="../../auth/buyer/register.html" class="nav-btn nav-btn-primary">Sign Up</a>
+        </div>
+    </nav>
+
+
+    <!-- ═══════════════════════════════════════════
+         PAGE HEADER
+    ═══════════════════════════════════════════ -->
+    <div class="page-header reveal">
+        <div class="page-header-inner">
+            <div>
+                <h1>Your Cart <span id="cart-item-count">(0 items)</span></h1>
+                <p class="breadcrumb">
+                    <a href="../home.html">Home</a>
+                    <i data-lucide="chevron-right"></i>
+                    <a href="shop.html">Shop</a>
+                    <i data-lucide="chevron-right"></i>
+                    <span>Cart</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════════
+         CART LAYOUT
+    ═══════════════════════════════════════════ -->
+    <div class="cart-layout" id="cart-layout">
+
+    <!-- ── CART ITEMS ── -->
+    <div class="cart-error-banner" id="cart-error-banner" style="display:none;padding:1rem;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);color:#dc2626;margin:1rem;border-radius:8px;font-size:0.9rem"></div>
+    <section class="cart-items" id="cart-items">
+
+            <div class="cart-items-header">
+                <span>Product</span>
+                <span>Price</span>
+                <span>Quantity</span>
+                <span>Total</span>
+            </div>
+
+            <!-- Continue shopping -->
+            <div class="cart-continue">
+                <a href="shop.html" class="continue-link">
+                    <i data-lucide="arrow-left"></i>
+                    Continue Shopping
+                </a>
+            </div>
+
+        </section>
+
+
+        <!-- ── ORDER SUMMARY ── -->
+        <aside class="order-summary reveal" id="order-summary">
+            <h2>Order Summary</h2>
+
+            <div class="summary-lines">
+                <div class="summary-line">
+                    <span>Subtotal <em id="summary-count">(0 items)</em></span>
+                    <strong id="summary-subtotal">GH₵ 0.00</strong>
+                </div>
+                <div class="summary-line">
+                    <span>Delivery</span>
+                    <strong class="delivery-fee" id="summary-delivery">GH₵ 20.00</strong>
+                </div>
+                <div class="summary-line summary-line--total">
+                    <span>Total</span>
+                    <strong id="summary-total">GH₵ 0.00</strong>
+                </div>
+            </div>
+
+            <p class="promo-msg hidden" id="promo-msg"></p>
+
+            <a href="checkout.html" class="checkout-btn">
+                <i data-lucide="lock"></i>
+                Proceed to Checkout
+            </a>
+
+            <div class="summary-trust">
+                <span><i data-lucide="shield-check"></i> Secure checkout</span>
+                <span><i data-lucide="refresh-ccw"></i> Easy returns</span>
+            </div>
+        </aside>
+
+    </div>
+
+
+    <!-- ═══════════════════════════════════════════
+         EMPTY CART STATE
+    ═══════════════════════════════════════════ -->
+    <div class="empty-cart hidden reveal" id="empty-cart">
+        <div class="empty-cart-inner">
+            <div class="empty-icon">
+                <i data-lucide="shopping-cart"></i>
+            </div>
+            <h2>Your cart is empty</h2>
+            <p>Looks like you haven't added anything yet.<br>Head to the shop and find something you love.</p>
+            <a href="shop.html" class="btn-primary-link">
+                <i data-lucide="shopping-bag"></i>
+                Start Shopping
+            </a>
+        </div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════════
+         FOOTER
+    ═══════════════════════════════════════════ -->
+    <footer class="footer reveal">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <a href="../home.html" class="nav-logo">Unimart<span>X</span></a>
+                <p>The campus marketplace built for buyers and sellers who mean business.</p>
+            </div>
+            <div class="footer-links">
+                <div class="footer-col">
+                    <h4>Shop</h4>
+                    <a href="shop.html">Browse Products</a>
+                    <a href="cart.html">Your Cart</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Sell</h4>
+                    <a href="../info/seller-policy.html">Seller Policy</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <a href="../info/about.html">About</a>
+                    <a href="../contact/contact.html">Contact</a>
+                    <a href="../info/faq.html">FAQ</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <a href="../info/terms.html">Terms</a>
+                    <a href="../info/privacy.html">Privacy</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>&copy; 2026 UnimartX. All rights reserved.</span>
+        </div>
+    </footer>
+
+    <script src="../../../config.js"></script>
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script src="../../shared/js/cart.js"></script>
+    <script src="../assets/js/cart.js"></script>
+    <script src="../../shared/js/public-nav.js"></script>
+
+</body>
+</html>
