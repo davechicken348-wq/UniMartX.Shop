@@ -262,19 +262,11 @@ export async function initializeEmailService(): Promise<void> {
 }
 
 export function getVerificationBaseUrl(): string {
-  const isProduction = process.env.NODE_ENV === 'production';
-  if (isProduction) {
-    return process.env.FRONTEND_URL || 'https://unimartx.com';
-  }
-  return process.env.FRONTEND_URL || 'http://localhost:3000';
+  return (process.env.FRONTEND_URL || 'http://localhost:3000').replace(/\/$/, '');
 }
 
 export function getBackendBaseUrl(): string {
-  const isProduction = process.env.NODE_ENV === 'production';
-  if (isProduction) {
-    return process.env.BACKEND_URL || process.env.FRONTEND_URL || 'https://unimartx.com';
-  }
-  return process.env.BACKEND_URL || 'http://localhost:5000';
+  return (process.env.BACKEND_URL || 'http://localhost:5000').replace(/\/$/, '');
 }
 
 async function sendMail(to: string, subject: string, html: string, replyTo?: string): Promise<boolean> {

@@ -228,9 +228,9 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       throw new AppError('Incorrect password', 401);
     }
 
-    // Check email verification (skip in development for testing)
-    if (!user.emailVerified && process.env.NODE_ENV === 'production') {
-      throw new AppError('Please verify your email before logging in', 403);
+    // Check email verification
+    if (!user.emailVerified) {
+      throw new AppError('Please verify your email before logging in. Check your inbox for the verification link.', 403);
     }
 
     let role = user.role;
