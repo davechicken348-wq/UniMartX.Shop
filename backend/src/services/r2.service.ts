@@ -1,66 +1,47 @@
-import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { randomUUID } from 'crypto';
 
-let s3: S3Client | null = null;
-let bucket: string = '';
-let publicUrl: string = '';
+let supabase: SupabaseClient | null = null;
+let bucket: string = 'unimartx';
 
 export function initializeR2(): void {
-  const accountId  = process.env.R2_ACCOUNT_ID;
-  const accessKey  = process.env.R2_ACCESS_KEY_ID;
-  const secretKey  = process.env.R2_SECRET_ACCESS_KEY;
-  const bucketName = process.env.R2_BUCKET_NAME;
-  const pub        = process.env.R2_PUBLIC_URL;
+  const url       = process.env.SUPABASE_URL;
+  const secretKey = process.env.SUPABASE_SECRET_KEY;
+  const b         = process.env.SUPABASE_BUCKET || 'unimartx';
 
-  if (!accountId || !accessKey || !secretKey || !bucketName || !pub) {
-    console.warn('⚠️  R2 credentials not fully configured. File uploads will be disabled.');
+  if (!url || !secretKey) {
+    console.warn('⚠️  SUPABASE_URL or SUPABASE_SECRET_KEY not set. File uploads will be disabled.');
     return;
   }
 
-  bucket    = bucketName;
-  publicUrl = pub.replace(/\/$/, '');
-
-  s3 = new S3Client({
-    region: 'auto',
-    endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
-    credentials: { accessKeyId: accessKey, secretAccessKey: secretKey },
-  });
-
-  console.log(`✓ R2 storage initialized — bucket: ${bucket}`);
+  bucket   = b;
+  supabase = createClient(url, secretKey);
+  console.log(`✓ Supabase Storage initialized — bucket: ${bucket}`);
 }
 
 export function isR2Ready(): boolean {
-  return s3 !== null;
+  return supabase !== null;
 }
 
-/**
- * Upload a buffer to R2.
- * @param key    Full object key e.g. sellers/abc123/avatar/img.jpg
- * @param buffer File buffer
- * @param mime   MIME type e.g. image/jpeg
- * @returns      Public URL of the uploaded file
- */
 export async function uploadToR2(key: string, buffer: Buffer, mime: string): Promise<string> {
-  if (!s3) throw new Error('R2 not initialized');
-  await s3.send(new PutObjectCommand({
-    Bucket: bucket,
-    Key: key,
-    Body: buffer,
-    ContentType: mime,
-    CacheControl: 'public, max-age=31536000, immutable',
-  }));
-  return `${publicUrl}/${key}`;
+  if (!supabase) throw new Error('Supabase storage not initialized');
+
+  const { error } = await supabase.storage
+    .from(bucket)
+    .upload(key, buffer, { contentType: mime, upsert: true, cacheControl: '31536000' });
+
+  if (error) throw new Error(`Upload failed: ${error.message}`);
+
+  const { data } = supabase.storage.from(bucket).getPublicUrl(key);
+  return data.publicUrl;
 }
 
-/**
- * Delete an object from R2 by its full public URL or key.
- */
 export async function deleteFromR2(urlOrKey: string): Promise<void> {
-  if (!s3) return;
-  const key = urlOrKey.startsWith('http')
-    ? urlOrKey.replace(`${publicUrl}/`, '')
+  if (!supabase) return;
+  const key = urlOrKey.includes('/object/public/')
+    ? urlOrKey.split(`/object/public/${bucket}/`)[1]
     : urlOrKey;
-  await s3.send(new DeleteObjectCommand({ Bucket: bucket, Key: key }));
+  await supabase.storage.from(bucket).remove([key]);
 }
 
 // ── Key builders ──────────────────────────────────────────────
@@ -87,17 +68,15 @@ export function evidenceKey(sellerId: string, orderId: string, ext: string): str
 
 // ── Helpers ───────────────────────────────────────────────────
 
-/** Parse a base64 data URL → { buffer, mime, ext } */
 export function parseBase64(dataUrl: string): { buffer: Buffer; mime: string; ext: string } {
   const match = dataUrl.match(/^data:(image\/(\w+));base64,(.+)$/);
   if (!match) throw new Error('Invalid base64 image data');
-  const mime = match[1];
-  const ext  = match[2] === 'jpeg' ? 'jpg' : match[2];
+  const mime   = match[1];
+  const ext    = match[2] === 'jpeg' ? 'jpg' : match[2];
   const buffer = Buffer.from(match[3], 'base64');
   return { buffer, mime, ext };
 }
 
-/** Get ext from original filename */
 export function extFromFilename(filename: string): string {
   return (filename.split('.').pop() || 'jpg').toLowerCase();
 }
