@@ -228,7 +228,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
           co.orderNumber,
           orderItemsForEmail,
           co.totalAmount,
-          `${frontendBase}/pages/buyer/order-history/order-details.html?id=${co.orderDbId}`,
+          `${frontendBase}/pages/buyer/orders/order-details.html?id=${co.orderDbId}`,
           (itemsBySeller.get(co.sellerId)?.[0]?.product as any)?.seller?.storeName || 'seller'
         );
       }

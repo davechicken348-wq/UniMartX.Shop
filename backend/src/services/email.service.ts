@@ -111,7 +111,7 @@ export function generateWelcomeEmail(userName: string): string {
 }
 
 export function generatePasswordResetEmail(userName: string, resetUrl: string): string {
-  const loginUrl = `${getVerificationBaseUrl()}/pages/auth/login.html`;
+  const loginUrl = `${getVerificationBaseUrl()}/pages/auth/login.html`; // unused but kept
   const body = `
   <p style="margin:0 0 32px;font-size:15px;color:${TEXT_2};line-height:1.6;">Hello <strong style="color:${TEXT};">${esc(userName)}</strong>,<br>We received a request to reset your password. Click the button below to choose a new password.</p>
   ${ctaButton(resetUrl, 'Reset Password', '#f59e0b, #fbbf24')}
@@ -134,11 +134,12 @@ export function generatePasswordChangedEmail(userName: string, frontendUrl: stri
 }
 
 export function generateSellerFollowedEmail(buyerName: string, sellerName: string, sellerStoreUrl: string): string {
+  const settingsUrl = `${getVerificationBaseUrl()}/pages/buyer/account/settings.html`;
   const body = `
   <p style="margin:0 0 24px;font-size:15px;color:${TEXT_2};">Hi <strong style="color:${TEXT};">${esc(buyerName)}</strong>,</p>
   <p style="margin:0 0 24px;font-size:15px;color:${TEXT_2};">You are now following <strong style="color:#fbbf24;">${esc(sellerName)}</strong>. We'll notify you when they add new products or run promotions.</p>
   ${ctaButton(sellerStoreUrl, 'Visit Store', '#f59e0b, #fbbf24')}
-  <p style="margin:0;font-size:13px;color:${TEXT_3};">You're receiving this because you have follow notifications enabled. You can update your preferences in your <a href="${getVerificationBaseUrl()}/pages/buyer/account/settings.html" style="color:#fbbf24;">account settings</a>.</p>`;
+  <p style="margin:0;font-size:13px;color:${TEXT_3};">You're receiving this because you have follow notifications enabled. You can update your preferences in your <a href="${settingsUrl}" style="color:#fbbf24;">account settings</a>.</p>`;
   return wrapperStart("You're Now Following a Seller") +
     headerBlock("You're Now Following a Seller", 'Stay updated with their latest products', '#f59e0b, #fbbf24') +
     body + footerBlock();
@@ -147,6 +148,7 @@ export function generateSellerFollowedEmail(buyerName: string, sellerName: strin
 export function generateNewReviewEmail(sellerName: string, reviewerName: string, productName: string, rating: number, comment: string | null, productUrl: string): string {
   const stars = '★'.repeat(rating) + '☆'.repeat(5 - rating);
   const commentBlock = comment ? `<p style="margin:0 0 0 0;font-size:15px;color:${TEXT_2};line-height:1.7;font-style:italic;">&ldquo;${esc(comment)}&rdquo;</p>` : '';
+  const settingsUrl = `${getVerificationBaseUrl()}/pages/seller/private/profile/account-settings.html`;
   const body = `
   <p style="margin:0 0 24px;font-size:15px;color:${TEXT_2};">Hi <strong style="color:${TEXT};">${esc(sellerName)}</strong>,</p>
   <p style="margin:0 0 24px;font-size:15px;color:${TEXT_2};"><strong style="color:${TEXT};">${esc(reviewerName)}</strong> just reviewed your product <strong style="color:${BRAND};">${esc(productName)}</strong>.</p>
@@ -158,7 +160,7 @@ export function generateNewReviewEmail(sellerName: string, reviewerName: string,
   </td></tr>
   </table>
   ${ctaButton(productUrl, 'View Product', `${BRAND_DARK}, ${BRAND}`)}
-  <p style="margin:0;font-size:13px;color:${TEXT_3};">You're receiving this because you have review notifications enabled. You can update your preferences in your <a href="${getVerificationBaseUrl()}/pages/seller/private/profile/account-settings.html" style="color:${BRAND};">account settings</a>.</p>`;
+  <p style="margin:0;font-size:13px;color:${TEXT_3};">You're receiving this because you have review notifications enabled. You can update your preferences in your <a href="${settingsUrl}" style="color:${BRAND};">account settings</a>.</p>`;
   return wrapperStart(`New ${rating}★ review on "${productName}"`) +
     headerBlock('New Review on Your Product', 'Someone left a review — see what they said', `${BRAND_DARK}, ${BRAND}`) +
     body + footerBlock();
@@ -367,7 +369,7 @@ export async function sendBuyerOrderConfirmationEmail(buyerEmail: string, buyerN
   await sendMail(buyerEmail, `Order confirmed #${orderNumber}`, generateBuyerOrderConfirmationEmail(buyerName, orderNumber, items, totalAmount, orderDetailsUrl, storeName));
 }
 
-export function generateBuyerOrderStatusEmail(buyerName: string, orderNumber: string, status: string, orderUrl: string, storeName: string): string {
+export function generateBuyerOrderStatusEmail(buyerName: string, orderNumber: string, status: string, orderUrl: string, storeName: string): string { // orderUrl = /pages/buyer/orders/order-details.html?id=<orderId>
   const statusCopy: Record<string, { title: string; subtitle: string; body: string; color: string }> = {
     processing: { title: 'Order Processing', subtitle: 'Your order is being prepared', body: 'Your order is now being packed and prepared for dispatch. We\'ll notify you again once it\'s on its way.', color: '#f59e0b' },
     shipped:    { title: 'Order Shipped!', subtitle: 'Your order is on its way', body: 'Great news — your order has been dispatched and is on its way to you. Track your delivery with the button below.', color: '#6366f1' },
