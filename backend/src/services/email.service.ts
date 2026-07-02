@@ -1,9 +1,8 @@
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 import { AppError } from '../middleware/errorHandler';
 
-export type { Transporter } from 'nodemailer';
-
-let transporter: nodemailer.Transporter | null = null;
+let resend: Resend | null = null;
+let fromAddress: string = 'UnimartX <onboarding@resend.dev>';
 
 /* ═══════════════════════════════════════════════════════════════
    UNIFIED EMAIL TEMPLATE SYSTEM
@@ -248,40 +247,18 @@ export function generateBuyerOrderConfirmationEmail(buyerName: string, orderNumb
 
 /* ═══════════════════════════════════════════════════════════════
    EMAIL SENDERS
-   All follow the same pattern:
-   1. Guard: if no transporter, warn and return (non-blocking)
-   2. Generate HTML via unified template system
-   3. Send via nodemailer
-   4. Log success, log error — do NOT throw (email is non-critical)
 ═══════════════════════════════════════════════════════════════ */
 
 export async function initializeEmailService(): Promise<void> {
-  const emailUser = process.env.EMAIL_USER;
-  const emailPassword = process.env.EMAIL_PASSWORD;
-  const emailService = process.env.EMAIL_SERVICE || 'gmail';
-
-  if (!emailUser) {
-    console.warn('⚠️  Email credentials not configured (EMAIL_USER missing). Email sending will be disabled.');
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    console.warn('⚠️  RESEND_API_KEY not set. Email sending will be disabled.');
     return;
   }
-
-  console.log(`[email] Initializing email service with user: ${emailUser}, service: ${emailService}`);
-
-  const transportOptions: Record<string, any> = emailService === 'gmail'
-    ? { host: 'smtp.gmail.com', port: 587, secure: false, family: 4, auth: { user: emailUser, pass: emailPassword } }
-    : { host: process.env.SMTP_HOST, port: parseInt(process.env.SMTP_PORT || '587'), secure: process.env.SMTP_SECURE === 'true', family: 4, auth: { user: emailUser, pass: emailPassword } };
-
-  transporter = nodemailer.createTransport(transportOptions as any);
-
-  try {
-    await transporter.verify();
-    console.log('✓ Email service initialized and ready');
-  } catch (error: any) {
-    console.error('❌ Email service configuration error:', error.message);
-    console.error('   Code:', error.code);
-    console.error('   Response:', error.response);
-    transporter = null;
-  }
+  resend = new Resend(apiKey);
+  const customFrom = process.env.EMAIL_FROM;
+  if (customFrom) fromAddress = customFrom;
+  console.log(`✓ Email service initialized (Resend) — from: ${fromAddress}`);
 }
 
 export function getVerificationBaseUrl(): string {
@@ -300,14 +277,15 @@ export function getBackendBaseUrl(): string {
   return process.env.BACKEND_URL || 'http://localhost:5000';
 }
 
-async function sendMail(to: string, subject: string, html: string): Promise<boolean> {
-  if (!transporter) {
-    console.warn(`[email] Transporter not configured, skipping email to ${to}`);
+async function sendMail(to: string, subject: string, html: string, replyTo?: string): Promise<boolean> {
+  if (!resend) {
+    console.warn(`[email] Resend not configured, skipping email to ${to}`);
     return false;
   }
   try {
-    const info = await transporter.sendMail({ from: `"UnimartX" <${process.env.EMAIL_USER}>`, to, subject, html });
-    console.log(`✓ Email sent to ${to}:`, info.messageId);
+    const { error } = await resend.emails.send({ from: fromAddress, to, subject, html, ...(replyTo ? { replyTo } : {}) });
+    if (error) { console.error(`❌ Failed to send email to ${to}:`, error); return false; }
+    console.log(`✓ Email sent to ${to}`);
     return true;
   } catch (error) {
     console.error(`❌ Failed to send email to ${to}:`, error);
@@ -348,17 +326,8 @@ export async function sendContactSellerEmail(sellerEmail: string, sellerName: st
 export async function sendSupportContactEmail(toEmail: string, name: string, email: string, phone: string, subject: string, message: string): Promise<void> {
   const html = generateSupportContactEmail(name, email, phone, subject, message);
   const subjectLine = `[${subject.toUpperCase()}] Contact form — ${name}`;
-  if (!transporter) {
-    console.warn('[email] Transporter not configured, skipping support contact email');
-    return;
-  }
-  try {
-    const info = await transporter.sendMail({ from: `"UnimartX Contact" <${process.env.EMAIL_USER}>`, to: toEmail, subject: subjectLine, html, replyTo: email });
-    console.log('✓ Support contact email sent:', info.messageId);
-  } catch (error) {
-    console.error('❌ Failed to send support contact email:', error);
-    throw new AppError('Failed to send support contact email', 500);
-  }
+  const ok = await sendMail(toEmail, subjectLine, html, email);
+  if (!ok) throw new AppError('Failed to send support contact email', 500);
 }
 
 export async function sendSellerNewOrderEmail(sellerEmail: string, sellerName: string, orderNumber: string, items: { name: string; quantity: number; price: number }[], totalAmount: number, orderDetailsUrl: string, buyerName: string, buyerAddress: string): Promise<void> {
