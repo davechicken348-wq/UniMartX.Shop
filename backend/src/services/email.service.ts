@@ -1,8 +1,8 @@
-import { Resend } from 'resend';
+import { BrevoClient } from '@getbrevo/brevo';
 import { AppError } from '../middleware/errorHandler';
 
-let resend: Resend | null = null;
-let fromAddress: string = 'UnimartX <onboarding@resend.dev>';
+let brevo: BrevoClient | null = null;
+let fromAddress: string = 'UnimartX <noreply@unimartx.com>';
 
 /* ═══════════════════════════════════════════════════════════════
    UNIFIED EMAIL TEMPLATE SYSTEM
@@ -250,15 +250,15 @@ export function generateBuyerOrderConfirmationEmail(buyerName: string, orderNumb
 ═══════════════════════════════════════════════════════════════ */
 
 export async function initializeEmailService(): Promise<void> {
-  const apiKey = process.env.RESEND_API_KEY;
+  const apiKey = process.env.BREVO_API_KEY;
   if (!apiKey) {
-    console.warn('⚠️  RESEND_API_KEY not set. Email sending will be disabled.');
+    console.warn('⚠️  BREVO_API_KEY not set. Email sending will be disabled.');
     return;
   }
-  resend = new Resend(apiKey);
+  brevo = new BrevoClient({ apiKey });
   const customFrom = process.env.EMAIL_FROM;
   if (customFrom) fromAddress = customFrom;
-  console.log(`✓ Email service initialized (Resend) — from: ${fromAddress}`);
+  console.log(`✓ Email service initialized (Brevo) — from: ${fromAddress}`);
 }
 
 export function getVerificationBaseUrl(): string {
@@ -278,17 +278,22 @@ export function getBackendBaseUrl(): string {
 }
 
 async function sendMail(to: string, subject: string, html: string, replyTo?: string): Promise<boolean> {
-  if (!resend) {
-    console.warn(`[email] Resend not configured, skipping email to ${to}`);
+  if (!brevo) {
+    console.warn(`[email] Brevo not configured, skipping email to ${to}`);
     return false;
   }
-  const devOverride = process.env.EMAIL_DEV_OVERRIDE;
-  const recipient = devOverride || to;
-  if (devOverride) console.log(`[email] DEV OVERRIDE: redirecting email from ${to} to ${devOverride}`);
+  const [fromName, fromEmail] = fromAddress.includes('<')
+    ? [fromAddress.split('<')[0].trim(), fromAddress.split('<')[1].replace('>', '').trim()]
+    : ['UnimartX', fromAddress];
   try {
-    const { error } = await resend.emails.send({ from: fromAddress, to: recipient, subject, html, ...(replyTo ? { replyTo } : {}) });
-    if (error) { console.error(`❌ Failed to send email to ${to}:`, error); return false; }
-    console.log(`✓ Email sent to ${recipient}`);
+    await brevo.transactionalEmails.sendTransacEmail({
+      sender: { name: fromName, email: fromEmail },
+      to: [{ email: to }],
+      subject,
+      htmlContent: html,
+      ...(replyTo ? { replyTo: { email: replyTo } } : {}),
+    });
+    console.log(`✓ Email sent to ${to}`);
     return true;
   } catch (error) {
     console.error(`❌ Failed to send email to ${to}:`, error);
