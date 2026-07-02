@@ -268,8 +268,8 @@ export async function initializeEmailService(): Promise<void> {
   console.log(`[email] Initializing email service with user: ${emailUser}, service: ${emailService}`);
 
   const transportOptions: Record<string, any> = emailService === 'gmail'
-    ? { host: 'smtp.gmail.com', port: 587, secure: false, auth: { user: emailUser, pass: emailPassword } }
-    : { host: process.env.SMTP_HOST, port: parseInt(process.env.SMTP_PORT || '587'), secure: process.env.SMTP_SECURE === 'true', auth: { user: emailUser, pass: emailPassword } };
+    ? { host: 'smtp.gmail.com', port: 587, secure: false, family: 4, auth: { user: emailUser, pass: emailPassword } }
+    : { host: process.env.SMTP_HOST, port: parseInt(process.env.SMTP_PORT || '587'), secure: process.env.SMTP_SECURE === 'true', family: 4, auth: { user: emailUser, pass: emailPassword } };
 
   transporter = nodemailer.createTransport(transportOptions as any);
 
