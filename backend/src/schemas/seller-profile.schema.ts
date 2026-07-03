@@ -9,7 +9,7 @@ export const updateProfileSchema = z.object({
   avatar: z.string().optional().nullable(),
 
   // Extended profile fields (General tab)
-  bio: z.string().max(300).optional().nullable(),
+  bio: z.string().max(1000).optional().nullable(),
   location: z.string().max(100).optional().nullable(),
 
   // Contact tab optional fields
@@ -24,7 +24,7 @@ export const updateProfileSchema = z.object({
 
    // Store fields
    storeName: z.string().min(2).max(100).optional(),
-   storeDescription: z.string().min(20).max(300).optional().nullable(),
+   storeDescription: z.string().min(20).max(1000).optional().nullable(),
    category: z.string().optional(),
    country: z.string().min(2).optional().nullable(),
    city: z.string().min(2).optional().nullable(),

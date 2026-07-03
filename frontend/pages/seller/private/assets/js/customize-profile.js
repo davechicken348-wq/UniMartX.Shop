@@ -273,9 +273,9 @@ function initBioCounter() {
     const progressBar = document.getElementById('bio-progress');
     if (!bioTextarea || !counter) return;
 
-    const maxLength = 300;
-    const warningThreshold = 280;
-    const dangerThreshold = 295;
+    const maxLength = 1000;
+    const warningThreshold = 950;
+    const dangerThreshold = 990;
 
     const updateCount = () => {
         const count = bioTextarea.value.length;
@@ -545,18 +545,18 @@ function resetForm(formId) {
         const progress = document.getElementById('bio-progress');
         if (bio && counter && progress) {
             const count = bio.value.length;
-            counter.textContent = `${count}/300`;
+            counter.textContent = `${count}/1000`;
             counter.className = 'char-counter';
-            if (count > 295) {
+            if (count > 990) {
                 counter.classList.add('danger');
                 progress.style.background = 'var(--danger)';
-            } else if (count > 280) {
+            } else if (count > 950) {
                 counter.classList.add('warning');
                 progress.style.background = 'var(--warning)';
             } else {
                 progress.style.background = 'linear-gradient(90deg, var(--primary), var(--primary-d))';
             }
-            progress.style.width = `${Math.min((count/300)*100, 100)}%`;
+            progress.style.width = `${Math.min((count/1000)*100, 100)}%`;
         }
     }
 
@@ -931,7 +931,7 @@ function updateBioPreview() {
     const counter = document.getElementById('bio-count');
     if (bioInput && counter) {
         const count = bioInput.value.length;
-        counter.textContent = `${count}/300`;
+        counter.textContent = `${count}/1000`;
     }
 }
 
