@@ -446,6 +446,7 @@ export const requestRefund = async (req: Request, res: Response): Promise<void> 
         orderNumber: order.orderNumber,
         buyerId: userPayload.userId,
         sellerId: order.sellerId,
+        amount: order.totalAmount,
         reason,
         message: message || null,
         evidence,

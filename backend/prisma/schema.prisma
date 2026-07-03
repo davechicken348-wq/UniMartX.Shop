@@ -453,6 +453,7 @@ model Refund {
   orderNumber      String
   buyerId          String
   sellerId         String
+  amount           Decimal       @db.Decimal(10, 2)
   reason           String?
   message          String?
   evidence         String[]      @default([])
