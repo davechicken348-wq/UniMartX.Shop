@@ -414,44 +414,18 @@ export const getProductById = async (req: Request, res: Response): Promise<void>
 
     // Revenue-carrying order statuses
     const REVENUE_STATUSES = ['processing', 'shipped', 'delivered'] as readonly ['processing', 'shipped', 'delivered'];
+    const revenueWhere = { productId: id, order: { status: { in: REVENUE_STATUSES } as any } };
 
-    // Units sold
-    const unitsSoldAgg = await prisma.orderItem.aggregate({
-      where: {
-        productId: id,
-        order: { status: { in: REVENUE_STATUSES } as any },
-      },
-      _sum: { quantity: true },
-    });
+    const [unitsSoldAgg, revenueAgg, wishlistCount, buyersItems] = await Promise.all([
+      prisma.orderItem.aggregate({ where: revenueWhere, _sum: { quantity: true } }),
+      prisma.orderItem.aggregate({ where: revenueWhere, _sum: { price: true } }),
+      prisma.wishlist.count({ where: { productId: id } }),
+      prisma.orderItem.findMany({ where: revenueWhere, select: { order: { select: { buyerId: true } } } }),
+    ]);
 
-    const unitsSold = (unitsSoldAgg._sum as any)?.quantity || 0;
-
-    // Revenue (non-void revenue orders)
-    const revenueAgg = await prisma.orderItem.aggregate({
-      where: {
-        productId: id,
-        order: { status: { in: REVENUE_STATUSES } as any },
-      },
-      _sum: { price: true },
-    });
-    const revenue = parseFloat(String((revenueAgg._sum as any)?.price || 0));
-
-    // Conversion rate (units sold / stock level)
+    const unitsSold    = (unitsSoldAgg._sum as any)?.quantity || 0;
+    const revenue      = parseFloat(String((revenueAgg._sum as any)?.price || 0));
     const conversionRate = product.stock > 0 ? (unitsSold / product.stock) * 100 : 0;
-
-    // Saves / wishlist count
-    const wishlistCount = await prisma.wishlist.count({
-      where: { productId: id },
-    });
-
-    // Unique buyer count
-    const buyersItems = await prisma.orderItem.findMany({
-      where: {
-        productId: id,
-        order: { status: { in: REVENUE_STATUSES } as any },
-      },
-      select: { order: { select: { buyerId: true } } },
-    });
     const uniqueBuyers = new Set(buyersItems.map((b: any) => b.order.buyerId)).size;
 
     result.stats = {

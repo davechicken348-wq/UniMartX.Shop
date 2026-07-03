@@ -322,8 +322,8 @@ export const logout = async (req: Request, res: Response): Promise<void> => {
         throw new AppError('Authentication required', 401);
       }
 
-      // Fetch user and addresses in parallel
-      const [user, addresses] = await Promise.all([
+      // Fetch user, addresses, and stats in parallel
+      const [user, addresses, ordersCount, wishlistCount] = await Promise.all([
         prisma.user.findUnique({
           where: { id: userPayload.userId },
           select: {
@@ -345,17 +345,13 @@ export const logout = async (req: Request, res: Response): Promise<void> => {
           orderBy: { isDefault: 'desc' },
           take: 5,
         }),
+        prisma.order.count({ where: { buyerId: userPayload.userId } }),
+        prisma.wishlist.count({ where: { userId: userPayload.userId } }),
       ]);
 
       if (!user) {
         throw new AppError('User not found', 404);
       }
-
-      // Get stats
-      const [ordersCount, wishlistCount] = await Promise.all([
-        prisma.order.count({ where: { buyerId: user.id } }),
-        prisma.wishlist.count({ where: { userId: user.id } }),
-      ]);
 
       res.status(200).json({
         success: true,

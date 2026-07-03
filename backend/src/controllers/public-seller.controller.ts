@@ -516,24 +516,65 @@ export const getPublicSellerProfile = async (req: Request, res: Response): Promi
   const user = seller.user;
   const fullName = `${user.firstName} ${user.lastName}`.trim();
 
-  // ── Active products ──────────────────────────────────────────────────────
-  const products = await prisma.product.findMany({
-    where: { sellerId, isActive: true },
-    orderBy: { createdAt: 'desc' },
-    select: {
-      id: true,
-      name: true,
-      price: true,
-      comparePrice: true,
-      image: true,
-      images: true,
-      category: true,
-      rating: true,
-      reviewCount: true,
-      stock: true,
-      tags: true,
-    },
-  });
+  const page = Math.max(1, parseInt(req.query.page as string) || 1);
+  const limit = Math.min(20, parseInt(req.query.limit as string) || 10);
+  const skip = (page - 1) * limit;
+
+  // ── All data in parallel ────────────────────────────────────────────────
+  const REVENUE_STATUSES = ['processing', 'shipped', 'delivered'] as const;
+
+  const [
+    products,
+    [reviews, totalReviews],
+    ratingGroups,
+    totalSalesAgg,
+    avgRatingAgg,
+    followerCount,
+    categoryCounts,
+  ] = await Promise.all([
+    prisma.product.findMany({
+      where: { sellerId, isActive: true },
+      orderBy: { createdAt: 'desc' },
+      select: {
+        id: true, name: true, price: true, comparePrice: true,
+        image: true, images: true, category: true, rating: true,
+        reviewCount: true, stock: true, tags: true,
+      },
+    }),
+    Promise.all([
+      prisma.review.findMany({
+        where: { product: { sellerId } },
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take: limit,
+        select: {
+          id: true, rating: true, comment: true, createdAt: true,
+          user: { select: { firstName: true, lastName: true, avatar: true } },
+          product: { select: { id: true, name: true } },
+        },
+      }),
+      prisma.review.count({ where: { product: { sellerId } } }),
+    ]),
+    prisma.review.groupBy({
+      by: ['rating'],
+      where: { product: { sellerId } },
+      _count: { rating: true },
+    }),
+    prisma.orderItem.aggregate({
+      where: { product: { sellerId }, order: { status: { in: REVENUE_STATUSES as any } } },
+      _sum: { quantity: true },
+    }),
+    prisma.review.aggregate({
+      where: { product: { sellerId } },
+      _avg: { rating: true },
+    }),
+    prisma.follow.count({ where: { sellerId } }),
+    prisma.product.groupBy({
+      by: ['category'],
+      where: { sellerId, isActive: true },
+      _count: { category: true },
+    }),
+  ]);
 
   const normalizedProducts = products.map(p => ({
     ...p,
@@ -542,29 +583,6 @@ export const getPublicSellerProfile = async (req: Request, res: Response): Promi
     image: absUrl(p.image),
     images: p.images.map(absUrl),
   }));
-
-  // ── Reviews (paginated, latest first) ───────────────────────────────────
-  const page = Math.max(1, parseInt(req.query.page as string) || 1);
-  const limit = Math.min(20, parseInt(req.query.limit as string) || 10);
-  const skip = (page - 1) * limit;
-
-  const [reviews, totalReviews] = await Promise.all([
-    prisma.review.findMany({
-      where: { product: { sellerId } },
-      orderBy: { createdAt: 'desc' },
-      skip,
-      take: limit,
-      select: {
-        id: true,
-        rating: true,
-        comment: true,
-        createdAt: true,
-        user: { select: { firstName: true, lastName: true, avatar: true } },
-        product: { select: { id: true, name: true } },
-      },
-    }),
-    prisma.review.count({ where: { product: { sellerId } } }),
-  ]);
 
   const normalizedReviews = reviews.map(r => ({
     id: r.id,
@@ -580,13 +598,6 @@ export const getPublicSellerProfile = async (req: Request, res: Response): Promi
     },
   }));
 
-  // ── Rating breakdown (1★–5★) ─────────────────────────────────────────────
-  const ratingGroups = await prisma.review.groupBy({
-    by: ['rating'],
-    where: { product: { sellerId } },
-    _count: { rating: true },
-  });
-
   const ratingBreakdown: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
   ratingGroups.forEach(g => { ratingBreakdown[g.rating] = g._count.rating; });
 
@@ -595,32 +606,8 @@ export const getPublicSellerProfile = async (req: Request, res: Response): Promi
     ratingPct[i] = totalReviews > 0 ? Math.round((ratingBreakdown[i] / totalReviews) * 100) : 0;
   }
 
-  // ── Stats ────────────────────────────────────────────────────────────────
-  const REVENUE_STATUSES = ['processing', 'shipped', 'delivered'] as const;
-
-  const [totalSalesAgg, avgRatingAgg, followerCount] = await Promise.all([
-    prisma.orderItem.aggregate({
-      where: { product: { sellerId }, order: { status: { in: REVENUE_STATUSES as any } } },
-      _sum: { quantity: true },
-    }),
-    prisma.review.aggregate({
-      where: { product: { sellerId } },
-      _avg: { rating: true },
-    }),
-    prisma.follow.count({ where: { sellerId } }),
-  ]);
-
   const totalSales = (totalSalesAgg._sum as any)?.quantity || 0;
-  const avgRating = avgRatingAgg._avg?.rating
-    ? parseFloat(avgRatingAgg._avg.rating.toFixed(1))
-    : null;
-
-  // ── Category counts for filter tabs ─────────────────────────────────────
-  const categoryCounts = await prisma.product.groupBy({
-    by: ['category'],
-    where: { sellerId, isActive: true },
-    _count: { category: true },
-  });
+  const avgRating = avgRatingAgg._avg?.rating ? parseFloat(avgRatingAgg._avg.rating.toFixed(1)) : null;
 
   const categoryMap: Record<string, number> = {};
   categoryCounts.forEach(c => { categoryMap[c.category] = c._count.category; });

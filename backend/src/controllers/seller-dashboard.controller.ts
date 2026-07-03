@@ -83,10 +83,14 @@ export const getSellerDashboard = async (req: Request, res: Response): Promise<v
           },
         },
       }),
-      // Fetch order items for top products (last 30 days)
+      // Fetch order items for top products (last 90 days)
       prisma.orderItem.findMany({
         where: {
-          order: { sellerId, status: { in: ['processing', 'shipped', 'delivered'] } },
+          order: {
+            sellerId,
+            status: { in: ['processing', 'shipped', 'delivered'] },
+            createdAt: { gte: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000) },
+          },
         },
         select: {
           quantity: true,

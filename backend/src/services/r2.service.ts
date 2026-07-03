@@ -30,7 +30,10 @@ export async function uploadToR2(key: string, buffer: Buffer, mime: string): Pro
     .from(bucket)
     .upload(key, buffer, { contentType: mime, upsert: true, cacheControl: '31536000' });
 
-  if (error) throw new Error(`Upload failed: ${error.message}`);
+  if (error) {
+    console.error('Supabase upload error:', { message: error.message, cause: (error as any).cause });
+    throw new Error(`Upload failed: ${error.message}`);
+  }
 
   const { data } = supabase.storage.from(bucket).getPublicUrl(key);
   return data.publicUrl;

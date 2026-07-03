@@ -5,10 +5,10 @@ import { AppError } from '../middleware/errorHandler';
 import { JwtPayload } from '../controllers/auth.controller';
 import { sendBuyerOrderStatusEmail, getVerificationBaseUrl } from '../services/email.service';
 
-const ADMIN_REGISTER_SECRET = process.env.ADMIN_REGISTER_SECRET;
-
 /** POST /api/admin/register — create first super admin, guarded by secret */
 export const registerAdmin = async (req: Request, res: Response): Promise<void> => {
+  const ADMIN_REGISTER_SECRET = process.env.ADMIN_REGISTER_SECRET;
+
   if (!ADMIN_REGISTER_SECRET) {
     throw new AppError('Admin registration is not configured on this server', 500);
   }

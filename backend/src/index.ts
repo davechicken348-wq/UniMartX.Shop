@@ -57,7 +57,7 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-      'img-src':    ["'self'", 'data:', backendOrigin],
+      'img-src':    ["'self'", 'data:', backendOrigin, '*.supabase.co'],
       'connect-src': ["'self'", backendOrigin, frontendOrigin],
       'upgrade-insecure-requests': [],
     },

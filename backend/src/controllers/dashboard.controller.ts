@@ -75,7 +75,7 @@ export const getBuyerDashboard = async (req: Request, res: Response): Promise<vo
       prisma.address.findMany({ where: { userId }, take: 1 }),
     ]);
 
-    // Look up buyer record (needed for follow query)
+    // Look up buyer record and followed sellers in parallel
     const buyer = await prisma.buyer.findUnique({ where: { userId }, select: { id: true } });
 
     let followedSellers: any[] = [];
