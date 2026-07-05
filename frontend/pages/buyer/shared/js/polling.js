@@ -6,7 +6,7 @@
 
   window.__createLiveSync = function createLiveSync(opts) {
     const config = Object.assign({
-      interval: 4000,
+      interval: 30000,
       fetchFn: null,
       onUpdate: function () {},
       onError: function () {},
@@ -23,6 +23,9 @@
     let _running = false;
     let _lastSnapshot = null;
     let _initialized = false;
+
+    const MIN_INTERVAL = 15000;
+    if (config.interval < MIN_INTERVAL) config.interval = MIN_INTERVAL;
 
     async function tick() {
       if (_isFetching) return;

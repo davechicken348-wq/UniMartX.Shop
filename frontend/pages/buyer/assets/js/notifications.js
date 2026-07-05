@@ -106,7 +106,6 @@ async function loadNotifications(reset = true, skipRerender = false) {
   try {
     const res = await fetch(`${API_BASE}/api/notifications?${params}`, { credentials: 'include',
       headers: authHeaders(),
-      cache: 'no-store'
     });
     const data = await res.json();
     if (!res.ok || !data.success) throw new Error(data.message || 'Failed to load');
@@ -351,7 +350,7 @@ function startNotificationsLiveSync() {
             return;
         }
         await liveFetchNotifications();
-    }, 5000);
+    }, 30000);
 }
 
 function stopNotificationsLiveSync() {

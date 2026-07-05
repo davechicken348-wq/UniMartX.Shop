@@ -611,7 +611,7 @@
     function startLiveSync() {
         if (typeof window.__createLiveSync === 'function') {
             _liveSyncHandle = window.__createLiveSync({
-                interval: 5000,
+                interval: 30000,
                 fetchFn: fetchOrder,
                 onUpdate: function() {},
                 getSnapshot: function(data) {
@@ -627,7 +627,7 @@
                 if (orderId && !_isFetching) {
                     freshFetch();
                 }
-            }, 5000);
+            }, 30000);
         }
     }
 

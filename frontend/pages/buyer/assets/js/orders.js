@@ -131,7 +131,6 @@
             const res = await fetch(`${API_BASE}/api/buyer/orders?${params}`, {
                 headers: authHeaders(),
                 credentials: 'include',
-                cache: 'no-store',
             });
             const data = await res.json();
             if (!res.ok || !data.success) {
@@ -398,7 +397,6 @@
             const response = await fetch(`${API_BASE}/api/buyer/orders?${params}`, {
                 headers: authHeaders(),
                 credentials: 'include',
-                cache: 'no-store'
             });
 
             if (!response.ok) {
@@ -437,7 +435,7 @@
                 return;
             }
             await liveFetchOrders();
-        }, 4000);
+        }, 30000);
     }
 
     function stopOrdersLiveSync() {

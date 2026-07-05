@@ -762,15 +762,8 @@ renderFilterChips();
 fetchProducts();
 fetchCartCount();
 
-// ── Live carts / stock on focus ───────────────
+// ── Refresh on focus / online ───────────────
 let _shopBusy = false;
-const productIndex = new Map();
-
-function buildProductIndex(products) {
-    productIndex.clear();
-    products.forEach(p => productIndex.set(p.id, p));
-}
-
 async function tickCart() {
     try {
         const token = getAuthToken();
@@ -778,51 +771,18 @@ async function tickCart() {
         const res = await fetch(`${SHOP_API_BASE}/api/cart`, {
             credentials: 'include',
             headers,
-            cache: 'no-store',
         });
         const json = await res.json();
         if (json?.data?.itemCount != null) updateCartBadge(json.data.itemCount);
     } catch { /* ignore */ }
 }
 
-async function tickStock() {
-    if (_shopBusy) return;
-    _shopBusy = true;
-    try {
-        const params = new URLSearchParams({ limit: 100, sort: 'newest' });
-        const res = await fetch(`${SHOP_API_BASE}/api/public/products?${params}`, {
-            credentials: 'include',
-            cache: 'no-store',
-        });
-        if (!res.ok) { _shopBusy = false; return; }
-        const json = await res.json();
-        if (!json.success) { _shopBusy = false; return; }
-        buildProductIndex(json.data || []);
-
-        document.querySelectorAll('.product-card').forEach(card => {
-            const id = new URL(card.href).searchParams.get('id');
-            const p = productIndex.get(id);
-            if (!p) return;
-            const stockEl = card.querySelector('.product-stock');
-            if (stockEl) {
-                stockEl.textContent = p.stock > 0 ? `${p.stock} in stock` : 'Out of stock';
-                stockEl.className = `product-stock ${p.stock > 0 ? '' : 'out-of-stock'}`;
-            }
-            const availBtn = card.querySelector('.product-cart-btn');
-            if (availBtn) availBtn.disabled = p.stock === 0;
-        });
-        _shopBusy = false;
-    } catch { _shopBusy = false; }
-}
-
 window.addEventListener('focus', () => {
-    _shopBusy = false;
     tickCart();
-    tickStock();
+    if (!_shopBusy) fetchProducts();
 });
 
 window.addEventListener('online', () => {
-    _shopBusy = false;
     tickCart();
-    tickStock();
+    if (!_shopBusy) fetchProducts();
 });

@@ -47,7 +47,6 @@ async function loadWishlist(skipRerender = false) {
     try {
         const res  = await fetch(`${API}/api/wishlist`, { credentials: 'include', 
             headers: authHeaders(),
-            cache: 'no-store'
         });
         if (!res.ok) throw new Error();
         const json = await res.json();
@@ -258,7 +257,7 @@ function startWishlistLiveSync() {
             return;
         }
         await loadWishlist(true);
-    }, 4000);
+    }, 30000);
 }
 
 function stopWishlistLiveSync() {

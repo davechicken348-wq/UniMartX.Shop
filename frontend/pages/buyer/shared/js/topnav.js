@@ -180,7 +180,7 @@
 
   // ── Live sync: user data ──────────────────────
   const userSync = window.__createLiveSync({
-    interval: 10000,
+    interval: 120000,
     fetchFn: fetchUserData,
     onUpdate: function (data) {
       if (data) updateTopnavUser(data);
@@ -329,7 +329,7 @@
 
   // ── Live sync: badge (always) ─────────────────
   const badgeSync = window.__createLiveSync({
-    interval: 4000,
+    interval: 60000,
     fetchFn: fetchBadgeCount,
     onUpdate: function (count) {
       if (count !== null) updateNotifBadge(count);
@@ -339,7 +339,7 @@
 
   // ── Live sync: panel (only when open) ─────────
   const panelSync = window.__createLiveSync({
-    interval: 4000,
+    interval: 30000,
     fetchFn: fetchNotifData,
     onUpdate: function (data) {
       if (data) renderNotifPanel(data);

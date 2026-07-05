@@ -95,7 +95,6 @@ async function fetchDashboard(skipLoading = false) {
         const res = await fetch(`${getBaseUrl()}/api/buyer/dashboard`, {
             credentials: 'include',
             headers,
-            cache: 'no-store'
         });
 
     const data = await res.json();
@@ -179,7 +178,6 @@ async function liveFetch() {
     const res = await fetch(`${getBaseUrl()}/api/buyer/dashboard`, {
       credentials: 'include',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-      cache: 'no-store'
     });
     const data = await res.json();
     if (!res.ok || !data.success) return;
@@ -216,7 +214,7 @@ function startDashboardLiveSync() {
       return;
     }
     await liveFetch();
-  }, 4000);
+  }, 30000);
 }
 
 function stopDashboardLiveSync() {
