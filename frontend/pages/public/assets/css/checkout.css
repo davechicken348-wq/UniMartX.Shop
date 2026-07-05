@@ -159,7 +159,6 @@ a { text-decoration: none; color: inherit; }
 }
 
 .checkout-form-col {
-    grid-column: 1 !important;
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
@@ -168,7 +167,7 @@ a { text-decoration: none; color: inherit; }
 }
 
 .checkout-summary {
-    grid-column: 2 !important;
+    min-width: 0;
 }
 
 
@@ -763,8 +762,10 @@ a { text-decoration: none; color: inherit; }
     font-size: 0.72rem;
     color: var(--text-3);
     font-weight: 600;
-    white-space: nowrap;
-    flex-shrink: 0;
+    white-space: normal;
+    word-break: break-word;
+    text-align: right;
+    flex-shrink: 1;
 }
 
 .payment-fields {
@@ -1272,63 +1273,6 @@ a { text-decoration: none; color: inherit; }
 
     .login-nudge { padding: 0.7rem 0.85rem; font-size: 0.8rem; }
     .login-nudge svg { width: 14px; height: 14px; }
-
-    .input-wrap > svg:first-child { left: 0.75rem; width: 13px; height: 13px; }
-    .input-wrap--textarea > svg:first-child { top: 0.65rem; }
-    .select-chevron { right: 0.75rem !important; width: 12px !important; height: 12px !important; }
-
-    .seller-group { padding: 0.85rem; }
-    .seller-avatar { width: 32px; height: 32px; font-size: 0.72rem; }
-    .seller-group-header strong { font-size: 0.82rem; }
-    .seller-group-header span { font-size: 0.7rem; }
-    .seller-delivery-fee { font-size: 0.75rem; }
-
-    .seller-item { padding: 0.6rem; }
-    .seller-item-img { width: 42px; height: 42px; }
-    .seller-item-name { font-size: 0.78rem; }
-    .seller-item-meta { font-size: 0.7rem; }
-    .seller-item-price { font-size: 0.8rem; }
-
-    .fulfillment-option-inner { padding: 0.65rem 0.75rem; }
-    .fulfill-icon { width: 28px; height: 28px; }
-    .fulfill-icon svg { width: 13px; height: 13px; }
-    .fulfillment-option-inner strong { font-size: 0.78rem; }
-    .fulfillment-option-inner span { font-size: 0.7rem; }
-
-    .method-card-inner { padding: 0.75rem; }
-    .method-icon { width: 32px; height: 32px; }
-    .method-icon svg { width: 14px; height: 14px; }
-    .method-card-left strong { font-size: 0.8rem; }
-    .method-card-left span { font-size: 0.7rem; }
-    .method-price { font-size: 0.82rem; }
-
-    .payment-card-header { padding: 0.75rem; }
-    .payment-icon { width: 30px; height: 30px; }
-    .payment-icon svg { width: 14px; height: 14px; }
-    .payment-card-header strong { font-size: 0.8rem; }
-    .payment-tag { font-size: 0.65rem; }
-
-    .checkout-summary { padding: 1rem; }
-    .checkout-summary h2 { font-size: 0.88rem; margin-bottom: 0.85rem; padding-bottom: 0.75rem; }
-    .summary-line { font-size: 0.82rem; }
-    .summary-line--total strong { font-size: 1rem; }
-
-    .place-order-btn {
-        font-size: 0.88rem;
-        padding: 0.8rem;
-        border-radius: 10px;
-    }
-
-    .summary-trust span { font-size: 0.68rem; gap: 0.25rem; }
-    .summary-trust svg { width: 12px; height: 12px; }
-
-    .back-to-cart { font-size: 0.75rem; }
-    .back-to-cart svg { width: 13px; height: 13px; }
-
-    .page-header { padding: 1.25rem 0 1rem; }
-    .page-header h1 { font-size: 1.4rem; }
-
-    .footer-bottom { padding: 1rem; font-size: 0.75rem; }
 }
 
 /* ── Very small screens: 425px and below ── */
