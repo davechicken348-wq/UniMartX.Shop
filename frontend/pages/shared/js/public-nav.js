@@ -286,29 +286,29 @@
         const depth = getDepth();
         const sellerHref = `${prefix(depth)}auth/seller/register.html`;
 
-        // Desktop nav — add Create a Shop button if not already present
+        // Desktop nav — add Sell on UniMartX text link if not already present
         const navActions = document.querySelector('.nav-actions');
         if (navActions && !document.getElementById('pnav-shop-btn')) {
-            const btn = document.createElement('a');
-            btn.id = 'pnav-shop-btn';
-            btn.href = sellerHref;
-            btn.className = 'nav-btn nav-btn-primary';
-            btn.style.cssText = 'background:linear-gradient(135deg,#10b981,#34d399);color:#fff;font-weight:700;padding:0.5rem 1.1rem;border-radius:9px;font-size:0.9rem;text-decoration:none;transition:all 0.2s;white-space:nowrap;';
-            btn.textContent = 'Create a Shop';
-            btn.addEventListener('mouseenter', () => { btn.style.boxShadow = '0 4px 16px rgba(52,211,153,0.3)'; });
-            btn.addEventListener('mouseleave', () => { btn.style.boxShadow = 'none'; });
-            navActions.appendChild(btn);
+            const link = document.createElement('a');
+            link.id = 'pnav-shop-btn';
+            link.href = sellerHref;
+            link.style.cssText = 'font-size:0.85rem;font-weight:600;color:rgba(255,255,255,0.55);text-decoration:none;white-space:nowrap;transition:color 0.2s;padding:0 0.25rem;';
+            link.textContent = 'Sell on UniMartX';
+            link.addEventListener('mouseenter', () => { link.style.color = '#34d399'; });
+            link.addEventListener('mouseleave', () => { link.style.color = 'rgba(255,255,255,0.55)'; });
+            // Insert before the first .nav-btn so it sits left of Log In
+            const firstBtn = navActions.querySelector('.nav-btn');
+            if (firstBtn) navActions.insertBefore(link, firstBtn);
+            else navActions.appendChild(link);
         }
 
-        // Mobile nav — add Create a Shop link if not already present
+        // Mobile nav — add Sell on UniMartX link if not already present
         const navMobile = document.getElementById('nav-mobile');
         if (navMobile && !document.getElementById('pnav-mobile-shop-btn')) {
             const link = document.createElement('a');
             link.id = 'pnav-mobile-shop-btn';
             link.href = sellerHref;
-            link.className = 'nav-btn nav-btn-primary';
-            link.style.cssText = 'display:block;text-align:center;margin-top:0.5rem;padding:0.75rem;';
-            link.textContent = 'Create a Shop';
+            link.textContent = 'Sell on UniMartX';
             navMobile.appendChild(link);
         }
     }
