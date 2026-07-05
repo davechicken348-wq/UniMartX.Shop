@@ -703,7 +703,7 @@
                 }
                 _lastFetchedStatus = current;
             } catch {}
-        }, 3000);
+        }, 30000);
     }
 
     async function freshFetch() {

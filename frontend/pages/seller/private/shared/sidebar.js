@@ -163,7 +163,7 @@
 
   // ── Live sync: sidebar badges ───────────────────
   const badgeSync = window.__createLiveSync({
-    interval: 4000,
+    interval: 60000,
     fetchFn: fetchSidebarBadges,
     onUpdate: function (data) {
       if (data) updateSidebarBadges(data);
@@ -176,7 +176,7 @@
 
   // ── Live sync: user data ───────────────────────
   const userSync = window.__createLiveSync({
-    interval: 10000,
+    interval: 120000,
     fetchFn: fetchUserData,
     onUpdate: function (data) {
       if (data) updateSidebarUser(data);

@@ -100,7 +100,7 @@ function startNotificationsLiveSync() {
             return;
         }
         await liveFetchNotifications();
-    }, 5000);
+    }, 30000);
 }
 
 function stopNotificationsLiveSync() {

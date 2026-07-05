@@ -14,3 +14,15 @@ if (!window.APP_CONFIG.BACKEND_URL) {
       ? 'http://localhost:5000'
       : '';
 }
+
+// ── Keep-alive ping (prevents Render free tier cold starts) ──
+// Pings /health every 13 minutes so the server never sleeps during active use.
+(function () {
+  const base = window.APP_CONFIG.BACKEND_URL;
+  if (!base || base.includes('localhost') || base.includes('127.0.0.1')) return;
+  function ping() {
+    fetch(base + '/health', { method: 'GET', cache: 'no-store' }).catch(function () {});
+  }
+  ping();
+  setInterval(ping, 13 * 60 * 1000);
+})();

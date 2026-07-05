@@ -466,7 +466,7 @@ function startDashboardLiveSync() {
       return;
     }
     await liveFetch();
-  }, 4000);
+  }, 30000);
 }
 
 function stopDashboardLiveSync() {

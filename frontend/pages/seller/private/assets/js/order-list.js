@@ -192,7 +192,7 @@
             }
 
             await liveFetchOrders();
-        }, 4000);
+        }, 30000);
     }
 
     function stopOrderListLiveSync() {
@@ -218,47 +218,6 @@
 
     // Reset snapshot so the first poll always refreshes
     _lastOrderSnapshot = null;
-
-    // ── Fetch orders from backend ────────────────────────────────
-    async function fetchOrders(page = 1, status = 'all', search = '') {
-        const token = getAuthToken();
-        if (!token) {
-            showError('Please log in to view orders');
-            return;
-        }
-
-        const params = new URLSearchParams({
-            page: page.toString(),
-            limit: ORDERS_PER_PAGE.toString(),
-        });
-        if (status && status !== 'all') params.set('status', status);
-        if (search) params.set('search', search);
-
-        try {
-            const response = await fetch(`${API_BASE}/api/seller/orders?${params}`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to fetch orders');
-            }
-
-            const data = await response.json();
-            
-            if (data.success) {
-                renderOrders(data.data.orders);
-                updateCounts(data.data.counts);
-                updatePagination(data.data.page, data.data.pages);
-                checkEmptyStates(data.data.orders.length, status, search);
-                lucide.createIcons();
-            } else {
-                throw new Error(data.error || 'Failed to fetch orders');
-            }
-        } catch (err) {
-            console.error('Error fetching orders:', err);
-            showError('Failed to load orders');
-        }
-    }
 
     // ── Render orders ──────────────────────────────────────────
     function renderOrders(orders) {

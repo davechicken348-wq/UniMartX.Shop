@@ -3,7 +3,7 @@
 
   window.__createLiveSync = window.__createLiveSync || function createLiveSync(opts) {
     const config = Object.assign({
-      interval: 4000,
+      interval: 30000,
       fetchFn: null,
       onUpdate: function () {},
       onError: function () {},
@@ -15,6 +15,9 @@
     if (typeof config.fetchFn !== 'function') {
       throw new Error('createLiveSync: fetchFn is required');
     }
+
+    // Hard floor: nothing polls faster than 15 seconds
+    if (config.interval < 15000) config.interval = 15000;
 
     let _isFetching = false;
     let _running = false;

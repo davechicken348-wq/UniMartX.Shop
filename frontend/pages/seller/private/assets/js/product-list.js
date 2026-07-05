@@ -135,7 +135,7 @@ function authHeaders() {
 // ── Data fetching ─────────────────────────────────────────────────────────────
 async function fetchProducts() {
   try {
-    const res = await fetch(`${API_BASE}/api/seller/products?_t=${Date.now()}`, {
+    const res = await fetch(`${API_BASE}/api/seller/products`, {
       headers: authHeaders(),
       cache: 'no-cache',
     });
