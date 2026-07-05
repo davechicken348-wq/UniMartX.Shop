@@ -283,34 +283,7 @@
     }
 
     function injectGuestNav() {
-        const depth = getDepth();
-        const sellerHref = `${prefix(depth)}auth/seller/register.html`;
-
-        // Desktop nav — add Sell on UniMartX text link if not already present
-        const navActions = document.querySelector('.nav-actions');
-        if (navActions && !document.getElementById('pnav-shop-btn')) {
-            const link = document.createElement('a');
-            link.id = 'pnav-shop-btn';
-            link.href = sellerHref;
-            link.style.cssText = 'font-size:0.85rem;font-weight:600;color:rgba(255,255,255,0.55);text-decoration:none;white-space:nowrap;transition:color 0.2s;padding:0 0.25rem;';
-            link.textContent = 'Sell on UniMartX';
-            link.addEventListener('mouseenter', () => { link.style.color = '#34d399'; });
-            link.addEventListener('mouseleave', () => { link.style.color = 'rgba(255,255,255,0.55)'; });
-            // Insert before the first .nav-btn so it sits left of Log In
-            const firstBtn = navActions.querySelector('.nav-btn');
-            if (firstBtn) navActions.insertBefore(link, firstBtn);
-            else navActions.appendChild(link);
-        }
-
-        // Mobile nav — add Sell on UniMartX link if not already present
-        const navMobile = document.getElementById('nav-mobile');
-        if (navMobile && !document.getElementById('pnav-mobile-shop-btn')) {
-            const link = document.createElement('a');
-            link.id = 'pnav-mobile-shop-btn';
-            link.href = sellerHref;
-            link.textContent = 'Sell on UniMartX';
-            navMobile.appendChild(link);
-        }
+        // All public pages have their own static nav CTAs — nothing to inject
     }
 
     if (document.readyState === 'loading') {
