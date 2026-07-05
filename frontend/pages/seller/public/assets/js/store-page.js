@@ -297,7 +297,7 @@ fetchCartCount();
         if (!sellerId) return;
         _fetching = true;
         try {
-            const res = await apiFetchWithTimeout(`${API_BASE}/api/public/seller/${sellerId}`, { cache: 'no-store' });
+            const res = await apiFetchWithTimeout(`${API_BASE}/api/public/seller/${sellerId}`);
             if (!res.ok) return;
             const json = await res.json();
             if (!json.success) return;
@@ -328,7 +328,7 @@ fetchCartCount();
         _fetching = false;
     }
 
-    const pollId = setInterval(tick, 5000);
+    const pollId = setInterval(tick, 60000);
     window.addEventListener('beforeunload', () => clearInterval(pollId));
 
     document.addEventListener('visibilitychange', () => {
@@ -336,5 +336,3 @@ fetchCartCount();
     });
     window.addEventListener('online', () => { _fetching = false; tick(); });
 })();
-
-fetchCartCount();

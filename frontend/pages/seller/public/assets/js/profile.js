@@ -96,7 +96,7 @@ async function loadSellerData() {
     window._currentSellerId = sellerId;
 
     try {
-        const res = await apiFetchWithTimeout(`${API_BASE}/api/public/seller/${sellerId}`, { cache: 'no-store' });
+        const res = await apiFetchWithTimeout(`${API_BASE}/api/public/seller/${sellerId}`);
         const json = await res.json();
 
         if (!res.ok || !json.success) {
@@ -646,7 +646,7 @@ fetchCartCount();
         _isFetching = true;
 
         try {
-            const res = await apiFetchWithTimeout(`${API_BASE}/api/public/seller/${sellerId}`, { cache: 'no-store' });
+            const res = await apiFetchWithTimeout(`${API_BASE}/api/public/seller/${sellerId}`);
             if (!res.ok) return;
             const json = await res.json();
             if (!json.success) return;
@@ -688,7 +688,7 @@ fetchCartCount();
             if (_isFetching) return;
             if (!initialized) { initialized = true; await liveFetchProfile(); return; }
             await liveFetchProfile();
-        }, 15000);
+        }, 60000);
         window.addEventListener('beforeunload', () => clearInterval(_pollId));
     }
 
