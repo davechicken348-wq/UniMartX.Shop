@@ -3,97 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="UniMartX helps student entrepreneurs build professional online stores — without building a website. Create your shop in minutes.">
-    <title>UniMartX — Build Your Student Business</title>
+    <title>Welcome — UniMartX</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="config.js"></script>
-    <script src="https://unpkg.com/lucide@0.468.0"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://api.unimartx.com">
     <link rel="stylesheet" href="assets/css/index.css">
 </head>
 <body>
     <nav>
-        <a href="#" class="logo">Unimart<span>X</span></a>
-        <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu" aria-expanded="false">
+        <a href="pages/public/home.html" class="logo">Unimart<span>X</span></a>
+        <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="navLinks">
             <span></span><span></span><span></span>
         </button>
         <div class="nav-links" id="navLinks">
             <a href="pages/public/stores/stores.html">Explore Shops</a>
-            <a href="pages/public/home.html">How It Works</a>
+            <a href="pages/public/home.html">Learn More</a>
             <a href="pages/auth/seller/register.html" class="btn-nav">Create My Shop</a>
         </div>
     </nav>
 
     <section class="hero">
-        <div class="hero-bg"></div>
-        <div class="hero-grid"></div>
-        <div class="orb orb-shop"></div>
-        <div class="orb orb-brand"></div>
-        <div class="orb orb-orders"></div>
-
+        <div class="hero-bg" aria-hidden="true">
+            <div class="hero-grid"></div>
+            <div class="orb orb-shop"></div>
+            <div class="orb orb-brand"></div>
+            <div class="orb orb-orders"></div>
+        </div>
         <div class="hero-content">
-            <div class="welcome-badge">
-                <i data-lucide="zap"></i>
-                Built for student entrepreneurs
-            </div>
-
-            <h1>
-                Build your<br>
-                <span class="highlight-green">student business.</span>
-            </h1>
-
-            <p class="subtitle">
-                Your business deserves more than WhatsApp Status. Create your own professional storefront, share one link, and start receiving orders — all without building a website.
+            <h1>Welcome to <span class="highlight-green">UniMartX.</span></h1>
+            <p class="hero-sub">
+                The student seller marketplace. Discover shops built by students, or start selling with your own storefront.
             </p>
-
             <div class="cta-group">
-                <a href="pages/auth/seller/register.html" class="btn btn-primary" id="createShopBtn">
-                    <i data-lucide="rocket"></i>
-                    <span>Create My Shop</span>
-                </a>
-                <a href="pages/public/stores/stores.html" class="btn btn-ghost" id="exploreBtn">
-                    <i data-lucide="compass"></i>
-                    <span>Explore Student Shops</span>
-                </a>
-            </div>
-
-            <div class="trust-strip">
-                <div class="trust-item">
-                    <i data-lucide="store"></i>
-                    Your own storefront
-                </div>
-                <div class="trust-divider"></div>
-                <div class="trust-item">
-                    <i data-lucide="link"></i>
-                    Shareable shop link
-                </div>
-                <div class="trust-divider"></div>
-                <div class="trust-item">
-                    <i data-lucide="package-check"></i>
-                    Order management
-                </div>
-                <div class="trust-divider"></div>
-                <div class="trust-item">
-                    <i data-lucide="trending-up"></i>
-                    Grow your brand
-                </div>
-            </div>
-
-            <div class="info-banner">
-                <i data-lucide="info"></i>
-                <span><strong>Perfect for student sellers</strong> — turn your side hustle into a real online business.</span>
+                <a href="pages/public/stores/stores.html" class="btn btn-primary">Browse Student Shops</a>
+                <a href="pages/auth/seller/register.html" class="btn btn-ghost">Start Selling</a>
             </div>
         </div>
     </section>
 
-    <footer>
-        &copy; 2025 UnimartX &nbsp;·&nbsp;
-        <a href="pages/public/info/terms.html">Terms</a> &nbsp;·&nbsp;
-        <a href="pages/public/info/privacy.html">Privacy</a> &nbsp;·&nbsp;
-        <a href="pages/public/contact/contact.html">Contact</a>
+    <section class="quick-links">
+        <a href="pages/public/stores/stores.html" class="quick-link">
+            <span class="quick-icon"><i data-lucide="store"></i></span>
+            <span class="quick-text">Discover shops</span>
+            <span class="quick-arrow"><i data-lucide="arrow-right"></i></span>
+        </a>
+        <a href="pages/public/shop/shop.html" class="quick-link">
+            <span class="quick-icon"><i data-lucide="shopping-bag"></i></span>
+            <span class="quick-text">Browse products</span>
+            <span class="quick-arrow"><i data-lucide="arrow-right"></i></span>
+        </a>
+        <a href="pages/public/home.html" class="quick-link">
+            <span class="quick-icon"><i data-lucide="info"></i></span>
+            <span class="quick-text">How it works</span>
+            <span class="quick-arrow"><i data-lucide="arrow-right"></i></span>
+        </a>
+    </section>
+
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <a href="pages/public/home.html" class="nav-logo">Unimart<span>X</span></a>
+                <p class="footer-tagline">The student seller marketplace.</p>
+            </div>
+            <div class="footer-cols">
+                <div class="footer-col">
+                    <h4>Shop</h4>
+                    <a href="pages/public/stores/stores.html">Explore Shops</a>
+                    <a href="pages/public/shop/shop.html">Browse Products</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Sell</h4>
+                    <a href="pages/auth/seller/register.html">Create My Shop</a>
+                    <a href="pages/public/home.html">How It Works</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <a href="pages/public/info/about.html">About</a>
+                    <a href="pages/public/contact/contact.html">Contact</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <a href="pages/public/info/terms.html">Terms</a>
+                    <a href="pages/public/info/privacy.html">Privacy</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>&copy; 2026 UniMartX. All rights reserved.</span>
+        </div>
     </footer>
 
+    <script src="config.js"></script>
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
     <script>
         lucide.createIcons();
 
@@ -102,7 +104,7 @@
 
         menuToggle.addEventListener('click', () => {
             const isOpen = navLinks.classList.toggle('open');
-            menuToggle.setAttribute('aria-expanded', isOpen);
+            menuToggle.setAttribute('aria-expanded', String(isOpen));
         });
 
         document.addEventListener('click', (e) => {
@@ -110,44 +112,6 @@
                 navLinks.classList.remove('open');
                 menuToggle.setAttribute('aria-expanded', 'false');
             }
-        });
-
-        function spawnParticles(btn, count = 24) {
-            const emojis = ["🚀","✨","🛍️","💚","🔥","📦","💸","🏪","🎯","💪"];
-            const rect = btn.getBoundingClientRect();
-            const cx = rect.left + rect.width / 2;
-            const cy = rect.top + rect.height / 2;
-            for (let i = 0; i < count; i++) {
-                const el = document.createElement('span');
-                el.className = 'particle';
-                el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-                el.style.left = cx + 'px';
-                el.style.top = cy + 'px';
-                el.style.setProperty('--tx', (Math.random() - 0.5) * 300 + 'px');
-                el.style.setProperty('--ty', (Math.random() - 0.9) * 280 + 'px');
-                el.style.fontSize = (14 + Math.random() * 20) + 'px';
-                document.body.appendChild(el);
-                el.addEventListener('animationend', () => el.remove());
-            }
-        }
-
-        const createShopBtn = document.getElementById('createShopBtn');
-        const exploreBtn = document.getElementById('exploreBtn');
-
-        createShopBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            spawnParticles(createShopBtn, 28);
-            setTimeout(() => {
-                window.location.href = createShopBtn.getAttribute('href');
-            }, 900);
-        });
-
-        exploreBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            spawnParticles(exploreBtn, 20);
-            setTimeout(() => {
-                window.location.href = exploreBtn.getAttribute('href');
-            }, 900);
         });
     </script>
 </body>

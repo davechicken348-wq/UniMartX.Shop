@@ -175,16 +175,6 @@ function buildStoreCard(store) {
                     <i data-lucide="package" aria-hidden="true"></i> ${store.productCount || 0}
                 </div>
             </div>
-            <div class="store-card-trust-row">
-                <i data-lucide="shield-check" aria-hidden="true"></i>
-                <span>Verified student seller</span>
-                <span class="trust-divider"></span>
-                <i data-lucide="map-pin" aria-hidden="true"></i>
-                <span>Campus-based</span>
-                <span class="trust-divider"></span>
-                <i data-lucide="headphones" aria-hidden="true"></i>
-                <span><strong>Direct support</strong></span>
-            </div>
             <div class="store-card-cta">
                 Visit shop <i data-lucide="arrow-right" aria-hidden="true"></i>
             </div>
@@ -246,29 +236,19 @@ async function fetchSpotlight() {
 
 
 async function fetchHeroStats() {
-    const sellersEl = document.getElementById('hero-stat-sellers');
-    const productsEl = document.getElementById('hero-stat-products');
-    const ratingEl = document.getElementById('hero-stat-rating');
-    const verifiedEl = document.getElementById('hero-stat-verified');
     const mpSellersEl = document.getElementById('mp-stat-sellers');
     const mpProductsEl = document.getElementById('mp-stat-products');
     const mpReviewsEl = document.getElementById('mp-stat-reviews');
 
-    if (!sellersEl && !productsEl && !ratingEl && !verifiedEl && !mpSellersEl && !mpProductsEl && !mpReviewsEl) return;
+    if (!mpSellersEl && !mpProductsEl && !mpReviewsEl) return;
 
     const FALLBACKS = {
         sellers: '0',
         products: '0',
-        rating: '0.0 ★',
-        verified: '0%',
         reviews: '0',
     };
 
-    const apply = (sellers, products, rating, verified, reviews) => {
-        if (sellersEl) sellersEl.textContent = sellers ?? FALLBACKS.sellers;
-        if (productsEl) productsEl.textContent = products ?? FALLBACKS.products;
-        if (ratingEl) ratingEl.textContent = rating ?? FALLBACKS.rating;
-        if (verifiedEl) verifiedEl.textContent = verified ?? FALLBACKS.verified;
+    const apply = (sellers, products, reviews) => {
         if (mpSellersEl) mpSellersEl.textContent = sellers ?? FALLBACKS.sellers;
         if (mpProductsEl) mpProductsEl.textContent = products ?? FALLBACKS.products;
         if (mpReviewsEl) mpReviewsEl.textContent = reviews ?? FALLBACKS.reviews;
@@ -282,8 +262,6 @@ async function fetchHeroStats() {
         apply(
             s.totalSellers || s.sellers || null,
             s.totalProducts || s.products || null,
-            s.avgRating ? `${Number(s.avgRating).toFixed(1)} ★` : null,
-            s.verifiedStores || s.verifiedPercent || null,
             s.totalReviews || s.reviews || null,
         );
     } catch(e) {}
@@ -386,10 +364,13 @@ document.getElementById('empty-reset').addEventListener('click', () => {
     fetchSpotlight();
 });
 
-// Navbar
+// Navbar + category rail: shadow lives on the rail so both feel unified
 window.addEventListener('scroll', () => {
-    document.getElementById('navbar').style.boxShadow =
-        window.scrollY > 10 ? '0 4px 24px rgba(0,0,0,0.4)' : 'none';
+    const scrolled = window.scrollY > 10;
+    const navbar = document.getElementById('navbar');
+    const catRail = document.querySelector('.category-rail-wrap');
+    if (navbar) navbar.style.boxShadow = 'none';
+    if (catRail) catRail.style.boxShadow = scrolled ? '0 4px 24px rgba(0,0,0,0.4)' : 'none';
 });
 
 const hamburger = document.getElementById('nav-hamburger');
@@ -481,18 +462,10 @@ async function liveFetchStores() {
 }
 
 function fetchHeroStatsFromData(s) {
-    const sellersEl  = document.getElementById('hero-stat-sellers');
-    const productsEl = document.getElementById('hero-stat-products');
-    const ratingEl   = document.getElementById('hero-stat-rating');
-    const verifiedEl = document.getElementById('hero-stat-verified');
     const mpSellersEl = document.getElementById('mp-stat-sellers');
     const mpProductsEl = document.getElementById('mp-stat-products');
     const mpReviewsEl = document.getElementById('mp-stat-reviews');
 
-    if (sellersEl)  sellersEl.textContent  = s.totalSellers || s.sellers || sellersEl.textContent;
-    if (productsEl) productsEl.textContent = s.totalProducts || s.products || productsEl.textContent;
-    if (ratingEl && s.avgRating) ratingEl.textContent = `${Number(s.avgRating).toFixed(1)} ★`;
-    if (verifiedEl && (s.verifiedStores || s.verifiedPercent)) verifiedEl.textContent = s.verifiedStores || s.verifiedPercent;
     if (mpSellersEl) mpSellersEl.textContent = s.totalSellers || s.sellers || mpSellersEl.textContent;
     if (mpProductsEl) mpProductsEl.textContent = s.totalProducts || s.products || mpProductsEl.textContent;
     if (mpReviewsEl) mpReviewsEl.textContent = s.totalReviews || s.reviews || mpReviewsEl.textContent;

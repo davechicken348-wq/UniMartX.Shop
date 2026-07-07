@@ -766,6 +766,7 @@ a { text-decoration: none; color: inherit; }
     word-break: break-word;
     text-align: right;
     flex-shrink: 1;
+    min-width: 0;
 }
 
 .payment-fields {
