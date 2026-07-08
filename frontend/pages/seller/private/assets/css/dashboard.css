@@ -483,6 +483,11 @@
 
 /* Very small phone */
 @media (max-width: 380px) {
+    .main-col { gap: 0.7rem; }
+    .card { padding: 0.85rem 0.65rem; }
+    .card-header { margin-bottom: 0.85rem; padding-bottom: 0.75rem; }
+    .card-header h2 { font-size: 0.95rem; }
+    .card-header p  { font-size: 0.72rem; }
     .stats-grid { grid-template-columns: 1fr; gap: 0.5rem; }
     .stat-card { padding: 0.7rem 0.45rem; }
     .stat-icon { width: 32px; height: 32px; }
@@ -497,4 +502,33 @@
 
     .topnav-add-btn { padding: 0.4rem 0.4rem; }
     .topnav-btn { width: 32px; height: 32px; }
+
+    .order-row { padding: 0.7rem 0; gap: 0.35rem; }
+    .order-ref    { font-size: 0.72rem; }
+    .order-product { font-size: 0.75rem; }
+    .order-amount  { font-size: 0.78rem; }
+    .order-link { width: 26px; height: 26px; }
+
+    .top-product-row { padding: 0.65rem 0; gap: 0.55rem; }
+    .top-product-img { width: 30px; height: 30px; }
+    .top-product-name  { font-size: 0.75rem; }
+    .top-product-sales { font-size: 0.65rem; }
+    .top-product-revenue { font-size: 0.75rem; }
+
+    .followers-grid { grid-template-columns: 1fr; gap: 0.65rem; }
+    .follower-card { padding: 0.65rem 0.75rem; }
+    .follower-avatar { width: 34px; height: 34px; font-size: 0.72rem; }
+    .follower-name  { font-size: 0.78rem; }
+    .follower-email { font-size: 0.65rem; }
+
+    .mini-chart { height: 60px; gap: 0.3rem; }
+    .chart-bar span { font-size: 0; }
+    @media (hover: hover) {
+        .chart-bar:hover span { font-size: 0.5rem; }
+    }
+
+    .qa-item { padding: 0.6rem 0.25rem; }
+    .qa-icon { width: 28px; height: 28px; }
+    .qa-icon svg { width: 13px; height: 13px; }
+    .qa-item span { font-size: 0.62rem; }
 }
