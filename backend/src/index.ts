@@ -41,6 +41,25 @@ process.on('SIGTERM', async () => {
   process.exit(0);
 });
 
+// ── Pre-connect Prisma before accepting requests ──
+// This prevents the first request from hanging while Prisma
+// lazily establishes the database connection pool.
+async function startServer(port: number) {
+  try {
+    console.log('🔌 Connecting to database...');
+    await prisma.$connect();
+    console.log('✅ Database connected');
+
+    app.listen(port, () => {
+      console.log(`🚀 Server is running on http://localhost:${PORT}`);
+      console.log(`📊 Prisma Studio: run "npm run prisma:studio" to view the database`);
+    });
+  } catch (err) {
+    console.error('❌ Failed to connect to database on startup:', err);
+    process.exit(1);
+  }
+}
+
 // ── Middleware ──
 const isDev = process.env.NODE_ENV === 'development';
 const allowedOrigins = isDev
@@ -105,13 +124,6 @@ app.use('/api/orders', orderRoutes);
 // ── Error handler (must be last) ──
 app.use(errorHandler);
 
-// ── Graceful shutdown ──
-process.on('SIGINT', async () => {
-  console.log('Shutting down gracefully...');
-  await prisma.$disconnect();
-  process.exit(0);
-});
-
 // ── Init R2 storage ──
 initializeR2();
 
@@ -120,9 +132,9 @@ initializeEmailService().catch((error) => {
   console.error('Failed to initialize email service:', error);
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = parseInt(process.env.PORT || '5000', 10);
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server is running on http://localhost:${PORT}`);
-  console.log(`📊 Prisma Studio: run "npm run prisma:studio" to view the database`);
-});
+// ── Start the server ──
+// Prisma is pre-connected inside startServer so the first
+// incoming request never has to wait for a cold connection.
+startServer(PORT);

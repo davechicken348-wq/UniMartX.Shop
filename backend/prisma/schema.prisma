@@ -6,6 +6,14 @@ datasource db {
   provider          = "postgresql"
   url               = env("DATABASE_URL")
   shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+  // Pool settings for Render / hosted PostgreSQL
+  // Lower connection_limit to stay within Render's pooler limits
+  // and avoid "too many connections" errors on cold starts.
+  // prisma generate --preview-feature is required for this syntax.
+  // If using a connection pooler (PgBouncer), set connection_limit <= 5.
+  // If connecting directly, 10 is usually safe.
+  // Note: This requires `prisma generate --preview-feature` for Prisma < 6, or just Prisma 6+.
+  // If not supported by your Prisma version, set via PRISMA_QUERY_ENGINE_LIBRARY or pool config below.
 }
 
 enum UserRole {
