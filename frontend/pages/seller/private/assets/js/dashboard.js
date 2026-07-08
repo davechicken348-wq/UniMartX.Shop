@@ -179,10 +179,24 @@ function renderRecentOrders(orders) {
       const statusClass = getStatusClass(o.status);
       return `
       <div class="order-row">
-        <span class="order-ref">#${o.orderNumber}</span>
-        <span class="order-product">${escapeHtml(o.productName || '—')}</span>
-        <span class="order-amount">GH₵ ${o.totalAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
-        <span class="badge-status ${statusClass}">${capitalize(o.status)}</span>
+        <div class="order-cell">
+          <span class="order-cell-label">Order</span>
+          <span class="order-cell-value order-cell-value--primary">#${o.orderNumber}</span>
+        </div>
+        <div class="order-cell">
+          <span class="order-cell-label">Product</span>
+          <span class="order-cell-value">${escapeHtml(o.productName || '—')}</span>
+        </div>
+        <div class="order-cell">
+          <span class="order-cell-label">Amount</span>
+          <span class="order-cell-value order-cell-value--amount">GH₵ ${o.totalAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+        </div>
+        <div class="order-cell">
+          <span class="order-cell-label">Status</span>
+          <span class="order-cell-value order-cell-value--status">
+            <span class="badge-status ${statusClass}">${capitalize(o.status)}</span>
+          </span>
+        </div>
         <a href="../orders/order-details.html?id=${o.id}" class="order-link"><i data-lucide="arrow-right"></i></a>
       </div>
     `;
