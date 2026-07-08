@@ -484,6 +484,7 @@
 /* Very small phone */
 @media (max-width: 380px) {
     .main-col { gap: 0.7rem; }
+    .dashboard-side { gap: 0.65rem; }
     .card { padding: 0.85rem 0.65rem; }
     .card-header { margin-bottom: 0.85rem; padding-bottom: 0.75rem; }
     .card-header h2 { font-size: 0.95rem; }
