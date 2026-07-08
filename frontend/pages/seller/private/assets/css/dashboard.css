@@ -314,8 +314,8 @@
     .stat-trend { font-size: 0.68rem; padding: 0.15rem 0.4rem; }
 
     .dashboard-grid { gap: 1rem; grid-template-columns: 1fr; }
-    .dashboard-side { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-    .main-col { gap: 1rem; }
+    .dashboard-side { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; min-width: 0; overflow: hidden; }
+    .main-col { gap: 1rem; min-width: 0; overflow: hidden; }
 
     .card { padding: 1rem; border-radius: 14px; }
     .card-header h2 { font-size: 1.05rem; }
@@ -382,8 +382,8 @@
     .stat-trend { font-size: 0.65rem; }
 
     .dashboard-grid { gap: 0.85rem; }
-    .dashboard-side { display: flex; flex-direction: column; gap: 0.85rem; }
-    .main-col { gap: 0.85rem; }
+    .dashboard-side { display: flex; flex-direction: column; gap: 0.85rem; min-width: 0; overflow: hidden; }
+    .main-col { gap: 0.85rem; min-width: 0; overflow: hidden; }
     .card { padding: 0.9rem 0.75rem; }
     .card-header h2 { font-size: 1rem; }
 
@@ -423,8 +423,9 @@
 
 /* Very small phone */
 @media (max-width: 380px) {
-    .main-col { gap: 0.7rem; }
-    .dashboard-side { gap: 0.65rem; }
+    .main-col { gap: 0.7rem; min-width: 0; overflow: hidden; }
+    .dashboard-side { gap: 0.65rem; min-width: 0; overflow: hidden; }
+    .followers-grid { grid-template-columns: 1fr; gap: 0.65rem; }
     .card { padding: 0.85rem 0.65rem; }
     .card-header { margin-bottom: 0.85rem; padding-bottom: 0.75rem; }
     .card-header h2 { font-size: 0.95rem; }
@@ -461,7 +462,6 @@
     .follower-avatar { width: 34px; height: 34px; font-size: 0.72rem; }
     .follower-name  { font-size: 0.78rem; }
     .follower-email { font-size: 0.65rem; }
-
     .mini-chart { height: 60px; gap: 0.3rem; }
     .chart-bar span { font-size: 0; }
     @media (hover: hover) {
