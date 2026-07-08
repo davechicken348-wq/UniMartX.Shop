@@ -404,6 +404,11 @@
     .topnav-add-btn svg { width: 18px; height: 18px; }
 
     .mini-chart { height: 80px; }
+    .mini-chart > .error-state,
+    .mini-chart > .loading-state {
+        align-self: stretch;
+        width: 100%;
+    }
     .chart-bar::before { border-radius: 3px 3px 0 0; }
 
     .top-product-img { width: 36px; height: 36px; }
@@ -478,7 +483,7 @@
 
 /* Very small phone */
 @media (max-width: 380px) {
-    .stats-grid { gap: 0.5rem; }
+    .stats-grid { grid-template-columns: 1fr; gap: 0.5rem; }
     .stat-card { padding: 0.7rem 0.45rem; }
     .stat-icon { width: 32px; height: 32px; }
     .stat-icon svg { width: 16px; height: 16px; }
