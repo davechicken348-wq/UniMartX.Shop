@@ -34,27 +34,84 @@ if (emailInput) {
 
 // ── STEP NAVIGATION ────────────────────────────────────────
 let currentStep = 1;
-const stepEls = document.querySelectorAll('.step');
-const stepLines = document.querySelectorAll('.step-line');
+
+const STEP_COLORS = {
+    1: '#6366f1',
+    2: '#8b5cf6',
+    3: '#f97316'
+};
+
+function updateProgress(n) {
+    const fill = document.getElementById('progress-fill');
+    const labels = document.querySelectorAll('.progress-label');
+    const visualSteps = document.querySelectorAll('.visual-step');
+
+    fill.style.width = `${(n / 3) * 100}%`;
+    fill.style.background = `linear-gradient(90deg, ${STEP_COLORS[n]}, ${STEP_COLORS[n]}dd)`;
+    fill.style.boxShadow = `0 0 12px ${STEP_COLORS[n]}44`;
+
+    labels.forEach((label, i) => {
+        label.classList.remove('active', 'completed');
+        if (i + 1 < n) label.classList.add('completed');
+        else if (i + 1 === n) {
+            label.classList.add('active');
+            label.style.color = STEP_COLORS[n];
+        }
+    });
+
+    visualSteps.forEach((step, i) => {
+        step.classList.toggle('active', i + 1 === n);
+        const iconWrap = step.querySelector('.visual-step-icon');
+        if (iconWrap && i + 1 === n) {
+            iconWrap.style.background = `${STEP_COLORS[n]}44`;
+            iconWrap.style.borderColor = `${STEP_COLORS[n]}66`;
+        } else if (iconWrap && i + 1 !== n) {
+            iconWrap.style.background = '';
+            iconWrap.style.borderColor = '';
+        }
+    });
+
+    const panelBorder = document.querySelector('.visual-panel');
+    if (panelBorder) {
+        panelBorder.style.boxShadow = `0 20px 60px ${STEP_COLORS[n]}33, 0 0 0 1px ${STEP_COLORS[n]}22`;
+    }
+}
 
 function showStep(n) {
-    document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.form-step').forEach(s => {
+        s.classList.remove('active');
+    });
+
     const currentStepEl = document.getElementById(`step-${n}`);
     if (currentStepEl) currentStepEl.classList.add('active');
 
-    const indicator = currentStepEl ? currentStepEl.querySelector('.step-indicator') : null;
-    if (indicator) {
-        const steps = indicator.querySelectorAll('.step');
-        const lines = indicator.querySelectorAll('.step-line');
-        steps.forEach((el, i) => {
-            el.classList.remove('active', 'completed');
-            if (i + 1 < n) el.classList.add('completed');
-            else if (i + 1 === n) el.classList.add('active');
-        });
-        lines.forEach((line, i) => line.classList.toggle('completed', i + 1 < n));
+    currentStep = n;
+    updateProgress(n);
+
+    const body = document.body;
+    body.classList.remove('theme-step-1', 'theme-step-2', 'theme-step-3');
+    body.classList.add(`theme-step-${n}`);
+
+    const cardBody = document.querySelector('.card-body');
+    const stepBgs = { 1: '#fafbff', 2: '#fdfbff', 3: '#fffaf7' };
+    if (cardBody) cardBody.style.background = stepBgs[n] || '#fff';
+
+    const panel = document.querySelector('.visual-panel');
+    const panelBgs = {
+        1: 'linear-gradient(160deg, #4f46e5 0%, #6366f1 40%, #8b5cf6 100%)',
+        2: 'linear-gradient(160deg, #7c3aed 0%, #8b5cf6 40%, #a78bfa 100%)',
+        3: 'linear-gradient(160deg, #ea580c 0%, #f97316 40%, #fb923c 100%)',
+    };
+    const panelShadows = {
+        1: '0 20px 60px rgba(99,102,241,0.25), 0 0 0 1px rgba(255,255,255,0.05)',
+        2: '0 20px 60px rgba(139,92,246,0.25), 0 0 0 1px rgba(255,255,255,0.05)',
+        3: '0 20px 60px rgba(249,115,22,0.25), 0 0 0 1px rgba(255,255,255,0.05)',
+    };
+    if (panel) {
+        panel.style.background = panelBgs[n] || panelBgs[1];
+        panel.style.boxShadow = panelShadows[n] || panelShadows[1];
     }
 
-    currentStep = n;
     const card = document.querySelector('.card');
     if (card) card.scrollTop = 0;
     if (window.lucide) lucide.createIcons();
@@ -224,48 +281,6 @@ function validateStep3() {
     return ok;
 }
 
-// ── REVIEW POPULATION ──────────────────────────────────────
-function populateReview() {
-    document.getElementById('r-name').textContent = val('name');
-    document.getElementById('r-email').textContent = val('email');
-    document.getElementById('r-phone').textContent = val('phone');
-
-    const selected = document.querySelector('.persona-card input[name="seller-type"]:checked');
-    const type = selected?.value;
-
-    document.getElementById('r-seller-type').textContent = type === 'campus' ? 'Campus Seller' : 'Independent Seller';
-
-    const rowUniversity = document.getElementById('r-row-university');
-    const rowBizType = document.getElementById('r-row-biz-type');
-    const rowPlatform = document.getElementById('r-row-platform');
-
-    rowUniversity.style.display = 'none';
-    rowBizType.style.display = 'none';
-    rowPlatform.style.display = 'none';
-
-    if (type === 'campus') {
-        rowUniversity.style.display = '';
-        document.getElementById('r-university').textContent = val('university') || '—';
-    }
-
-    if (type === 'independent') {
-        const bizEl = document.getElementById('biz-type');
-        const platEl = document.getElementById('current-platform');
-        rowBizType.style.display = '';
-        document.getElementById('r-biz-type').textContent = bizEl.options[bizEl.selectedIndex]?.text || '—';
-        if (platEl.value) {
-            rowPlatform.style.display = '';
-            document.getElementById('r-platform').textContent = platEl.options[platEl.selectedIndex]?.text || '—';
-        }
-    }
-}
-
-const catEl = document.getElementById('category');
-document.getElementById('r-store-name').textContent = val('store-name');
-document.getElementById('r-category').textContent = catEl.options[catEl.selectedIndex]?.text || '—';
-document.getElementById('r-location').textContent = `${val('city')}, ${val('country')}`;
-document.getElementById('r-desc').textContent = document.getElementById('store-desc').value.trim();
-
 // ── BLUR VALIDATION ────────────────────────────────────────
 ['name', 'email', 'phone', 'password', 'confirm-password'].forEach(id => {
     document.getElementById(id).addEventListener('blur', () => {
@@ -276,21 +291,6 @@ document.getElementById('r-desc').textContent = document.getElementById('store-d
 document.getElementById('confirm-password').addEventListener('input', function () {
     if (this.value && this.value === passwordInput.value) setSuccess('confirm-password');
 });
-
-// ── LIVE REVIEW UPDATES ────────────────────────────────────
-const allReviewIds = ['name','email','phone','university','biz-type','current-platform','store-name','category','store-desc','country','city'];
-const reviewInputs = allReviewIds.map(id => document.getElementById(id)).filter(Boolean);
-
-reviewInputs.forEach(el => {
-    el.addEventListener('input', populateReview);
-    el.addEventListener('change', populateReview);
-});
-
-document.querySelectorAll('.persona-card input[name="seller-type"]').forEach(radio => {
-    radio.addEventListener('change', populateReview);
-});
-
-populateReview();
 
 // ── FORM SUBMIT ────────────────────────────────────────────
 const form = document.getElementById('register-form');
@@ -335,7 +335,7 @@ form.addEventListener('submit', async function (e) {
             city: document.getElementById('city').value.trim(),
         };
 
-        const response = await fetch(`${API_BASE}/api/seller-auth/register`, { credentials: 'include', 
+        const response = await fetch(`${API_BASE}/api/seller-auth/register`, { credentials: 'include',
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload),
@@ -345,7 +345,7 @@ form.addEventListener('submit', async function (e) {
 
         if (response.ok && result.success) {
 
-            
+
 
             alertSuccess.classList.add('visible');
             form.reset();
@@ -372,3 +372,7 @@ form.addEventListener('submit', async function (e) {
         submitBtn.disabled = false;
     }
 });
+
+// ── INIT ───────────────────────────────────────────────────
+document.body.classList.add('theme-step-1');
+updateProgress(1);
