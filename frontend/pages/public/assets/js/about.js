@@ -19,7 +19,6 @@ window.addEventListener('scroll', () => {
 });
 
 const revealEls = document.querySelectorAll('.reveal');
-
 if ('IntersectionObserver' in window) {
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -29,6 +28,5 @@ if ('IntersectionObserver' in window) {
             }
         });
     }, { threshold: 0.1 });
-
     revealEls.forEach((el) => observer.observe(el));
 }
