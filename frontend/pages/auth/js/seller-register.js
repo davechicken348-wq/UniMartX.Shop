@@ -344,9 +344,6 @@ form.addEventListener('submit', async function (e) {
         const result = await response.json();
 
         if (response.ok && result.success) {
-
-
-
             alertSuccess.classList.add('visible');
             form.reset();
             strengthBar.className = 'password-strength-bar';
@@ -362,12 +359,16 @@ form.addEventListener('submit', async function (e) {
                 localStorage.setItem('pnav_role', 'seller');
             }
             setTimeout(() => { window.location.href = '../login.html'; }, 1000);
-
+        } else {
+            const errorMessage = result?.error || 'Registration failed. Please check your information and try again.';
+            errorText.textContent = errorMessage;
+            alertError.classList.add('visible');
         }
     } catch (err) {
         console.error('Registration error:', err);
         errorText.textContent = 'Network error. Please check your connection and try again.';
         alertError.classList.add('visible');
+    } finally {
         submitBtn.classList.remove('loading');
         submitBtn.disabled = false;
     }
