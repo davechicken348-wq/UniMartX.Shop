@@ -251,7 +251,7 @@ form.addEventListener('submit', async function (e) {
             localStorage.setItem('userRole', user.role);
 
             const redirectMap = {
-                buyer: '../../buyer/dashboard/dashboard.html',
+                buyer: '../buyer/dashboard/dashboard.html',
                 seller: '../seller/private/dashboard/overview.html',
                 admin: '../admin/admin-landing/admin-landing.html',
             };
