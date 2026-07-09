@@ -188,11 +188,6 @@ const rememberCheckbox = document.getElementById('remember');
 
 const API_BASE = (window.APP_CONFIG && window.APP_CONFIG.BACKEND_URL) || 'http://localhost:5000';
 
-const LANDING_PAGES = {
-    buyer: '../buyer/buyer-landing/buyer-landing.html',
-    seller: '../seller/private/seller-landing/landing.html',
-    admin: '../admin/admin-landing/admin-landing.html',
-};
 
 const REMEMBER_ME_EXPIRY = 30 * 24 * 60 * 60 * 1000;
 
@@ -256,7 +251,7 @@ form.addEventListener('submit', async function (e) {
             localStorage.setItem('userRole', user.role);
 
             const redirectMap = {
-                buyer: '../buyer/buyer-landing/buyer-landing.html',
+                buyer: '../../buyer/dashboard/dashboard.html',
                 seller: '../seller/private/dashboard/overview.html',
                 admin: '../admin/admin-landing/admin-landing.html',
             };
