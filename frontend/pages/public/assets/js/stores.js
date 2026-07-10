@@ -226,6 +226,7 @@ async function fetchSpotlight() {
         const { data } = await res.json();
         grid.innerHTML = data.slice(0, 3).map((s, i) => buildSpotlightCard(s, i + 1)).join('');
         lucide.createIcons();
+        observeNewRevealElements(grid);
     } catch(e) {}
 }
 
