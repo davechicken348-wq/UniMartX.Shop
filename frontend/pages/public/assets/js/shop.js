@@ -598,8 +598,10 @@ function showSkeletons() {
 }
 
 let fetchAbortController = null;
+let lastFetchId = 0;
 
 async function fetchProducts() {
+    const fetchId = ++lastFetchId;
     showSkeletons();
     syncStateFromDOM();
 
@@ -616,11 +618,13 @@ async function fetchProducts() {
         });
         if (!res.ok) throw new Error();
         const json = await res.json();
+        if (fetchId !== lastFetchId) return;
         renderProducts(json.data, json.total);
         renderPagination(json.totalPages || 1);
         announceFilters(filterLabels, json.total);
     } catch (err) {
         if (err.name === 'AbortError') return;
+        if (fetchId !== lastFetchId) return;
         if (productsWrap) productsWrap.innerHTML = '';
         if (emptyState) {
             emptyState.classList.remove('hidden');
