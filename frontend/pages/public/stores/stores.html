@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,10 +14,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://api.unimartx.com">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/stores.css">
 </head>
-
 <body>
     <a href="#main-content" class="visually-hidden">Skip to main content</a>
 
@@ -51,77 +49,27 @@
         </div>
     </nav>
 
-
     <!-- ═══════════════════════════════════════════
          HERO
     ═══════════════════════════════════════════ -->
     <section class="stores-hero">
-        <div class="hero-bg" aria-hidden="true">
-            <div class="hero-grid-pattern"></div>
-            <div class="hero-glow"></div>
-        </div>
-
+        <div class="hero-bg" aria-hidden="true"></div>
         <div class="hero-inner">
             <div class="hero-text">
                 <div class="hero-eyebrow">
                     <i data-lucide="store"></i>
                     Student Seller Marketplace
                 </div>
-
                 <h1>Your gateway to <span>student sellers.</span></h1>
                 <p id="hero-subtitle">Discover unique shops built by student entrepreneurs across campus. From fashion and food to tech and tutoring — find what you need, directly from the people who make it.</p>
-
                 <div class="hero-search">
                     <i data-lucide="search"></i>
                     <input type="search" id="hero-search-input" placeholder="Search by store name, category…" autocomplete="off">
-                    <button id="hero-search-btn"><i data-lucide="arrow-right"></i></button>
+                    <button id="hero-search-btn" aria-label="Search"><i data-lucide="arrow-right"></i></button>
                 </div>
             </div>
-
-            <div class="hero-images" aria-hidden="true">
-                <div class="hero-img-main">
-                    <img src="../assets/images/stores-hero/profile-6.webp" alt="Student seller with products" loading="eager" />
-                </div>
-                <div class="hero-img-float hero-img-1">
-                    <img src="../assets/images/stores-hero/profile-9.webp" alt="Student shop display" loading="eager" />
-                </div>
-                <div class="hero-img-float hero-img-2">
-                    <img src="../assets/images/stores-hero/profile-11.webp" alt="Campus entrepreneur" loading="eager" />
-                </div>
-                <div class="hero-img-float hero-img-3">
-                    <img src="../assets/images/stores-hero/profile-13.webp" alt="Student business owner" loading="eager" />
-                </div>
-            </div>
-        </div>
-
-        <!-- Mobile image strip -->
-        <div class="hero-mobile-strip" aria-hidden="true">
-            <div class="hero-mobile-strip-track">
-                <div class="hero-mobile-card">
-                    <img src="../assets/images/stores-hero/profile-6.webp" alt="Student seller" loading="lazy" />
-                    <div class="hero-mobile-caption">Your shop, your rules.</div>
-                </div>
-                <div class="hero-mobile-card">
-                    <img src="../assets/images/stores-hero/profile-9.webp" alt="Student shop" loading="lazy" />
-                    <div class="hero-mobile-caption">Start before you’re ready.</div>
-                </div>
-                <div class="hero-mobile-card">
-                    <img src="../assets/images/stores-hero/profile-11.webp" alt="Campus entrepreneur" loading="lazy" />
-                    <div class="hero-mobile-caption">Built here. Sold everywhere.</div>
-                </div>
-                <div class="hero-mobile-card">
-                    <img src="../assets/images/stores-hero/profile-13.webp" alt="Student business owner" loading="lazy" />
-                    <div class="hero-mobile-caption">Turn ideas into income.</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Live store ticker — populated by stores.js -->
-        <div class="hero-ticker" aria-hidden="true">
-            <div class="ticker-track" id="ticker-track"></div>
         </div>
     </section>
-
 
     <!-- ═══════════════════════════════════════════
          CATEGORY RAIL
@@ -139,7 +87,6 @@
             <button class="cat-pill" data-cat="other"><i data-lucide="more-horizontal"></i> Other</button>
         </div>
     </div>
-
 
     <!-- ═══════════════════════════════════════════
          MAIN
@@ -181,10 +128,8 @@
                         </select>
                     </div>
                     <div class="view-toggle">
-                        <button class="view-btn active" id="btn-grid" aria-label="Grid view"><i
-                                data-lucide="layout-grid"></i></button>
-                        <button class="view-btn" id="btn-list" aria-label="List view"><i
-                                data-lucide="list"></i></button>
+                        <button class="view-btn active" id="btn-grid" aria-label="Grid view"><i data-lucide="layout-grid"></i></button>
+                        <button class="view-btn" id="btn-list" aria-label="List view"><i data-lucide="list"></i></button>
                     </div>
                 </div>
             </div>
@@ -216,6 +161,34 @@
         </div>
     </main>
 
+    <!-- ═══════════════════════════════════════════
+         SELLER CTA
+    ═══════════════════════════════════════════ -->
+    <section class="seller-cta">
+        <div class="seller-cta-bg" aria-hidden="true">
+            <div class="cta-glow"></div>
+            <div class="cta-grid"></div>
+        </div>
+        <div class="seller-cta-inner">
+            <div class="seller-cta-content">
+                <div class="seller-cta-badge">
+                    <i data-lucide="zap"></i>
+                    Start Selling
+                </div>
+                <h2 class="seller-cta-title">Ready to launch <span>your shop?</span></h2>
+                <p class="seller-cta-sub">Join student entrepreneurs already selling on UniMartX. Set up your storefront in minutes.</p>
+                <a href="../../auth/seller/register.html" class="seller-cta-btn">
+                    Create My Shop <i data-lucide="arrow-right"></i>
+                </a>
+            </div>
+            <div class="seller-cta-perks">
+                <div class="perk"><i data-lucide="store"></i> <span>Free storefront</span></div>
+                <div class="perk"><i data-lucide="link"></i> <span>Shareable link</span></div>
+                <div class="perk"><i data-lucide="package"></i> <span>Product management</span></div>
+                <div class="perk"><i data-lucide="shield-check"></i> <span>Secure payments</span></div>
+            </div>
+        </div>
+    </section>
 
     <!-- FOOTER -->
     <footer class="footer">
@@ -249,7 +222,7 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <span>&copy; 2026 UnimartX. All rights reserved.</span>
+            <span>&copy; 2026 UniMartX. All rights reserved.</span>
         </div>
     </footer>
 
@@ -258,7 +231,5 @@
     <script src="../../shared/js/cart.js"></script>
     <script src="../assets/js/stores.js"></script>
     <script src="../../shared/js/public-nav.js"></script>
-
 </body>
-
 </html>

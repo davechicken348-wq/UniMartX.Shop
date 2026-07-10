@@ -87,11 +87,6 @@ function avatarStyle(s) {
     return `background:${storeGradient(s)}`;
 }
 
-function avatarStyle(s) {
-    if (s.storeAvatar) return `background-image:url('${s.storeAvatar}');background-size:cover;background-position:center`;
-    return `background:${storeGradient(s)}`;
-}
-
 function bannerStyle(s) {
     if (s.storeBanner) return `background-image:url('${s.storeBanner}');background-size:cover;background-position:center`;
     return `background:${storeGradient(s)}`;
