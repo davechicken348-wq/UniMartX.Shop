@@ -1191,8 +1191,10 @@ img { display: block; max-width: 100%; }
 
 
 /* ═══════════════════════════════════════════
-   EMPTY STATE
+   13. UTILITIES & EMPTY STATE
 ═══════════════════════════════════════════ */
+.hidden { display: none !important; }
+
 .empty-state {
     display: flex;
     flex-direction: column;
