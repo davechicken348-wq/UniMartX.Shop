@@ -56,6 +56,29 @@ img { display: block; max-width: 100%; }
     }
 }
 
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-6px); }
+}
+
+.reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal.in-view {
+    opacity: 1;
+    transform: translateY(0);
+}
+.delay-100 { transition-delay: 100ms; }
+.delay-200 { transition-delay: 200ms; }
+.delay-300 { transition-delay: 300ms; }
+
 
 /* ═══════════════════════════════════════════
    NAVBAR
@@ -516,8 +539,14 @@ img { display: block; max-width: 100%; }
     background: none;
     border: none;
     padding: 0;
+    animation: float 5s ease-in-out infinite;
 }
-.spotlight-card:hover { transform: translateY(-6px); }
+.spotlight-card:nth-child(2) { animation-delay: 1.5s; }
+.spotlight-card:nth-child(3) { animation-delay: 3s; }
+.spotlight-card:hover {
+    animation-play-state: paused;
+    transform: translateY(-6px);
+}
 
 .spotlight-avatar-ring {
     width: 88px;
@@ -720,6 +749,29 @@ img { display: block; max-width: 100%; }
     font-size: 0.875rem; color: var(--text-3); font-weight: 600;
 }
 .store-products-count svg { width: 14px; height: 14px; stroke: currentColor; }
+
+.store-card-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 14px;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--primary);
+    transition: gap 0.2s ease, color 0.2s ease;
+}
+.store-card-cta svg {
+    width: 14px; height: 14px;
+    stroke: currentColor;
+    transition: transform 0.2s ease;
+}
+.store-card:hover .store-card-cta {
+    gap: 10px;
+    color: var(--primary-d);
+}
+.store-card:hover .store-card-cta svg {
+    transform: translateX(3px);
+}
 
 
 /* ═══════════════════════════════════════════

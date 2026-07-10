@@ -136,7 +136,7 @@ function buildSpotlightCard(store, rank) {
         : `<span class="spotlight-avatar-fallback">${initial}</span>`;
 
     return `
-    <a class="spotlight-card" href="../../seller/public/store/store.html?id=${escapeHtml(store.id)}" aria-label="Store ${escapeHtml(store.storeName)}, rank ${rank}">
+    <a class="spotlight-card reveal delay-${rank}" href="../../seller/public/store/store.html?id=${escapeHtml(store.id)}" aria-label="Store ${escapeHtml(store.storeName)}, rank ${rank}">
         <div class="spotlight-avatar-ring">
             <div class="spotlight-avatar" style="${store.storeAvatar ? `background-image:url('${escapeHtml(store.storeAvatar)}');background-size:cover;background-position:center` : `background:${storeGradient(store)}`}">
                 ${avatarInner}
@@ -149,7 +149,7 @@ function buildSpotlightCard(store, rank) {
 function buildStoreCard(store) {
     const storeColor = store.storeColor || null;
     return `
-    <a class="store-card" href="../../seller/public/store/store.html?id=${escapeHtml(store.id)}">
+    <a class="store-card reveal" href="../../seller/public/store/store.html?id=${escapeHtml(store.id)}">
         <div class="store-card-top" style="${bannerStyle(store)}">
             <div class="store-avatar-wrap">
                 <div class="store-avatar" style="${avatarStyle(store)}"></div>
@@ -284,6 +284,14 @@ function renderGrid() {
     gridEl.innerHTML = state.data.map(buildStoreCard).join('');
     loadWrap.classList.toggle('hidden', state.data.length >= state.total);
     lucide.createIcons();
+
+    const cards = gridEl.querySelectorAll('.store-card.reveal');
+    cards.forEach((card, i) => {
+        card.classList.remove('delay-100', 'delay-200', 'delay-300');
+        if (i % 3 === 0) card.classList.add('delay-100');
+        else if (i % 3 === 1) card.classList.add('delay-200');
+        else card.classList.add('delay-300');
+    });
 }
 
 // ═══════════════════════════════════════════
@@ -486,6 +494,14 @@ function renderGridQuiet() {
     gridEl.innerHTML = state.data.map(buildStoreCard).join('');
     loadWrap.classList.toggle('hidden', state.data.length >= state.total);
     lucide.createIcons();
+
+    const cards = gridEl.querySelectorAll('.store-card.reveal');
+    cards.forEach((card, i) => {
+        card.classList.remove('delay-100', 'delay-200', 'delay-300');
+        if (i % 3 === 0) card.classList.add('delay-100');
+        else if (i % 3 === 1) card.classList.add('delay-200');
+        else card.classList.add('delay-300');
+    });
 }
 
 function startStoresLiveSync() {
@@ -513,5 +529,21 @@ window.addEventListener('online', () => {
     _isFetching = false;
     liveFetchStores();
 });
+
+// ── Scroll reveal ────────────────────────────
+if ('IntersectionObserver' in window) {
+    const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('in-view');
+                revealObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+} else {
+    document.querySelectorAll('.reveal').forEach(el => el.classList.add('in-view'));
+}
 
 liveFetchStores();
