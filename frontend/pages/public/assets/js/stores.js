@@ -292,6 +292,8 @@ function renderGrid() {
         else if (i % 3 === 1) card.classList.add('delay-200');
         else card.classList.add('delay-300');
     });
+
+    observeNewRevealElements(gridEl);
 }
 
 // ═══════════════════════════════════════════
@@ -502,6 +504,8 @@ function renderGridQuiet() {
         else if (i % 3 === 1) card.classList.add('delay-200');
         else card.classList.add('delay-300');
     });
+
+    observeNewRevealElements(gridEl);
 }
 
 function startStoresLiveSync() {
@@ -531,8 +535,15 @@ window.addEventListener('online', () => {
 });
 
 // ── Scroll reveal ────────────────────────────
-if ('IntersectionObserver' in window) {
-    const revealObserver = new IntersectionObserver((entries) => {
+let revealObserver = null;
+
+function setupRevealObserver() {
+    if (revealObserver) return;
+    if (!('IntersectionObserver' in window)) {
+        document.querySelectorAll('.reveal').forEach(el => el.classList.add('in-view'));
+        return;
+    }
+    revealObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.classList.add('in-view');
@@ -542,8 +553,14 @@ if ('IntersectionObserver' in window) {
     }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 
     document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
-} else {
-    document.querySelectorAll('.reveal').forEach(el => el.classList.add('in-view'));
 }
+
+function observeNewRevealElements(container) {
+    if (!revealObserver) return;
+    const els = container.querySelectorAll('.reveal:not(.in-view)');
+    els.forEach(el => revealObserver.observe(el));
+}
+
+setupRevealObserver();
 
 liveFetchStores();
