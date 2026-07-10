@@ -47,8 +47,14 @@ function productSkeleton() {
 function storeSkeleton() {
     return `<div class="store-card skeleton-card"><div class="store-card-top skel-banner"></div><div class="store-info" style="padding:1.25rem"><div class="skel skel-md" style="margin-bottom:0.5rem"></div><div class="skel skel-sm" style="margin-bottom:0.85rem"></div><div class="store-meta"><div class="skel skel-sm"></div><div class="skel skel-sm"></div></div></div></div>`;
 }
-document.getElementById('products-grid').innerHTML = Array(4).fill(productSkeleton()).join('');
-document.getElementById('stores-grid').innerHTML   = Array(4).fill(storeSkeleton()).join('');
+const productsGrid = document.getElementById('products-grid');
+if (productsGrid) {
+    productsGrid.innerHTML = Array(4).fill(productSkeleton()).join('');
+}
+const storesGrid = document.getElementById('stores-grid');
+if (storesGrid) {
+    storesGrid.innerHTML = Array(4).fill(storeSkeleton()).join('');
+}
 
 // ── Card builders ────────────────────────────
 function buildProductCard(p) {
@@ -99,16 +105,22 @@ async function loadHeroStats() {
 
 // ── Fetch trending products ──────────────────
 async function loadProducts() {
+    const grid = document.getElementById('products-grid');
+    if (!grid) return;
     try {
         const res = await apiFetch('/api/public/products/trending');
         if (!res.ok) throw new Error();
         const { data } = await res.json();
-        const grid = document.getElementById('products-grid');
-        if (!data.length) { grid.innerHTML = '<p class="empty-msg">No products yet.</p>'; return; }
+        if (!data.length) {
+            grid.innerHTML = '<div class="empty-msg"><div class="empty-msg-icon"><i data-lucide="package-open"></i></div><span>No products yet.</span></div>';
+            lucide.createIcons();
+            return;
+        }
         grid.innerHTML = data.slice(0, 4).map(buildProductCard).join('');
         lucide.createIcons();
     } catch {
-        document.getElementById('products-grid').innerHTML = '<p class="empty-msg">Could not load products.</p>';
+        grid.innerHTML = '<div class="empty-msg"><div class="empty-msg-icon"><i data-lucide="alert-circle"></i></div><span>Could not load products.</span></div>';
+        lucide.createIcons();
     }
 }
 
@@ -119,11 +131,19 @@ async function loadStores() {
         if (!res.ok) throw new Error();
         const { data } = await res.json();
         const grid = document.getElementById('stores-grid');
-        if (!data.length) { grid.innerHTML = '<p class="empty-msg">No shops yet.</p>'; return; }
+        if (!grid) return;
+        if (!data.length) {
+            grid.innerHTML = '<div class="empty-msg"><div class="empty-msg-icon"><i data-lucide="store"></i></div><span>No shops yet.</span></div>';
+            lucide.createIcons();
+            return;
+        }
         grid.innerHTML = data.map(buildStoreCard).join('');
         lucide.createIcons();
     } catch {
-        document.getElementById('stores-grid').innerHTML = '<p class="empty-msg">Could not load shops.</p>';
+        const grid = document.getElementById('stores-grid');
+        if (!grid) return;
+        grid.innerHTML = '<div class="empty-msg"><div class="empty-msg-icon"><i data-lucide="alert-circle"></i></div><span>Could not load shops.</span></div>';
+        lucide.createIcons();
     }
 }
 
@@ -137,7 +157,8 @@ async function loadStores() {
         loadStores();
         loadHeroStats();
 
-        document.getElementById('products-grid')?.addEventListener('click', async (e) => {
+        const productsGridEl = document.getElementById('products-grid');
+        productsGridEl?.addEventListener('click', async (e) => {
             const btn = e.target.closest('.product-cart-btn');
             if (!btn) return;
             e.preventDefault();
@@ -165,3 +186,19 @@ async function loadStores() {
         document.querySelectorAll('.hero-anim').forEach(el => el.classList.add('in-view'));
     }
 })();
+
+// ── Scroll reveal ────────────────────────────
+if ('IntersectionObserver' in window) {
+    const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('in-view');
+                revealObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+} else {
+    document.querySelectorAll('.reveal').forEach(el => el.classList.add('in-view'));
+}
