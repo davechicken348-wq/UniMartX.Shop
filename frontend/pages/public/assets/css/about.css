@@ -538,8 +538,10 @@ img { display: block; max-width: 100%; }
 }
 .builders-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 1.5rem;
+    max-width: 720px;
+    margin-inline: auto;
 }
 .builders-grid:has(.builder-card:only-child) {
     grid-template-columns: 1fr;

@@ -27,6 +27,10 @@ export const registerBuyerSchema = z.object({
     .max(100, 'Email is too long')
     .toLowerCase()
     .trim(),
+  phone: z
+    .string()
+    .min(7, 'Phone number must be at least 7 digits')
+    .max(20, 'Phone number is too long'),
   password: z
     .string()
     .min(8, 'Password must be at least 8 characters')

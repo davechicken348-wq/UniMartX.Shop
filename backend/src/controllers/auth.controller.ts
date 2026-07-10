@@ -86,6 +86,7 @@ export const registerBuyer = async (req: Request, res: Response): Promise<void> 
           password: hashedPassword,
           firstName: firstName,
           lastName: lastName,
+          phone: input.phone || null,
         },
       });
 

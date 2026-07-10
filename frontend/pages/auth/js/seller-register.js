@@ -223,7 +223,7 @@ function val(id) { return document.getElementById(id).value.trim(); }
 function validateStep1() {
     let ok = true;
     if (!val('name') || val('name').length < 2) { setError('name', 'Please enter your full name (min 2 chars).'); ok = false; } else setSuccess('name');
-    if (!val('email') || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val('email'))) { setError('email', 'Please enter a valid email address.'); ok = false; } else setSuccess('email');
+    if (!val('email') || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val('email'))) { setError('email', 'Please enter a valid email address.'); ok = false; } else if (!/^[^\s@]+@gmail\.com$/i.test(val('email'))) { setError('email', 'Only Gmail addresses are allowed. Please use a @gmail.com email.'); ok = false; } else setSuccess('email');
     if (!val('phone') || !/^\+?[\d\s\-().]{7,20}$/.test(val('phone'))) { setError('phone', 'Please enter a valid phone number.'); ok = false; } else setSuccess('phone');
     if (!val('password') || val('password').length < 8) { setError('password', 'Password must be at least 8 characters.'); ok = false; } else setSuccess('password');
     if (!val('confirm-password') || val('confirm-password') !== document.getElementById('password').value) { setError('confirm-password', 'Passwords do not match.'); ok = false; } else setSuccess('confirm-password');

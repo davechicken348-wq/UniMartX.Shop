@@ -81,7 +81,7 @@ function setSuccess(id) {
 }
 
 function clearAllFieldErrors() {
-    ['name', 'email', 'password', 'confirm-password'].forEach(id => {
+    ['name', 'email', 'phone', 'password', 'confirm-password'].forEach(id => {
         const input = document.getElementById(id);
         if (input) {
             input.classList.remove('error');
@@ -104,6 +104,12 @@ function validateField(id) {
     if (id === 'email') {
         if (!value) return setError(id, 'Please enter your email address.'), false;
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return setError(id, 'Please enter a valid email address.'), false;
+        if (!/^[^\s@]+@gmail\.com$/i.test(value)) return setError(id, 'Only Gmail addresses are allowed. Please use a @gmail.com email.'), false;
+        return setSuccess(id), true;
+    }
+    if (id === 'phone') {
+        if (!value) return setError(id, 'Please enter your phone number.'), false;
+        if (!/^\+?[\d\s\-().]{7,20}$/.test(value)) return setError(id, 'Please enter a valid phone number.'), false;
         return setSuccess(id), true;
     }
     if (id === 'password') {
@@ -131,7 +137,7 @@ function validateField(id) {
     return true;
 }
 
-['name', 'email', 'password', 'confirm-password'].forEach(id => {
+['name', 'email', 'phone', 'password', 'confirm-password'].forEach(id => {
     document.getElementById(id).addEventListener('blur', () => validateField(id));
 });
 
@@ -172,6 +178,7 @@ form.addEventListener('submit', async function (e) {
             body: JSON.stringify({
                 name: document.getElementById('name').value,
                 email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
                 password: document.getElementById('password').value,
             }),
         });
