@@ -448,6 +448,7 @@ async function liveFetchStores() {
             const grid = document.getElementById('spotlight-grid');
             grid.innerHTML = data.slice(0, 3).map((s, i) => buildSpotlightCard(s, i + 1)).join('');
             lucide.createIcons();
+            observeNewRevealElements(grid);
         }
 
         if (storesRes.ok) {
