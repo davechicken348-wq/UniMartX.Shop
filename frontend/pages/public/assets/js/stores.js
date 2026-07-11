@@ -232,10 +232,6 @@ function buildStoreCard(store) {
             
             <div class="store-card-cta-row">
                 <span class="btn-visit-store" aria-hidden="true">Visit Store →</span>
-                <button class="btn-save-store" type="button" aria-label="Save ${escapeHtml(store.storeName)}" onclick="event.preventDefault();event.stopPropagation();showToast('Saved to your wishlist')">
-                    <i data-lucide="heart" aria-hidden="true"></i>
-                    <span class="btn-save-label">Save</span>
-                </button>
             </div>
         </div>
     </div>`;
@@ -368,7 +364,6 @@ function renderGrid() {
 
 // Store card navigation (keyboard)
 document.getElementById('stores-grid').addEventListener('keydown', e => {
-    if (e.target.closest('.btn-save-store')) return;
     const card = e.target.closest('.store-card');
     if (!card) return;
     if (e.key === 'Enter' || e.key === ' ') {

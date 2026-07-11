@@ -907,8 +907,7 @@ img { display: block; max-width: 100%; }
   }
   
   .btn-visit-store {
-      flex: 1 1 auto;
-      min-width: 0;
+      width: 100%;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -931,33 +930,6 @@ img { display: block; max-width: 100%; }
       transform: translateY(-2px);
       box-shadow: 0 8px 20px rgba(5, 150, 105, 0.25);
   }
-  
-  .btn-save-store {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      background: rgba(5, 150, 105, 0.06);
-      color: var(--primary);
-      border: 1.5px solid rgba(5, 150, 105, 0.2);
-      border-radius: 10px;
-      padding: 10px 14px;
-      font-family: 'Quicksand', sans-serif;
-      font-size: 0.875rem;
-      font-weight: 700;
-      cursor: pointer;
-      text-decoration: none;
-      transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
-      white-space: nowrap;
-      flex-shrink: 0;
-  }
-  .btn-save-store:hover {
-      background: var(--primary);
-      color: #fff;
-      border-color: var(--primary);
-      transform: translateY(-2px);
-  }
-  .btn-save-store svg { width: 16px; height: 16px; stroke: currentColor; }
   
   .store-live-badge {
      position: absolute;
@@ -1481,10 +1453,9 @@ img { display: block; max-width: 100%; }
     .store-products-preview { gap: 6px; }
     .preview-product-name { font-size: 0.6875rem; }
     .preview-product-price { font-size: 0.75rem; }
-    .btn-visit-store { font-size: 0.8125rem; padding: 8px 10px; }
-    .btn-save-store { padding: 8px 10px; }
+    .btn-visit-store { font-size: 0.8125rem; padding: 8px 10px; width: 100%; }
     .store-card-cta-row { gap: 8px; }
-    .btn-save-store .btn-save-label { display: none; }
+    .store-card-cta-row { flex-wrap: wrap; }
     .stores-grid.list-view .store-card-banner {
         width: 90px;
         min-height: 120px;
@@ -1508,10 +1479,9 @@ img { display: block; max-width: 100%; }
     .store-tagline { font-size: 0.75rem; }
     .store-stat { font-size: 0.6875rem; }
     .store-badge { font-size: 0.6875rem; padding: 3px 6px; }
-    .btn-visit-store { font-size: 0.75rem; padding: 8px 10px; }
-    .btn-save-store { padding: 8px 10px; }
-    .store-card-cta-row { flex-direction: column; align-items: stretch; }
-    .btn-visit-store, .btn-save-store { width: 100%; justify-content: center; }
+     .btn-visit-store { font-size: 0.75rem; padding: 8px 10px; }
+     .store-card-cta-row { flex-direction: column; align-items: stretch; }
+     .btn-visit-store { width: 100%; justify-content: center; }
 }
 @media (min-width: 769px) {
     .hero-images { display: none; }
