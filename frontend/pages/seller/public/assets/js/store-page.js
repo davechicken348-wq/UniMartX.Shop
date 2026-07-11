@@ -325,6 +325,7 @@ function apiFetchWithTimeout(url, options = {}, timeout = 15000) {
     // -- Populate all elements from API data -------------------------------
     function populate(data) {
         const { profile, stats, products, reviews, ratingBreakdown, pagination, categorycounts } = data;
+        window._lastProfile = profile;
 
         // Page title
         document.title = `${profile.storeName || profile.name} | UnimartX`;
@@ -516,6 +517,85 @@ function apiFetchWithTimeout(url, options = {}, timeout = 15000) {
             showToast('Failed to copy. Please copy the URL manually.', 'error');
         }
     });
+})();
+
+// ── Contact Dropdown ────────────────────────────────────────────────────────
+(function () {
+    const btn = document.getElementById('contact-btn');
+    const dropdown = document.getElementById('contact-dropdown');
+    if (!btn || !dropdown) return;
+
+    function showToast(message, type) {
+        const existing = document.querySelector('.toast');
+        if (existing) existing.remove();
+
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.textContent = message;
+        toast.style.cssText = 'position:fixed;bottom:2rem;right:2rem;background:#ffffff;border:1px solid var(--border);color:var(--text);padding:1rem 1.5rem;border-radius:12px;box-shadow:var(--shadow-lg);z-index:9999;transform:translateY(120%);opacity:0;transition:transform 0.3s,opacity 0.3s;font-size:0.95rem;font-weight:600;max-width:380px;';
+        document.body.appendChild(toast);
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+            toast.style.transform = 'translateY(0)';
+            toast.style.opacity = '1';
+        }));
+        setTimeout(() => {
+            toast.style.transform = 'translateY(120%)';
+            toast.style.opacity = '0';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+
+    function openDropdown() {
+        dropdown.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+    }
+
+    function closeDropdown() {
+        dropdown.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+    }
+
+    btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        dropdown.classList.contains('open') ? closeDropdown() : openDropdown();
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!dropdown.contains(e.target) && e.target !== btn) closeDropdown();
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeDropdown();
+    });
+
+    const emailBtn = document.getElementById('contact-email-btn');
+    const phoneBtn = document.getElementById('contact-phone-btn');
+
+    if (emailBtn) {
+        emailBtn.addEventListener('click', () => {
+            const profile = window._lastProfile;
+            const email = profile?.email || profile?.storeEmail;
+            if (email) {
+                window.location.href = `mailto:${email}`;
+            } else {
+                showToast('Email contact: seller@unimartx.com', 'info');
+            }
+            closeDropdown();
+        });
+    }
+
+    if (phoneBtn) {
+        phoneBtn.addEventListener('click', () => {
+            const profile = window._lastProfile;
+            const phone = profile?.phone || profile?.storePhone;
+            if (phone) {
+                window.location.href = `tel:${phone}`;
+            } else {
+                showToast('Phone contact: +1 (555) 000-0000', 'info');
+            }
+            closeDropdown();
+        });
+    }
 })();
 
 fetchCartCount();
