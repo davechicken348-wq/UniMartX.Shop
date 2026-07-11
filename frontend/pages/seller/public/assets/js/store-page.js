@@ -523,7 +523,21 @@ function apiFetchWithTimeout(url, options = {}, timeout = 15000) {
 (function () {
     const btn = document.getElementById('contact-btn');
     const dropdown = document.getElementById('contact-dropdown');
+    const API_BASE = (window.APP_CONFIG && window.APP_CONFIG.BACKEND_URL) || 'http://localhost:5000';
     if (!btn || !dropdown) return;
+
+    async function fetchProfileOnce() {
+        const sellerId = window.getSellerId ? window.getSellerId() : new URLSearchParams(window.location.search).get('id') || new URLSearchParams(window.location.search).get('sellerId');
+        if (!sellerId) return null;
+        try {
+            const res = await fetch(`${API_BASE}/api/public/seller/${sellerId}`);
+            const json = await res.json();
+            if (json && json.success && json.data && json.data.profile) {
+                return json.data.profile;
+            }
+        } catch {}
+        return null;
+    }
 
     function showToast(message) {
         const existing = document.querySelector('.toast');
@@ -545,7 +559,17 @@ function apiFetchWithTimeout(url, options = {}, timeout = 15000) {
         }, 3000);
     }
 
+    function positionDropdown() {
+        const rect = btn.getBoundingClientRect();
+        dropdown.style.position = 'fixed';
+        dropdown.style.top = (rect.bottom + 8) + 'px';
+        dropdown.style.right = (window.innerWidth - rect.right) + 'px';
+        dropdown.style.left = 'auto';
+        dropdown.style.bottom = 'auto';
+    }
+
     function openDropdown() {
+        positionDropdown();
         dropdown.classList.add('open');
         btn.setAttribute('aria-expanded', 'true');
     }
@@ -555,9 +579,23 @@ function apiFetchWithTimeout(url, options = {}, timeout = 15000) {
         btn.setAttribute('aria-expanded', 'false');
     }
 
-    btn.addEventListener('click', (e) => {
+    btn.addEventListener('click', async (e) => {
         e.stopPropagation();
-        dropdown.classList.contains('open') ? closeDropdown() : openDropdown();
+        if (dropdown.classList.contains('open')) {
+            closeDropdown();
+            return;
+        }
+        const p = window._lastProfile || {};
+        if (!p.email && !p.phone && !p.whatsapp) {
+            const fresh = await fetchProfileOnce();
+            if (fresh) {
+                window._lastProfile = { ...(window._lastProfile || {}), ...fresh };
+                console.log('[contact-dropdown] Fetched profile:', window._lastProfile);
+            } else {
+                console.log('[contact-dropdown] _lastProfile =', window._lastProfile);
+            }
+        }
+        openDropdown();
     });
 
     document.addEventListener('click', (e) => {
@@ -566,6 +604,10 @@ function apiFetchWithTimeout(url, options = {}, timeout = 15000) {
 
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') closeDropdown();
+    });
+
+    window.addEventListener('scroll', () => {
+        if (dropdown.classList.contains('open')) positionDropdown();
     });
 
     function getProfile() {
@@ -587,7 +629,7 @@ function apiFetchWithTimeout(url, options = {}, timeout = 15000) {
             if (email) {
                 window.location.href = `mailto:${email}`;
             } else {
-                showToast('No email contact available for this seller.');
+                showToast('No email available for this seller.');
             }
             closeDropdown();
         });
@@ -599,7 +641,7 @@ function apiFetchWithTimeout(url, options = {}, timeout = 15000) {
             if (phone) {
                 window.location.href = `tel:${phone}`;
             } else {
-                showToast('No phone number available for this seller.');
+                showToast('No phone available for this seller.');
             }
             closeDropdown();
         });
@@ -611,7 +653,7 @@ function apiFetchWithTimeout(url, options = {}, timeout = 15000) {
             if (phone) {
                 window.open(`https://wa.me/${phone}`, '_blank', 'noopener');
             } else {
-                showToast('No WhatsApp number available for this seller.');
+                showToast('No WhatsApp available for this seller.');
             }
             closeDropdown();
         });

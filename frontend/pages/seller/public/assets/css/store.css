@@ -591,15 +591,15 @@ button, input, textarea { font-family: 'Quicksand', sans-serif; }
 }
 
 .contact-dropdown {
-  position: absolute;
-  top: calc(100% + 10px);
+  position: fixed;
+  top: 0;
   right: 0;
   background: var(--bg-2);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   box-shadow: var(--shadow-lg);
   min-width: 200px;
-  z-index: 300;
+  z-index: 9998;
   opacity: 0;
   transform: translateY(-8px);
   pointer-events: none;
