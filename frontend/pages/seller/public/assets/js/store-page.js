@@ -18,16 +18,29 @@ function apiFetchWithTimeout(url, options = {}, timeout = 15000) {
 
     function initScrollAnimations() {
         if (!window.IntersectionObserver) {
-            document.querySelectorAll('.store-hero,.stat-item,.section-header,.product-card,.empty-state').forEach(el => el.classList.add('animated'));
+            document.querySelectorAll('.store-hero,.stat-card,#stats-section-animated,#trust-badges-section-animated,#meet-seller-section-animated,#collections-section-animated,#policies-section-animated,#related-stores-section-animated,.trust-badge,.badge-pill,.section-header,.product-card,.empty-state').forEach(el => el.classList.add('animated'));
             return;
         }
         if (window._scrollAnimObserver) return;
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                if (entry.isIntersecting) { entry.target.classList.add('animated'); observer.unobserve(entry.target); }
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animated');
+                    // Stagger trust-badge pills
+                    const badges = entry.target.querySelectorAll('.trust-badge');
+                    badges.forEach((b, i) => {
+                        setTimeout(() => b.classList.add('visible'), i * 80);
+                    });
+                    // Stagger badge-pills
+                    const pills = entry.target.querySelectorAll('.badge-pill');
+                    pills.forEach((p, i) => {
+                        setTimeout(() => p.classList.add('visible'), i * 80);
+                    });
+                }
             });
-        }, { threshold: 0.12, rootMargin: '0px 0px -30px 0px' });
-        document.querySelectorAll('.store-hero,.stat-item,.section-header,.product-card,.empty-state').forEach(el => observer.observe(el));
+        }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+
+        document.querySelectorAll('.store-hero,#stats-section-animated,#trust-badges-section-animated,#meet-seller-section-animated,#collections-section-animated,#policies-section-animated,#related-stores-section-animated,.stat-card,.section-header,.product-card,.empty-state').forEach(el => observer.observe(el));
         window._scrollAnimObserver = observer;
     }
 
@@ -40,7 +53,7 @@ function apiFetchWithTimeout(url, options = {}, timeout = 15000) {
         window.observeNewElements = observeNewElements;
     }
 
-    // ── Get sellerId from URL or localStorage ─────────────────────────────
+    // -- Get sellerId from URL or localStorage -----------------------------
     function getSellerId() {
         return new URLSearchParams(window.location.search).get('id')
             || new URLSearchParams(window.location.search).get('sellerId')
@@ -48,7 +61,7 @@ function apiFetchWithTimeout(url, options = {}, timeout = 15000) {
     }
     window.getSellerId = getSellerId;
 
-    // ── Helpers ────────────────────────────────────────────────────────────
+    // -- Helpers ------------------------------------------------------------
     function set(id, val) {
         const el = document.getElementById(id);
         if (el) el.textContent = val;
@@ -78,7 +91,7 @@ function apiFetchWithTimeout(url, options = {}, timeout = 15000) {
         other:         'Other',
     };
 
-    // ── Apply fallbacks before API responds ───────────────────────────────
+    // -- Apply fallbacks before API responds -------------------------------
     function applyFallbacks() {
         set('store-name', 'Store');
         set('store-bio', 'No description available.');
@@ -95,9 +108,221 @@ function apiFetchWithTimeout(url, options = {}, timeout = 15000) {
 
         const avatar = document.getElementById('store-avatar');
         if (avatar && !avatar.textContent.trim()) avatar.textContent = '?';
+
+        const meetAvatar = document.getElementById('meet-seller-avatar');
+        if (meetAvatar && !meetAvatar.textContent.trim()) meetAvatar.textContent = '?';
     }
 
-    // ── Populate all elements from API data ───────────────────────────────
+    // -- Populate trust badges inside hero ---------------------------------
+    function populateTrustBadges(stats, sellerId) {
+        const wrap = document.getElementById('trust-badges');
+        if (!wrap) return;
+        const badges = [];
+
+        if (stats.totalReviews >= 5) {
+            badges.push({ cls: 'trust-badge--verified', icon: 'badge-check', text: 'Verified Student' });
+        }
+        if (stats.totalSales >= 50 || stats.avgRating >= 4.8) {
+            badges.push({ cls: 'trust-badge--top-seller', icon: 'trophy', text: 'Top Seller' });
+        }
+        badges.push({ cls: 'trust-badge--fast-response', icon: 'zap', text: 'Fast Response' });
+        if (stats.avgRating >= 4.5) {
+            badges.push({ cls: 'trust-badge--highly-rated', icon: 'star', text: 'Highly Rated' });
+        }
+        if (stats.productCount >= 10) {
+            badges.push({ cls: 'trust-badge--trending', icon: 'trending-up', text: 'Trending' });
+        }
+
+        wrap.innerHTML = badges.map(b =>
+            `<span class="trust-badge ${b.cls}"><i data-lucide="${b.icon}"></i>${b.text}</span>`
+        ).join('');
+
+        if (window.lucide && lucide.createIcons) lucide.createIcons();
+
+        // Stagger fade-in
+        const allBadges = wrap.querySelectorAll('.trust-badge');
+        allBadges.forEach((b, i) => setTimeout(() => b.classList.add('visible'), i * 80));
+    }
+
+    // -- Populate trust badges section (full-width strip) ------------------
+    function populateTrustBadgesSection(stats) {
+        const row = document.getElementById('trust-badges-row');
+        if (!row) return;
+        const pills = [];
+
+        if (stats.totalReviews >= 5) {
+            pills.push({ cls: 'badge-pill--verified', icon: 'badge-check', text: '✓ Verified Student' });
+        }
+        if (stats.totalSales >= 50 || stats.avgRating >= 4.8) {
+            pills.push({ cls: 'badge-pill--top-seller', icon: 'trophy', text: '★ Top Seller' });
+        }
+        pills.push({ cls: 'badge-pill--fast-response', icon: 'zap', text: '⚡ Fast Response' });
+        if (stats.avgRating >= 4.5) {
+            pills.push({ cls: 'badge-pill--highly-rated', icon: 'star', text: '↗ Highly Rated' });
+        }
+        if (stats.productCount >= 10) {
+            pills.push({ cls: 'badge-pill--trending', icon: 'flame', text: '🔥 Trending' });
+        }
+
+        row.innerHTML = pills.map(p =>
+            `<span class="badge-pill ${p.cls}"><i data-lucide="${p.icon}"></i>${p.text}</span>`
+        ).join('');
+
+        if (window.lucide && lucide.createIcons) lucide.createIcons();
+
+        // Trigger stagger via observer
+        const section = document.getElementById('trust-badges-section-animated');
+        if (section) {
+            const pillsEls = section.querySelectorAll('.badge-pill');
+            pillsEls.forEach((p, i) => setTimeout(() => p.classList.add('visible'), i * 80));
+        }
+    }
+
+    // -- Populate Meet the Seller -----------------------------------------
+    function populateMeetSeller(profile, stats) {
+        const avatarEl = document.getElementById('meet-seller-avatar');
+        if (avatarEl) {
+            if (profile.storeAvatar) {
+                avatarEl.innerHTML = `<img src="${profile.storeAvatar}" alt="${profile.storeName}" loading="lazy">`;
+            } else {
+                avatarEl.textContent = getInitials(profile.storeName || profile.name);
+            }
+        }
+        set('meet-seller-name', profile.storeName || profile.name || 'Store');
+        set('meet-store-name', `@${(profile.storeName || profile.name || 'store').toLowerCase().replace(/\s+/g, '')}`);
+        set('meet-seller-bio', profile.storeDescription || profile.bio || '');
+        set('meet-seller-location', [profile.city, profile.country].filter(Boolean).join(', ') || profile.location || 'Not specified');
+        set('meet-seller-joined', profile.joinedDate ? formatJoinDate(profile.joinedDate) : '—');
+        set('meet-seller-products', stats.productCount ?? '0');
+
+        // Social links
+        const socialsEl = document.getElementById('meet-seller-socials');
+        if (socialsEl) {
+            const links = [];
+            const socialMap = [
+                { key: 'instagram', icon: 'instagram', label: 'Instagram' },
+                { key: 'twitter', icon: 'twitter', label: 'X / Twitter' },
+                { key: 'tiktok', icon: 'music', label: 'TikTok' },
+                { key: 'website', icon: 'globe', label: 'Website', direct: true },
+            ];
+            socialMap.forEach(item => {
+                const val = profile[item.key];
+                if (!val) return;
+                const href = item.direct && !val.startsWith('http') ? `https://${val}` : val;
+                links.push(`<a href="${href}" target="_blank" rel="noopener noreferrer" class="meet-social-link" aria-label="${item.label}"><i data-lucide="${item.icon}"></i>${item.label}</a>`);
+            });
+            socialsEl.innerHTML = links.join('');
+            if (window.lucide && lucide.createIcons) lucide.createIcons();
+        }
+    }
+
+    // -- Populate featured collections counts -----------------------------
+    window._collectionData = null;
+
+    function populateCollections(products) {
+        const list = products || [];
+        const bestSellers = [...list].sort((a, b) => (b.reviewCount || 0) - (a.reviewCount || 0)).slice(0, 8);
+        const newArrivals = list.slice(0, 8);
+        const studentFavs = [...list].filter(p => (p.rating || 0) >= 4.5).sort((a, b) => (b.rating || 0) - (a.rating || 0)).slice(0, 8);
+        const specialOffers = list.filter(p => p.comparePrice && p.comparePrice > p.price);
+
+        window._collectionData = { bestSellers, newArrivals, studentFavs, specialOffers };
+
+        set('col-count-best-sellers', `${bestSellers.length} products`);
+        set('col-count-new-arrivals', `${newArrivals.length} products`);
+        set('col-count-student-favorites', `${studentFavs.length} products`);
+        set('col-count-special-offers', `${specialOffers.length} products`);
+    }
+
+    // Collection click: filter store products to collection
+    function initCollectionCards() {
+        document.querySelectorAll('.collection-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const key = card.dataset.collection;
+                const data = window._collectionData;
+                if (!data || !window._storeProducts) return;
+
+                let filtered;
+                switch (key) {
+                    case 'best-sellers':    filtered = data.bestSellers; break;
+                    case 'new-arrivals':    filtered = data.newArrivals; break;
+                    case 'student-favorites': filtered = data.studentFavs; break;
+                    case 'special-offers':  filtered = data.specialOffers; break;
+                    default: filtered = window._storeProducts;
+                }
+
+                if (window.initStore) {
+                    window.initStore({
+                        products: filtered,
+                        categorycounts: {},
+                        pagination: { page: 1, limit: filtered.length, total: filtered.length, hasMore: false },
+                        sellerId: document.getElementById('store-products')?.dataset?.sellerId || '',
+                        isPreview: false,
+                    });
+                }
+
+                const productsSection = document.getElementById('products');
+                if (productsSection) {
+                    productsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    }
+
+    // -- Populate store policies ------------------------------------------
+    function populatePolicies() {
+        // Static - always shown
+    }
+
+    // -- Populate related stores (placeholder) ----------------------------
+    function populateRelatedStores() {
+        const grid = document.getElementById('related-stores-grid');
+        if (!grid) return;
+        // Substitute Browse CTA if nothing in grid yet
+        const existing = grid.querySelector('.related-store-card:not([data-placeholder])');
+        if (!existing) {
+            grid.innerHTML = `
+                <a href="../../../public/stores/stores.html" class="related-store-card" aria-label="Browse all student stores">
+                    <div class="related-store-initial"><i data-lucide="compass"></i></div>
+                    <h4>Browse All Stores</h4>
+                    <p>Discover 100+ student-run shops on UniMartX</p>
+                </a>
+            `;
+            if (window.lucide && lucide.createIcons) lucide.createIcons();
+        }
+    }
+
+    // -- Populate reviews summary with rating distribution -----------------
+    function populateReviewsSummary(reviews, avgRating) {
+        const scoreEl = document.getElementById('reviews-score');
+        const totalEl = document.getElementById('reviews-total-count');
+        const distEl = document.getElementById('rating-distribution');
+
+        if (scoreEl) scoreEl.textContent = avgRating != null ? avgRating.toFixed(1) : '—';
+        if (totalEl) totalEl.textContent = `${(reviews || []).length} reviews`;
+
+        if (!distEl) return;
+
+        const counts = [0, 0, 0, 0, 0];
+        (reviews || []).forEach(r => {
+            const s = Math.min(5, Math.max(1, Math.round(r.rating) || 1));
+            counts[5 - s]++;
+        });
+        const total = counts.reduce((a, b) => a + b, 0) || 1;
+        distEl.innerHTML = [5, 4, 3, 2, 1].map((star, i) => {
+            const count = counts[5 - star];
+            const pct = (count / total * 100).toFixed(0);
+            return `
+                <div class="rating-bar-row">
+                    <span class="rating-bar-label">${star}★</span>
+                    <div class="rating-bar-track"><div class="rating-bar-fill" style="width:${pct}%"></div></div>
+                    <span class="rating-bar-count">${count}</span>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // -- Populate all elements from API data -------------------------------
     function populate(data) {
         const { profile, stats, products, reviews, ratingBreakdown, pagination, categorycounts } = data;
 
@@ -116,7 +341,10 @@ function apiFetchWithTimeout(url, options = {}, timeout = 15000) {
         if (avatarEl) {
             if (profile.storeAvatar) {
                 avatarEl.innerHTML = `<img src="${profile.storeAvatar}" alt="${profile.storeName}" style="width:100%;height:100%;border-radius:inherit;object-fit:cover;">`;
+            } else {
+                avatarEl.textContent = getInitials(profile.storeName || profile.name);
             }
+        }
 
         // Store color — apply as CSS variable
         if (profile.storeColor) {
@@ -144,8 +372,10 @@ function apiFetchWithTimeout(url, options = {}, timeout = 15000) {
         if (studentBadge) studentBadge.textContent = 'Student Seller';
 
         // View Profile link
-        const profileLink = document.getElementById('view-profile-btn');
-        if (profileLink) profileLink.href = `../profile/profile.html?sellerId=${profile.sellerId}`;
+        const profileLink = document.getElementById('visit-store-btn');
+        if (profileLink) {
+            profileLink.href = `../profile/profile.html?sellerId=${profile.sellerId}`;
+        }
 
         // Contact modal store name
         set('contact-modal-store-name', profile.storeName || profile.name || 'Seller');
@@ -167,18 +397,35 @@ function apiFetchWithTimeout(url, options = {}, timeout = 15000) {
         if (typeof window.initStore === 'function') {
             window.initStore({ products, reviews, categorycounts, pagination, sellerId: profile.sellerId });
         }
-    }
+
+        // New section population
+        populateTrustBadges(stats, profile.sellerId);
+        populateTrustBadgesSection(stats);
+        populateMeetSeller(profile, stats);
+        populateCollections(products);
+        populatePolicies();
+        populateRelatedStores();
+        populateReviewsSummary(reviews, stats.avgRating);
     }
 
-    // ── Show error banner ─────────────────────────────────────────────────
+    // -- Show error banner -------------------------------------------------
     function showError(msg) {
-        const banner = document.createElement('div');
-        banner.style.cssText = 'position:fixed;top:1rem;left:50%;transform:translateX(-50%);background:#ef4444;color:#fff;padding:0.75rem 1.5rem;border-radius:8px;z-index:9999;font-size:0.9rem;';
-        banner.textContent = msg;
-        document.body.appendChild(banner);
+        const heroError = document.getElementById('store-hero-error');
+        const errorMsg  = document.getElementById('store-error-msg');
+        const errorIcon = document.getElementById('store-error-icon');
+        if (heroError) {
+            if (errorMsg) errorMsg.textContent = msg;
+            if (errorIcon) errorIcon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
+            document.body.classList.add('page-has-error');
+        } else {
+            const banner = document.createElement('div');
+            banner.style.cssText = 'position:fixed;top:1rem;left:50%;transform:translateX(-50%);background:#ef4444;color:#fff;padding:0.75rem 1.5rem;border-radius:8px;z-index:9999;font-size:0.9rem;';
+            banner.textContent = msg;
+            document.body.appendChild(banner);
+        }
     }
 
-    // ── Main ──────────────────────────────────────────────────────────────
+    // -- Main --------------------------------------------------------------
     async function init() {
         applyFallbacks();
         initScrollAnimations();
@@ -201,6 +448,7 @@ function apiFetchWithTimeout(url, options = {}, timeout = 15000) {
             json.data.profile.sellerId = sellerId;
             populate(json.data);
             observeNewElements();
+            if (typeof initCollectionCards === 'function') initCollectionCards();
 
         } catch (err) {
             console.error('Store page load error:', err);
@@ -272,7 +520,7 @@ function apiFetchWithTimeout(url, options = {}, timeout = 15000) {
 
 fetchCartCount();
 
-// ── Single live sync loop ──────────────────────────────────────────────────
+// -- Single live sync loop --------------------------------------------------
 (function liveStoreSync() {
     let _fetching = false;
     let _productSnap = null;

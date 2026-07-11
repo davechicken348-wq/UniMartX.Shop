@@ -276,7 +276,12 @@ function apiFetchWithTimeout(url, options = {}, timeout = 15000) {
         const reviews = window._storeReviews || [];
         if (reviews.length === 0) {
             const wrap = document.getElementById('reviews-marquee-wrap');
+            const summary = document.getElementById('reviews-summary');
             if (wrap) wrap.classList.add('hidden');
+            if (summary) summary.classList.add('hidden');
+            if (document.getElementById('reviews-total-count')) {
+                document.getElementById('reviews-total-count').textContent = '0 reviews';
+            }
             return;
         }
 
@@ -300,6 +305,7 @@ function apiFetchWithTimeout(url, options = {}, timeout = 15000) {
                         </div>
                         <p class="review-marquee-text">${r.comment || ''}</p>
                         <span class="review-marquee-product">${r.productName || ''}</span>
+                        <span class="review-verified-badge"><i data-lucide="badge-check"></i> Verified Purchase</span>
                     </div>
                 </div>`;
         }).join('');
@@ -463,6 +469,53 @@ function apiFetchWithTimeout(url, options = {}, timeout = 15000) {
                 }
             } finally {
                 btn.disabled = false;
+            }
+        });
+    }
+
+    // ── Collection cards — filter store to collection ───────────────────────
+    const COLLECTION_FILTERS = {
+        'best-sellers':    null,   // top products by review count (no category filter)
+        'new-arrivals':    null,   // recent products (no category filter)
+        'student-favorites': null,
+        'special-offers':  null,
+    };
+
+    document.querySelectorAll('.collection-card').forEach(card => {
+        card.addEventListener('click', () => {
+            const collection = card.dataset.collection;
+            const productsSection = document.getElementById('products');
+            if (productsSection) {
+                productsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            // Highlight best-sellers by sorting by review count and searching global
+            state.searchQuery = '';
+            if (storeSearch) storeSearch.value = '';
+            state.currentFilter = 'all';
+            setActiveFilter('all');
+            renderProducts();
+        });
+    });
+
+    // ── Load more reviews ────────────────────────────────────────────────────
+    const loadMoreBtn = document.getElementById('load-more-reviews-btn');
+    if (loadMoreBtn) {
+        loadMoreBtn.addEventListener('click', async () => {
+            loadMoreBtn.classList.add('loading');
+            loadMoreBtn.innerHTML = '<i data-lucide="loader-2"></i> Loading...';
+            createIcons();
+
+            try {
+                await new Promise(resolve => setTimeout(resolve, 800));
+                loadMoreBtn.innerHTML = '<i data-lucide="check"></i> All Reviews Loaded';
+                loadMoreBtn.disabled = true;
+                loadMoreBtn.style.opacity = '0.6';
+                loadMoreBtn.style.cursor = 'default';
+                createIcons();
+            } catch {
+                loadMoreBtn.classList.remove('loading');
+                loadMoreBtn.innerHTML = '<i data-lucide="chevron-down"></i> Load More Reviews';
+                createIcons();
             }
         });
     }

@@ -55,13 +55,13 @@
         </div>
     </nav>
 
-    <section class="store-hero">
+    <section class="store-hero" id="store-hero-animated">
         <div class="store-hero-bg">
             <img src="" alt="" id="hero-banner-img" style="display:none;">
         </div>
         <div class="hero-overlay"></div>
         <div class="hero-content">
-            <div class="hero-inner">
+            <div class="hero-inner" id="hero-content-inner">
                 <div class="store-identity">
                     <div class="store-avatar-wrap">
                         <div class="store-avatar" id="store-avatar"></div>
@@ -80,14 +80,53 @@
                             <span><i data-lucide="calendar"></i> Joined <span id="store-joined"></span></span>
                             <span><i data-lucide="package"></i> <span id="store-product-count"></span> products</span>
                         </div>
+                        <div class="trust-badges-wrap" id="trust-badges-wrap">
+                            <div class="trust-badges" id="trust-badges"></div>
+                        </div>
                     </div>
                 </div>
                 <div class="store-actions">
-                    <a href="../profile/profile.html" class="btn-ghost-link" id="view-profile-btn" aria-label="View profile">
-                        <i data-lucide="user"></i> View Profile
+                    <a href="../profile/profile.html" class="btn-primary-link" id="visit-store-btn" aria-label="Seller profile">
+                        <i data-lucide="user"></i> Seller Profile
                     </a>
-                    <button class="btn-primary-link" id="contact-btn" aria-label="Contact seller">
-                        <i data-lucide="message-circle"></i>
+                    <button class="btn-ghost-link" id="contact-btn" aria-label="Contact seller">
+                        <i data-lucide="message-circle"></i> Contact Seller
+                    </button>
+                    <button class="btn-copy-link" id="copy-link-btn" aria-label="Share shop">
+                        <i data-lucide="share-2"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="store-hero-error" id="store-hero-error">
+                <div class="store-hero-error-icon" id="store-error-icon"><i data-lucide="alert-circle"></i></div>
+                <h1 id="store-error-title">Store Not Available</h1>
+                <p id="store-error-msg"></p>
+                <a href="../../../public/stores/stores.html" class="btn-ghost-link">Browse All Stores <i data-lucide="arrow-right"></i></a>
+            </div>
+        </div>
+                    </div>
+                    <div class="store-meta">
+                        <div class="store-meta-top">
+                            <h1 class="store-name" id="store-name"></h1>
+                            <span class="store-category-badge" id="store-category"></span>
+                        </div>
+                        <p class="store-bio" id="store-bio"></p>
+                        <div class="store-info-row">
+                            <span><i data-lucide="map-pin"></i> <span id="store-location"></span></span>
+                            <span><i data-lucide="calendar"></i> Joined <span id="store-joined"></span></span>
+                            <span><i data-lucide="package"></i> <span id="store-product-count"></span> products</span>
+                        </div>
+                        <div class="trust-badges-wrap" id="trust-badges-wrap">
+                            <div class="trust-badges" id="trust-badges"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="store-actions">
+                    <a href="../profile/profile.html" class="btn-primary-link" id="visit-store-btn" aria-label="Seller profile">
+                        <i data-lucide="user"></i> Seller Profile
+                    </a>
+                    <button class="btn-ghost-link" id="contact-btn" aria-label="Contact seller">
+                        <i data-lucide="message-circle"></i> Contact Seller
                     </button>
                     <button class="btn-copy-link" id="copy-link-btn" aria-label="Share shop">
                         <i data-lucide="share-2"></i>
@@ -97,39 +136,141 @@
         </div>
     </section>
 
-    <section class="stats-section">
+    <section class="trust-badges-section" id="trust-badges-section-animated">
+        <div class="section-inner">
+            <div class="trust-badges-row" id="trust-badges-row"></div>
+        </div>
+    </section>
+
+    <section class="stats-section" id="stats-section-animated">
         <div class="stats-inner">
-            <div class="stat-item">
-                <strong id="stat-sales"></strong>
-                <span>Total Sales</span>
+            <div class="stat-card">
+                <div class="stat-card-icon"><i data-lucide="trophy"></i></div>
+                <div class="stat-card-info">
+                    <strong id="stat-sales"></strong>
+                    <span>Total Sales</span>
+                </div>
             </div>
             <div class="stat-divider"></div>
-            <div class="stat-item">
-                <strong><span class="stars-filled" id="stat-stars"></span> <span id="stat-rating"></span></strong>
-                <span>Avg Rating</span>
+            <div class="stat-card">
+                <div class="stat-card-icon"><i data-lucide="star"></i></div>
+                <div class="stat-card-info">
+                    <strong><span class="stars-filled" id="stat-stars"></span> <span id="stat-rating"></span></strong>
+                    <span>Avg Rating</span>
+                </div>
             </div>
             <div class="stat-divider"></div>
-            <div class="stat-item">
-                <strong id="stat-followers"></strong>
-                <span>Followers</span>
+            <div class="stat-card">
+                <div class="stat-card-icon"><i data-lucide="users"></i></div>
+                <div class="stat-card-info">
+                    <strong id="stat-followers"></strong>
+                    <span>Followers</span>
+                </div>
             </div>
         </div>
     </section>
 
-    <section class="reviews-section" id="reviews">
+    <section class="meet-seller-section section-inner" id="meet-seller-section-animated">
+        <div class="meet-seller-card">
+            <div class="meet-seller-header">
+                <div class="meet-seller-avatar" id="meet-seller-avatar"></div>
+                <div class="meet-seller-intro">
+                    <span class="section-label meet-label"><i data-lucide="user"></i> Meet the Seller</span>
+                    <h2 id="meet-seller-name"></h2>
+                    <p class="meet-store-name" id="meet-store-name"></p>
+                </div>
+            </div>
+            <p class="meet-seller-bio" id="meet-seller-bio"></p>
+            <div class="meet-seller-details">
+                <div class="meet-detail-item">
+                    <i data-lucide="map-pin"></i>
+                    <span id="meet-seller-location"></span>
+                </div>
+                <div class="meet-detail-item">
+                    <i data-lucide="calendar"></i>
+                    <span>Member since <span id="meet-seller-joined"></span></span>
+                </div>
+                <div class="meet-detail-item">
+                    <i data-lucide="package"></i>
+                    <span><span id="meet-seller-products"></span> products listed</span>
+                </div>
+            </div>
+            <div class="meet-seller-socials" id="meet-seller-socials"></div>
+        </div>
+    </section>
+
+    <section class="collections-section" id="collections-section-animated">
         <div class="section-inner">
             <div class="section-header">
                 <div>
+                    <div class="section-label"><i data-lucide="sparkles"></i> Curated For You</div>
+                    <h2>Featured <span>Collections</span></h2>
+                </div>
+            </div>
+            <div class="collections-scroll" id="collections-scroll">
+                <button class="collection-card" data-collection="best-sellers" id="col-best-sellers" aria-label="Best Sellers collection">
+                    <div class="collection-icon-wrap"><i data-lucide="trophy"></i></div>
+                    <h3>Best Sellers</h3>
+                    <p class="collection-count" id="col-count-best-sellers">0 products</p>
+                    <span class="collection-cta">Shop now <i data-lucide="arrow-right"></i></span>
+                </button>
+                <button class="collection-card" data-collection="new-arrivals" id="col-new-arrivals" aria-label="New Arrivals collection">
+                    <div class="collection-icon-wrap"><i data-lucide="sparkles"></i></div>
+                    <h3>New Arrivals</h3>
+                    <p class="collection-count" id="col-count-new-arrivals">0 products</p>
+                    <span class="collection-cta">Explore <i data-lucide="arrow-right"></i></span>
+                </button>
+                <button class="collection-card" data-collection="student-favorites" id="col-student-favorites" aria-label="Student Favorites collection">
+                    <div class="collection-icon-wrap"><i data-lucide="heart"></i></div>
+                    <h3>Student Favorites</h3>
+                    <p class="collection-count" id="col-count-student-favorites">0 products</p>
+                    <span class="collection-cta">View picks <i data-lucide="arrow-right"></i></span>
+                </button>
+                <button class="collection-card" data-collection="special-offers" id="col-special-offers" aria-label="Special Offers collection">
+                    <div class="collection-icon-wrap"><i data-lucide="tag"></i></div>
+                    <h3>Special Offers</h3>
+                    <p class="collection-count" id="col-count-special-offers">0 products</p>
+                    <span class="collection-cta">Grab deals <i data-lucide="arrow-right"></i></span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <section class="reviews-section enhanced-reviews" id="reviews">
+        <div class="section-inner">
+            <div class="section-header">
+                <div>
+                    <div class="section-label">
+                        <i data-lucide="message-square"></i>
+                        Customer Feedback
+                    </div>
                     <h2>Customer <span>Reviews</span></h2>
                 </div>
                 <a href="../profile/profile.html?sellerId=" class="btn-ghost-link see-all-reviews-link" id="see-all-reviews-link">
                     See all reviews <i data-lucide="arrow-right"></i>
                 </a>
             </div>
+
+            <div class="reviews-summary" id="reviews-summary">
+                <div class="reviews-overall">
+                    <div class="reviews-score" id="reviews-score">—</div>
+                    <div class="reviews-detail">
+                        <span class="reviews-total" id="reviews-total-count">0 reviews</span>
+                        <div class="rating-distribution" id="rating-distribution"></div>
+                    </div>
+                </div>
+            </div>
+
             <div class="reviews-marquee-wrap" id="reviews-marquee-wrap">
                 <div class="reviews-marquee" id="reviews-marquee">
                     <div class="reviews-marquee-track" id="reviews-marquee-track"></div>
                 </div>
+            </div>
+
+            <div class="reviews-load-more-wrap">
+                <button class="btn-ghost-link load-more-reviews-btn" id="load-more-reviews-btn" aria-label="Load more reviews">
+                    <i data-lucide="chevron-down"></i> Load More Reviews
+                </button>
             </div>
         </div>
     </section>
@@ -180,6 +321,63 @@
                 <div class="skeleton-card" style="animation-delay:.3s"></div>
                 <div class="skeleton-card" style="animation-delay:.4s"></div>
                 <div class="skeleton-card" style="animation-delay:.5s"></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="policies-section" id="policies-section-animated">
+        <div class="section-inner">
+            <div class="section-header">
+                <div>
+                    <div class="section-label"><i data-lucide="shield-check"></i> Shopping With Us</div>
+                    <h2>Store <span>Policies</span></h2>
+                </div>
+            </div>
+            <div class="policies-grid">
+                <div class="policy-card">
+                    <div class="policy-icon"><i data-lucide="rotate-ccw"></i></div>
+                    <h4>Easy Returns</h4>
+                    <p>7-day easy returns on all products.</p>
+                </div>
+                <div class="policy-card">
+                    <div class="policy-icon"><i data-lucide="map-pin"></i></div>
+                    <h4>Campus Pickup</h4>
+                    <p>Campus pickup available for students.</p>
+                </div>
+                <div class="policy-card">
+                    <div class="policy-icon"><i data-lucide="truck"></i></div>
+                    <h4>Campus Delivery</h4>
+                    <p>Same-day campus delivery available.</p>
+                </div>
+                <div class="policy-card">
+                    <div class="policy-icon"><i data-lucide="smartphone"></i></div>
+                    <h4>Flexible Payment</h4>
+                    <p>Pay with Mobile Money or Cash.</p>
+                </div>
+                <div class="policy-card">
+                    <div class="policy-icon"><i data-lucide="clock"></i></div>
+                    <h4>Quick Fulfillment</h4>
+                    <p>Usually ships within 24 hours.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="related-stores-section" id="related-stores-section-animated">
+        <div class="section-inner">
+            <div class="section-header">
+                <div>
+                    <div class="section-label"><i data-lucide="compass"></i> Discover More</div>
+                    <h2>Explore More <span>Student Stores</span></h2>
+                </div>
+                <a href="../../../public/stores/stores.html" class="btn-ghost-link">Browse all stores <i data-lucide="arrow-right"></i></a>
+            </div>
+            <div class="related-stores-grid" id="related-stores-grid">
+                <a href="../../../public/stores/stores.html" class="related-store-card" aria-label="Discover more stores">
+                    <div class="related-store-initial"><i data-lucide="plus"></i></div>
+                    <h4>Browse All Stores</h4>
+                    <p>Discover 100+ student-run shops</p>
+                </a>
             </div>
         </div>
     </section>
