@@ -116,12 +116,18 @@ function spotlightSkeleton() {
 }
 
 function storeSkeleton() {
-    return `<div class="store-card skeleton-card" style="pointer-events:none">
-        <div class="store-card-top skel-banner"></div>
+    return `<div class="store-card skeleton-card" style="pointer-events:none" aria-hidden="true">
+        <div class="store-skeleton-banner skel-banner"></div>
         <div class="store-card-body">
-            <div class="skel skel-md" style="margin-bottom:0.5rem"></div>
-            <div class="skel skel-sm" style="margin-bottom:0.85rem"></div>
-            <div class="skel skel-sm"></div>
+            <div class="store-skeleton">
+                <div class="store-skeleton-avatar skel-banner"></div>
+                <div class="store-skeleton-body">
+                    <div class="store-skeleton-line skel-banner skel-md"></div>
+                    <div class="store-skeleton-line skel sm"></div>
+                    <div class="store-skeleton-line skel sm"></div>
+                    <div class="store-skeleton-line skel-banner" style="height:10px;margin-top:8px;width:100%;border-radius:50px"></div>
+                </div>
+            </div>
         </div>
     </div>`;
 }
@@ -146,35 +152,90 @@ function buildSpotlightCard(store, rank) {
     </a>`;
 }
 
+function productPreviewMini(store, index) {
+    if (store.featuredProducts && store.featuredProducts[index]) {
+        const p = store.featuredProducts[index];
+        return `
+        <span class="preview-product" aria-hidden="true">
+            <div class="preview-product-img" style="${p.image ? `background-image:url('${escapeHtml(p.image)}');background-size:cover;background-position:center` : `background:${storeGradient(store)}`}">
+                ${!p.image ? `<i data-lucide="package" aria-hidden="true"></i>` : ''}
+            </div>
+            <span class="preview-product-name">${escapeHtml(p.name || 'Product')}</span>
+            <span class="preview-product-price">${p.price ? '$' + Number(p.price).toFixed(2) : ''}</span>
+        </span>`;
+    }
+    const gradients = ['#f0fdf4', '#fef3c7', '#fce7f3', '#e0f2fe'];
+    const bg = gradients[index % gradients.length];
+    return `
+    <span class="preview-product preview-product--placeholder" aria-hidden="true">
+        <div class="preview-product-img" style="background:${bg}">
+            <i data-lucide="package" aria-hidden="true"></i>
+        </div>
+        <span class="preview-product-name">Sample Product</span>
+        <span class="preview-product-price">$0.00</span>
+    </span>`;
+}
+
 function buildStoreCard(store) {
     const storeColor = store.storeColor || null;
+    const totalSales = store.totalSales || 0;
+    const isVerified = store.isVerified || store.totalReviews >= 5;
+    const isTopSeller = totalSales >= 50 || (store.avgRating && store.avgRating >= 4.8);
+    const isTrending = store.isTrending || (store.productCount >= 10);
+    const joinedLabel = store.joinedLabel || (store.createdAt ? 'Member' : '');
+    const activeLabel = store.activeLabel || '';
+    const responseLabel = store.responseLabel || '';
+    
+    let badgesHtml = '';
+    if (isVerified) badgesHtml += `<span class="store-badge store-badge--verified">Verified Student</span>`;
+    if (isTopSeller) badgesHtml += `<span class="store-badge store-badge--top">Top Seller</span>`;
+    if (isTrending) badgesHtml += `<span class="store-badge store-badge--trending">Trending</span>`;
+    
+    let statsHtml = '';
+    if (store.avgRating) statsHtml += `<span class="store-stat"><i data-lucide="star" aria-hidden="true"></i> ${store.avgRating}</span>`;
+    if (totalSales) statsHtml += `<span class="store-stat"><i data-lucide="shopping-bag" aria-hidden="true"></i> ${totalSales} Sales</span>`;
+    statsHtml += `<span class="store-stat"><i data-lucide="package" aria-hidden="true"></i> ${store.productCount || 0} Products</span>`;
+    if (activeLabel) statsHtml += `<span class="store-stat"><i data-lucide="zap" aria-hidden="true"></i> ${escapeHtml(activeLabel)}</span>`;
+    if (responseLabel) statsHtml += `<span class="store-stat"><i data-lucide="clock" aria-hidden="true"></i> ${escapeHtml(responseLabel)}</span>`;
+    if (joinedLabel && !activeLabel && !responseLabel) statsHtml += `<span class="store-stat"><i data-lucide="calendar" aria-hidden="true"></i> ${escapeHtml(joinedLabel)}</span>`;
+
     return `
-    <a class="store-card reveal" href="../../seller/public/store/store.html?id=${escapeHtml(store.id)}">
-        <div class="store-card-top" style="${bannerStyle(store)}">
-            <div class="store-avatar-wrap">
-                <div class="store-avatar" style="${avatarStyle(store)}"></div>
-                <div class="store-verified-dot" title="Verified"><i data-lucide="badge-check" aria-hidden="true"></i></div>
-            </div>
+    <div class="store-card reveal" data-href="../../seller/public/store/store.html?id=${escapeHtml(store.id)}" onclick="location.href=this.dataset.href" role="link" tabindex="0" aria-label="Store ${escapeHtml(store.storeName)}">
+        <div class="store-card-banner" style="${bannerStyle(store)}" aria-hidden="true">
+            <div class="store-banner-bg" style="${bannerStyle(store)}"></div>
+            <div class="store-banner-overlay"></div>
         </div>
         <div class="store-card-body">
-            <div class="store-name-row"><h3>${colorizeName(store.storeName, storeColor)}</h3></div>
-            <p class="store-cat-label"><i data-lucide="${categoryIcon(store.category)}" aria-hidden="true"></i> ${escapeHtml(categoryLabel(store.category))}</p>
-            <p class="store-bio">${escapeHtml(store.storeDescription) || 'Student entrepreneur building their brand.'}</p>
-            <div class="store-card-footer">
-                <div class="store-rating">
-                    <span class="store-stars">${stars(store.avgRating)}</span>
-                    <span class="store-rating-val">${store.avgRating || '—'}</span>
-                    <span class="store-reviews">(${store.totalReviews || 0})</span>
-                </div>
-                <div class="store-products-count">
-                    <i data-lucide="package" aria-hidden="true"></i> ${store.productCount || 0}
-                </div>
+            <div class="store-avatar-ring">
+                <div class="store-avatar" style="${avatarStyle(store)}"></div>
+                ${isVerified ? `<div class="store-verified-dot" title="Verified Student"><i data-lucide="badge-check" aria-hidden="true"></i></div>` : ''}
             </div>
-            <div class="store-card-cta">
-                Visit shop <i data-lucide="arrow-right" aria-hidden="true"></i>
+            
+            <div class="store-identity">
+                <h3 class="store-name">${colorizeName(store.storeName, storeColor)}</h3>
+                <p class="store-cat-label"><i data-lucide="${categoryIcon(store.category)}" aria-hidden="true"></i> ${escapeHtml(categoryLabel(store.category))}</p>
+                <p class="store-tagline">${escapeHtml(store.storeDescription) || 'Student entrepreneur building their brand.'}</p>
+            </div>
+            
+            ${badgesHtml ? `<div class="store-badges">${badgesHtml}</div>` : ''}
+            
+            ${statsHtml ? `<div class="store-stats">${statsHtml}</div>` : ''}
+            
+            <div class="store-products-preview">
+                ${productPreviewMini(store, 0)}
+                ${productPreviewMini(store, 1)}
+                ${productPreviewMini(store, 2)}
+            </div>
+            
+            <div class="store-card-cta-row">
+                <span class="btn-visit-store" aria-hidden="true">Visit Store →</span>
+                <button class="btn-save-store" type="button" aria-label="Save ${escapeHtml(store.storeName)}" onclick="event.preventDefault();event.stopPropagation();showToast('Saved to your wishlist')">
+                    <i data-lucide="heart" aria-hidden="true"></i>
+                    <span class="btn-save-label">Save</span>
+                </button>
             </div>
         </div>
-    </a>`;
+    </div>`;
 }
 
 // ═══════════════════════════════════════════
@@ -300,6 +361,17 @@ function renderGrid() {
 // ═══════════════════════════════════════════
 // EVENTS
 // ═══════════════════════════════════════════
+
+// Store card navigation (keyboard)
+document.getElementById('stores-grid').addEventListener('keydown', e => {
+    if (e.target.closest('.btn-save-store')) return;
+    const card = e.target.closest('.store-card');
+    if (!card) return;
+    if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        location.href = card.dataset.href;
+    }
+});
 
 // Hero search
 const heroInput = document.getElementById('hero-search-input');
