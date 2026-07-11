@@ -562,9 +562,9 @@ function apiFetchWithTimeout(url, options = {}, timeout = 15000) {
     function positionDropdown() {
         const rect = btn.getBoundingClientRect();
         dropdown.style.position = 'fixed';
-        dropdown.style.top = (rect.bottom + 8) + 'px';
-        dropdown.style.right = (window.innerWidth - rect.right) + 'px';
-        dropdown.style.left = 'auto';
+        dropdown.style.top = (rect.bottom + 10) + 'px';
+        dropdown.style.left = rect.left + 'px';
+        dropdown.style.right = 'auto';
         dropdown.style.bottom = 'auto';
     }
 
