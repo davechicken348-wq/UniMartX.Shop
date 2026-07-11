@@ -526,6 +526,11 @@ function apiFetchWithTimeout(url, options = {}, timeout = 15000) {
     const API_BASE = (window.APP_CONFIG && window.APP_CONFIG.BACKEND_URL) || 'http://localhost:5000';
     if (!btn || !dropdown) return;
 
+    const DROPDOWN_OFFSET = 10;
+    const DROPDOWN_WIDTH = 210;
+    let portalParent = null;
+    let portalSibling = null;
+
     async function fetchProfileOnce() {
         const sellerId = window.getSellerId ? window.getSellerId() : new URLSearchParams(window.location.search).get('id') || new URLSearchParams(window.location.search).get('sellerId');
         if (!sellerId) return null;
@@ -559,11 +564,42 @@ function apiFetchWithTimeout(url, options = {}, timeout = 15000) {
         }, 3000);
     }
 
+    function getProfile() {
+        return window._lastProfile || {};
+    }
+
+    function normalizePhone(raw) {
+        if (!raw) return null;
+        return raw.replace(/[^0-9]/g, '');
+    }
+
+    // Move dropdown to body-level portal when opening, return to wrap when closing
+    function mountToBody() {
+        if (dropdown.parentNode === document.body) return;
+        portalParent = dropdown.parentNode;
+        portalSibling = dropdown.nextSibling;
+        document.body.appendChild(dropdown);
+    }
+
+    function returnToWrap() {
+        if (!portalParent || dropdown.parentNode === portalParent) return;
+        if (portalSibling) {
+            portalParent.insertBefore(dropdown, portalSibling);
+        } else {
+            portalParent.appendChild(dropdown);
+        }
+        portalParent = null;
+        portalSibling = null;
+    }
+
     function positionDropdown() {
+        mountToBody();
         const rect = btn.getBoundingClientRect();
-        dropdown.style.position = 'fixed';
-        dropdown.style.top = (rect.bottom + 10) + 'px';
-        dropdown.style.left = rect.left + 'px';
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+        dropdown.style.position = 'absolute';
+        dropdown.style.top = (rect.bottom + scrollTop + DROPDOWN_OFFSET) + 'px';
+        dropdown.style.left = (rect.left + scrollLeft) + 'px';
         dropdown.style.right = 'auto';
         dropdown.style.bottom = 'auto';
     }
@@ -577,6 +613,7 @@ function apiFetchWithTimeout(url, options = {}, timeout = 15000) {
     function closeDropdown() {
         dropdown.classList.remove('open');
         btn.setAttribute('aria-expanded', 'false');
+        setTimeout(() => { if (!dropdown.classList.contains('open')) returnToWrap(); }, 200);
     }
 
     btn.addEventListener('click', async (e) => {
@@ -590,9 +627,6 @@ function apiFetchWithTimeout(url, options = {}, timeout = 15000) {
             const fresh = await fetchProfileOnce();
             if (fresh) {
                 window._lastProfile = { ...(window._lastProfile || {}), ...fresh };
-                console.log('[contact-dropdown] Fetched profile:', window._lastProfile);
-            } else {
-                console.log('[contact-dropdown] _lastProfile =', window._lastProfile);
             }
         }
         openDropdown();
@@ -606,18 +640,11 @@ function apiFetchWithTimeout(url, options = {}, timeout = 15000) {
         if (e.key === 'Escape') closeDropdown();
     });
 
-    window.addEventListener('scroll', () => {
-        if (dropdown.classList.contains('open')) positionDropdown();
+    window.addEventListener('resize', () => {
+        if (dropdown.classList.contains('open')) {
+            closeDropdown();
+        }
     });
-
-    function getProfile() {
-        return window._lastProfile || {};
-    }
-
-    function normalizePhone(raw) {
-        if (!raw) return null;
-        return raw.replace(/[^0-9]/g, '');
-    }
 
     const emailBtn = document.getElementById('contact-email-btn');
     const phoneBtn = document.getElementById('contact-phone-btn');
