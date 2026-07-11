@@ -570,6 +570,14 @@ button, input, textarea { font-family: 'Quicksand', sans-serif; }
 }
 .btn-ghost-link svg { width: 17px; height: 17px; stroke: currentColor; }
 
+#contact-btn {
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  justify-content: center;
+}
+#contact-btn svg { width: 20px; height: 20px; stroke: currentColor; }
+
 .btn-copy-link {
   border: 1px solid rgba(5, 150, 105, 0.35);
   background: rgba(5, 150, 105, 0.08);
