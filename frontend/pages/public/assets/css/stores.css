@@ -876,71 +876,90 @@ img { display: block; max-width: 100%; }
      overflow: hidden;
      text-overflow: ellipsis;
  }
- .preview-product-price {
-     font-size: 0.8125rem;
-     font-weight: 700;
-     color: var(--primary);
- }
- 
- .store-card-cta-row {
-     display: flex;
-     align-items: center;
-     gap: 10px;
-     margin-top: 4px;
- }
- 
- .btn-visit-store {
-     flex: 1;
-     display: inline-flex;
-     align-items: center;
-     justify-content: center;
-     gap: 6px;
-     background: var(--primary);
-     color: #fff;
-     border: none;
-     border-radius: 10px;
-     padding: 10px 14px;
-     font-family: 'Quicksand', sans-serif;
-     font-size: 0.875rem;
-     font-weight: 700;
-     cursor: pointer;
-     text-decoration: none;
-     transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
-     white-space: nowrap;
- }
- .btn-visit-store:hover {
-     background: var(--primary-d);
-     transform: translateY(-2px);
-     box-shadow: 0 8px 20px rgba(5, 150, 105, 0.25);
- }
- 
- .btn-save-store {
-     display: inline-flex;
-     align-items: center;
-     justify-content: center;
-     gap: 6px;
-     background: rgba(5, 150, 105, 0.06);
-     color: var(--primary);
-     border: 1.5px solid rgba(5, 150, 105, 0.2);
-     border-radius: 10px;
-     padding: 10px 14px;
-     font-family: 'Quicksand', sans-serif;
-     font-size: 0.875rem;
-     font-weight: 700;
-     cursor: pointer;
-     text-decoration: none;
-     transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
-     white-space: nowrap;
- }
- .btn-save-store:hover {
-     background: var(--primary);
-     color: #fff;
-     border-color: var(--primary);
-     transform: translateY(-2px);
- }
- .btn-save-store svg { width: 16px; height: 16px; stroke: currentColor; }
- 
- .store-live-badge {
+  .preview-product-price {
+      font-size: 0.8125rem;
+      font-weight: 700;
+      color: var(--primary);
+  }
+  
+  .preview-products-empty {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 0.8125rem;
+      font-weight: 700;
+      color: var(--text-3);
+      padding: 12px 0;
+      background: var(--bg-3);
+      border: 1px dashed var(--border);
+      border-radius: 10px;
+  }
+  .preview-products-empty svg { width: 16px; height: 16px; stroke: currentColor; }
+  
+  .store-card-cta-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 4px;
+      flex-wrap: wrap;
+  }
+  
+  .btn-visit-store {
+      flex: 1 1 auto;
+      min-width: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-family: 'Quicksand', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+      white-space: nowrap;
+  }
+  .btn-visit-store:hover {
+      background: var(--primary-d);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(5, 150, 105, 0.25);
+  }
+  
+  .btn-save-store {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: rgba(5, 150, 105, 0.06);
+      color: var(--primary);
+      border: 1.5px solid rgba(5, 150, 105, 0.2);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-family: 'Quicksand', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+      white-space: nowrap;
+      flex-shrink: 0;
+  }
+  .btn-save-store:hover {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+      transform: translateY(-2px);
+  }
+  .btn-save-store svg { width: 16px; height: 16px; stroke: currentColor; }
+  
+  .store-live-badge {
      position: absolute;
      top: 12px;
      right: 12px;
@@ -1438,6 +1457,15 @@ img { display: block; max-width: 100%; }
     }
      .stores-grid.list-view .store-name { font-size: 0.9375rem; }
 }
+@media (max-height: 520px) and (orientation: landscape) {
+    .store-card-banner { height: 110px; }
+    .store-avatar-ring { width: 48px; height: 48px; padding: 2px; margin-top: -24px; margin-left: 14px; }
+    .store-verified-dot { width: 18px; height: 18px; }
+    .store-verified-dot svg { width: 10px; height: 10px; }
+    .store-card-body { padding: 0 14px 14px; gap: 6px; }
+    .store-tagline { display: none; }
+    .store-stats { padding: 6px 0; }
+}
 @media (max-width: 480px) {
     .store-card-banner { height: 120px; }
     .store-avatar-ring { width: 50px; height: 50px; padding: 2px; margin-top: -25px; margin-left: 12px; }
@@ -1455,6 +1483,8 @@ img { display: block; max-width: 100%; }
     .preview-product-price { font-size: 0.75rem; }
     .btn-visit-store { font-size: 0.8125rem; padding: 8px 10px; }
     .btn-save-store { padding: 8px 10px; }
+    .store-card-cta-row { gap: 8px; }
+    .btn-save-store .btn-save-label { display: none; }
     .stores-grid.list-view .store-card-banner {
         width: 90px;
         min-height: 120px;
@@ -1478,6 +1508,10 @@ img { display: block; max-width: 100%; }
     .store-tagline { font-size: 0.75rem; }
     .store-stat { font-size: 0.6875rem; }
     .store-badge { font-size: 0.6875rem; padding: 3px 6px; }
+    .btn-visit-store { font-size: 0.75rem; padding: 8px 10px; }
+    .btn-save-store { padding: 8px 10px; }
+    .store-card-cta-row { flex-direction: column; align-items: stretch; }
+    .btn-visit-store, .btn-save-store { width: 100%; justify-content: center; }
 }
 @media (min-width: 769px) {
     .hero-images { display: none; }

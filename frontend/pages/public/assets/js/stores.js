@@ -39,6 +39,8 @@ let state = {
 };
 
 const PAGE_SIZE = 9;
+const storeProductsCache = new Map();
+let _enriching = false;
 
 // ═══════════════════════════════════════════
 // HELPERS
@@ -164,15 +166,16 @@ function productPreviewMini(store, index) {
             <span class="preview-product-price">${p.price ? '$' + Number(p.price).toFixed(2) : ''}</span>
         </span>`;
     }
-    const gradients = ['#f0fdf4', '#fef3c7', '#fce7f3', '#e0f2fe'];
-    const bg = gradients[index % gradients.length];
+    if (store.productCount === 0) {
+        return `<div class="preview-products-empty" aria-hidden="true"><i data-lucide="package" aria-hidden="true"></i> No products yet</div>`;
+    }
     return `
     <span class="preview-product preview-product--placeholder" aria-hidden="true">
-        <div class="preview-product-img" style="background:${bg}">
+        <div class="preview-product-img">
             <i data-lucide="package" aria-hidden="true"></i>
         </div>
-        <span class="preview-product-name">Sample Product</span>
-        <span class="preview-product-price">$0.00</span>
+        <span class="preview-product-name">Loading products…</span>
+        <span class="preview-product-price"></span>
     </span>`;
 }
 
@@ -221,7 +224,7 @@ function buildStoreCard(store) {
             
             ${statsHtml ? `<div class="store-stats">${statsHtml}</div>` : ''}
             
-            <div class="store-products-preview">
+            <div class="store-products-preview" data-store-id="${escapeHtml(store.id)}">
                 ${productPreviewMini(store, 0)}
                 ${productPreviewMini(store, 1)}
                 ${productPreviewMini(store, 2)}
@@ -356,6 +359,7 @@ function renderGrid() {
     });
 
     observeNewRevealElements(gridEl);
+    enrichStoreProducts();
 }
 
 // ═══════════════════════════════════════════
@@ -580,6 +584,55 @@ function renderGridQuiet() {
     });
 
     observeNewRevealElements(gridEl);
+    enrichStoreProducts();
+}
+
+async function enrichStoreProducts() {
+    if (_enriching) return;
+    _enriching = true;
+    try {
+        const storesToFetch = state.data.filter(s => s.productCount > 0 && !storeProductsCache.has(s.id));
+        if (!storesToFetch.length) return;
+
+        const results = await Promise.allSettled(
+            storesToFetch.map(s =>
+                fetch(`${API}/api/public/seller/${encodeURIComponent(s.id)}?limit=3`).then(r => r.ok ? r.json() : Promise.reject()).then(j => ({ store: s, json: j })).catch(() => null)
+            )
+        );
+
+        results.forEach(result => {
+            if (!result || result.status !== 'fulfilled' || !result.value) return;
+            const { store: s, json } = result.value;
+            const products = (json && json.data && json.data.products && json.data.products.slice(0, 3)) || [];
+            storeProductsCache.set(s.id, products);
+            updateStoreProductPreview(s.id, products);
+        });
+    } catch (e) {
+        // Silently fail; cards keep their loading/empty state
+    } finally {
+        _enriching = false;
+    }
+}
+
+function updateStoreProductPreview(storeId, products) {
+    const container = document.querySelector(`.store-products-preview[data-store-id="${storeId}"]`);
+    if (!container) return;
+
+    if (!products.length) {
+        container.innerHTML = `<div class="preview-products-empty" aria-hidden="true"><i data-lucide="package" aria-hidden="true"></i> No products yet</div>`;
+    } else {
+        container.innerHTML = products.map((p, idx) => `
+            <span class="preview-product" aria-hidden="true">
+                <div class="preview-product-img" style="${p.image ? `background-image:url('${escapeHtml(p.image)}');background-size:cover;background-position:center` : `background:var(--bg-3)`}">
+                    ${!p.image ? `<i data-lucide="package" aria-hidden="true"></i>` : ''}
+                </div>
+                <span class="preview-product-name">${escapeHtml(p.name || 'Product')}</span>
+                <span class="preview-product-price">${p.price != null ? '$' + Number(p.price).toFixed(2) : ''}</span>
+            </span>
+        `).join('');
+    }
+
+    lucide.createIcons();
 }
 
 function startStoresLiveSync() {
