@@ -525,7 +525,7 @@ function apiFetchWithTimeout(url, options = {}, timeout = 15000) {
     const dropdown = document.getElementById('contact-dropdown');
     if (!btn || !dropdown) return;
 
-    function showToast(message, type) {
+    function showToast(message) {
         const existing = document.querySelector('.toast');
         if (existing) existing.remove();
 
@@ -568,17 +568,26 @@ function apiFetchWithTimeout(url, options = {}, timeout = 15000) {
         if (e.key === 'Escape') closeDropdown();
     });
 
+    function getProfile() {
+        return window._lastProfile || {};
+    }
+
+    function normalizePhone(raw) {
+        if (!raw) return null;
+        return raw.replace(/[^0-9]/g, '');
+    }
+
     const emailBtn = document.getElementById('contact-email-btn');
     const phoneBtn = document.getElementById('contact-phone-btn');
+    const whatsappBtn = document.getElementById('contact-whatsapp-btn');
 
     if (emailBtn) {
         emailBtn.addEventListener('click', () => {
-            const profile = window._lastProfile;
-            const email = profile?.email || profile?.storeEmail;
+            const email = getProfile().email;
             if (email) {
                 window.location.href = `mailto:${email}`;
             } else {
-                showToast('Email contact: seller@unimartx.com', 'info');
+                showToast('No email contact available for this seller.');
             }
             closeDropdown();
         });
@@ -586,12 +595,23 @@ function apiFetchWithTimeout(url, options = {}, timeout = 15000) {
 
     if (phoneBtn) {
         phoneBtn.addEventListener('click', () => {
-            const profile = window._lastProfile;
-            const phone = profile?.phone || profile?.storePhone;
+            const phone = normalizePhone(getProfile().phone);
             if (phone) {
                 window.location.href = `tel:${phone}`;
             } else {
-                showToast('Phone contact: +1 (555) 000-0000', 'info');
+                showToast('No phone number available for this seller.');
+            }
+            closeDropdown();
+        });
+    }
+
+    if (whatsappBtn) {
+        whatsappBtn.addEventListener('click', () => {
+            const phone = normalizePhone(getProfile().whatsapp);
+            if (phone) {
+                window.open(`https://wa.me/${phone}`, '_blank', 'noopener');
+            } else {
+                showToast('No WhatsApp number available for this seller.');
             }
             closeDropdown();
         });

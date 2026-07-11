@@ -635,6 +635,8 @@ export const getPublicSellerProfile = async (req: Request, res: Response): Promi
         twitter: user.twitter || null,
         tiktok: user.tiktok || null,
         website: user.website || null,
+        email: user.email || null,
+        phone: user.phone || null,
         whatsapp: user.whatsapp || null,
         verified: seller.isActive,
         deliveryFee: seller.deliveryFee !== null && seller.deliveryFee !== undefined ? parseFloat(seller.deliveryFee.toString()) : null,

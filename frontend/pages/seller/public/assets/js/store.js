@@ -369,7 +369,7 @@ function apiFetchWithTimeout(url, options = {}, timeout = 15000) {
     if (btnList) btnList.addEventListener('click', () => setView('list'));
 
     // Contact modal
-    if (contactBtn && contactModal) contactBtn.addEventListener('click', () => {
+    if (contactBtn && contactModal && !document.querySelector('.contact-dropdown')) contactBtn.addEventListener('click', () => {
         contactModal.classList.remove('hidden');
         document.body.style.overflow = 'hidden';
     });
