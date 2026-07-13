@@ -20,7 +20,7 @@ export const registerBuyerSchema = z.object({
     .string()
     .min(2, 'Full name must be at least 2 characters')
     .max(100, 'Full name is too long')
-    .regex(/^[a-zA-Z\s'-]+$/, 'Name can only contain letters, spaces, hyphens, and apostrophes'),
+    .regex(/^[\p{L}\p{M}'’.\- ]+$/u, 'Name can only contain letters, spaces, hyphens, and apostrophes'),
   email: z
     .string()
     .email('Invalid email address')
@@ -43,7 +43,7 @@ export const registerSellerSchema = z.object({
     .string()
     .min(2, 'Full name must be at least 2 characters')
     .max(100, 'Full name is too long')
-    .regex(/^[a-zA-Z\s'-]+$/, 'Name can only contain letters, spaces, hyphens, and apostrophes'),
+    .regex(/^[\p{L}\p{M}'’.\- ]+$/u, 'Name can only contain letters, spaces, hyphens, and apostrophes'),
   email: z
     .string()
     .email('Invalid email address')

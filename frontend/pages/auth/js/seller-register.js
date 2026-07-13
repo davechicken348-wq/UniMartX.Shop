@@ -360,7 +360,13 @@ form.addEventListener('submit', async function (e) {
             }
             setTimeout(() => { window.location.href = '../login.html'; }, 1000);
         } else {
-            const errorMessage = result?.error || 'Registration failed. Please check your information and try again.';
+            let errorMessage = result?.error || 'Registration failed. Please check your information and try again.';
+            if (Array.isArray(result?.details) && result.details.length) {
+                const fieldMsgs = result.details
+                    .map(d => `${d.field ? d.field + ': ' : ''}${d.message}`)
+                    .join(' ');
+                errorMessage = `${errorMessage} (${fieldMsgs})`;
+            }
             errorText.textContent = errorMessage;
             alertError.classList.add('visible');
         }
