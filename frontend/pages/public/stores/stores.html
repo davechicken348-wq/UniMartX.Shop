@@ -14,7 +14,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://api.unimartx.com">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/stores.css">
 </head>
 <body>
@@ -54,18 +54,47 @@
     ═══════════════════════════════════════════ -->
     <section class="stores-hero">
         <div class="hero-bg" aria-hidden="true"></div>
+        <div class="hero-decor" aria-hidden="true">
+            <img class="hero-decor-img hero-decor-img--1" src="../assets/images/stores-hero/store5.webp" alt="">
+            <img class="hero-decor-img hero-decor-img--2" src="../assets/images/stores-hero/store6.webp" alt="">
+            <img class="hero-decor-img hero-decor-img--3" src="../assets/images/stores-hero/store7.webp" alt="">
+        </div>
         <div class="hero-inner">
-            <div class="hero-text">
-                <div class="hero-eyebrow">
+            <div class="hero-content">
+                <div class="hero-badge reveal">
                     <i data-lucide="store"></i>
                     Student Seller Marketplace
                 </div>
-                <h1>Your gateway to <span>student sellers.</span></h1>
-                <p id="hero-subtitle">Discover unique shops built by student entrepreneurs across campus. From fashion and food to tech and tutoring — find what you need, directly from the people who make it.</p>
-                <div class="hero-search">
+                <h1 class="hero-title reveal">Your gateway to <span>student sellers.</span></h1>
+                <p class="hero-sub reveal" id="hero-subtitle">Discover unique shops built by student entrepreneurs across campus. From fashion and food to tech and tutoring — find what you need, directly from the people who make it.</p>
+                <div class="hero-search reveal">
                     <i data-lucide="search"></i>
                     <input type="search" id="hero-search-input" placeholder="Search by store name, category…" autocomplete="off">
                     <button id="hero-search-btn" aria-label="Search"><i data-lucide="arrow-right"></i></button>
+                </div>
+                <div class="hero-stats reveal">
+                    <div class="stat">
+                        <strong id="mp-stat-sellers">0</strong>
+                        <span>Active Shops</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat">
+                        <strong id="mp-stat-products">0</strong>
+                        <span>Products</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat">
+                        <strong id="mp-stat-reviews">0</strong>
+                        <span>Reviews</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-showcase reveal delay-200">
+                <div class="hero-store-grid">
+                    <div class="hero-store-card"><img src="../assets/images/stores-hero/store1.webp" alt="Student store showcase" loading="eager"></div>
+                    <div class="hero-store-card"><img src="../assets/images/stores-hero/store2.webp" alt="Student store showcase" loading="lazy"></div>
+                    <div class="hero-store-card"><img src="../assets/images/stores-hero/store3.webp" alt="Student store showcase" loading="lazy"></div>
+                    <div class="hero-store-card"><img src="../assets/images/stores-hero/store4.webp" alt="Student store showcase" loading="lazy"></div>
                 </div>
             </div>
         </div>
@@ -94,25 +123,6 @@
     <main class="stores-main" id="main-content">
         <div class="stores-container">
 
-            <div class="mp-banner">
-                <h2>The gateway to <span>student businesses.</span></h2>
-                <p>Every shop on UniMartX is built and run by a real student entrepreneur. Browse products, read reviews, and support campus businesses — all in one place.</p>
-                <div class="mp-stats">
-                    <div class="mp-stat">
-                        <strong id="mp-stat-sellers">0</strong>
-                        <span>Active Shops</span>
-                    </div>
-                    <div class="mp-stat">
-                        <strong id="mp-stat-products">0</strong>
-                        <span>Products</span>
-                    </div>
-                    <div class="mp-stat">
-                        <strong id="mp-stat-reviews">0</strong>
-                        <span>Reviews</span>
-                    </div>
-                </div>
-            </div>
-
             <!-- Toolbar -->
             <div class="stores-toolbar">
                 <p class="results-label">Showing <strong id="results-count">0</strong> stores</p>
@@ -135,28 +145,36 @@
             </div>
 
             <!-- Spotlight top 3 -->
-            <div class="spotlight-section" id="spotlight-section">
-                <div class="spotlight-label"><i data-lucide="flame"></i> Featured Student Shops</div>
+            <section class="section spotlight-section" id="spotlight-section">
+                <div class="section-header">
+                    <div>
+                        <h2>Featured Student Shops</h2>
+                        <p class="section-sub">Real businesses. Real students.</p>
+                    </div>
+                    <span class="spotlight-label"><i data-lucide="flame"></i> Hand-picked</span>
+                </div>
                 <div class="spotlight-grid" id="spotlight-grid"></div>
-            </div>
+            </section>
 
             <!-- All stores -->
-            <div class="stores-grid grid-view" id="stores-grid"></div>
+            <section class="section stores-list-section">
+                <div class="stores-grid grid-view" id="stores-grid"></div>
 
-            <!-- Empty state -->
-            <div class="empty-state hidden" id="empty-state">
-                <div class="empty-icon"><i data-lucide="store"></i></div>
-                <h3>No stores found</h3>
-                <p>Try a different search or category.</p>
-                <button class="empty-reset" id="empty-reset">Clear filters</button>
-            </div>
+                <!-- Empty state -->
+                <div class="empty-state hidden" id="empty-state">
+                    <div class="empty-icon"><i data-lucide="store"></i></div>
+                    <h3>No stores found</h3>
+                    <p>Try a different search or category.</p>
+                    <button class="empty-reset" id="empty-reset">Clear filters</button>
+                </div>
 
-            <!-- Load more -->
-            <div class="load-more-wrap hidden" id="load-more-wrap">
-                <button class="load-more-btn" id="load-more-btn">
-                    Load More Stores <i data-lucide="chevron-down"></i>
-                </button>
-            </div>
+                <!-- Load more -->
+                <div class="load-more-wrap hidden" id="load-more-wrap">
+                    <button class="load-more-btn" id="load-more-btn">
+                        Load More Stores <i data-lucide="chevron-down"></i>
+                    </button>
+                </div>
+            </section>
 
         </div>
     </main>
@@ -164,28 +182,15 @@
     <!-- ═══════════════════════════════════════════
          SELLER CTA
     ═══════════════════════════════════════════ -->
-    <section class="seller-cta">
-        <div class="seller-cta-bg" aria-hidden="true">
-            <div class="cta-glow"></div>
-            <div class="cta-grid"></div>
-        </div>
-        <div class="seller-cta-inner">
-            <div class="seller-cta-content">
-                <div class="seller-cta-badge">
-                    <i data-lucide="zap"></i>
-                    Start Selling
+    <section class="cta-section seller-cta">
+        <div class="container">
+            <div class="cta-inner">
+                <h2>Ready to launch <span>your shop?</span></h2>
+                <p>Join student entrepreneurs already selling on UniMartX. Set up your storefront in minutes.</p>
+                <div class="cta-actions">
+                    <a href="../../auth/seller/register.html" class="btn btn-primary btn-lg">Create My Shop</a>
+                    <a href="../shop/shop.html" class="btn btn-ghost btn-lg">Browse Products</a>
                 </div>
-                <h2 class="seller-cta-title">Ready to launch <span>your shop?</span></h2>
-                <p class="seller-cta-sub">Join student entrepreneurs already selling on UniMartX. Set up your storefront in minutes.</p>
-                <a href="../../auth/seller/register.html" class="seller-cta-btn">
-                    Create My Shop <i data-lucide="arrow-right"></i>
-                </a>
-            </div>
-            <div class="seller-cta-perks">
-                <div class="perk"><i data-lucide="store"></i> <span>Free storefront</span></div>
-                <div class="perk"><i data-lucide="link"></i> <span>Shareable link</span></div>
-                <div class="perk"><i data-lucide="package"></i> <span>Product management</span></div>
-                <div class="perk"><i data-lucide="shield-check"></i> <span>Secure payments</span></div>
             </div>
         </div>
     </section>

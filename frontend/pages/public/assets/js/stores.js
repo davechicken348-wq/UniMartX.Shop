@@ -167,7 +167,7 @@ function productPreviewMini(store, index) {
         </span>`;
     }
     if (store.productCount === 0) {
-        return `<div class="preview-products-empty" aria-hidden="true"><i data-lucide="package" aria-hidden="true"></i> No products yet</div>`;
+        return '';
     }
     return `
     <span class="preview-product preview-product--placeholder" aria-hidden="true">
@@ -614,7 +614,7 @@ function updateStoreProductPreview(storeId, products) {
     if (!container) return;
 
     if (!products.length) {
-        container.innerHTML = `<div class="preview-products-empty" aria-hidden="true"><i data-lucide="package" aria-hidden="true"></i> No products yet</div>`;
+        container.innerHTML = '';
     } else {
         container.innerHTML = products.map((p, idx) => `
             <span class="preview-product" aria-hidden="true">
