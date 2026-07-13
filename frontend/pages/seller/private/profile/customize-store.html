@@ -170,6 +170,9 @@
                         <button class="section-btn settings-nav-item" data-target="fulfillment">
                             <i data-lucide="truck"></i> Delivery
                         </button>
+                        <button class="section-btn settings-nav-item" data-target="policies">
+                            <i data-lucide="file-text"></i> Policies
+                        </button>
                     </nav>
                 </div>
 
@@ -322,6 +325,41 @@
                             </div>
                             <div class="form-actions">
                                 <button type="submit" class="btn btn-primary btn-sm" id="fulfillment-save"><i data-lucide="save"></i> Save</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- POLICIES -->
+                    <div class="editor-section settings-section" id="policies" data-section="policies">
+                        <form id="store-policies-form" novalidate>
+                            <p class="section-desc">Set the policies buyers see on your store. Clear policies build trust.</p>
+                            <div class="field">
+                                <label for="processing-time">Processing Time</label>
+                                <input type="text" id="processing-time" name="processingTime" placeholder="e.g. 1–2 business days" maxlength="100">
+                                <span class="field-hint">Typical time before an order ships.</span>
+                            </div>
+                            <div class="field">
+                                <label for="return-policy">Return Policy</label>
+                                <textarea id="return-policy" name="returnPolicy" rows="3" placeholder="e.g. Returns accepted within 7 days of delivery." maxlength="1000"></textarea>
+                            </div>
+                            <div class="field">
+                                <label for="shipping-policy">Shipping Policy</label>
+                                <textarea id="shipping-policy" name="shippingPolicy" rows="3" placeholder="e.g. Same-day campus delivery for orders before 2pm." maxlength="1000"></textarea>
+                            </div>
+                            <div class="field">
+                                <label for="refund-policy">Refund Policy</label>
+                                <textarea id="refund-policy" name="refundPolicy" rows="3" placeholder="e.g. Full refunds issued within 48 hours of approval." maxlength="1000"></textarea>
+                            </div>
+                            <div class="field">
+                                <label for="exchange-policy">Exchange Policy</label>
+                                <textarea id="exchange-policy" name="exchangePolicy" rows="3" placeholder="e.g. Size exchanges available within 14 days." maxlength="1000"></textarea>
+                            </div>
+                            <div class="field">
+                                <label for="cancellation-policy">Cancellation Policy</label>
+                                <textarea id="cancellation-policy" name="cancellationPolicy" rows="3" placeholder="e.g. Orders can be cancelled within 2 hours of purchase." maxlength="1000"></textarea>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary btn-sm" id="policies-save"><i data-lucide="save"></i> Save Policies</button>
                             </div>
                         </form>
                     </div>

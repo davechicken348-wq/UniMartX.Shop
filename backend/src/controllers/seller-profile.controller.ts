@@ -74,9 +74,15 @@ export const getSellerProfile = async (req: Request, res: Response): Promise<voi
         // Branding
          storeBanner: absUrl(user.seller.storeBanner || ''),
          storeAvatar: absUrl(user.seller.storeAvatar || ''),
-        storeColor: user.seller.storeColor || '',
-        deliveryFee: user.seller.deliveryFee !== null && user.seller.deliveryFee !== undefined ? parseFloat(user.seller.deliveryFee.toString()) : null,
-      };
+         storeColor: user.seller.storeColor || '',
+         deliveryFee: user.seller.deliveryFee !== null && user.seller.deliveryFee !== undefined ? parseFloat(user.seller.deliveryFee.toString()) : null,
+         returnPolicy: user.seller.returnPolicy || '',
+         shippingPolicy: user.seller.shippingPolicy || '',
+         refundPolicy: user.seller.refundPolicy || '',
+         exchangePolicy: user.seller.exchangePolicy || '',
+         cancellationPolicy: user.seller.cancellationPolicy || '',
+         processingTime: user.seller.processingTime || '',
+       };
 
     res.status(200).json({ success: true, data: profileData });
   } catch (error) {
@@ -151,8 +157,14 @@ export const updateSellerProfile = async (req: Request, res: Response): Promise<
          sellerUpdate.storeAvatar = input.storeAvatar ? input.storeAvatar.trim() : null;
        }
      }
-     if (input.storeColor !== undefined) sellerUpdate.storeColor = input.storeColor ? input.storeColor.trim() : null;
-     if (input.deliveryFee !== undefined) sellerUpdate.deliveryFee = input.deliveryFee;
+      if (input.storeColor !== undefined) sellerUpdate.storeColor = input.storeColor ? input.storeColor.trim() : null;
+      if (input.deliveryFee !== undefined) sellerUpdate.deliveryFee = input.deliveryFee;
+      if (input.returnPolicy !== undefined) sellerUpdate.returnPolicy = input.returnPolicy ? input.returnPolicy.trim() : null;
+      if (input.shippingPolicy !== undefined) sellerUpdate.shippingPolicy = input.shippingPolicy ? input.shippingPolicy.trim() : null;
+      if (input.refundPolicy !== undefined) sellerUpdate.refundPolicy = input.refundPolicy ? input.refundPolicy.trim() : null;
+      if (input.exchangePolicy !== undefined) sellerUpdate.exchangePolicy = input.exchangePolicy ? input.exchangePolicy.trim() : null;
+      if (input.cancellationPolicy !== undefined) sellerUpdate.cancellationPolicy = input.cancellationPolicy ? input.cancellationPolicy.trim() : null;
+      if (input.processingTime !== undefined) sellerUpdate.processingTime = input.processingTime ? input.processingTime.trim() : null;
 
     if (Object.keys(userUpdate).length === 0 && Object.keys(sellerUpdate).length === 0) {
       throw new AppError('No fields provided for update', 400);
@@ -205,9 +217,15 @@ export const updateSellerProfile = async (req: Request, res: Response): Promise<
          // Branding fields
           storeBanner: absUrl(seller?.storeBanner || ''),
           storeAvatar: absUrl(seller?.storeAvatar || ''),
-         storeColor: seller?.storeColor || '',
-       },
-     });
+          storeColor: seller?.storeColor || '',
+          returnPolicy: seller?.returnPolicy || '',
+          shippingPolicy: seller?.shippingPolicy || '',
+          refundPolicy: seller?.refundPolicy || '',
+          exchangePolicy: seller?.exchangePolicy || '',
+          cancellationPolicy: seller?.cancellationPolicy || '',
+          processingTime: seller?.processingTime || '',
+        },
+      });
   } catch (error) {
     if (error instanceof AppError) throw error;
     if (error instanceof z.ZodError) throw new AppError('Invalid input data', 400);

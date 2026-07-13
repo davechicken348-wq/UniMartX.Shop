@@ -50,8 +50,25 @@ async function addToCartAPI(productId, qty = 1) {
     });
     const json = await res.json();
     if (json.cartCount != null) updateCartBadge(json.cartCount);
+    window.dispatchEvent(new Event('cart:updated'));
     return json;
 }
 
 window.__addToCartAPI = addToCartAPI;
 window.__updateCartBadge = updateCartBadge;
+
+// ── Auto-refresh cart badge on load & on relevant events ──────────────────
+(function initCartBadge() {
+    const run = () => { if (document.getElementById('cart-count')) fetchCartCount(); };
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', run);
+    } else {
+        run();
+    }
+    // Refresh when auth state changes in another tab/window
+    window.addEventListener('storage', e => {
+        if (e.key === 'authData' || e.key === 'authToken') run();
+    });
+    // Allow other scripts to signal a cart change
+    window.addEventListener('cart:updated', run);
+})();

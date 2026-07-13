@@ -412,7 +412,7 @@ function renderSellerProfile(product) {
               </div>
             </div>
           </div>
-           ${store ? `<a href="../../seller/public/store/store.html?sellerId=${seller.sellerId}" class="visit-store-btn"><i data-lucide="store"></i> Browse Store <i data-lucide="arrow-right" style="width:14px;height:14px;stroke:currentColor;"></i></a>` : ''}
+            ${store ? `<a href="../../seller/public/store/store.html?sellerId=${seller.id}&slug=${seller.slug || ''}" class="visit-store-btn"><i data-lucide="store"></i> Browse Store <i data-lucide="arrow-right" style="width:14px;height:14px;stroke:currentColor;"></i></a>` : ''}
         </div>
         <div class="seller-stats-row">
           ${statsBadges.map(h => `<div class="seller-stat"><strong>${h.value}</strong><span>${h.label}</span></div>`).join('')}
@@ -470,7 +470,7 @@ function renderSellerProfileFromProfile(profile, stats) {
             </div>
           </div>
         </div>
-         ${profile.storeName ? `<a href="../../seller/public/store/store.html?sellerId=${profile.sellerId}" class="visit-store-btn"><i data-lucide="store"></i> Browse Store <i data-lucide="arrow-right" style="width:14px;height:14px;stroke:currentColor;"></i></a>` : ''}
+          ${profile.storeName ? `<a href="../../seller/public/store/store.html?sellerId=${profile.sellerId}&slug=${profile.slug || ''}" class="visit-store-btn"><i data-lucide="store"></i> Browse Store <i data-lucide="arrow-right" style="width:14px;height:14px;stroke:currentColor;"></i></a>` : ''}
       </div>
       <div class="seller-stats-row">
         ${statsBadges.map(h => `<div class="seller-stat"><strong>${h.value}</strong><span>${h.label}</span></div>`).join('')}

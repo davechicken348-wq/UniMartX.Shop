@@ -53,8 +53,27 @@ document.addEventListener('DOMContentLoaded', async () => {
     initScrollAnimations();
     await loadSellerData();
 
-    const loadMoreBtn = document.getElementById('load-more-reviews');
-    if (loadMoreBtn) loadMoreBtn.addEventListener('click', loadMoreProfileReviews);
+    // Seller reviews
+    const loadMoreSellerBtn = document.getElementById('load-more-seller-reviews');
+    if (loadMoreSellerBtn) loadMoreSellerBtn.addEventListener('click', loadMoreSellerReviews);
+
+    const writeSellerReviewBtn = document.getElementById('write-seller-review-btn');
+    if (writeSellerReviewBtn) writeSellerReviewBtn.addEventListener('click', openSellerReviewModal);
+
+    initSellerReviewStars();
+
+    const sellerReviewModal = document.getElementById('seller-review-modal');
+    const sellerReviewClose = document.getElementById('seller-review-close');
+    const sellerReviewCancel = document.getElementById('seller-review-cancel');
+    const sellerReviewSubmit = document.getElementById('seller-review-submit');
+    if (sellerReviewClose) sellerReviewClose.addEventListener('click', closeSellerReviewModal);
+    if (sellerReviewCancel) sellerReviewCancel.addEventListener('click', closeSellerReviewModal);
+    if (sellerReviewModal) {
+        sellerReviewModal.addEventListener('click', (e) => {
+            if (e.target === sellerReviewModal) closeSellerReviewModal();
+        });
+    }
+    if (sellerReviewSubmit) sellerReviewSubmit.addEventListener('click', submitSellerReview);
 
     // Extra observer passes for late-rendered cards
     setTimeout(observeNewElements, 200);
@@ -65,8 +84,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 // ── Max featured products shown on profile ──────────────────────────────────
 const MAX_PREVIEW = 4;
 
-// ── Profile page review state ────────────────────────────────────────────────
-const profileReviewState = {
+// ── Seller (store) review state ─────────────────────────────────────────────
+const sellerReviewState = {
     reviews: [],
     pagination: { page: 1, limit: 5, total: 0, hasMore: false },
     loadingMore: false,
@@ -104,15 +123,21 @@ async function loadSellerData() {
             return;
         }
 
-        const { profile, stats, products, reviews, ratingBreakdown, pagination, categorycounts } = json.data;
+        const { profile, stats, products, reviews, pagination, categorycounts, sellerReviews, sellerRatingBreakdown } = json.data;
 
         populateProfile(profile, stats);
-        populateRatingBreakdown(ratingBreakdown, stats);
 
-        profileReviewState.sellerId = sellerId;
-        profileReviewState.reviews = reviews || [];
-        profileReviewState.pagination = pagination || profileReviewState.pagination;
-        renderProfileReviews();
+        // Seller (store) reviews
+        sellerReviewState.sellerId = sellerId;
+        sellerReviewState.reviews = sellerReviews || [];
+        sellerReviewState.pagination = {
+            page: 1,
+            limit: 5,
+            total: stats.sellerReviewCount || 0,
+            hasMore: (sellerReviews?.length || 0) < (stats.sellerReviewCount || 0),
+        };
+        populateSellerReviews({ sellerRating: stats.sellerRating, sellerReviewCount: stats.sellerReviewCount }, sellerRatingBreakdown);
+        renderSellerReviews();
 
         // Hand off to store.js — profile gets a small preview slice
         if (typeof window.initStore === 'function') {
@@ -177,7 +202,7 @@ function populateProfile(profile, stats) {
     document.title = `${profile.storeName || profile.name} | UnimartX`;
 
     // Wire up store links with sellerId
-    const storeUrl = `../store/store.html?sellerId=${profile.sellerId}`;
+    const storeUrl = `../store/store.html?sellerId=${profile.sellerId}&slug=${profile.slug || ''}`;
     const viewAllBtn = document.getElementById('view-all-btn');
     if (viewAllBtn) viewAllBtn.href = storeUrl;
     const ctaViewAll = document.getElementById('cta-view-all-btn');
@@ -193,94 +218,207 @@ function populateProfile(profile, stats) {
     renderSocialLinks(profile);
 }
 
-// ── Rating breakdown bars ──────────────────────────────────────────────────
-function populateRatingBreakdown(ratingBreakdown, stats) {
-    const scoreBig = document.getElementById('score-big');
-    const scoreStars = document.getElementById('score-stars');
-    const reviewsBars = document.getElementById('reviews-bars');
+// ── Seller (store) reviews ──────────────────────────────────────────────────
+function populateSellerReviews(stats, breakdown) {
+    const sum = document.getElementById('seller-reviews-summary');
+    if (!sum) return;
 
-    if (scoreBig) scoreBig.textContent = stats.avgRating != null ? stats.avgRating.toFixed(1) : '—';
-    if (scoreStars) scoreStars.textContent = stats.avgRating != null ? starsFromRating(stats.avgRating) : '☆☆☆☆☆';
+    const scoreBig = document.getElementById('seller-score-big');
+    if (scoreBig) scoreBig.textContent = stats.sellerRating != null ? stats.sellerRating.toFixed(1) : '—';
+    const stars = document.getElementById('seller-score-stars');
+    if (stars) stars.textContent = stats.sellerRating != null ? starsFromRating(stats.sellerRating) : '☆☆☆☆☆';
+    const countSub = document.getElementById('seller-reviews-count-sub');
+    if (countSub) countSub.textContent = (stats.sellerReviewCount ?? 0) + ' reviews';
 
-    if (reviewsBars && ratingBreakdown) {
-        reviewsBars.innerHTML = [5, 4, 3, 2, 1].map(n => `
+    const bars = document.getElementById('seller-reviews-bars');
+    if (bars && breakdown) {
+        bars.innerHTML = [5, 4, 3, 2, 1].map(n => `
             <div class="rating-bar-row">
                 <span>${n}★</span>
-                <div class="rating-bar-track"><div class="rating-bar-fill" style="width:${ratingBreakdown[n] ?? 0}%"></div></div>
-                 <span>${ratingBreakdown[n] ?? 0}%</span>
+                <div class="rating-bar-track"><div class="rating-bar-fill" style="width:${breakdown[n] ?? 0}%"></div></div>
+                <span>${breakdown[n] ?? 0}%</span>
             </div>`).join('');
     }
 }
 
-// ── Profile page review rendering ───────────────────────────────────────────
-function renderProfileReviewCard(review) {
+function renderSellerReviewCard(review) {
     const stars = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
-            const initials = (review.buyer?.name || 'B').split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
-            const avatarContent = review.buyer?.avatar
-                ? `<img src="${review.buyer.avatar}" alt="${review.buyer?.name || 'Buyer'}" loading="lazy">`
-                : initials;
+    const subs = [];
+    if (review.communication) subs.push(`Communication ${'★'.repeat(review.communication)}`);
+    if (review.shipping) subs.push(`Shipping ${'★'.repeat(review.shipping)}`);
+    const initials = (review.buyer?.name || 'B').split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+    const avatar = review.buyer?.avatar
+        ? `<img src="${review.buyer.avatar}" alt="${review.buyer?.name || 'Buyer'}" loading="lazy">`
+        : initials;
 
-            return `
-                <article class="review-item">
-                    <div class="review-avatar">${avatarContent}</div>
-                    <div class="review-body">
-                        <div class="review-header">
-                            <span class="review-author">${review.buyer?.name || 'Buyer'}</span>
-                            <span class="review-stars">${stars}</span>
-                            <span class="review-date">${formatRelativeDate(review.createdAt)}</span>
-                        </div>
-                        <p class="review-text">${review.comment || ''}</p>
-                        <span class="review-product-name">${review.productName || ''}</span>
-                    </div>
-                </article>`;
+    return `
+        <article class="review-item">
+            <div class="review-avatar">${avatar}</div>
+            <div class="review-body">
+                <div class="review-header">
+                    <span class="review-author">${review.buyer?.name || 'Buyer'}</span>
+                    <span class="review-stars">${stars}</span>
+                    <span class="review-date">${formatRelativeDate(review.createdAt)}</span>
+                </div>
+                ${subs.length ? `<div class="review-sub-scores">${subs.map(s => `<span>${s}</span>`).join('')}</div>` : ''}
+                <p class="review-text">${review.comment || ''}</p>
+            </div>
+        </article>`;
 }
 
-function renderProfileReviews() {
-    const list = document.getElementById('reviews-list');
+function renderSellerReviews() {
+    const list = document.getElementById('seller-reviews-list');
     if (!list) return;
 
-    const reviews = profileReviewState.reviews || [];
+    const reviews = sellerReviewState.reviews || [];
     if (reviews.length === 0) {
-        list.innerHTML = '<p class="reviews-empty">No reviews yet.</p>';
-        const btn = document.getElementById('load-more-reviews');
+        list.innerHTML = '<p class="reviews-empty">No seller reviews yet.</p>';
+        const btn = document.getElementById('load-more-seller-reviews');
         if (btn) btn.classList.add('hidden');
         return;
     }
 
-    list.innerHTML = reviews.map(renderProfileReviewCard).join('');
+    list.innerHTML = reviews.map(renderSellerReviewCard).join('');
     if (window.lucide) window.lucide.createIcons();
 
-    const btn = document.getElementById('load-more-reviews');
-    if (btn) btn.classList.toggle('hidden', !profileReviewState.pagination.hasMore);
+    const btn = document.getElementById('load-more-seller-reviews');
+    if (btn) btn.classList.toggle('hidden', !sellerReviewState.pagination.hasMore);
 }
 
-async function loadMoreProfileReviews() {
-    if (!profileReviewState.sellerId || profileReviewState.loadingMore || !profileReviewState.pagination.hasMore) return;
-
-    profileReviewState.loadingMore = true;
-    const btn = document.getElementById('load-more-reviews');
+async function loadMoreSellerReviews() {
+    if (!sellerReviewState.sellerId || sellerReviewState.loadingMore || !sellerReviewState.pagination.hasMore) return;
+    sellerReviewState.loadingMore = true;
+    const btn = document.getElementById('load-more-seller-reviews');
     if (btn) btn.textContent = 'Loading…';
 
     try {
-        const nextPage = profileReviewState.pagination.page + 1;
-        const res = await apiFetchWithTimeout(`${API_BASE}/api/public/seller/${profileReviewState.sellerId}?page=${nextPage}&limit=${profileReviewState.pagination.limit}`);
+        const next = sellerReviewState.pagination.page + 1;
+        const res = await fetch(`${API_BASE}/api/public/seller/${sellerReviewState.sellerId}/reviews?page=${next}&limit=${sellerReviewState.pagination.limit}`);
         const json = await res.json();
-
         if (res.ok && json.success) {
-            const newReviews = json.data.reviews || [];
-            profileReviewState.reviews = [...profileReviewState.reviews, ...newReviews];
-            profileReviewState.pagination = json.data.pagination;
-            renderProfileReviews();
+            const d = json.data;
+            sellerReviewState.reviews = [...sellerReviewState.reviews, ...d.reviews];
+            sellerReviewState.pagination = d.pagination;
+            renderSellerReviews();
         }
     } catch (err) {
-        console.error('Failed to load more reviews:', err);
+        console.error('Failed to load more seller reviews:', err);
     } finally {
-        profileReviewState.loadingMore = false;
+        sellerReviewState.loadingMore = false;
         if (btn) {
             btn.innerHTML = 'Load More Reviews <i data-lucide="chevron-down"></i>';
             if (window.lucide) window.lucide.createIcons();
         }
     }
+}
+
+async function refreshSellerReviewSummary(sellerId) {
+    try {
+        const res = await fetch(`${API_BASE}/api/public/seller/${sellerId}/reviews?limit=1`);
+        const json = await res.json();
+        if (res.ok && json.success) {
+            const d = json.data;
+            populateSellerReviews(
+                { sellerRating: d.sellerRating, sellerReviewCount: d.sellerReviewCount },
+                d.sellerRatingBreakdown
+            );
+        }
+    } catch (err) {
+        console.error('Failed to refresh seller review summary:', err);
+    }
+}
+
+function openSellerReviewModal() {
+    const modal = document.getElementById('seller-review-modal');
+    if (!modal) return;
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+    document.querySelectorAll('#seller-review-modal .star-rating').forEach(r => setStarRating(r, 0));
+    const ta = document.getElementById('seller-review-comment');
+    if (ta) ta.value = '';
+}
+
+function closeSellerReviewModal() {
+    const modal = document.getElementById('seller-review-modal');
+    if (!modal) return;
+    modal.classList.add('hidden');
+    document.body.style.overflow = '';
+}
+
+function setStarRating(widget, value) {
+    widget.dataset.rating = String(value);
+    widget.querySelectorAll('.sr-star').forEach(s => {
+        s.classList.toggle('active', parseInt(s.dataset.v, 10) <= value);
+    });
+}
+
+function initSellerReviewStars() {
+    document.querySelectorAll('#seller-review-modal .star-rating').forEach(widget => {
+        widget.querySelectorAll('.sr-star').forEach(star => {
+            star.addEventListener('click', () => {
+                setStarRating(widget, parseInt(star.dataset.v, 10));
+            });
+        });
+    });
+}
+
+async function submitSellerReview() {
+    const sellerId = sellerReviewState.sellerId;
+    if (!sellerId) return;
+
+    const token = getToken();
+    if (!token) { window.location.href = '../../../auth/login.html'; return; }
+
+    const rating = parseInt(document.querySelector('#sr-overall')?.dataset.rating || '0', 10);
+    if (!rating) { showToast('Please select an overall rating.', 'error'); return; }
+    const communication = parseInt(document.querySelector('#sr-communication')?.dataset.rating || '0', 10) || null;
+    const shipping = parseInt(document.querySelector('#sr-shipping')?.dataset.rating || '0', 10) || null;
+    const comment = (document.getElementById('seller-review-comment')?.value || '').trim();
+
+    const submitBtn = document.getElementById('seller-review-submit');
+    if (submitBtn) { submitBtn.disabled = true; }
+
+    try {
+        const res = await fetch(`${API_BASE}/api/public/seller/${sellerId}/reviews`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ rating, communication, shipping, comment }),
+        });
+        const json = await res.json();
+
+        if (res.ok && json.success) {
+            sellerReviewState.reviews = [json.data, ...sellerReviewState.reviews];
+            closeSellerReviewModal();
+            await refreshSellerReviewSummary(sellerId);
+            renderSellerReviews();
+            showToast('Review submitted. Thank you!', 'success');
+        } else if (res.status === 401) {
+            window.location.href = '../../../auth/login.html';
+        } else if (res.status === 409) {
+            showToast('You have already reviewed this store.', 'error');
+        } else {
+            showToast(json.error || 'Could not submit your review.', 'error');
+        }
+    } catch (err) {
+        console.error('Failed to submit seller review:', err);
+        showToast('Network error. Please try again.', 'error');
+    } finally {
+        if (submitBtn) { submitBtn.disabled = false; }
+    }
+}
+
+function showToast(message, type = 'info') {
+    let toast = document.querySelector('.toast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.style.cssText = 'position:fixed;bottom:2rem;right:2rem;background:var(--bg-2);border:1px solid var(--primary);color:var(--text);padding:1rem 1.5rem;border-radius:var(--radius);box-shadow:0 8px 32px rgba(0,0,0,0.4);z-index:9999;transform:translateY(120%);opacity:0;transition:transform 0.3s,opacity 0.3s;max-width:320px;';
+        document.body.appendChild(toast);
+    }
+    toast.textContent = message;
+    toast.classList.add('show');
+    clearTimeout(toast._timeout);
+    toast._timeout = setTimeout(() => toast.classList.remove('show'), 2800);
 }
 
 function formatRelativeDate(dateStr) {
@@ -338,7 +476,7 @@ function formatJoinDate(dateStr) {
 }
 
 function starsFromRating(rating) {
-    const filled = Math.round(rating);
+    const filled = Math.max(0, Math.min(5, Math.round(rating)));
     return '★'.repeat(filled) + '☆'.repeat(5 - filled);
 }
 
@@ -363,22 +501,6 @@ function applyProfileFallbacks() {
 
     const avatar = document.getElementById('profile-avatar');
     if (avatar && !avatar.textContent.trim() && !avatar.querySelector('img')) avatar.textContent = '?';
-
-    const scoreBig = document.getElementById('score-big');
-    if (scoreBig && !scoreBig.textContent.trim()) scoreBig.textContent = '—';
-
-    const scoreStars = document.getElementById('score-stars');
-    if (scoreStars && !scoreStars.textContent.trim()) scoreStars.textContent = '☆☆☆☆☆';
-
-    const reviewsBars = document.getElementById('reviews-bars');
-    if (reviewsBars && !reviewsBars.innerHTML.trim()) {
-        reviewsBars.innerHTML = [5, 4, 3, 2, 1].map(n => `
-            <div class="rating-bar-row">
-                <span>${n}★</span>
-                <div class="rating-bar-track"><div class="rating-bar-fill" style="width:0%"></div></div>
-                <span>0%</span>
-            </div>`).join('');
-    }
 }
 
 // ── Modals ─────────────────────────────────────────────────────────────────
@@ -651,27 +773,20 @@ fetchCartCount();
             const json = await res.json();
             if (!json.success) return;
 
-            const { profile, stats, products, reviews, ratingBreakdown, pagination, categorycounts } = json.data;
+            const { profile, stats, products, reviews, categorycounts } = json.data;
 
             const currentProductIds = (products || []).map(p => p.id).join(',');
-            const currentReviewIds = (reviews || []).map(r => r.id).join(',');
 
-            if (currentProductIds === window._lastProductIds && currentReviewIds === window._lastReviewIds) return;
+            if (currentProductIds === window._lastProductIds) return;
             window._lastProductIds = currentProductIds;
-            window._lastReviewIds = currentReviewIds;
 
-            if (typeof populateProfile !== 'function' || typeof populateRatingBreakdown !== 'function') return;
+            if (typeof populateProfile !== 'function') return;
 
             populateProfile(profile, stats);
-            populateRatingBreakdown(ratingBreakdown, stats);
 
             if (typeof window.initStore === 'function') {
-                window.initStore({ products: getPreviewProducts(products), reviews, categorycounts, pagination, sellerId: profile.sellerId, isPreview: true });
+                window.initStore({ products: getPreviewProducts(products), reviews, categorycounts, sellerId: profile.sellerId, isPreview: true });
             }
-
-            profileReviewState.reviews = reviews || [];
-            profileReviewState.pagination = pagination || profileReviewState.pagination;
-            renderProfileReviews();
 
             window.lucide?.createIcons?.();
             window.observeNewElements?.();

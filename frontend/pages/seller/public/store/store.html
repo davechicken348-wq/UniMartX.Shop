@@ -3,43 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Store | UniMartX</title>
-    <meta name="description" content="Browse products from this student entrepreneur on UniMartX — the platform that helps students build professional online businesses.">
-    <meta property="og:title" content="Student Shop | UniMartX">
-    <meta property="og:description" content="Discover this student entrepreneur's shop on UniMartX. Professional storefront, unique products, built without a website.">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://www.unimartx.com/seller/public/store/store.html">
-    <meta property="og:image" content="https://www.unimartx.com/assets/images/og-store.png">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-    <meta property="og:site_name" content="UnimartX">
-    <meta name="twitter:card" content="summary_large_image">
-    <link rel="canonical" href="https://www.unimartx.com/seller/public/store/store.html">
+    <title id="page-title">Store — UnimartX</title>
+    <meta name="description" content="Browse products from this student seller on UniMartX.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/store.css">
 </head>
 <body>
+    <a href="#main-content" class="visually-hidden">Skip to main content</a>
 
+    <!-- NAVBAR -->
     <nav class="navbar" id="navbar">
         <div class="nav-inner">
             <a href="../../../public/home.html" class="nav-logo">Unimart<span>X</span></a>
-            <div class="nav-search">
+            <form class="nav-search" action="../../../public/shop/shop.html" method="get">
                 <i data-lucide="search"></i>
-                <input type="search" id="nav-search-input" placeholder="Search products, stores…" aria-label="Search">
-                <button class="search-btn" id="nav-search-btn">Search</button>
-            </div>
+                <input type="search" name="search" placeholder="Search products, stores, categories…" aria-label="Search">
+                <button type="submit" class="search-btn">Search</button>
+            </form>
             <div class="nav-actions">
                 <a href="../../../public/shop/cart.html" class="nav-icon-btn" aria-label="Cart">
                     <i data-lucide="shopping-cart"></i>
                     <span class="badge" id="cart-count">0</span>
                 </a>
                 <a href="../../../auth/login.html" class="nav-btn nav-btn-ghost">Log In</a>
-                <a href="../../../auth/buyer/register.html" class="nav-btn nav-btn-primary">Sign Up to Buy</a>
+                <a href="../../../auth/buyer/register.html" class="nav-btn nav-btn-primary">Register as a buyer</a>
             </div>
-            <button class="nav-hamburger" id="nav-hamburger" aria-label="Open menu">
-                <i data-lucide="menu"></i>
+            <button class="nav-hamburger" id="nav-hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="nav-mobile">
+                <i data-lucide="menu" aria-hidden="true"></i>
             </button>
         </div>
         <div class="nav-mobile" id="nav-mobile">
@@ -51,322 +43,226 @@
             <a href="../../../public/shop/shop.html">Browse Products</a>
             <a href="../../../public/shop/cart.html">Cart</a>
             <a href="../../../auth/login.html">Log In</a>
-            <a href="../../../auth/buyer/register.html" class="nav-btn nav-btn-primary">Sign Up to Buy</a>
+            <a href="../../../auth/buyer/register.html" class="nav-btn nav-btn-primary">Register as a buyer</a>
         </div>
     </nav>
 
-    <section class="store-hero" id="store-hero-animated">
-        <div class="store-hero-bg">
-            <img src="" alt="" id="hero-banner-img" style="display:none;">
-        </div>
-        <div class="hero-overlay"></div>
-        <div class="hero-content">
-            <div class="hero-inner" id="hero-content-inner">
-                <div class="store-identity">
-                    <div class="store-avatar-wrap">
-                        <div class="store-avatar" id="store-avatar"></div>
-                        <div class="store-verified" title="Verified Seller">
-                            <i data-lucide="badge-check"></i>
-                        </div>
-                    </div>
-                    <div class="store-meta">
-                        <div class="store-meta-top">
-                            <h1 class="store-name" id="store-name"></h1>
-                            <span class="store-category-badge" id="store-category"></span>
-                        </div>
-                        <p class="store-bio" id="store-bio"></p>
-                        <div class="store-info-row">
-                            <span><i data-lucide="map-pin"></i> <span id="store-location"></span></span>
-                            <span><i data-lucide="calendar"></i> Joined <span id="store-joined"></span></span>
-                            <span><i data-lucide="package"></i> <span id="store-product-count"></span> products</span>
-                        </div>
-                        <div class="trust-badges-wrap" id="trust-badges-wrap">
-                            <div class="trust-badges" id="trust-badges"></div>
-                        </div>
-                    </div>
+    <!-- STORE HERO -->
+    <section class="store-hero" id="store-hero">
+        <div class="store-hero-bg" id="store-hero-bg" aria-hidden="true"></div>
+        <div class="store-hero-overlay" aria-hidden="true"></div>
+        <div class="store-hero-inner">
+            <div class="store-hero-left">
+                <div class="store-avatar-ring" id="store-avatar-ring">
+                    <div class="store-avatar" id="store-avatar"></div>
                 </div>
-                <div class="store-actions">
-                    <a href="../profile/profile.html" class="btn-primary-link" id="visit-store-btn" aria-label="Seller profile">
-                        <i data-lucide="user"></i> Seller Profile
+                <div class="store-hero-meta">
+                    <div class="store-hero-badges" id="store-hero-badges"></div>
+                    <h1 class="store-hero-name" id="store-hero-name">Loading…</h1>
+                    <p class="store-hero-desc" id="store-hero-desc"></p>
+                    <button class="store-desc-toggle hidden" id="store-desc-toggle" type="button">View full description <i data-lucide="chevron-down"></i></button>
+                    <div class="store-hero-tags" id="store-hero-tags"></div>
+                </div>
+            </div>
+            <div class="store-hero-right">
+                <div class="store-hero-stats" id="store-hero-stats"></div>
+                <div class="store-hero-actions">
+                    <a href="#" class="btn-view-profile" id="view-profile-btn">
+                        <i data-lucide="user"></i>
+                        <span>View Seller Profile</span>
                     </a>
-                    <div class="contact-dropdown-wrap">
-                        <button class="btn-ghost-link" id="contact-btn" aria-label="Contact seller" aria-haspopup="true" aria-expanded="false">
-                            <i data-lucide="message-circle"></i>
-                        </button>
-                        <div class="contact-dropdown" id="contact-dropdown">
-                            <button class="contact-dropdown-item" id="contact-email-btn" data-action="email">
-                                <i data-lucide="mail"></i>
-                                <span>Email</span>
-                            </button>
-                            <button class="contact-dropdown-item" id="contact-phone-btn" data-action="phone">
-                                <i data-lucide="phone"></i>
-                                <span>Phone</span>
-                            </button>
-                            <button class="contact-dropdown-item" id="contact-whatsapp-btn" data-action="whatsapp">
-                                <i data-lucide="message-circle"></i>
-                                <span>WhatsApp</span>
-                            </button>
-                        </div>
-                    </div>
-                    <button class="btn-copy-link" id="copy-link-btn" aria-label="Share shop">
+                    <button class="btn-share" id="share-btn" type="button">
                         <i data-lucide="share-2"></i>
+                        <span>Share</span>
                     </button>
                 </div>
             </div>
-            <div class="store-hero-error" id="store-hero-error">
-                <div class="store-hero-error-icon" id="store-error-icon"><i data-lucide="alert-circle"></i></div>
-                <h1 id="store-error-title">Store Not Available</h1>
-                <p id="store-error-msg"></p>
-                <a href="../../../public/stores/stores.html" class="btn-ghost-link">Browse All Stores <i data-lucide="arrow-right"></i></a>
-            </div>
         </div>
     </section>
 
-    <section class="trust-badges-section" id="trust-badges-section-animated">
-        <div class="section-inner">
-            <div class="trust-badges-row" id="trust-badges-row"></div>
-        </div>
-    </section>
+    <!-- MAIN CONTENT -->
+    <main class="store-main" id="main-content">
+        <div class="store-container">
+            <div class="store-layout">
 
-    <section class="stats-section" id="stats-section-animated">
-        <div class="stats-inner">
-            <div class="stat-card">
-                <div class="stat-card-icon"><i data-lucide="trophy"></i></div>
-                <div class="stat-card-info">
-                    <strong id="stat-sales"></strong>
-                    <span>Total Sales</span>
-                </div>
-            </div>
-            <div class="stat-divider"></div>
-            <div class="stat-card">
-                <div class="stat-card-icon"><i data-lucide="star"></i></div>
-                <div class="stat-card-info">
-                    <strong><span class="stars-filled" id="stat-stars"></span> <span id="stat-rating"></span></strong>
-                    <span>Avg Rating</span>
-                </div>
-            </div>
-            <div class="stat-divider"></div>
-            <div class="stat-card">
-                <div class="stat-card-icon"><i data-lucide="users"></i></div>
-                <div class="stat-card-info">
-                    <strong id="stat-followers"></strong>
-                    <span>Followers</span>
-                </div>
-            </div>
-        </div>
-    </section>
+                <!-- SELLER SIDEBAR (left grided rail) -->
+                <aside class="store-sidebar" id="seller-snapshot" aria-label="Seller quick info">
+                    <div class="seller-snapshot-label">At a glance</div>
+                    <div class="seller-snapshot-grid" id="seller-snapshot-grid"></div>
+                </aside>
 
-    <section class="meet-seller-section section-inner" id="meet-seller-section-animated">
-        <div class="meet-seller-card">
-            <div class="meet-seller-header">
-                <div class="meet-seller-avatar" id="meet-seller-avatar"></div>
-                <div class="meet-seller-intro">
-                    <span class="section-label meet-label"><i data-lucide="user"></i> Meet the Seller</span>
-                    <h2 id="meet-seller-name"></h2>
-                    <p class="meet-store-name" id="meet-store-name"></p>
-                </div>
-            </div>
-            <p class="meet-seller-bio" id="meet-seller-bio"></p>
-            <div class="meet-seller-details">
-                <div class="meet-detail-item">
-                    <i data-lucide="map-pin"></i>
-                    <span id="meet-seller-location"></span>
-                </div>
-                <div class="meet-detail-item">
-                    <i data-lucide="calendar"></i>
-                    <span>Member since <span id="meet-seller-joined"></span></span>
-                </div>
-                <div class="meet-detail-item">
-                    <i data-lucide="package"></i>
-                    <span><span id="meet-seller-products"></span> products listed</span>
-                </div>
-            </div>
-            <div class="meet-seller-socials" id="meet-seller-socials"></div>
-        </div>
-    </section>
+                <div class="store-content">
 
-    <section class="collections-section" id="collections-section-animated">
-        <div class="section-inner">
-            <div class="section-header">
-                <div>
-                    <div class="section-label"><i data-lucide="sparkles"></i> Curated For You</div>
-                    <h2>Featured <span>Collections</span></h2>
-                </div>
-            </div>
-            <div class="collections-scroll" id="collections-scroll">
-                <button class="collection-card" data-collection="best-sellers" id="col-best-sellers" aria-label="Best Sellers collection">
-                    <div class="collection-icon-wrap"><i data-lucide="trophy"></i></div>
-                    <h3>Best Sellers</h3>
-                    <p class="collection-count" id="col-count-best-sellers">0 products</p>
-                    <span class="collection-cta">Shop now <i data-lucide="arrow-right"></i></span>
-                </button>
-                <button class="collection-card" data-collection="new-arrivals" id="col-new-arrivals" aria-label="New Arrivals collection">
-                    <div class="collection-icon-wrap"><i data-lucide="sparkles"></i></div>
-                    <h3>New Arrivals</h3>
-                    <p class="collection-count" id="col-count-new-arrivals">0 products</p>
-                    <span class="collection-cta">Explore <i data-lucide="arrow-right"></i></span>
-                </button>
-                <button class="collection-card" data-collection="student-favorites" id="col-student-favorites" aria-label="Student Favorites collection">
-                    <div class="collection-icon-wrap"><i data-lucide="heart"></i></div>
-                    <h3>Student Favorites</h3>
-                    <p class="collection-count" id="col-count-student-favorites">0 products</p>
-                    <span class="collection-cta">View picks <i data-lucide="arrow-right"></i></span>
-                </button>
-                <button class="collection-card" data-collection="special-offers" id="col-special-offers" aria-label="Special Offers collection">
-                    <div class="collection-icon-wrap"><i data-lucide="tag"></i></div>
-                    <h3>Special Offers</h3>
-                    <p class="collection-count" id="col-count-special-offers">0 products</p>
-                    <span class="collection-cta">Grab deals <i data-lucide="arrow-right"></i></span>
-                </button>
-            </div>
-        </div>
-    </section>
-
-    <section class="reviews-section enhanced-reviews" id="reviews">
-        <div class="section-inner">
-            <div class="section-header">
-                <div>
-                    <div class="section-label">
-                        <i data-lucide="message-square"></i>
-                        Customer Feedback
+                <!-- TOOLBAR -->
+                <div class="store-toolbar">
+                    <div class="store-toolbar-left">
+                        <p class="results-label">Showing <strong id="results-count">0</strong> products</p>
                     </div>
-                    <h2>Customer <span>Reviews</span></h2>
-                </div>
-                <a href="../profile/profile.html?sellerId=" class="btn-ghost-link see-all-reviews-link" id="see-all-reviews-link">
-                    See all reviews <i data-lucide="arrow-right"></i>
-                </a>
-            </div>
-
-            <div class="reviews-summary" id="reviews-summary">
-                <div class="reviews-overall">
-                    <div class="reviews-score" id="reviews-score">—</div>
-                    <div class="reviews-detail">
-                        <span class="reviews-total" id="reviews-total-count">0 reviews</span>
-                        <div class="rating-distribution" id="rating-distribution"></div>
+                    <div class="store-toolbar-right">
+                        <div class="store-search-wrap">
+                            <i data-lucide="search"></i>
+                            <input type="search" id="store-search" placeholder="Search this store…" aria-label="Search store">
+                        </div>
+                        <div class="sort-wrap">
+                            <i data-lucide="arrow-up-down"></i>
+                            <select id="sort-select" aria-label="Sort products">
+                                <option value="newest">Newest</option>
+                                <option value="price-asc">Price: Low → High</option>
+                                <option value="price-desc">Price: High → Low</option>
+                                <option value="rating">Top Rated</option>
+                                <option value="popular">Most Popular</option>
+                            </select>
+                        </div>
+                        <div class="view-toggle">
+                            <button class="view-btn active" id="btn-grid" aria-label="Grid view"><i data-lucide="layout-grid"></i></button>
+                            <button class="view-btn" id="btn-list" aria-label="List view"><i data-lucide="list"></i></button>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="reviews-marquee-wrap" id="reviews-marquee-wrap">
-                <div class="reviews-marquee" id="reviews-marquee">
-                    <div class="reviews-marquee-track" id="reviews-marquee-track"></div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="products-section" id="products">
-        <div class="section-inner">
-            <div class="section-header">
-                <div>
-                    <div class="section-label">
-                        <i data-lucide="package"></i>
-                        Browse
-                    </div>
-                    <h2>All <span>Products</span></h2>
-                </div>
-            </div>
-
-            <div class="store-toolbar">
+                <!-- CATEGORY TABS -->
                 <div class="store-filter-tabs" id="store-filter-tabs">
                     <button class="store-tab active" data-filter="all">All <span class="tab-num" id="tab-count-all">0</span></button>
                 </div>
-                <div class="toolbar-right">
-                    <div class="store-search-wrap">
-                        <i data-lucide="search"></i>
-                        <input type="search" id="store-search" placeholder="Search this store…">
-                    </div>
-                    <div class="view-toggle" role="group" aria-label="Product layout">
-                        <button class="view-btn active" id="btn-grid" aria-label="Grid view" aria-pressed="true">
-                            <i data-lucide="grid-2x2"></i>
-                        </button>
-                        <button class="view-btn" id="btn-list" aria-label="List view" aria-pressed="false">
-                            <i data-lucide="list"></i>
-                        </button>
-                    </div>
+
+                <!-- PRODUCTS GRID -->
+                <div class="store-products grid-view" id="store-products"></div>
+
+                <!-- EMPTY STATE -->
+                <div class="empty-state hidden" id="no-results">
+                    <div class="empty-icon"><i data-lucide="search-x"></i></div>
+                    <h3>No products found</h3>
+                    <p>Try a different search or category.</p>
+                    <button class="empty-reset" id="empty-reset">Clear filters</button>
                 </div>
-            </div>
 
-            <div class="empty-state hidden" id="no-results">
-                <div class="empty-icon"><i data-lucide="search-x"></i></div>
-                <h3>No products found</h3>
-                <p>Try a different search or category.</p>
-            </div>
+                <!-- LOAD MORE -->
+                <div class="load-more-wrap hidden" id="load-more-wrap">
+                    <button class="load-more-btn" id="load-more-btn">
+                        Load More Products <i data-lucide="chevron-down"></i>
+                    </button>
+                </div>
 
-            <div class="store-products grid-view" id="store-products"></div>
-            <div class="loading-skeleton" id="loading-skeleton" aria-hidden="true">
-                <div class="skeleton-card" style="animation-delay:0s"></div>
-                <div class="skeleton-card" style="animation-delay:.1s"></div>
-                <div class="skeleton-card" style="animation-delay:.2s"></div>
-                <div class="skeleton-card" style="animation-delay:.3s"></div>
-                <div class="skeleton-card" style="animation-delay:.4s"></div>
-                <div class="skeleton-card" style="animation-delay:.5s"></div>
+                </div>
+
+                <!-- SELLER POLICIES (right sticky rail) -->
+                <aside class="store-policies-sidebar hidden" id="store-policies" aria-label="Store policies">
+                    <div class="store-policies-inner">
+                        <div class="section-label">
+                            <i data-lucide="scroll-text"></i>
+                            Store Policies
+                        </div>
+                        <h2>Our <span>Policies</span></h2>
+                        <p class="section-desc">Everything you need to know about ordering, shipping, and returns from this store.</p>
+                        <div class="store-policies-list" id="store-policies-list"></div>
+                    </div>
+                </aside>
+
             </div>
+        </div>
+    </main>
+
+    <!-- STORE ABOUT SECTION -->
+    <section class="store-about-section hidden" id="store-about">
+        <div class="store-about-inner">
+            <div class="section-label">
+                <i data-lucide="info"></i>
+                About this store
+            </div>
+            <h2 id="store-about-title">About <span>the store</span></h2>
+            <div class="store-about-body" id="store-about-body"></div>
         </div>
     </section>
 
-    <section class="policies-section" id="policies-section-animated">
-        <div class="section-inner">
-            <div class="section-header">
+    <!-- REVIEWS SECTION -->
+    <section class="reviews-section" id="reviews">
+        <div class="reviews-inner">
+            <div class="reviews-header">
                 <div>
-                    <div class="section-label"><i data-lucide="shield-check"></i> Shopping With Us</div>
-                    <h2>Store <span>Policies</span></h2>
+                    <div class="section-label">
+                        <i data-lucide="message-square"></i>
+                        What buyers say
+                    </div>
+                    <h2>Customer <span>Reviews</span></h2>
                 </div>
             </div>
-            <div class="policies-grid">
-                <div class="policy-card">
-                    <div class="policy-icon"><i data-lucide="rotate-ccw"></i></div>
-                    <h4>Easy Returns</h4>
-                    <p>7-day easy returns on all products.</p>
+
+            <div class="reviews-summary">
+                <div class="reviews-score">
+                    <span class="score-big" id="score-big">—</span>
+                    <div class="stars-filled score-stars" id="score-stars">☆☆☆☆☆</div>
+                    <span class="score-sub" id="reviews-count-sub">0 reviews</span>
                 </div>
-                <div class="policy-card">
-                    <div class="policy-icon"><i data-lucide="map-pin"></i></div>
-                    <h4>Campus Pickup</h4>
-                    <p>Campus pickup available for students.</p>
-                </div>
-                <div class="policy-card">
-                    <div class="policy-icon"><i data-lucide="truck"></i></div>
-                    <h4>Campus Delivery</h4>
-                    <p>Same-day campus delivery available.</p>
-                </div>
-                <div class="policy-card">
-                    <div class="policy-icon"><i data-lucide="smartphone"></i></div>
-                    <h4>Flexible Payment</h4>
-                    <p>Pay with Mobile Money or Cash.</p>
-                </div>
-                <div class="policy-card">
-                    <div class="policy-icon"><i data-lucide="clock"></i></div>
-                    <h4>Quick Fulfillment</h4>
-                    <p>Usually ships within 24 hours.</p>
-                </div>
+                <div class="reviews-bars" id="reviews-bars"></div>
             </div>
+
+            <div class="reviews-list" id="reviews-list"></div>
+
+            <button class="load-more-btn" id="load-more-reviews">
+                Load More Reviews <i data-lucide="chevron-down"></i>
+            </button>
         </div>
     </section>
 
-    <section class="related-stores-section" id="related-stores-section-animated">
-        <div class="section-inner">
-            <div class="section-header">
+    <!-- ═══════════════════════════════════════════
+         BROWSE MORE SHOPS
+    ═══════════════════════════════════════════ -->
+    <section class="more-shops-section" id="more-shops-section">
+        <div class="more-shops-inner">
+            <div class="more-shops-header">
                 <div>
-                    <div class="section-label"><i data-lucide="compass"></i> Discover More</div>
-                    <h2>Explore More <span>Student Stores</span></h2>
+                    <div class="section-label">
+                        <i data-lucide="store"></i>
+                        Discover more
+                    </div>
+                    <h2>Browse More <span>Shops</span></h2>
                 </div>
-                <a href="../../../public/stores/stores.html" class="btn-ghost-link">Browse all stores <i data-lucide="arrow-right"></i></a>
+                <a href="../../../public/stores/stores.html" class="btn-ghost-link">
+                    View All Stores <i data-lucide="arrow-right"></i>
+                </a>
             </div>
-            <div class="related-stores-grid" id="related-stores-grid">
-                <a href="../../../public/stores/stores.html" class="related-store-card" aria-label="Discover more stores">
-                    <div class="related-store-initial"><i data-lucide="plus"></i></div>
-                    <h4>Browse All Stores</h4>
-                    <p>Discover 100+ student-run shops</p>
+
+            <div class="more-shops-grid" id="more-shops-grid">
+                <div class="store-skeleton-card">
+                    <div class="store-skeleton-banner skel-banner"></div>
+                    <div class="store-skeleton-body">
+                        <div class="store-skeleton-line skel sm"></div>
+                        <div class="store-skeleton-line skel md"></div>
+                        <div class="store-skeleton-line skel sm"></div>
+                    </div>
+                </div>
+                <div class="store-skeleton-card">
+                    <div class="store-skeleton-banner skel-banner"></div>
+                    <div class="store-skeleton-body">
+                        <div class="store-skeleton-line skel sm"></div>
+                        <div class="store-skeleton-line skel md"></div>
+                        <div class="store-skeleton-line skel sm"></div>
+                    </div>
+                </div>
+                <div class="store-skeleton-card">
+                    <div class="store-skeleton-banner skel-banner"></div>
+                    <div class="store-skeleton-body">
+                        <div class="store-skeleton-line skel sm"></div>
+                        <div class="store-skeleton-line skel md"></div>
+                        <div class="store-skeleton-line skel sm"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="more-shops-cta">
+                <a href="../../../public/stores/stores.html" class="btn-primary-link">
+                    <i data-lucide="grid-2x2"></i> Explore All Student Shops
                 </a>
             </div>
         </div>
     </section>
 
+    <!-- FOOTER -->
     <footer class="footer">
         <div class="footer-inner">
             <div class="footer-brand">
                 <a href="../../../public/home.html" class="nav-logo">Unimart<span>X</span></a>
-                <p>The platform that helps student entrepreneurs build professional online businesses — without building their own websites.</p>
+                <p>The campus marketplace built for buyers and sellers who mean business.</p>
             </div>
             <div class="footer-links">
                 <div class="footer-col">
@@ -376,7 +272,6 @@
                 </div>
                 <div class="footer-col">
                     <h4>Sell</h4>
-                    <a href="../../../auth/seller/register.html" class="footer-seller-link">Become a Seller</a>
                     <a href="../../../public/info/seller-policy.html">Seller Policy</a>
                 </div>
                 <div class="footer-col">
@@ -393,50 +288,46 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <span id="current-year">&copy; 2026 UnimartX. All rights reserved.</span>
+            <span id="current-year">&copy; 2026 UniMartX. All rights reserved.</span>
         </div>
     </footer>
 
-    <div class="modal-overlay hidden" id="contact-modal" role="dialog" aria-modal="true" aria-labelledby="modal-header-text">
+    <!-- Share Modal -->
+    <div class="modal-overlay hidden" id="share-modal" role="dialog" aria-modal="true" aria-labelledby="share-modal-title">
         <div class="modal">
             <div class="modal-header">
-                <h3 id="modal-header-text">Contact <span id="contact-modal-store-name">Seller</span></h3>
-                <button class="modal-close" id="modal-close" aria-label="Close dialog"><i data-lucide="x"></i></button>
+                <h3 id="share-modal-title">Share this store</h3>
+                <button class="modal-close" id="share-modal-close" aria-label="Close dialog"><i data-lucide="x"></i></button>
             </div>
-            <p class="modal-sub">Send a message to this seller. They typically respond within 1 hour.</p>
-            <textarea id="contact-msg" rows="4" placeholder="Hi, I'm interested in…"></textarea>
-            <div class="modal-actions">
-                <button class="btn-ghost-link" id="modal-cancel">Cancel</button>
-                <button class="btn-primary-link" id="modal-send">
-                    <i data-lucide="send"></i> Send Message
+            <p class="modal-sub">Copy the link or share this store with your friends.</p>
+            <div class="share-link-row">
+                <input type="text" id="share-link-input" readonly aria-label="Store link">
+                <button class="btn-primary-link" id="share-copy-btn" type="button">
+                    <i data-lucide="copy"></i> Copy
                 </button>
             </div>
+            <div class="share-socials" id="share-socials"></div>
         </div>
     </div>
 
     <script src="../../../../config.js"></script>
     <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
-    <script>
-      if (window.lucide && lucide.createIcons) {
-        lucide.createIcons();
-      }
-    </script>
-    <script src="../assets/js/store.js"></script>
     <script src="../../../shared/js/cart.js"></script>
-    <script src="../assets/js/store-page.js"></script>
+    <script src="../../../shared/js/wishlist-api.js"></script>
+    <script src="../assets/js/store.js"></script>
     <script src="../../../shared/js/public-nav.js"></script>
     <script>
-      (function () {
-        var y = document.getElementById('current-year');
-        if (y) y.textContent = '\u00A9 ' + new Date().getFullYear() + ' UnimartX. All rights reserved.';
-        if (document.readyState === 'loading') {
-          document.addEventListener('DOMContentLoaded', function () {
-            if (window.lucide && lucide.createIcons) lucide.createIcons();
-          });
-        } else if (window.lucide && lucide.createIcons) {
-          lucide.createIcons();
-        }
-      })();
+        (function () {
+            var y = document.getElementById('current-year');
+            if (y) y.textContent = '\u00A9 ' + new Date().getFullYear() + ' UniMartX. All rights reserved.';
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function () {
+                    if (window.lucide && lucide.createIcons) lucide.createIcons();
+                });
+            } else if (window.lucide && lucide.createIcons) {
+                lucide.createIcons();
+            }
+        })();
     </script>
 </body>
 </html>

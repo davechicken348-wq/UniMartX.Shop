@@ -47,6 +47,7 @@ model User {
   passwordResetTokens    PasswordResetToken[]
   reviews                Review[]
   seller                 Seller?
+  sellerReviews          SellerReview[]
   wishlist               Wishlist[]
   refunds                Refund[]
 
@@ -85,14 +86,23 @@ model Seller {
   storeBanner           String?
   storeColor            String?
   deliveryFee           Decimal?            @db.Decimal(10, 2)
+  slug                  String?             @unique
+  returnPolicy          String?
+  shippingPolicy        String?
+  refundPolicy          String?
+  exchangePolicy        String?
+  cancellationPolicy    String?
+  processingTime        String?
   orders                Order[]
   products              Product[]
   sellerVerification    SellerVerification?
+  sellerReviews         SellerReview[]
   user                  User                @relation(fields: [userId], references: [id], onDelete: Cascade)
   followers             Follow[] @relation("SellerFollowers")
   refunds               Refund[] @relation("SellerRefunds")
 
   @@map("sellers")
+  @@index([slug])
 }
 
 model SellerVerification {
@@ -158,6 +168,24 @@ model Review {
 
   @@unique([productId, userId])
   @@map("reviews")
+}
+
+model SellerReview {
+  id            String   @id @default(cuid())
+  sellerId      String
+  userId        String
+  rating        Int
+  communication Int?
+  shipping      Int?
+  comment       String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  seller        Seller   @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([sellerId, userId])
+  @@index([sellerId])
+  @@map("seller_reviews")
 }
 
 model Wishlist {

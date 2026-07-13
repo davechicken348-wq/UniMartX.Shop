@@ -311,6 +311,15 @@ async function loadStoreData() {
         const cityInput = document.getElementById('store-city');
         if (cityInput) cityInput.value = data.city || '';
 
+        // ── Policies Section ──
+        const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
+        setVal('processing-time', data.processingTime);
+        setVal('return-policy', data.returnPolicy);
+        setVal('shipping-policy', data.shippingPolicy);
+        setVal('refund-policy', data.refundPolicy);
+        setVal('exchange-policy', data.exchangePolicy);
+        setVal('cancellation-policy', data.cancellationPolicy);
+
         // ── Branding Section ──
         const brandingForm = document.getElementById('store-branding-form');
         const bannerImg = document.getElementById('banner-img');
@@ -465,7 +474,7 @@ async function loadStoreData() {
         }
 
         // Capture initial form state
-        const forms = ['store-general-form', 'store-branding-form', 'store-colors-form'];
+        const forms = ['store-general-form', 'store-branding-form', 'store-colors-form', 'store-policies-form'];
         forms.forEach(formId => {
             const form = document.getElementById(formId);
             if (form) captureFormState(form);
@@ -976,6 +985,7 @@ function initForms() {
         'store-general-form',
         'store-branding-form',
         'store-colors-form',
+        'store-policies-form',
         'store-fulfillment-form'
     ];
 
@@ -1205,7 +1215,7 @@ function resetForm(formId) {
 }
 
 function isAnyFormDirty() {
-    const forms = ['store-general-form', 'store-branding-form', 'store-colors-form', 'store-fulfillment-form'];
+    const forms = ['store-general-form', 'store-branding-form', 'store-colors-form', 'store-policies-form', 'store-fulfillment-form'];
     for (const formId of forms) {
         const form = document.getElementById(formId);
         const original = window.formStates?.[formId];
@@ -1309,6 +1319,15 @@ async function handleFormSubmit(e) {
         } else if (formId === 'store-colors-form') {
             payload = {
                 storeColor: document.getElementById('custom-color')?.value,
+            };
+        } else if (formId === 'store-policies-form') {
+            payload = {
+                processingTime: document.getElementById('processing-time')?.value.trim() || null,
+                returnPolicy: document.getElementById('return-policy')?.value.trim() || null,
+                shippingPolicy: document.getElementById('shipping-policy')?.value.trim() || null,
+                refundPolicy: document.getElementById('refund-policy')?.value.trim() || null,
+                exchangePolicy: document.getElementById('exchange-policy')?.value.trim() || null,
+                cancellationPolicy: document.getElementById('cancellation-policy')?.value.trim() || null,
             };
         }
 
@@ -1510,7 +1529,7 @@ function markDirty() {
 }
 
 function saveCurrentDraft() {
-    const forms = ['store-general-form', 'store-branding-form', 'store-colors-form', 'store-fulfillment-form'];
+    const forms = ['store-general-form', 'store-branding-form', 'store-colors-form', 'store-policies-form', 'store-fulfillment-form'];
     forms.forEach(formId => {
         const form = document.getElementById(formId);
         if (!form) return;

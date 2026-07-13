@@ -12,6 +12,9 @@ import {
   getProductReviews,
   contactSeller,
   publicContact,
+  getSellerBySlug,
+  getSellerReviews,
+  submitSellerReview,
 } from '../controllers/public-seller.controller';
 
 const router = Router();
@@ -66,6 +69,15 @@ router.get('/stores', asyncHandler(getPublicStores));
  * @access  Public (no auth required)
  */
 router.get('/seller/:sellerId', asyncHandler(getPublicSellerProfile));
+router.get('/seller/:sellerId/reviews', asyncHandler(getSellerReviews));
+router.post('/seller/:sellerId/reviews', asyncHandler(submitSellerReview));
+
+/**
+ * @route   GET /api/public/seller/by-slug/:slug
+ * @desc    Resolve a seller slug to their sellerId
+ * @access  Public (no auth required)
+ */
+router.get('/seller/by-slug/:slug', asyncHandler(getSellerBySlug));
 
 /**
  * @route   POST /api/public/reviews

@@ -17,6 +17,15 @@ function absUrl(path: string | null | undefined): string | null {
   return `${BACKEND_URL}${p}`;
 }
 
+function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/[\s_]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
 /**
  * GET /api/public/products
  * Paginated, filterable public product listing.
@@ -85,7 +94,7 @@ export const getPublicProducts = async (req: Request, res: Response): Promise<vo
         serviceType: true,
         seller: {
           select: {
-            id: true, storeName: true, deliveryFee: true,
+            id: true, slug: true, storeName: true, deliveryFee: true,
           },
         },
       },
@@ -125,7 +134,7 @@ export const getPublicProductById = async (req: Request, res: Response): Promise
       details: true, serviceType: true,
       seller: {
         select: {
-          id: true, storeName: true, storeDescription: true, storeAvatar: true,
+          id: true, slug: true, storeName: true, storeDescription: true, storeAvatar: true,
           storeBanner: true, storeColor: true, category: true, city: true, country: true,
           isActive: true, createdAt: true, userId: true, deliveryFee: true,
           user: { select: { bio: true, location: true } },
@@ -426,6 +435,7 @@ export const getPublicStores = async (req: Request, res: Response): Promise<void
   const category = (req.query.category as string) || 'all';
   const search   = (req.query.search   as string) || '';
   const sort     = (req.query.sort     as string) || 'featured';
+  const sellerType = (req.query.sellerType as string) || 'all';
   const page     = Math.max(1, parseInt(req.query.page  as string) || 1);
   const limit    = Math.min(50, parseInt(req.query.limit as string) || 18);
   const skip     = (page - 1) * limit;
@@ -439,6 +449,8 @@ export const getPublicStores = async (req: Request, res: Response): Promise<void
       { category:         { contains: search, mode: 'insensitive' } },
     ];
   }
+  if (sellerType === 'campus')      where.businessType = 'campus_seller';
+  if (sellerType === 'independent') where.businessType = { notIn: ['campus', 'campus_seller'] };
 
   const orderBy: any =
     sort === 'newest'   ? { createdAt: 'desc' } :
@@ -454,6 +466,7 @@ export const getPublicStores = async (req: Request, res: Response): Promise<void
       take: limit,
       select: {
         id: true,
+        slug: true,
         storeName: true,
         storeDescription: true,
         storeAvatar: true,
@@ -479,6 +492,7 @@ export const getPublicStores = async (req: Request, res: Response): Promise<void
 
     return {
       id:               s.id,
+      slug:             s.slug || slugify(s.storeName),
       storeName:        s.storeName,
       storeDescription: s.storeDescription || '',
       storeAvatar:      absUrl(s.storeAvatar),
@@ -501,10 +515,23 @@ export const getPublicStores = async (req: Request, res: Response): Promise<void
 /**
  * GET /api/public/seller/:sellerId
  * Public profile page data — no auth required.
+ * Accepts either a raw seller ID or a slug (e.g. /store/james-tech-hub).
  * Returns profile, stats, active products, and reviews in one response.
  */
 export const getPublicSellerProfile = async (req: Request, res: Response): Promise<void> => {
-  const { sellerId } = req.params;
+  const rawParam = (req.params.sellerId || '') as string;
+
+  // If it looks like a slug (not a CUID), resolve it to a seller ID first
+  let sellerId = rawParam;
+  if (!rawParam.startsWith('cm')) {
+    const resolved = await prisma.seller.findFirst({
+      where: { slug: rawParam },
+      select: { id: true },
+    });
+    if (resolved) {
+      sellerId = resolved.id;
+    }
+  }
 
   const seller = await prisma.seller.findUnique({
     where: { id: sellerId },
@@ -531,6 +558,9 @@ export const getPublicSellerProfile = async (req: Request, res: Response): Promi
     avgRatingAgg,
     followerCount,
     categoryCounts,
+    sellerReviewsAgg,
+    sellerRatingGroups,
+    [sellerReviews, totalSellerReviews],
   ] = await Promise.all([
     prisma.product.findMany({
       where: { sellerId, isActive: true },
@@ -574,7 +604,39 @@ export const getPublicSellerProfile = async (req: Request, res: Response): Promi
       where: { sellerId, isActive: true },
       _count: { category: true },
     }),
+    prisma.sellerReview.aggregate({
+      where: { sellerId },
+      _avg: { rating: true },
+      _count: { rating: true },
+    }),
+    prisma.sellerReview.groupBy({
+      by: ['rating'],
+      where: { sellerId },
+      _count: { rating: true },
+    }),
+    Promise.all([
+      prisma.sellerReview.findMany({
+        where: { sellerId },
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take: limit,
+        select: {
+          id: true, rating: true, communication: true, shipping: true,
+          comment: true, createdAt: true,
+          user: { select: { firstName: true, lastName: true, avatar: true } },
+        },
+      }),
+      prisma.sellerReview.count({ where: { sellerId } }),
+    ]),
   ]);
+
+  // Resolve the seller's slug for the response so the frontend can build clean URLs
+  const profileForResponse = {
+    ...seller,
+    slug: seller.slug || slugify(seller.storeName),
+  };
+
+  // ...rest of the function stays the same...
 
   const normalizedProducts = products.map(p => ({
     ...p,
@@ -612,6 +674,28 @@ export const getPublicSellerProfile = async (req: Request, res: Response): Promi
   const categoryMap: Record<string, number> = {};
   categoryCounts.forEach(c => { categoryMap[c.category] = c._count.category; });
 
+  const sellerAvgRating = sellerReviewsAgg._avg?.rating ? parseFloat(sellerReviewsAgg._avg.rating.toFixed(1)) : null;
+  const sellerReviewCount = totalSellerReviews;
+
+  const sellerRatingPct: Record<number, number> = {};
+  for (let i = 1; i <= 5; i++) {
+    sellerRatingPct[i] = sellerReviewCount > 0 ? Math.round((((sellerRatingGroups.find(g => g.rating === i)?._count.rating) || 0) / sellerReviewCount) * 100) : 0;
+  }
+
+  const normalizedSellerReviews = sellerReviews.map(r => ({
+    id: r.id,
+    rating: r.rating,
+    communication: r.communication,
+    shipping: r.shipping,
+    comment: r.comment || '',
+    createdAt: r.createdAt,
+    buyer: {
+      name: `${r.user.firstName} ${r.user.lastName}`.trim(),
+      initials: `${r.user.firstName[0]}${r.user.lastName?.[0] || ''}`.toUpperCase(),
+      avatar: absUrl(r.user.avatar),
+    },
+  }));
+
   // ── Response ─────────────────────────────────────────────────────────────
   res.json({
     success: true,
@@ -638,6 +722,13 @@ export const getPublicSellerProfile = async (req: Request, res: Response): Promi
         email: user.email || null,
         phone: user.phone || null,
         whatsapp: user.whatsapp || null,
+        returnPolicy: seller.returnPolicy || null,
+        shippingPolicy: seller.shippingPolicy || null,
+        refundPolicy: seller.refundPolicy || null,
+        exchangePolicy: seller.exchangePolicy || null,
+        cancellationPolicy: seller.cancellationPolicy || null,
+        processingTime: seller.processingTime || null,
+        slug: seller.slug || slugify(seller.storeName),
         verified: seller.isActive,
         deliveryFee: seller.deliveryFee !== null && seller.deliveryFee !== undefined ? parseFloat(seller.deliveryFee.toString()) : null,
       },
@@ -647,11 +738,15 @@ export const getPublicSellerProfile = async (req: Request, res: Response): Promi
         totalReviews,
         productCount: products.length,
         followerCount,
+        sellerRating: sellerAvgRating,
+        sellerReviewCount,
       },
       products: normalizedProducts,
       categorycounts: categoryMap,
       reviews: normalizedReviews,
       ratingBreakdown: ratingPct,
+      sellerReviews: normalizedSellerReviews,
+      sellerRatingBreakdown: sellerRatingPct,
       pagination: {
         page,
         limit,
@@ -790,6 +885,149 @@ export const submitReview = async (req: Request, res: Response): Promise<void> =
 };
 
 /**
+ * GET /api/public/seller/:sellerId/reviews
+ * Paginated seller (store) reviews + aggregate rating.
+ * @access Public
+ */
+export const getSellerReviews = async (req: Request, res: Response): Promise<void> => {
+  const { sellerId } = req.params;
+  const page  = Math.max(1, parseInt(req.query.page as string) || 1);
+  const limit = Math.min(20, parseInt(req.query.limit as string) || 10);
+  const skip  = (page - 1) * limit;
+
+  const seller = await prisma.seller.findUnique({ where: { id: sellerId }, select: { id: true } });
+  if (!seller) throw new AppError('Seller not found', 404);
+
+  const [reviews, total, agg, groups] = await Promise.all([
+    prisma.sellerReview.findMany({
+      where: { sellerId },
+      orderBy: { createdAt: 'desc' },
+      skip,
+      take: limit,
+      select: {
+        id: true, rating: true, communication: true, shipping: true,
+        comment: true, createdAt: true,
+        user: { select: { firstName: true, lastName: true, avatar: true } },
+      },
+    }),
+    prisma.sellerReview.count({ where: { sellerId } }),
+    prisma.sellerReview.aggregate({ where: { sellerId }, _avg: { rating: true } }),
+    prisma.sellerReview.groupBy({ by: ['rating'], where: { sellerId }, _count: { rating: true } }),
+  ]);
+
+  const ratingPct: Record<number, number> = {};
+  for (let i = 1; i <= 5; i++) {
+    ratingPct[i] = total > 0 ? Math.round((((groups.find(g => g.rating === i)?._count.rating) || 0) / total) * 100) : 0;
+  }
+
+  res.json({
+    success: true,
+    data: {
+      reviews: reviews.map(r => ({
+        id: r.id,
+        rating: r.rating,
+        communication: r.communication,
+        shipping: r.shipping,
+        comment: r.comment || '',
+        createdAt: r.createdAt,
+        buyer: {
+          name: `${r.user.firstName} ${r.user.lastName}`.trim(),
+          initials: `${r.user.firstName[0]}${r.user.lastName?.[0] || ''}`.toUpperCase(),
+          avatar: absUrl(r.user.avatar),
+        },
+      })),
+      sellerRating: agg._avg?.rating ? parseFloat(agg._avg.rating.toFixed(1)) : null,
+      sellerReviewCount: total,
+      sellerRatingBreakdown: ratingPct,
+      pagination: { page, limit, total, hasMore: skip + limit < total },
+    },
+  });
+};
+
+/**
+ * POST /api/public/seller/:sellerId/reviews
+ * Submit a review for a seller (store).
+ * - Auth required (any logged-in user)
+ * - The seller cannot review their own store
+ * - One review per user per seller
+ */
+export const submitSellerReview = async (req: Request, res: Response): Promise<void> => {
+  const userPayload = authenticate(req);
+  if (!userPayload) throw new AppError('You must be logged in to leave a review', 401);
+
+  const { sellerId } = req.params;
+  const { rating, communication, shipping, comment } = req.body;
+
+  if (!rating || typeof rating !== 'number' || rating < 1 || rating > 5) {
+    throw new AppError('Rating must be a number between 1 and 5', 400);
+  }
+  if (communication != null && (typeof communication !== 'number' || communication < 1 || communication > 5)) {
+    throw new AppError('Communication rating must be between 1 and 5', 400);
+  }
+  if (shipping != null && (typeof shipping !== 'number' || shipping < 1 || shipping > 5)) {
+    throw new AppError('Shipping rating must be between 1 and 5', 400);
+  }
+
+  const seller = await prisma.seller.findUnique({
+    where: { id: sellerId },
+    select: { id: true, userId: true, storeName: true, user: { select: { firstName: true, lastName: true, email: true } } },
+  });
+  if (!seller) throw new AppError('Seller not found', 404);
+
+  // Block seller from reviewing their own store
+  if (seller.userId === userPayload.userId) {
+    throw new AppError('You cannot review your own store', 403);
+  }
+
+  const existing = await prisma.sellerReview.findUnique({
+    where: { sellerId_userId: { sellerId, userId: userPayload.userId } },
+  });
+  if (existing) throw new AppError('You have already reviewed this store', 409);
+
+  const review = await prisma.sellerReview.create({
+    data: {
+      sellerId,
+      userId: userPayload.userId,
+      rating,
+      communication: communication ?? null,
+      shipping: shipping ?? null,
+      comment: comment?.trim() || null,
+    },
+    select: {
+      id: true, rating: true, communication: true, shipping: true, comment: true, createdAt: true,
+      user: { select: { firstName: true, lastName: true, avatar: true } },
+    },
+  });
+
+  // In-app notification to the seller
+  NotificationService.create({
+    userId: seller.userId,
+    type: 'new_review',
+    title: 'New Review on Your Store',
+    message: `Someone left a ${rating}★ review on your store${comment ? `: "${comment.slice(0, 60)}"` : ''}`,
+    icon: 'star',
+    priority: 'normal',
+  }).catch(err => console.error('[seller-review] Failed to create in-app notification:', err));
+
+  res.status(201).json({
+    success: true,
+    data: {
+      id: review.id,
+      rating: review.rating,
+      communication: review.communication,
+      shipping: review.shipping,
+      comment: review.comment || '',
+      createdAt: review.createdAt,
+      buyer: {
+        name: `${review.user.firstName} ${review.user.lastName}`.trim(),
+        initials: `${review.user.firstName[0]}${review.user.lastName?.[0] || ''}`.toUpperCase(),
+        avatar: absUrl(review.user.avatar),
+      },
+    },
+  });
+};
+
+/**
  * POST /api/public/seller/:sellerId/contact
  * Send a contact message to a seller via email.
  * @access Public (logged-in buyers preferred, but not strictly required)
@@ -883,4 +1121,24 @@ export const publicContact = async (req: Request, res: Response): Promise<void> 
   } catch {
     throw new AppError('Failed to send message. Please try again later.', 500);
   }
+};
+
+/**
+ * GET /api/public/seller/by-slug/:slug
+ * Look up a seller by their slug and return the sellerId.
+ * Used by the frontend to resolve clean URLs.
+ */
+export const getSellerBySlug = async (req: Request, res: Response): Promise<void> => {
+  const { slug } = req.params;
+
+  const seller = await prisma.seller.findFirst({
+    where: { slug },
+    select: { id: true, storeName: true },
+  });
+
+  if (!seller) {
+    throw new AppError('Store not found.', 404);
+  }
+
+  res.json({ success: true, data: { sellerId: seller.id, storeName: seller.storeName } });
 };

@@ -189,33 +189,34 @@
         </div>
     </section>
 
-    <!-- ═══════════════════════════════════════════
-         REVIEWS SECTION
-    ═══════════════════════════════════════════ -->
-    <section class="reviews-section" id="reviews">
+    <!-- SELLER REVIEWS SECTION -->
+    <section class="reviews-section seller-reviews-section" id="seller-reviews">
         <div class="section-inner">
             <div class="section-header">
                 <div>
                     <div class="section-label">
-                        <i data-lucide="message-square"></i>
-                        What buyers say
+                        <i data-lucide="store"></i>
+                        Store reputation
                     </div>
-                    <h2>Customer <span>Reviews</span></h2>
+                    <h2>Seller <span>Reviews</span></h2>
                 </div>
+                <button class="btn-primary-link" id="write-seller-review-btn" type="button">
+                    <i data-lucide="pen-line"></i> Write a Review
+                </button>
             </div>
 
-            <div class="reviews-summary">
+            <div class="reviews-summary" id="seller-reviews-summary">
                 <div class="reviews-score">
-                    <span class="score-big" id="score-big">—</span>
-                    <div class="stars-filled score-stars" id="score-stars">☆☆☆☆☆</div>
-                    <span class="score-sub" id="reviews-count-sub">0 reviews</span>
+                    <span class="score-big" id="seller-score-big">—</span>
+                    <div class="stars-filled score-stars" id="seller-score-stars">☆☆☆☆☆</div>
+                    <span class="score-sub" id="seller-reviews-count-sub">0 reviews</span>
                 </div>
-                <div class="reviews-bars" id="reviews-bars"></div>
+                <div class="reviews-bars" id="seller-reviews-bars"></div>
             </div>
 
-            <div class="reviews-list" id="reviews-list"></div>
+            <div class="reviews-list" id="seller-reviews-list"></div>
 
-            <button class="load-more-btn" id="load-more-reviews">
+            <button class="load-more-btn" id="load-more-seller-reviews">
                 Load More Reviews <i data-lucide="chevron-down"></i>
             </button>
         </div>
@@ -316,10 +317,52 @@
         </div>
     </div>
 
+    <!-- Seller Review Modal -->
+    <div class="modal-overlay hidden" id="seller-review-modal" role="dialog" aria-modal="true" aria-labelledby="seller-review-title">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="seller-review-title">Review <span id="seller-review-store-name">this store</span></h3>
+                <button class="modal-close" id="seller-review-close" aria-label="Close dialog"><i data-lucide="x"></i></button>
+            </div>
+            <p class="modal-sub">Share your experience with this seller's service and reliability.</p>
+            <div class="seller-review-form">
+                <div class="sr-field">
+                    <label>Overall rating <span class="req">*</span></label>
+                    <div class="star-rating" id="sr-overall" data-rating="0">
+                        <span class="sr-star" data-v="1">★</span><span class="sr-star" data-v="2">★</span><span class="sr-star" data-v="3">★</span><span class="sr-star" data-v="4">★</span><span class="sr-star" data-v="5">★</span>
+                    </div>
+                </div>
+                <div class="sr-field">
+                    <label>Communication <span class="sr-optional">(optional)</span></label>
+                    <div class="star-rating" id="sr-communication" data-rating="0">
+                        <span class="sr-star" data-v="1">★</span><span class="sr-star" data-v="2">★</span><span class="sr-star" data-v="3">★</span><span class="sr-star" data-v="4">★</span><span class="sr-star" data-v="5">★</span>
+                    </div>
+                </div>
+                <div class="sr-field">
+                    <label>Shipping <span class="sr-optional">(optional)</span></label>
+                    <div class="star-rating" id="sr-shipping" data-rating="0">
+                        <span class="sr-star" data-v="1">★</span><span class="sr-star" data-v="2">★</span><span class="sr-star" data-v="3">★</span><span class="sr-star" data-v="4">★</span><span class="sr-star" data-v="5">★</span>
+                    </div>
+                </div>
+                <div class="sr-field">
+                    <label>Your review <span class="sr-optional">(optional)</span></label>
+                    <textarea id="seller-review-comment" rows="4" placeholder="What stood out about buying from this seller?"></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn-ghost-link" id="seller-review-cancel" type="button">Cancel</button>
+                    <button class="btn-primary-link" id="seller-review-submit" type="button">
+                        <i data-lucide="send"></i> Submit Review
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="../../../../config.js"></script>
     <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
     <script src="../assets/js/store.js"></script>
     <script src="../../../shared/js/cart.js"></script>
+    <script src="../../../shared/js/wishlist-api.js"></script>
     <script src="../assets/js/profile.js"></script>
     <script src="../../../shared/js/public-nav.js"></script>
     <script>

@@ -510,7 +510,7 @@ async function initMyShopBtn() {
   if (!btn) return;
   const cached = localStorage.getItem('seller_id');
   if (cached) {
-    btn.href = `../../../seller/public/store/store.html?sellerId=${cached}`;
+    btn.href = `/pages/seller/public/store/store.html?sellerId=${cached}`;
     return;
   }
   try {

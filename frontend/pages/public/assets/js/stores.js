@@ -144,7 +144,7 @@ function buildSpotlightCard(store, rank) {
         : `<span class="spotlight-avatar-fallback">${initial}</span>`;
 
     return `
-    <a class="spotlight-card reveal delay-${rank}" href="../../seller/public/store/store.html?id=${escapeHtml(store.id)}" aria-label="Store ${escapeHtml(store.storeName)}, rank ${rank}">
+    <a class="spotlight-card reveal delay-${rank}" href="/pages/seller/public/store/store.html?sellerId=${escapeHtml(store.id)}&slug=${escapeHtml(store.slug || '')}" aria-label="Store ${escapeHtml(store.storeName)}, rank ${rank}">
         <div class="spotlight-avatar-ring">
             <div class="spotlight-avatar" style="${store.storeAvatar ? `background-image:url('${escapeHtml(store.storeAvatar)}');background-size:cover;background-position:center` : `background:${storeGradient(store)}`}">
                 ${avatarInner}
@@ -203,7 +203,7 @@ function buildStoreCard(store) {
     if (joinedLabel && !activeLabel && !responseLabel) statsHtml += `<span class="store-stat"><i data-lucide="calendar" aria-hidden="true"></i> ${escapeHtml(joinedLabel)}</span>`;
 
     return `
-    <div class="store-card reveal" data-href="../../seller/public/store/store.html?id=${escapeHtml(store.id)}" onclick="location.href=this.dataset.href" role="link" tabindex="0" aria-label="Store ${escapeHtml(store.storeName)}">
+    <div class="store-card reveal" data-href="/pages/seller/public/store/store.html?sellerId=${escapeHtml(store.id)}&slug=${escapeHtml(store.slug || '')}" onclick="location.href=this.dataset.href" role="link" tabindex="0" aria-label="Store ${escapeHtml(store.storeName)}">
         <div class="store-card-banner" style="${bannerStyle(store)}" aria-hidden="true">
             <div class="store-banner-bg" style="${bannerStyle(store)}"></div>
             <div class="store-banner-overlay"></div>

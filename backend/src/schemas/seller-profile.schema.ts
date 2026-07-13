@@ -33,5 +33,13 @@ export const updateProfileSchema = z.object({
     storeAvatar: z.string().optional().nullable(),
     storeColor: z.string().optional().nullable(),
     deliveryFee: z.coerce.number().nonnegative().optional().nullable(),
+
+   // Store policies
+   returnPolicy: z.string().max(1000).optional().nullable(),
+   shippingPolicy: z.string().max(1000).optional().nullable(),
+   refundPolicy: z.string().max(1000).optional().nullable(),
+   exchangePolicy: z.string().max(1000).optional().nullable(),
+   cancellationPolicy: z.string().max(1000).optional().nullable(),
+   processingTime: z.string().max(100).optional().nullable(),
 });
 

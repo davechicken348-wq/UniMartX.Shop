@@ -78,7 +78,7 @@ function buildStoreCard(s) {
     const gradient = s.storeColor || 'linear-gradient(135deg,#6366f1,#a78bfa)';
     const avatarStyle = s.storeAvatar ? `background-image:url('${s.storeAvatar}');background-size:cover` : `background:${gradient}`;
     const stars = s.avgRating > 0 ? `<span><i data-lucide="star"></i> ${s.avgRating}</span>` : '';
-    return `<a href="../seller/public/store/store.html?id=${s.id}" class="store-card"><div class="store-card-top" style="background:${gradient}"><div class="store-avatar" style="${avatarStyle}"></div></div><div class="store-info"><h3 class="store-name">${esc(s.storeName)}</h3><p class="store-category">${esc(s.category || 'General')}</p><div class="store-meta"><span><i data-lucide="package"></i> ${s.productCount} products</span>${stars}</div></div></a>`;
+    return `<a href="/pages/seller/public/store/store.html?sellerId=${esc(s.id)}&slug=${esc(s.slug || '')}" class="store-card"><div class="store-card-top" style="background:${gradient}"><div class="store-avatar" style="${avatarStyle}"></div></div><div class="store-info"><h3 class="store-name">${esc(s.storeName)}</h3><p class="store-category">${esc(s.category || 'General')}</p><div class="store-meta"><span><i data-lucide="package"></i> ${s.productCount} products</span>${stars}</div></div></a>`;
 }
 
 // ── Fetch platform stats ──────────────────
