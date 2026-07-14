@@ -134,9 +134,14 @@ CREATE INDEX IF NOT EXISTS "sessions_userId_idx" ON "sessions"("userId");
 CREATE INDEX IF NOT EXISTS "sessions_expiresAt_idx" ON "sessions"("expiresAt");
 
 -- RefundStatus enum (used by the refunds table)
-CREATE TYPE IF NOT EXISTS "RefundStatus" AS ENUM (
-  'refund_requested', 'seller_approved', 'seller_denied', 'disputed', 'refunded', 'denied'
-);
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'RefundStatus') THEN
+    CREATE TYPE "RefundStatus" AS ENUM (
+      'refund_requested', 'seller_approved', 'seller_denied', 'disputed', 'refunded', 'denied'
+    );
+  END IF;
+END $$;
 
 CREATE TABLE IF NOT EXISTS "refunds" (
   "id" TEXT NOT NULL,
