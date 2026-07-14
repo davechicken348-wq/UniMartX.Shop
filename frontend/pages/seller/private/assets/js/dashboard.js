@@ -67,6 +67,8 @@ function escapeHtml(text) {
 let _isFetching = false;
 let _lastStats = null;
 let _pollId = null;
+let _dashSig = null;
+let _dashInitialized = false;
 
 async function fetchDashboard(skipLoading = false) {
   const token = getAuthToken();
@@ -91,6 +93,8 @@ async function fetchDashboard(skipLoading = false) {
     renderDashboard(json.data, skipLoading);
     if (!skipLoading) animateCounters();
     _lastStats = json.data.stats;
+    _dashSig = dashboardSignature(json.data);
+    updateGettingStarted(json.data);
     return json.data;
   } catch (err) {
     console.error('Dashboard fetch error:', err);
@@ -104,10 +108,72 @@ async function fetchDashboard(skipLoading = false) {
 function renderDashboard(data, skipLoading = false) {
   renderStats(data.stats);
   renderRecentOrders(data.recentOrders);
-  renderChart(data.chartData, data.chartLabels);
+  renderAreaChart(data.chartData, data.chartLabels);
+  renderOrderStatus(data.recentOrders);
+  renderStoreHealth(data);
   renderTopProducts(data.topProducts);
   renderFollowers(data.followers);
   if (skipLoading) lucide.createIcons();
+}
+
+// ── Getting-started panel (new sellers) ─────────
+function dashboardSignature(data) {
+  try {
+    return JSON.stringify({
+      s: data.stats,
+      o: (data.recentOrders || []).map(x => `${x.id}:${x.status}`),
+      t: (data.topProducts || []).map(x => x.id),
+      f: (data.followers || []).map(x => x.id),
+      c: data.chartData
+    });
+  } catch (e) {
+    return Date.now() + ':' + Math.random();
+  }
+}
+
+function updateGettingStarted(data) {
+  const panel = document.getElementById('getting-started');
+  if (!panel) return;
+
+  const topProducts = data.topProducts || [];
+  const isNew = topProducts.length === 0;
+  panel.hidden = !isNew;
+  if (!isNew) return;
+
+  const profile = data.profile || {};
+  const steps = {
+    verify: !!(data.verified || profile.verified),
+    product: topProducts.length > 0 || (data.stats && data.stats.products > 0),
+    branding: !!(profile.storeAvatar || profile.storeBanner),
+    share: false
+  };
+
+  panel.querySelectorAll('.gs-step').forEach((li) => {
+    li.classList.toggle('is-done', !!steps[li.dataset.step]);
+  });
+
+  // Progress bar + label
+  const total = panel.querySelectorAll('.gs-step').length;
+  const done = panel.querySelectorAll('.gs-step.is-done').length;
+  const bar = document.getElementById('gs-progress-bar');
+  const label = document.getElementById('gs-progress-label');
+  if (bar) bar.style.width = (total ? (done / total) * 100 : 0) + '%';
+  if (label) {
+    label.textContent = done === total
+      ? "You're all set — your store is ready to sell!"
+      : `${done} of ${total} setup steps complete`;
+  }
+
+  const dismiss = document.getElementById('gs-dismiss');
+  if (dismiss) dismiss.onclick = () => { panel.hidden = true; };
+}
+
+function showGsToast(message) {
+  const t = document.createElement('div');
+  t.textContent = message;
+  t.style.cssText = 'position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);background:var(--primary-d,#d97706);color:#fff;padding:0.6rem 1.1rem;border-radius:10px;font-size:0.85rem;font-weight:700;z-index:9999;box-shadow:0 10px 30px rgba(0,0,0,.25)';
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 1800);
 }
 
 function renderStats(stats) {
@@ -253,6 +319,107 @@ function renderChart(data, labels) {
       </div>
     `;
   }).join('');
+}
+
+// ── Revenue area chart (main card) ─────────────
+function renderAreaChart(data, labels) {
+  const el = document.getElementById('area-chart');
+  const lab = document.getElementById('area-labels');
+  if (!el) return;
+
+  if (!data || !data.length) {
+    el.innerHTML = '<div class="chart-empty">No revenue yet — your first sale will appear here.</div>';
+    if (lab) lab.innerHTML = '';
+    return;
+  }
+
+  const max = Math.max(...data, 1);
+  const n = data.length;
+  const W = 100, H = 42;
+  const stepX = n > 1 ? W / (n - 1) : 0;
+  const pts = data.map((v, i) => [i * stepX, H - (v / max) * (H - 6) - 3]);
+  const line = pts.map((p, i) => (i === 0 ? 'M' : 'L') + p[0].toFixed(2) + ' ' + p[1].toFixed(2)).join(' ');
+  const area = `${line} L ${W} ${H} L 0 ${H} Z`;
+
+  el.innerHTML = `
+    <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" class="area-svg">
+      <defs>
+        <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="var(--primary)" stop-opacity="0.30"/>
+          <stop offset="100%" stop-color="var(--primary)" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <path d="${area}" fill="url(#areaGrad)"/>
+      <path d="${line}" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+    </svg>`;
+
+  if (lab && labels) {
+    lab.innerHTML = labels.map((l, i) =>
+      `<span class="${i === n - 1 ? 'is-today' : ''}">${l}</span>`).join('');
+  }
+}
+
+// ── Order status breakdown ─────────────────────
+function renderOrderStatus(orders) {
+  const el = document.getElementById('order-status');
+  if (!el) return;
+
+  const order = ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'];
+  const label = {
+    pending: 'Pending', confirmed: 'Confirmed', shipped: 'Shipped',
+    delivered: 'Delivered', cancelled: 'Cancelled'
+  };
+  const counts = Object.fromEntries(order.map(s => [s, 0]));
+  (orders || []).forEach(o => {
+    const s = (o.status || '').toLowerCase();
+    if (s in counts) counts[s]++;
+  });
+  const total = order.reduce((a, s) => a + counts[s], 0);
+
+  if (!total) {
+    el.innerHTML = '<p class="os-empty">No orders yet.</p>';
+    return;
+  }
+
+  el.innerHTML = order.map(s => {
+    const v = counts[s];
+    const pct = Math.round((v / total) * 100);
+    return `
+      <div class="os-row">
+        <span class="os-name">${label[s]}</span>
+        <div class="os-track"><div class="os-fill os-fill--${s}" style="width:${pct}%"></div></div>
+        <span class="os-count">${v}</span>
+      </div>`;
+  }).join('');
+}
+
+// ── Store health ring ──────────────────────────
+function renderStoreHealth(data) {
+  const ring = document.getElementById('health-ring');
+  const pctEl = document.getElementById('health-pct');
+  const labelEl = document.getElementById('health-label');
+  if (!ring) return;
+
+  const profile = data.profile || {};
+  const steps = {
+    verify: !!(data.verified || profile.verified),
+    product: (data.topProducts || []).length > 0 || (data.stats && data.stats.products > 0),
+    branding: !!(profile.storeAvatar || profile.storeBanner),
+    share: false
+  };
+  const vals = Object.values(steps);
+  const done = vals.filter(Boolean).length;
+  const pct = Math.round((done / vals.length) * 100);
+
+  const circle = ring.querySelector('.ring-progress');
+  const r = 26, c = 2 * Math.PI * r;
+  circle.style.strokeDasharray = c.toFixed(2);
+  circle.style.strokeDashoffset = (c * (1 - pct / 100)).toFixed(2);
+
+  if (pctEl) pctEl.textContent = pct + '%';
+  if (labelEl) labelEl.textContent = pct === 100
+    ? "You're all set — your store is ready to sell!"
+    : `${done} of ${vals.length} setup steps complete`;
 }
 
 function renderFollowers(followers) {
@@ -451,19 +618,17 @@ async function liveFetch() {
     if (!res.ok || !json.success) return;
 
     const data = json.data;
-    const prev = _lastStats;
-    let changed = false;
-    if (prev) {
-      changed =
-        prev.revenue !== data.stats.revenue ||
-        prev.orders !== data.stats.orders ||
-        prev.pending !== data.stats.pending ||
-        prev.rating !== data.stats.rating;
-    }
+    const sig = dashboardSignature(data);
+
+    // Skip the full re-render (and the icon re-scan) when nothing changed
+    if (_dashInitialized && sig === _dashSig) return;
+    _dashSig = sig;
+    _dashInitialized = true;
 
     renderDashboard(data, true);
-    if (changed) animateCounters();
+    animateCounters();
     _lastStats = data.stats;
+    updateGettingStarted(data);
   } catch {}
 
   _isFetching = false;
@@ -504,24 +669,22 @@ history.replaceState = function () {
   setTimeout(startDashboardLiveSync, 0);
 };
 
-// ── My Shop button ────────────────────────────
-async function initMyShopBtn() {
-  const btn = document.getElementById('view-my-shop-btn');
-  if (!btn) return;
-  const cached = localStorage.getItem('seller_id');
-  if (cached) {
-    btn.href = `/pages/seller/public/store/store.html?sellerId=${cached}`;
-    return;
-  }
-  try {
-    const token = getAuthToken();
-    const res = await fetch(`${API_BASE}/api/seller/profile`, { headers: { 'Authorization': `Bearer ${token}` } });
-    const json = await res.json();
-    if (json.success && json.data?.sellerId) {
-      localStorage.setItem('seller_id', json.data.sellerId);
-      btn.href = `../../../seller/public/store/store.html?sellerId=${json.data.sellerId}`;
-    }
-  } catch {}
+
+// ── Post-registration welcome modal ────────────
+function maybeShowWelcome() {
+  if (localStorage.getItem('umx_show_welcome') !== '1') return;
+  localStorage.removeItem('umx_show_welcome');
+
+  const overlay = document.getElementById('welcome-overlay');
+  if (!overlay) return;
+
+  const close = () => { overlay.hidden = true; };
+  const c = document.getElementById('welcome-close');
+  const e = document.getElementById('welcome-explore');
+  if (c) c.addEventListener('click', close);
+  if (e) e.addEventListener('click', close);
+  overlay.addEventListener('click', (ev) => { if (ev.target === overlay) close(); });
+  overlay.hidden = false;
 }
 
 // ── Init ───────────────────────────────────────
@@ -529,7 +692,7 @@ function init() {
   lucide.createIcons();
   fetchDashboard();
   startDashboardLiveSync();
-  initMyShopBtn();
+  maybeShowWelcome();
 
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible') {

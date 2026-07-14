@@ -98,17 +98,35 @@
         </button>
         <div class="topnav-title">
             <h1>Notifications</h1>
-            <p>Your latest updates and alerts</p>
+            <p>Every order, product, and system alert — in one place</p>
         </div>
         <div class="topnav-search">
             <i data-lucide="search"></i>
-            <input type="search" placeholder="Search notifications…" aria-label="Search">
+            <input type="search" id="notif-search" placeholder="Search notifications…" aria-label="Search">
         </div>
         <div class="topnav-actions">
-            <button class="topnav-btn" id="mark-all-read" aria-label="Mark all as read">
-                <i data-lucide="check-check"></i>
-                <span>Mark all read</span>
-            </button>
+            <a href="#" id="view-my-shop-btn" class="topnav-add-btn" target="_blank" rel="noopener" style="background:linear-gradient(135deg,#10b981,#34d399);color:#0a0a0f;" title="View your public store">
+                <i data-lucide="store"></i>
+                <span>My Shop</span>
+            </a>
+            <a href="../products/add-product.html" class="topnav-add-btn">
+                <i data-lucide="plus"></i>
+                <span>Add Product</span>
+            </a>
+            <div style="position:relative;">
+                <button class="topnav-btn" id="notif-btn" aria-label="Notifications">
+                    <i data-lucide="bell"></i>
+                    <span class="topnav-badge" id="notif-badge">0</span>
+                </button>
+                <div class="notif-panel" id="notif-panel">
+                    <div class="notif-header">
+                        <h3>Notifications</h3>
+                        <button class="notif-mark-read" id="mark-read">Mark all read</button>
+                    </div>
+                    <div class="notif-list"></div>
+                    <div class="notif-footer"><a href="../notifications.html">View all</a></div>
+                </div>
+            </div>
             <div style="position:relative;">
                 <div class="topnav-user" id="topnav-user">
                     <div class="topnav-avatar" id="topnav-avatar"></div>
@@ -129,18 +147,66 @@
     <!-- MAIN -->
     <div class="seller-main" id="seller-main">
         <div class="page-content">
-            <div class="page-header">
-                <h1>Notifications</h1>
-                <p>Stay updated with your store activity</p>
+
+            <!-- ══ Notification Center Hero ══ -->
+            <section class="notif-hero">
+                <div class="notif-hero-icon"><i data-lucide="bell-ring"></i></div>
+                <div class="notif-hero-text">
+                    <div class="notif-hero-title-row">
+                        <h1>Notification Center</h1>
+                        <span class="notif-hero-badge" id="hero-unread-badge">0 unread</span>
+                    </div>
+                    <p>Central command for every alert across your seller platform — orders, inventory, payouts, and system events.</p>
+                </div>
+                <a href="./profile/account-settings.html#notifications" class="btn btn-ghost btn-sm notif-hero-prefs">
+                    <i data-lucide="sliders-horizontal"></i> Manage Preferences
+                </a>
+            </section>
+
+            <!-- ══ Summary stats ══ -->
+            <div class="notif-stats">
+                <div class="notif-stat notif-stat--unread">
+                    <div class="notif-stat-icon"><i data-lucide="mail"></i></div>
+                    <div class="notif-stat-info">
+                        <span class="notif-stat-value" id="stat-unread">0</span>
+                        <span class="notif-stat-label">Unread</span>
+                    </div>
+                </div>
+                <div class="notif-stat notif-stat--orders">
+                    <div class="notif-stat-icon"><i data-lucide="shopping-bag"></i></div>
+                    <div class="notif-stat-info">
+                        <span class="notif-stat-value" id="stat-orders">0</span>
+                        <span class="notif-stat-label">Orders</span>
+                    </div>
+                </div>
+                <div class="notif-stat notif-stat--products">
+                    <div class="notif-stat-icon"><i data-lucide="package"></i></div>
+                    <div class="notif-stat-info">
+                        <span class="notif-stat-value" id="stat-products">0</span>
+                        <span class="notif-stat-label">Products</span>
+                    </div>
+                </div>
+                <div class="notif-stat notif-stat--system">
+                    <div class="notif-stat-icon"><i data-lucide="shield"></i></div>
+                    <div class="notif-stat-info">
+                        <span class="notif-stat-value" id="stat-system">0</span>
+                        <span class="notif-stat-label">System</span>
+                    </div>
+                </div>
             </div>
 
-            <!-- Filter tabs -->
-            <div class="notif-filters">
-                <button class="notif-filter active" data-filter="all">All</button>
-                <button class="notif-filter" data-filter="unread">Unread</button>
-                <button class="notif-filter" data-filter="orders">Orders</button>
-                <button class="notif-filter" data-filter="products">Products</button>
-                <button class="notif-filter" data-filter="system">System</button>
+            <!-- ══ Toolbar ══ -->
+            <div class="notif-toolbar">
+                <div class="notif-filters">
+                    <button class="notif-filter active" data-filter="all">All <span class="notif-filter-count" id="count-all">0</span></button>
+                    <button class="notif-filter" data-filter="unread">Unread <span class="notif-filter-count" id="count-unread">0</span></button>
+                    <button class="notif-filter" data-filter="orders">Orders <span class="notif-filter-count" id="count-orders">0</span></button>
+                    <button class="notif-filter" data-filter="products">Products <span class="notif-filter-count" id="count-products">0</span></button>
+                    <button class="notif-filter" data-filter="system">System <span class="notif-filter-count" id="count-system">0</span></button>
+                </div>
+                <button class="topnav-pill" id="mark-all-read">
+                    <i data-lucide="check-check"></i> <span>Mark all read</span>
+                </button>
             </div>
 
             <!-- Notifications list -->
@@ -155,11 +221,11 @@
         </div>
     </div>
 
-    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
-    <script>lucide.createIcons();</script>
-    <script src="./shared/polling.js"></script>
-    <script src="./shared/sidebar.js"></script>
-    <script src="./shared/topnav.js"></script>
-    <script src="./assets/js/notifications.js"></script>
+    <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script>if(window.lucide)lucide.createIcons();else window.addEventListener('DOMContentLoaded',function(){if(window.lucide)lucide.createIcons();});</script>
+    <script defer src="./shared/polling.js"></script>
+    <script defer src="./shared/sidebar.js"></script>
+    <script defer src="./shared/topnav.js"></script>
+    <script defer src="./assets/js/notifications.js"></script>
 </body>
 </html>

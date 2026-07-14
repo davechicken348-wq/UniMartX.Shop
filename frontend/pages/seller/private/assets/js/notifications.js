@@ -139,28 +139,62 @@ window.addEventListener('online', () => {
 });
 
 // ── Render a single notification item ──
+const CATEGORY_LABELS = { orders: 'Order', products: 'Product', system: 'System' };
+
 function renderItem(n) {
     const category = typeToFilter(n.type);
     const iconMap = { orders: 'shopping-bag', products: 'package', system: 'bell' };
     const icon = iconMap[category] || 'bell';
+    const label = CATEGORY_LABELS[category] || 'System';
     const timeStr = formatTime(n.createdAt);
 
     return `
     <div class="notif-item ${n.read ? '' : 'unread'}" data-id="${n.id}">
         ${!n.read ? '<div class="notif-unread-dot"></div>' : ''}
-        <div class="notif-icon"><i data-lucide="${icon}"></i></div>
+        <div class="notif-icon notif-icon--${category}"><i data-lucide="${icon}"></i></div>
         <div class="notif-content">
-            <div class="notif-title">${n.read ? n.title : `<strong>${n.title}</strong>`}</div>
-            <div class="notif-desc">${n.message}</div>
-            <div class="notif-meta">
+            <div class="notif-top">
+                <span class="notif-badge notif-badge--${category}">${label}</span>
                 <span class="notif-time"><i data-lucide="clock"></i> ${timeStr}</span>
             </div>
+            <div class="notif-title">${n.read ? n.title : `<strong>${n.title}</strong>`}</div>
+            <div class="notif-desc">${n.message}</div>
         </div>
         <div class="notif-actions">
             ${n.actionUrl ? `<a href="${n.actionUrl}" class="notif-btn notif-btn-primary">View</a>` : ''}
             <button class="notif-btn notif-btn-delete" data-delete="${n.id}" aria-label="Delete"><i data-lucide="trash-2"></i></button>
         </div>
     </div>`;
+}
+
+// ── Summary counts (hero stats + filter pills) ──
+function setText(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+}
+
+async function loadSummary() {
+    try {
+        const json = await apiFetch(`/api/notifications?limit=200&offset=0`);
+        if (!json || !json.success) return;
+        const all = json.data.notifications || [];
+        const counts = { all: all.length, unread: 0, orders: 0, products: 0, system: 0 };
+        all.forEach(n => {
+            const cat = typeToFilter(n.type);
+            if (!n.read) counts.unread++;
+            counts[cat] = (counts[cat] || 0) + 1;
+        });
+        setText('count-all', counts.all);
+        setText('count-unread', counts.unread);
+        setText('count-orders', counts.orders);
+        setText('count-products', counts.products);
+        setText('count-system', counts.system);
+        setText('stat-unread', counts.unread);
+        setText('stat-orders', counts.orders);
+        setText('stat-products', counts.products);
+        setText('stat-system', counts.system);
+        setText('hero-unread-badge', `${counts.unread} unread`);
+    } catch { /* non-fatal */ }
 }
 
 // ── Render list ──
@@ -201,6 +235,7 @@ async function renderNotifications(reset = false, skipRerender = false) {
 
         await updateBadges();
         bindItemActions();
+        await loadSummary();
     }
 
     return items;
@@ -231,6 +266,7 @@ function bindItemActions() {
             const title = el.querySelector('.notif-title');
             if (title) title.innerHTML = title.querySelector('strong')?.textContent || title.textContent;
             await updateBadges();
+            await loadSummary();
         }, { once: true });
     });
 
@@ -241,6 +277,7 @@ function bindItemActions() {
             await apiFetch(`/api/notifications/${id}`, { method: 'DELETE' });
             document.querySelector(`.notif-item[data-id="${id}"]`)?.remove();
             await updateBadges();
+            await loadSummary();
         });
     });
 }
@@ -262,12 +299,26 @@ function initMarkAllRead() {
     document.getElementById('mark-all-read')?.addEventListener('click', async () => {
         await apiFetch('/api/notifications/read-all', { method: 'PATCH' });
         renderNotifications(true);
+        await loadSummary();
     });
 }
 
 // ── Load more ──
 function initLoadMore() {
     document.getElementById('load-more')?.addEventListener('click', () => renderNotifications(false));
+}
+
+// ── Search (client-side filter on loaded items) ──
+function initSearch() {
+    const input = document.getElementById('notif-search');
+    if (!input) return;
+    input.addEventListener('input', () => {
+        const q = input.value.trim().toLowerCase();
+        document.querySelectorAll('#notifications-list .notif-item').forEach(el => {
+            const text = (el.textContent || '').toLowerCase();
+            el.style.display = (!q || text.includes(q)) ? '' : 'none';
+        });
+    });
 }
 
 // ── Time formatter ──
@@ -286,6 +337,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     initFilters();
     initMarkAllRead();
     initLoadMore();
+    initSearch();
     await renderNotifications(true);
     const countJson = await apiFetch('/api/notifications?limit=1&offset=0');
     if (countJson && countJson.success) {

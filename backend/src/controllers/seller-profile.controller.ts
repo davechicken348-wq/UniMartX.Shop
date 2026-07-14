@@ -38,7 +38,7 @@ export const getSellerProfile = async (req: Request, res: Response): Promise<voi
     // Fetch user with related seller profile
     const user = await prisma.user.findUnique({
       where: { id: userPayload.userId },
-      include: { seller: true },
+      include: { seller: { include: { sellerVerification: true } } },
     });
 
     if (!user || !user.seller) {
@@ -66,23 +66,28 @@ export const getSellerProfile = async (req: Request, res: Response): Promise<voi
        storeName: user.seller.storeName || '',
        storeDescription: user.seller.storeDescription || '',
        category: user.seller.category || '',
-       country: user.seller.country || '',
-       city: user.seller.city || '',
-       pickupAddress: user.seller.pickupAddress || '',
-       businessType: user.seller.businessType || '',
-       universityAffiliation: user.seller.universityAffiliation || '',
-        // Branding
-         storeBanner: absUrl(user.seller.storeBanner || ''),
-         storeAvatar: absUrl(user.seller.storeAvatar || ''),
-         storeColor: user.seller.storeColor || '',
-         deliveryFee: user.seller.deliveryFee !== null && user.seller.deliveryFee !== undefined ? parseFloat(user.seller.deliveryFee.toString()) : null,
-         returnPolicy: user.seller.returnPolicy || '',
-         shippingPolicy: user.seller.shippingPolicy || '',
-         refundPolicy: user.seller.refundPolicy || '',
-         exchangePolicy: user.seller.exchangePolicy || '',
-         cancellationPolicy: user.seller.cancellationPolicy || '',
-         processingTime: user.seller.processingTime || '',
-       };
+        country: user.seller.country || '',
+        city: user.seller.city || '',
+        pickupAddress: user.seller.pickupAddress || '',
+        businessType: user.seller.businessType || '',
+        universityAffiliation: user.seller.universityAffiliation || '',
+        storeTagline: user.seller.storeTagline || '',
+        campus: user.seller.campus || '',
+        businessHours: user.seller.businessHours || '',
+        deliveryOptions: user.seller.deliveryOptions || '',
+        studentEmail: user.seller.sellerVerification?.studentEmail || '',
+         // Branding
+          storeBanner: absUrl(user.seller.storeBanner || ''),
+          storeAvatar: absUrl(user.seller.storeAvatar || ''),
+          storeColor: user.seller.storeColor || '',
+          deliveryFee: user.seller.deliveryFee !== null && user.seller.deliveryFee !== undefined ? parseFloat(user.seller.deliveryFee.toString()) : null,
+          returnPolicy: user.seller.returnPolicy || '',
+          shippingPolicy: user.seller.shippingPolicy || '',
+          refundPolicy: user.seller.refundPolicy || '',
+          exchangePolicy: user.seller.exchangePolicy || '',
+          cancellationPolicy: user.seller.cancellationPolicy || '',
+          processingTime: user.seller.processingTime || '',
+        };
 
     res.status(200).json({ success: true, data: profileData });
   } catch (error) {
@@ -134,9 +139,14 @@ export const updateSellerProfile = async (req: Request, res: Response): Promise<
      if (input.storeName !== undefined) sellerUpdate.storeName = input.storeName.trim();
      if (input.storeDescription !== undefined) sellerUpdate.storeDescription = input.storeDescription ? input.storeDescription.trim() : null;
      if (input.category !== undefined) sellerUpdate.category = input.category;
-     if (input.country !== undefined) sellerUpdate.country = input.country ? input.country.trim() : null;
-     if (input.city !== undefined) sellerUpdate.city = input.city ? input.city.trim() : null;
-     if (input.pickupAddress !== undefined) sellerUpdate.pickupAddress = input.pickupAddress ? input.pickupAddress.trim() : null;
+      if (input.country !== undefined) sellerUpdate.country = input.country ? input.country.trim() : null;
+      if (input.city !== undefined) sellerUpdate.city = input.city ? input.city.trim() : null;
+      if (input.pickupAddress !== undefined) sellerUpdate.pickupAddress = input.pickupAddress ? input.pickupAddress.trim() : null;
+      if (input.storeTagline !== undefined) sellerUpdate.storeTagline = input.storeTagline ? input.storeTagline.trim() : null;
+      if (input.universityAffiliation !== undefined) sellerUpdate.universityAffiliation = input.universityAffiliation ? input.universityAffiliation.trim() : null;
+      if (input.campus !== undefined) sellerUpdate.campus = input.campus ? input.campus.trim() : null;
+      if (input.businessHours !== undefined) sellerUpdate.businessHours = input.businessHours ? input.businessHours.trim() : null;
+      if (input.deliveryOptions !== undefined) sellerUpdate.deliveryOptions = input.deliveryOptions ? input.deliveryOptions : null;
      if (input.storeBanner !== undefined) {
        if (input.storeBanner && input.storeBanner.startsWith('data:')) {
          const s = await prisma.seller.findUnique({ where: { userId: userPayload.userId }, select: { id: true } });
@@ -184,6 +194,15 @@ export const updateSellerProfile = async (req: Request, res: Response): Promise<
         await tx.seller.update({
           where: { userId: userPayload.userId },
           data: sellerUpdate,
+        });
+      }
+
+      // Update verification student email if provided
+      if (input.studentEmail !== undefined && user.seller?.id) {
+        await tx.sellerVerification.upsert({
+          where: { sellerId: user.seller.id },
+          update: { studentEmail: input.studentEmail ? input.studentEmail.trim() : null },
+          create: { sellerId: user.seller.id, studentEmail: input.studentEmail ? input.studentEmail.trim() : null },
         });
       }
 

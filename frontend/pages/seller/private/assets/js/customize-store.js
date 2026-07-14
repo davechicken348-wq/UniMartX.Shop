@@ -24,6 +24,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (descInput2) descInput2.addEventListener('input', updateStoreBioPreview);
     if (categorySelect2) categorySelect2.addEventListener('change', updateStoreCategoryPreview);
 
+    const taglineInput = document.getElementById('store-tagline');
+    if (taglineInput) {
+        taglineInput.addEventListener('input', updateStoreTaglinePreview);
+        updateStoreTaglinePreview();
+    }
+
     // Fulfillment form
     const fulfillmentForm = document.getElementById('store-fulfillment-form');
     if (fulfillmentForm) fulfillmentForm.addEventListener('submit', handleFulfillmentSubmit);
@@ -230,6 +236,12 @@ function updateStoreBioPreview() {
     if (el) el.textContent = bio;
 }
 
+function updateStoreTaglinePreview() {
+    const tagline = document.getElementById('store-tagline')?.value.trim() || '';
+    const el = document.getElementById('preview-tagline');
+    if (el) el.textContent = tagline;
+}
+
 function updateStoreCategoryPreview() {
     const select = document.getElementById('store-category');
     const el = document.getElementById('preview-category');
@@ -267,6 +279,17 @@ function updateFulfillmentPreview() {
         hasAny = true;
     } else {
         if (pickupRow) pickupRow.style.display = 'none';
+    }
+
+    const hours = document.getElementById('store-hours')?.value;
+    const hoursRow = document.getElementById('mock-hours-row');
+    const hoursText = document.getElementById('mock-hours-text');
+    if (hours) {
+        if (hoursRow) hoursRow.style.display = '';
+        if (hoursText) hoursText.textContent = `Hours: ${hours}`;
+        hasAny = true;
+    } else {
+        if (hoursRow) hoursRow.style.display = 'none';
     }
 
     if (fulfillmentBar) fulfillmentBar.style.display = hasAny ? '' : 'none';
@@ -310,6 +333,24 @@ async function loadStoreData() {
         if (countryInput) countryInput.value = data.country || '';
         const cityInput = document.getElementById('store-city');
         if (cityInput) cityInput.value = data.city || '';
+
+        // ── Newly editable store fields ──
+        const taglineInput = document.getElementById('store-tagline');
+        if (taglineInput) taglineInput.value = data.storeTagline || '';
+        const universityInput = document.getElementById('store-university');
+        if (universityInput && data.universityAffiliation) universityInput.value = data.universityAffiliation;
+        const campusInput = document.getElementById('store-campus');
+        if (campusInput) campusInput.value = data.campus || '';
+        const hoursInput = document.getElementById('store-hours');
+        if (hoursInput && data.businessHours) hoursInput.value = data.businessHours;
+
+        // Delivery options (stored as JSON string)
+        try {
+            const opts = data.deliveryOptions ? JSON.parse(data.deliveryOptions) : [];
+            document.querySelectorAll('#store-delivery-options input[type="checkbox"]').forEach(cb => {
+                cb.checked = Array.isArray(opts) && opts.includes(cb.value);
+            });
+        } catch (e) { /* ignore malformed */ }
 
         // ── Policies Section ──
         const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
@@ -461,6 +502,7 @@ async function loadStoreData() {
         // Initialize previews
         updateStoreNamePreview();
         updateStoreBioPreview();
+        updateStoreTaglinePreview();
         updateStoreCategoryPreview();
         updateFulfillmentPreview();
 
@@ -1291,6 +1333,10 @@ async function handleFormSubmit(e) {
                 storeDescription: document.getElementById('store-description')?.value.trim(),
                 country: document.getElementById('store-country')?.value.trim(),
                 city: document.getElementById('store-city')?.value.trim(),
+                storeTagline: document.getElementById('store-tagline')?.value.trim() || null,
+                universityAffiliation: document.getElementById('store-university')?.value || null,
+                campus: document.getElementById('store-campus')?.value.trim() || null,
+                businessHours: document.getElementById('store-hours')?.value || null,
             };
         } else if (formId === 'store-branding-form') {
             // Convert image files to base64
@@ -1446,6 +1492,11 @@ async function handleFulfillmentSubmit(e) {
     const payload = {};
     if (deliveryFee !== '') payload.deliveryFee = parseFloat(deliveryFee) || 0;
     if (pickupAddress !== undefined) payload.pickupAddress = pickupAddress;
+
+    const deliveryOptions = Array.from(
+        document.querySelectorAll('#store-delivery-options input[type="checkbox"]:checked')
+    ).map(cb => cb.value);
+    payload.deliveryOptions = JSON.stringify(deliveryOptions);
 
     try {
         if (submitBtn) { submitBtn.classList.add('saving'); submitBtn.disabled = true; }

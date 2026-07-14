@@ -71,7 +71,7 @@
                 <div class="nav-item-icon"><i data-lucide="home"></i></div>
                 <span class="nav-item-label">Home</span>
             </a>
-            <a href="../../public/info/faq.html" class="nav-item" data-tooltip="Help">
+            <a href="../../../public/info/faq.html" class="nav-item" data-tooltip="Help">
                 <div class="nav-item-icon"><i data-lucide="help-circle"></i></div>
                 <span class="nav-item-label">Help & FAQ</span>
             </a>
@@ -97,8 +97,8 @@
             <i data-lucide="menu"></i>
         </button>
         <div class="topnav-title">
-            <h1>Account Settings</h1>
-            <p>Manage your account preferences</p>
+            <h1>Seller Settings</h1>
+            <p>Control your store, security, and platform preferences</p>
         </div>
         <div class="topnav-actions">
             <div style="position:relative;">
@@ -134,34 +134,43 @@
     <!-- MAIN -->
     <div class="seller-main" id="seller-main">
         <div class="page-content">
+
             <div class="settings-layout">
                 <!-- Settings Nav -->
                 <nav class="settings-nav" id="settings-nav">
-                    <a href="#notifications" class="settings-nav-item active" data-target="notifications">
-                        <i data-lucide="bell"></i><span>Notifications</span>
-                    </a>
-                    <a href="#password" class="settings-nav-item" data-target="password">
-                        <i data-lucide="lock"></i><span>Change Password</span>
-                    </a>
-                    <a href="#activity" class="settings-nav-item" data-target="activity">
-                        <i data-lucide="monitor"></i><span>Account Activity</span>
-                    </a>
-                    <a href="#delete" class="settings-nav-item danger" data-target="delete">
-                        <i data-lucide="trash-2"></i><span>Delete Account</span>
-                    </a>
+                    <div class="settings-nav-group">
+                        <span class="settings-nav-group-label">Preferences</span>
+                        <a href="#notifications" class="settings-nav-item active" data-target="notifications">
+                            <i data-lucide="bell"></i><span>Notifications</span>
+                        </a>
+                    </div>
+
+                    <div class="settings-nav-group">
+                        <span class="settings-nav-group-label">Security</span>
+                        <a href="#security" class="settings-nav-item" data-target="security">
+                            <i data-lucide="lock"></i><span>Login & Security</span>
+                        </a>
+                    </div>
+
+                    <div class="settings-nav-group">
+                        <span class="settings-nav-group-label">Danger</span>
+                        <a href="#delete" class="settings-nav-item danger" data-target="delete">
+                            <i data-lucide="trash-2"></i><span>Delete Account</span>
+                        </a>
+                    </div>
                 </nav>
 
                 <!-- Content Area -->
                 <div class="settings-content" id="settings-content">
-                    <!-- NOTIFICATIONS SECTION -->
-                    <div class="settings-section" id="notifications">
+
+
+                    <!-- ══ NOTIFICATIONS ══ -->
+                    <div class="settings-section" id="notifications" style="display:none;">
+                        <div class="section-head">
+                            <h2>Notification Preferences</h2>
+                            <p>Choose how you receive updates about your account</p>
+                        </div>
                         <div class="card">
-                            <div class="card-header">
-                                <div>
-                                    <h2><i data-lucide="bell"></i> Notification Preferences</h2>
-                                    <p>Choose how you receive updates about your account</p>
-                                </div>
-                            </div>
                             <div class="settings-list">
                                 <div class="settings-item">
                                     <div class="settings-item-info">
@@ -227,11 +236,20 @@
                                     </label>
                                 </div>
                             </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-primary" id="save-notif-btn"><i data-lucide="save"></i> Save Preferences</button>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- PASSWORD SECTION -->
-                    <div class="settings-section" id="password">
+                    <!-- ══ LOGIN & SECURITY ══ -->
+                    <div class="settings-section" id="security" style="display:none;">
+                        <div class="section-head">
+                            <h2>Login & Security</h2>
+                            <p>Protect your account and review access</p>
+                        </div>
+
+                        <!-- Change Password -->
                         <div class="card">
                             <div class="card-header">
                                 <div>
@@ -245,9 +263,10 @@
                                         <label for="current-password">Current Password <span class="req">*</span></label>
                                         <div class="input-icon-wrap">
                                             <i data-lucide="key" class="input-icon"></i>
-                                            <input type="password" id="current-password" name="current_password" placeholder="Enter current password" required>
+                                            <input type="password" id="current-password" name="current_password" placeholder="Enter current password" autocomplete="current-password" required>
                                             <button type="button" class="pw-toggle" tabindex="-1"><i data-lucide="eye"></i></button>
                                         </div>
+                                        <span class="field-status" id="current-pw-status"></span>
                                     </div>
                                     <div class="field">
                                         <label for="new-password">New Password <span class="req">*</span></label>
@@ -272,10 +291,8 @@
                                 </div>
                             </form>
                         </div>
-                    </div>
 
-                    <!-- ACCOUNT MONITORING SECTION -->
-                    <div class="settings-section" id="activity">
+                        <!-- Account Activity -->
                         <div class="card">
                             <div class="card-header">
                                 <div>
@@ -294,8 +311,12 @@
                         </div>
                     </div>
 
-                    <!-- DANGER ZONE SECTION -->
-                    <div class="settings-section" id="delete">
+                    <!-- ══ DANGER ZONE ══ -->
+                    <div class="settings-section" id="delete" style="display:none;">
+                        <div class="section-head">
+                            <h2>Danger Zone</h2>
+                            <p>Irreversible and destructive actions</p>
+                        </div>
                         <div class="card card--danger">
                             <div class="card-header">
                                 <div>
@@ -309,6 +330,7 @@
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -327,11 +349,11 @@
         </div>
     </div>
 
-    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
-    <script>lucide.createIcons();</script>
-    <script src="../shared/polling.js"></script>
-    <script src="../shared/sidebar.js"></script>
-    <script src="../shared/topnav.js"></script>
-    <script src="../assets/js/account-settings.js"></script>
+    <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script>if(window.lucide)lucide.createIcons();else window.addEventListener('DOMContentLoaded',function(){if(window.lucide)lucide.createIcons();});</script>
+    <script defer src="../shared/polling.js"></script>
+    <script defer src="../shared/sidebar.js"></script>
+    <script defer src="../shared/topnav.js"></script>
+    <script defer src="../assets/js/account-settings.js"></script>
 </body>
 </html>

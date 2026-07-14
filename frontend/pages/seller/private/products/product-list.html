@@ -143,7 +143,43 @@
     <div class="seller-main" id="seller-main">
         <div class="page-content">
 
-            <!-- Toolbar -->
+            <!-- ── KPI / summary row ── -->
+            <div class="prod-stats" id="prod-stats">
+                <div class="stat-card" data-stat="total">
+                    <div class="stat-icon stat-icon--brand"><i data-lucide="package"></i></div>
+                    <div class="stat-body">
+                        <p class="stat-label">Total Products</p>
+                        <p class="stat-value" id="stat-total">0</p>
+                        <p class="stat-sub" id="stat-total-sub">in your catalog</p>
+                    </div>
+                </div>
+                <div class="stat-card" data-stat="active">
+                    <div class="stat-icon stat-icon--success"><i data-lucide="check-circle-2"></i></div>
+                    <div class="stat-body">
+                        <p class="stat-label">Published</p>
+                        <p class="stat-value" id="stat-active">0</p>
+                        <p class="stat-sub" id="stat-active-sub">visible to buyers</p>
+                    </div>
+                </div>
+                <div class="stat-card" data-stat="low">
+                    <div class="stat-icon stat-icon--warning"><i data-lucide="alert-triangle"></i></div>
+                    <div class="stat-body">
+                        <p class="stat-label">Low Stock</p>
+                        <p class="stat-value" id="stat-low">0</p>
+                        <p class="stat-sub">needs restocking</p>
+                    </div>
+                </div>
+                <div class="stat-card" data-stat="out">
+                    <div class="stat-icon stat-icon--danger"><i data-lucide="package-x"></i></div>
+                    <div class="stat-body">
+                        <p class="stat-label">Out of Stock</p>
+                        <p class="stat-value" id="stat-out">0</p>
+                        <p class="stat-sub">unavailable</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Toolbar ── -->
             <div class="products-toolbar">
                 <div class="filter-tabs" id="filter-tabs">
                     <button class="filter-tab active" data-filter="all">All</button>
@@ -152,42 +188,70 @@
                     <button class="filter-tab filter-tab--warning" data-filter="low-stock">⚠ Low Stock</button>
                 </div>
                 <div class="toolbar-right">
-                    <div class="product-search-mobile">
+                    <div class="prod-search">
                         <i data-lucide="search"></i>
-                        <input type="search" id="product-search-mobile" placeholder="Search products…">
+                        <input type="search" id="product-search" placeholder="Search products, categories…">
                     </div>
+                    <div class="prod-sort">
+                        <i data-lucide="arrow-down-wide-narrow"></i>
+                        <select id="product-sort" aria-label="Sort products">
+                            <option value="name-asc">Name (A–Z)</option>
+                            <option value="name-desc">Name (Z–A)</option>
+                            <option value="price-asc">Price (Low → High)</option>
+                            <option value="price-desc">Price (High → Low)</option>
+                            <option value="stock-asc">Stock (Low → High)</option>
+                            <option value="stock-desc">Stock (High → Low)</option>
+                        </select>
+                    </div>
+                    <button class="select-toggle" id="btn-select" aria-pressed="false">
+                        <i data-lucide="list-checks"></i><span>Select</span>
+                    </button>
                     <div class="view-toggle">
-                        <button class="view-btn active" id="btn-grid" aria-label="Grid view">
+                        <button class="view-btn active" id="btn-grid" aria-label="Grid view" title="Grid view">
                             <i data-lucide="grid-2x2"></i>
                         </button>
-                        <button class="view-btn" id="btn-list" aria-label="List view">
-                            <i data-lucide="list"></i>
+                        <button class="view-btn" id="btn-list" aria-label="Table view" title="Table view">
+                            <i data-lucide="table-2"></i>
                         </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Empty state -->
+            <!-- ── Bulk action bar ── -->
+            <div class="bulk-bar hidden" id="bulk-bar">
+                <label class="bulk-selectall">
+                    <input type="checkbox" id="select-all">
+                    <span>Select all</span>
+                </label>
+                <span class="bulk-count" id="bulk-count">0 selected</span>
+                <div class="bulk-actions">
+                    <button class="bulk-btn" data-bulk="publish"><i data-lucide="eye"></i> Publish</button>
+                    <button class="bulk-btn" data-bulk="unpublish"><i data-lucide="eye-off"></i> Unpublish</button>
+                    <button class="bulk-btn bulk-btn--danger" data-bulk="delete"><i data-lucide="trash-2"></i> Delete</button>
+                </div>
+                <button class="bulk-clear" id="bulk-clear">Clear</button>
+            </div>
+
+            <!-- ── Empty state ── -->
             <div class="empty-state hidden" id="no-results">
                 <div class="empty-state-icon"><i data-lucide="search-x"></i></div>
                 <h3>No products found</h3>
                 <p>Try a different search or filter.</p>
             </div>
 
-            <!-- Products grid/list -->
-            <div class="products-wrap grid-view" id="products-wrap">
-            </div>
+            <!-- ── Products grid / table ── -->
+            <div class="products-wrap grid-view" id="products-wrap"></div>
 
         </div>
 
     </div>
 
-    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
-    <script>lucide.createIcons();</script>
-    <script src="../shared/polling.js"></script>
-    <script src="../shared/sidebar.js"></script>
-    <script src="../shared/topnav.js"></script>
-    <script src="../assets/js/product-list.js"></script>
+    <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script>if(window.lucide)lucide.createIcons();else window.addEventListener('DOMContentLoaded',function(){if(window.lucide)lucide.createIcons();});</script>
+    <script defer src="../shared/polling.js"></script>
+    <script defer src="../shared/sidebar.js"></script>
+    <script defer src="../shared/topnav.js"></script>
+    <script defer src="../assets/js/product-list.js"></script>
 
 </body>
 </html>

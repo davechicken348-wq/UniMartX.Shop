@@ -1,52 +1,36 @@
 // ══════════════════════════════════════════
-//  PRODUCT LIST JS — seller panel
+//  PRODUCT LIST JS — seller panel (dashboard)
 // ══════════════════════════════════════════
 
 const API_BASE = (window.APP_CONFIG && window.APP_CONFIG.BACKEND_URL) || 'http://localhost:5000';
 const TOKEN_KEY = 'authToken';
-
-function getAuthToken() {
-  try {
-    const raw = localStorage.getItem('authData');
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      const data = parsed.value ? JSON.parse(parsed.value) : parsed;
-      return data.token || null;
-    }
-  } catch {}
-  return localStorage.getItem(TOKEN_KEY);
-}
-
-async function apiFetch(url, options = {}) {
-  const token = getAuthToken();
-  const headers = {
-    'Content-Type': 'application/json',
-    ...(options.headers || {}),
-  };
-  if (token) headers['Authorization'] = `Bearer ${token}`;
-  const res = await fetch(`${API_BASE}${url}`, { ...options, headers });
-  if (!res.ok) throw new Error(`Request failed (${res.status})`);
-  return res.json();
-}
-
 const LOW_STOCK_THRESHOLD = 5;
 
 // ── State ──────────────────────────────────────────────────────────────────────
-let allProducts   = [];
-let activeFilter  = 'all';
-let searchQuery   = '';
+let allProducts = [];
+let activeFilter = 'all';
+let searchQuery  = '';
+let sortKey      = 'name-asc';
+let currentView  = 'grid';
+let selectMode   = false;
+const selected   = new Set();
 
 // ── DOM refs ──────────────────────────────────────────────────────────────────
-const productsWrap       = document.getElementById('products-wrap');
-const noResults          = document.getElementById('no-results');
-const searchDesktop      = document.getElementById('product-search');
-const searchMobile       = document.getElementById('product-search-mobile');
-const filterTabs         = document.querySelectorAll('.filter-tab');
-const btnGrid            = document.getElementById('btn-grid');
-const btnList            = document.getElementById('btn-list');
-const toastEl            = document.getElementById('toast');
+const productsWrap = document.getElementById('products-wrap');
+const noResults    = document.getElementById('no-results');
+const searchInput  = document.getElementById('product-search');
+const filterTabs   = document.querySelectorAll('.filter-tab');
+const btnGrid      = document.getElementById('btn-grid');
+const btnList      = document.getElementById('btn-list');
+const btnSelect    = document.getElementById('btn-select');
+const sortSelect   = document.getElementById('product-sort');
+const bulkBar      = document.getElementById('bulk-bar');
+const bulkCount    = document.getElementById('bulk-count');
+const selectAll    = document.getElementById('select-all');
+const bulkClear    = document.getElementById('bulk-clear');
+const toastEl      = document.getElementById('toast');
 
-// Single body-level dropdown menu to avoid stacking-context trapping
+// ── Single body-level dropdown menu ────────────────────────────────────────────
 const bodyMenu = (() => {
   const m = document.createElement('div');
   m.className = 'pc-menu';
@@ -62,11 +46,10 @@ const bodyMenu = (() => {
       <i data-lucide="trash-2"></i> Delete
     </button>`;
   document.body.appendChild(m);
-  lucide.createIcons();
+  if (window.lucide) lucide.createIcons();
   return m;
 })();
 
-// Close menu helper
 function closeBodyMenu() {
   if (bodyMenu.classList.contains('open')) {
     bodyMenu.classList.remove('open');
@@ -74,42 +57,19 @@ function closeBodyMenu() {
   }
 }
 
-// ── Constants ─────────────────────────────────────────────────────────────────
-
-const STATUS_LABEL = {
-  active: 'Active',
-  draft:  'Draft',
-};
-
-function stockBadgeHTML(stock) {
-  if (stock === 0)  return `<span class="pc-stock-badge pc-stock-badge--out">Out of stock</span>`;
-  if (stock <= LOW_STOCK_THRESHOLD) return `<span class="pc-stock-badge pc-stock-badge--low">${stock} left</span>`;
-  return '';
+// ── Helpers ────────────────────────────────────────────────────────────────────
+function getAuthToken() {
+  try {
+    const raw = localStorage.getItem('authData');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      const data = parsed.value ? JSON.parse(parsed.value) : parsed;
+      return data.token || null;
+    }
+  } catch {}
+  return localStorage.getItem(TOKEN_KEY);
 }
 
-function statusBadgeHTML(isActive) {
-  const cls = isActive ? 'badge-status badge-status--active' : 'badge-status badge-status--draft';
-  const lbl = isActive ? 'Active' : 'Draft';
-  return `<span class="${cls}">${lbl}</span>`;
-}
-
-const CATEGORY_ICONS = {
-  electronics:  'smartphone',
-  books:        'book-open',
-  fashion:      'shirt',
-  food:         'utensils',
-  beauty:       'sparkles',
-  sports:       'dumbbell',
-};
-
-function safeImgSrc(src) {
-  if (!src) return '';
-  return src.replace(/"/g, '&quot;').replace(/\s+/g, '%20');
-}
-
-const PLACEHOLDER_SVG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2Y1YTQ1MCIvPjxjaXJjbGUgY3g9IjEwMCIgY3k9IjEwMCIgcj0iODAiIGZpbGw9IiNlM2M0YzgiLz48ZyBzdHJva2U9Im5vbmUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgc3Ryb2tlLW9wYWNpdHk9IjAuNSIgc3Ryb2tlLXdpZHRoPSIzIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTgiPjxwYXRoIGQ9Ik0xMDMgNTUgTDUwIDExMCAzNSA5NSAyMCAxMDAgMzUgNjUgMTI1IDU1IDEyMCA1NCAxMDAgNTUgOTAgMzUgMTU1IDkwIDEyMCA3MCAxNzUgMTI1IDY1IDE1MCA0MCAxNzUgMzUgMjAwIDU1IDI1MCA0MCAyNzUgMzUgMzAwIDU1IDMwMCA3MCAyNzUgMTIwIDMxMCA3MCAzMzUgMzUgMzUwIDU1IDM1MCAxMDAgMzM1IDEyMCA0MCAzMzAgNTUgdlsgICAgXCIvPjwvZz48L3N2Zz4=';
-
-// ── Auth ──────────────────────────────────────────────────────────────────────
 function authHeaders() {
   let token = localStorage.getItem(TOKEN_KEY);
   if (token && token !== 'undefined' && token !== 'null') {
@@ -132,12 +92,39 @@ function authHeaders() {
   return { 'Content-Type': 'application/json' };
 }
 
+const STATUS_LABEL = { active: 'Active', draft: 'Draft' };
+
+function fmtPrice(v) {
+  return `GH₵ ${parseFloat(v || 0).toFixed(2)}`;
+}
+
+function stockBadgeHTML(stock) {
+  if (stock === 0) return `<span class="pc-stock-badge pc-stock-badge--out">Out of stock</span>`;
+  if (stock <= LOW_STOCK_THRESHOLD) return `<span class="pc-stock-badge pc-stock-badge--low">${stock} left</span>`;
+  return '';
+}
+
+function statusBadgeHTML(isActive) {
+  const cls = isActive ? 'badge-status badge-status--active' : 'badge-status badge-status--draft';
+  const lbl = isActive ? 'Active' : 'Draft';
+  return `<span class="${cls}">${lbl}</span>`;
+}
+
+const CATEGORY_ICONS = {
+  electronics: 'smartphone', books: 'book-open', fashion: 'shirt',
+  food: 'utensils', beauty: 'sparkles', sports: 'dumbbell',
+};
+
+function safeImgSrc(src) {
+  if (!src) return '';
+  return src.replace(/"/g, '&quot;').replace(/\s+/g, '%20');
+}
+
 // ── Data fetching ─────────────────────────────────────────────────────────────
 async function fetchProducts() {
   try {
     const res = await fetch(`${API_BASE}/api/seller/products`, {
-      headers: authHeaders(),
-      cache: 'no-cache',
+      headers: authHeaders(), cache: 'no-cache',
     });
     const json = await res.json();
     if (!res.ok || !json.success) throw new Error(json.error || 'Failed to load products');
@@ -149,72 +136,105 @@ async function fetchProducts() {
   }
 }
 
+// ── Derived list (filter + search + sort) ─────────────────────────────────────
+function getVisibleList() {
+  const q = searchQuery.trim().toLowerCase();
+  let list = allProducts.filter(p => {
+    const status = p.isActive !== false ? 'active' : 'draft';
+    let okFilter = true;
+    if (activeFilter === 'active') okFilter = status === 'active';
+    else if (activeFilter === 'draft') okFilter = status === 'draft';
+    else if (activeFilter === 'low-stock') {
+      const s = p.stock ?? 9999;
+      okFilter = s > 0 && s <= LOW_STOCK_THRESHOLD;
+    }
+    const hay = `${p.name || ''} ${p.category || ''} ${fmtPrice(p.price)}`.toLowerCase();
+    const okSearch = !q || hay.includes(q);
+    return okFilter && okSearch;
+  });
+
+  const dir = sortKey.endsWith('desc') ? -1 : 1;
+  const key = sortKey.split('-')[0];
+  list = list.slice().sort((a, b) => {
+    let av, bv;
+    if (key === 'name')  { av = (a.name || '').toLowerCase(); bv = (b.name || '').toLowerCase(); }
+    if (key === 'price') { av = parseFloat(a.price || 0); bv = parseFloat(b.price || 0); }
+    if (key === 'stock') { av = a.stock ?? 0; bv = b.stock ?? 0; }
+    if (av < bv) return -1 * dir;
+    if (av > bv) return 1 * dir;
+    return 0;
+  });
+  return list;
+}
+
 // ── Main render ───────────────────────────────────────────────────────────────
 function renderAll() {
-  renderProductCards(allProducts);
-  applyFilter(activeFilter);
-  filterBySearch(searchQuery);
-  checkEmptyStates();
-}
-
-// ── Empty state ───────────────────────────────────────────────────────────────
-function checkEmptyStates() {
-  const cards = productsWrap.querySelectorAll('.product-card');
-  let visible = 0;
-  cards.forEach(card => {
-    if (!card.classList.contains('hidden')) visible++;
-  });
-  noResults.classList.toggle('hidden', visible > 0);
-}
-
-// ══════════════════════════════════════════════════════════════════════════════
-//  PRODUCT CARDS
-// ══════════════════════════════════════════════════════════════════════════════
-function renderProductCards(list) {
-  if (!productsWrap) return;
-
+  renderKPIs();
+  const list = getVisibleList();
+  productsWrap.className = `products-wrap ${currentView === 'grid' ? 'grid-view' : 'list-view'}${selectMode ? ' select-mode' : ''}`;
   if (list.length === 0) {
     productsWrap.innerHTML = `
       <div class="empty-state" style="grid-column:1/-1;text-align:center;padding:3rem 1rem;">
         <i data-lucide="package" style="width:48px;height:48px;margin:0 auto 1rem;display:block;opacity:.3;"></i>
         <p style="color:var(--text-3);font-family:Quicksand,sans-serif;">No products match your filter.</p>
       </div>`;
-    lucide.createIcons();
-    return;
+    if (window.lucide) lucide.createIcons();
+  } else if (currentView === 'grid') {
+    renderGrid(list);
+  } else {
+    renderTable(list);
   }
+  updateBulkUI();
+  noResults.classList.add('hidden');
+}
 
+// ── KPI cards ─────────────────────────────────────────────────────────────────
+function renderKPIs() {
+  const total = allProducts.length;
+  const active = allProducts.filter(p => p.isActive !== false).length;
+  const low = allProducts.filter(p => { const s = p.stock ?? 9999; return s > 0 && s <= LOW_STOCK_THRESHOLD; }).length;
+  const out = allProducts.filter(p => (p.stock ?? 0) === 0).length;
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-active').textContent = active;
+  document.getElementById('stat-low').textContent = low;
+  document.getElementById('stat-out').textContent = out;
+  const st = document.getElementById('stat-total-sub');
+  if (st) st.textContent = active === total ? 'all published' : `${total - active} draft`;
+}
+
+// ── Grid view ─────────────────────────────────────────────────────────────────
+function renderGrid(list) {
   const frag = document.createDocumentFragment();
-
   list.forEach(p => {
+    const isActive = p.isActive !== false;
     const card = document.createElement('div');
-    card.className = 'product-card';
-    card.dataset.id    = p.id;
-    card.dataset.status = p.isActive !== false ? 'active' : 'draft';
-    card.dataset.category = p.category || '';
+    card.className = 'product-card' + (selected.has(p.id) && selectMode ? ' selected' : '');
+    card.dataset.id = p.id;
+    card.dataset.status = isActive ? 'active' : 'draft';
+    card.dataset.stock = p.stock != null ? p.stock : '';
+    card.dataset.name = (p.name || '').toLowerCase();
+    card.dataset.category = (p.category || '').toLowerCase();
+    card.dataset.price = fmtPrice(p.price).toLowerCase();
 
-    const imgSrc  = p.image || '';
-    const price   = parseFloat(p.price || 0).toFixed(2);
-    const stock   = p.stock ?? null;
-    const badge   = statusBadgeHTML(p.isActive !== false);
-    const stockBadge = stockBadgeHTML(stock);
+    const imgSrc = p.image || '';
     const catIcon = CATEGORY_ICONS[p.category] || 'package';
     const catName = (p.category || '').replace('_', ' ');
-    const name    = p.name || 'Untitled';
-
-    card.dataset.stock = stock !== null ? stock : '';
+    const stockBadge = stockBadgeHTML(p.stock);
+    const checked = selected.has(p.id) && selectMode ? 'checked' : '';
 
     card.innerHTML = `
+      <label class="pc-check"><input type="checkbox" class="row-check" data-pid="${p.id}" ${checked}></label>
       <div class="pc-image-wrap">
         ${imgSrc
-          ? `<img src="${safeImgSrc(imgSrc)}" alt="${name}" class="pc-img" loading="lazy">`
+          ? `<img src="${safeImgSrc(imgSrc)}" alt="${p.name || ''}" class="pc-img" loading="lazy">`
           : `<div class="pc-img-placeholder"><i data-lucide="${catIcon}"></i></div>`}
-        <span class="pc-badge">${badge}</span>
+        <span class="pc-badge">${statusBadgeHTML(isActive)}</span>
         ${stockBadge ? `<span class="pc-stock-overlay">${stockBadge}</span>` : ''}
       </div>
       <div class="pc-body">
         <p class="pc-category">${catName}</p>
-        <h3 class="pc-name">${name}</h3>
-        <p class="pc-price">GH₵ ${price}</p>
+        <h3 class="pc-name">${p.name || 'Untitled'}</h3>
+        <p class="pc-price">${fmtPrice(p.price)}</p>
       </div>
       <div class="pc-footer">
         <button type="button" class="view-detail-btn" data-pid="${p.id}">View Details</button>
@@ -224,196 +244,287 @@ function renderProductCards(list) {
           </button>
         </div>
       </div>`;
-
     frag.appendChild(card);
   });
-
   productsWrap.innerHTML = '';
   productsWrap.appendChild(frag);
-  lucide.createIcons();
-
-  // Wire up view-detail buttons
-  document.querySelectorAll('.view-detail-btn[data-pid]').forEach(btn => {
-    btn.addEventListener('click', e => {
-      e.stopPropagation();
-      const pid = btn.dataset.pid;
-      viewDetail(pid);
-    });
-  });
-
-  // Body-level menu toggle
-  document.querySelectorAll('.pc-menu-btn[data-pid]').forEach(btn => {
-    btn.addEventListener('click', async e => {
-      e.stopPropagation();
-      const pid    = btn.dataset.pid;
-      const card   = document.querySelector(`.product-card[data-id="${pid}"]`);
-      const active = card ? card.dataset.status === 'active' : true;
-
-      if (bodyMenu.classList.contains('open') && bodyMenu._pid === pid) {
-        closeBodyMenu();
-        return;
-      }
-
-      const toggleCb  = bodyMenu.querySelector('[data-action="toggle"]');
-      const deleteCb  = bodyMenu.querySelector('[data-action="delete"]');
-      const labelSpan = bodyMenu.querySelector('.pc-menu-label');
-      if (toggleCb) {
-        toggleCb.dataset.pid = pid;
-        const ic = toggleCb.querySelector('i');
-        if (ic) { ic.setAttribute('data-lucide', active ? 'eye-off' : 'eye'); ic.className = ''; }
-        if (labelSpan) labelSpan.textContent = active ? 'Unpublish' : 'Publish';
-      }
-      if (deleteCb) deleteCb.dataset.pid = pid;
-      lucide.createIcons();
-
-      const rect = btn.getBoundingClientRect();
-      bodyMenu.style.top  = `${rect.bottom + 6}px`;
-      bodyMenu.style.left = `${Math.max(8, rect.right - 168)}px`;
-      bodyMenu.style.display = 'block';
-      bodyMenu._pid = pid;
-      requestAnimationFrame(() => bodyMenu.classList.add('open'));
-    });
-  });
-
-  console.log('[product-list] renderProductCards patched —', list.length, 'cards');
+  if (window.lucide) lucide.createIcons();
 }
 
+// ── Table view ────────────────────────────────────────────────────────────────
+function renderTable(list) {
+  const rows = list.map(p => {
+    const isActive = p.isActive !== false;
+    const imgSrc = p.image || '';
+    const catIcon = CATEGORY_ICONS[p.category] || 'package';
+    const catName = (p.category || '').replace('_', ' ');
+    const stockBadge = stockBadgeHTML(p.stock);
+    const stockText = p.stock != null ? p.stock : '—';
+    const checked = selected.has(p.id) && selectMode ? 'checked' : '';
+    const cls = 'prod-row' + (selected.has(p.id) && selectMode ? ' selected' : '');
+    return `
+      <tr class="${cls}" data-id="${p.id}" data-status="${isActive ? 'active' : 'draft'}"
+          data-stock="${p.stock != null ? p.stock : ''}"
+          data-name="${(p.name || '').toLowerCase()}" data-category="${(p.category || '').toLowerCase()}" data-price="${fmtPrice(p.price).toLowerCase()}">
+        <td class="col-check prod-check-cell">
+          <input type="checkbox" class="row-check" data-pid="${p.id}" ${checked}>
+        </td>
+        <td data-label="Product">
+          <div class="tp-cell">
+            <div class="tp-thumb">${imgSrc ? `<img src="${safeImgSrc(imgSrc)}" alt="${p.name || ''}">` : `<i data-lucide="${catIcon}"></i>`}</div>
+            <div class="tp-meta">
+              <span class="tp-name">${p.name || 'Untitled'}</span>
+              <span class="tp-cat">${catName}</span>
+            </div>
+          </div>
+        </td>
+        <td data-label="Status">${statusBadgeHTML(isActive)}</td>
+        <td class="col-price tp-price" data-label="Price">${fmtPrice(p.price)}</td>
+        <td class="col-stock tp-stock" data-label="Stock">${stockText}${stockBadge}</td>
+        <td data-label="Category"><span class="tp-cat">${catName}</span></td>
+        <td class="col-actions">
+          <div class="tp-actions">
+            <button type="button" class="view-detail-btn" data-pid="${p.id}">View</button>
+            <button class="pc-menu-btn" data-pid="${p.id}" aria-label="Product menu"><i data-lucide="more-vertical"></i></button>
+          </div>
+        </td>
+      </tr>`;
+  }).join('');
 
-// ══════════════════════════════════════════════════════════════════════════════
-//  FILTER / SEARCH
-// ══════════════════════════════════════════════════════════════════════════════
-function applyFilter(filter) {
-  activeFilter = filter;
-  filterTabs.forEach(tab => {
-    tab.classList.toggle('active', tab.dataset.filter === filter);
-  });
-  filterBySearch(searchQuery);
+  productsWrap.innerHTML = `
+    <table class="prod-table">
+      <thead>
+        <tr>
+          <th class="col-check"></th>
+          <th>Product</th>
+          <th>Status</th>
+          <th>Price</th>
+          <th>Stock</th>
+          <th>Category</th>
+          <th class="col-actions"></th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+  if (window.lucide) lucide.createIcons();
 }
 
-function filterBySearch(query) {
-  searchQuery = query;
-  const cards = productsWrap.querySelectorAll('.product-card');
-  let visible = 0;
-  cards.forEach(card => {
-    const name     = card.querySelector('.pc-name')?.textContent.toLowerCase() || '';
-    const category = card.querySelector('.pc-category')?.textContent.toLowerCase() || '';
-    const price    = card.querySelector('.pc-price')?.textContent.toLowerCase() || '';
-    const matchSearch = !query || name.includes(query) || category.includes(query) || price.includes(query);
-
-    let matchFilter = true;
-    if (activeFilter === 'active')     matchFilter = card.dataset.status === 'active';
-    else if (activeFilter === 'draft') matchFilter = card.dataset.status === 'draft';
-    else if (activeFilter === 'low-stock') {
-      const stock = parseInt(card.dataset.stock ?? '', 10);
-      matchFilter = !isNaN(stock) && stock <= LOW_STOCK_THRESHOLD;
-    }
-
-    const show = matchFilter && matchSearch;
-    card.classList.toggle('hidden', !show);
-    if (show) visible++;
-  });
-  if (noResults) noResults.classList.toggle('hidden', visible > 0);
-}
-
-function getSearchVal() {
-  return (searchDesktop?.value || searchMobile?.value || '').trim().toLowerCase();
-}
-
-// ── View toggle ───────────────────────────────────────────────────────────────
+// ── View / filter / sort ──────────────────────────────────────────────────────
 function setViewMode(mode) {
-  productsWrap.classList.toggle('grid-view', mode === 'grid');
-  productsWrap.classList.toggle('list-view', mode === 'list');
+  currentView = mode;
   btnGrid?.classList.toggle('active', mode === 'grid');
   btnList?.classList.toggle('active', mode === 'list');
+  renderAll();
+}
+
+function applyFilter(filter) {
+  activeFilter = filter;
+  filterTabs.forEach(tab => tab.classList.toggle('active', tab.dataset.filter === filter));
+  renderAll();
+}
+
+function setSort(val) {
+  sortKey = val;
+  renderAll();
+}
+
+// ── Selection / bulk ──────────────────────────────────────────────────────────
+function setSelectMode(on) {
+  selectMode = on;
+  btnSelect?.classList.toggle('active', on);
+  btnSelect?.setAttribute('aria-pressed', String(on));
+  productsWrap.classList.toggle('select-mode', on);
+  bulkBar?.classList.toggle('hidden', !on);
+  if (!on) { selected.clear(); selectAll.checked = false; }
+  renderAll();
+}
+
+function toggleSelect(pid, on) {
+  if (on) selected.add(pid); else selected.delete(pid);
+  updateBulkUI();
+}
+
+function updateBulkUI() {
+  const n = selected.size;
+  if (bulkCount) bulkCount.textContent = `${n} selected`;
+  if (selectAll) {
+    const visible = productsWrap.querySelectorAll('.row-check[data-pid]').length;
+    const selVisible = productsWrap.querySelectorAll('.row-check[data-pid]:checked').length;
+    selectAll.checked = visible > 0 && selVisible === visible;
+    selectAll.indeterminate = selVisible > 0 && selVisible < visible;
+  }
+}
+
+async function bulkAction(action) {
+  if (selected.size === 0) return;
+  const ids = Array.from(selected);
+  if (action === 'delete') {
+    if (!confirm(`Delete ${ids.length} product(s) permanently?`)) return;
+  }
+  for (const pid of ids) {
+    try {
+      if (action === 'delete') {
+        const res = await fetch(`${API_BASE}/api/seller/products/${pid}`, { method: 'DELETE', headers: authHeaders() });
+        const j = await res.json().catch(() => ({}));
+        if (res.ok && j.success) allProducts = allProducts.filter(x => x.id !== pid);
+        else showToast(j.error || 'Failed to delete', 'error');
+      } else {
+        const desired = action === 'publish';
+        const res = await fetch(`${API_BASE}/api/seller/products/${pid}/toggle`, {
+          method: 'PATCH', headers: authHeaders(), body: JSON.stringify({ isActive: desired }),
+        });
+        const j = await res.json().catch(() => ({}));
+        if (res.ok && j.success) {
+          const p = allProducts.find(x => x.id === pid);
+          if (p) p.isActive = desired;
+        } else showToast(j.error || 'Failed', 'error');
+      }
+    } catch (err) { showToast(err.message, 'error'); }
+  }
+  selected.clear();
+  selectAll.checked = false;
+  showToast(action === 'delete' ? 'Deleted' : (action === 'publish' ? 'Published' : 'Unpublished'), 'success');
+  renderAll();
+}
+
+// ── Toggle / delete (body menu) ───────────────────────────────────────────────
+function openMenu(btn) {
+  const pid = btn.dataset.pid;
+  const item = document.querySelector(`[data-id="${pid}"]`);
+  const active = item ? item.dataset.status === 'active' : true;
+
+  if (bodyMenu.classList.contains('open') && bodyMenu._pid === pid) { closeBodyMenu(); return; }
+
+  const toggleCb = bodyMenu.querySelector('[data-action="toggle"]');
+  const deleteCb = bodyMenu.querySelector('[data-action="delete"]');
+  const labelSpan = bodyMenu.querySelector('.pc-menu-label');
+  if (toggleCb) {
+    toggleCb.dataset.pid = pid;
+    const ic = toggleCb.querySelector('i');
+    if (ic) { ic.setAttribute('data-lucide', active ? 'eye-off' : 'eye'); ic.className = ''; }
+    if (labelSpan) labelSpan.textContent = active ? 'Unpublish' : 'Publish';
+  }
+  if (deleteCb) deleteCb.dataset.pid = pid;
+  if (window.lucide) lucide.createIcons();
+
+  const rect = btn.getBoundingClientRect();
+  bodyMenu.style.top = `${rect.bottom + 6}px`;
+  bodyMenu.style.left = `${Math.max(8, rect.right - 168)}px`;
+  bodyMenu.style.display = 'block';
+  bodyMenu._pid = pid;
+  requestAnimationFrame(() => bodyMenu.classList.add('open'));
+}
+
+function makeToggleHandler(pid, desiredActive) {
+  return async function () {
+    const item = document.querySelector(`[data-id="${pid}"]`);
+    try {
+      const res = await fetch(`${API_BASE}/api/seller/products/${pid}/toggle`, {
+        method: 'PATCH', headers: authHeaders(), body: JSON.stringify({ isActive: !desiredActive }),
+      });
+      const j = await res.json().catch(() => ({}));
+      if (res.ok && j.success) {
+        const p = allProducts.find(x => x.id === pid);
+        if (p) p.isActive = !desiredActive;
+        const badgeEl = item ? item.querySelector('.badge-status') : null;
+        if (badgeEl) {
+          badgeEl.className = desiredActive ? 'badge-status badge-status--draft' : 'badge-status badge-status--active';
+          badgeEl.textContent = desiredActive ? 'Draft' : 'Active';
+        }
+        if (item) item.dataset.status = desiredActive ? 'draft' : 'active';
+        showToast(desiredActive ? 'Unpublished' : 'Published', 'success');
+        renderKPIs();
+      } else showToast(j.error || 'Failed', 'error');
+    } catch (err) { showToast(err.message, 'error'); }
+    closeBodyMenu();
+  };
+}
+
+function makeDeleteHandler(pid) {
+  return async function () {
+    if (!confirm('Delete this product permanently?')) { closeBodyMenu(); return; }
+    try {
+      const res = await fetch(`${API_BASE}/api/seller/products/${pid}`, { method: 'DELETE', headers: authHeaders() });
+      const j = await res.json().catch(() => ({}));
+      if (res.ok && j.success) {
+        allProducts = allProducts.filter(x => x.id !== pid);
+        selected.delete(pid);
+        renderAll();
+      } else showToast(j.error || 'Failed to delete', 'error');
+    } catch (err) { showToast(err.message, 'error'); }
+    closeBodyMenu();
+  };
 }
 
 // ── Toast helper ──────────────────────────────────────────────────────────────
 function showToast(msg, type) {
   if (toastEl) {
     toastEl.textContent = msg;
-    toastEl.className   = 'toast toast--' + (type || 'error');
+    toastEl.className = 'toast toast--' + (type || 'error');
     toastEl.style.display = '';
     setTimeout(() => { toastEl.style.display = 'none'; }, 3000);
-  } else {
-    console.warn('[product-list] toast el not found:', msg);
-  }
+  } else console.warn('[product-list] toast el not found:', msg);
 }
 
-// ══════════════════════════════════════════════════════════════════════════════
-//  EVENT LISTENERS  (lines ~551-587)
-// ══════════════════════════════════════════════════════════════════════════════
-// Filter tabs
-filterTabs.forEach(tab => {
-  tab.addEventListener('click', () => applyFilter(tab.dataset.filter));
+function viewDetail(id) {
+  window.location.href = 'product-details.html#id=' + encodeURIComponent(id);
+}
+
+// ── Event wiring (delegated) ──────────────────────────────────────────────────
+filterTabs.forEach(tab => tab.addEventListener('click', () => applyFilter(tab.dataset.filter)));
+
+if (searchInput) searchInput.addEventListener('input', () => {
+  searchQuery = searchInput.value;
+  renderAll();
 });
-
-// Search (desktop + mobile sync)
-function attachSearch(input) {
-  if (!input) return;
-  input.addEventListener('input', () => {
-    const val = input.value;
-    if (searchDesktop && input !== searchDesktop) searchDesktop.value = val;
-    if (searchMobile  && input !== searchMobile)  searchMobile.value  = val;
-    filterBySearch(val.trim().toLowerCase());
-  });
-}
-attachSearch(searchDesktop);
-attachSearch(searchMobile);
-
-// View toggle
+if (sortSelect) sortSelect.addEventListener('change', () => setSort(sortSelect.value));
 btnGrid?.addEventListener('click', () => setViewMode('grid'));
 btnList?.addEventListener('click', () => setViewMode('list'));
+btnSelect?.addEventListener('click', () => setSelectMode(!selectMode));
+bulkClear?.addEventListener('click', () => setSelectMode(false));
 
-// Body-menu action delegation (toggle & delete)
-function makeToggleHandler(pid, desiredActive) {
-  return async function () {
-    const card = document.querySelector(`.product-card[data-id="${pid}"]`);
-    if (!card) return;
-    const newActive = !desiredActive;
-    try {
-      const res = await fetch(`${API_BASE}/api/seller/products/${pid}/toggle`, {
-        method: 'PATCH', headers: authHeaders(),
-        body: JSON.stringify({ isActive: newActive })
-      });
-      const j = await res.json().catch(() => ({}));
-      if (res.ok && j.success) {
-        card.dataset.status = desiredActive ? 'draft' : 'active';
-        const badgeEl  = card.querySelector('.pc-badge .badge-status');
-        if (badgeEl) {
-          badgeEl.className = desiredActive
-            ? 'badge-status badge-status--draft'
-            : 'badge-status badge-status--active';
-          badgeEl.textContent = desiredActive ? 'Draft' : 'Active';
-        }
-        showToast(desiredActive ? 'Unpublished' : 'Published', 'success');
-      } else { showToast(j.error || 'Failed', 'error'); }
-    } catch (err) { showToast(err.message, 'error'); }
-    closeBodyMenu();
-  };
-}
-function makeDeleteHandler(pid) {
-  return async function () {
-    const card = document.querySelector(`.product-card[data-id="${pid}"]`);
-    if (!card) { closeBodyMenu(); return; }
-    if (!confirm('Delete this product permanently?')) { closeBodyMenu(); return; }
-    try {
-      const res = await fetch(`${API_BASE}/api/seller/products/${pid}`, {
-        method: 'DELETE', headers: authHeaders()
-      });
-      const j = await res.json().catch(() => ({}));
-      if (res.ok && j.success) { card.remove(); }
-      else { showToast(j.error || 'Failed to delete', 'error'); }
-    } catch (err) { showToast(err.message, 'error'); }
-    closeBodyMenu();
-  };
-}
+if (selectAll) selectAll.addEventListener('change', () => {
+  const checks = productsWrap.querySelectorAll('.row-check[data-pid]');
+  checks.forEach(c => {
+    c.checked = selectAll.checked;
+    toggleSelect(c.dataset.pid, selectAll.checked);
+  });
+  renderAll();
+});
+
+// Bulk action buttons
+document.querySelectorAll('.bulk-btn[data-bulk]').forEach(b => {
+  b.addEventListener('click', () => bulkAction(b.dataset.bulk));
+});
+
+// Delegated clicks inside product wrap
+productsWrap?.addEventListener('click', e => {
+  const menuBtn = e.target.closest('.pc-menu-btn');
+  if (menuBtn) { e.stopPropagation(); openMenu(menuBtn); return; }
+
+  const viewBtn = e.target.closest('.view-detail-btn');
+  if (viewBtn) { e.stopPropagation(); viewDetail(viewBtn.dataset.pid); return; }
+
+  const check = e.target.closest('.row-check');
+  if (check) {
+    toggleSelect(check.dataset.pid, check.checked);
+    const card = check.closest('.product-card');
+    if (card) card.classList.toggle('selected', check.checked && selectMode);
+    const row = check.closest('.prod-row');
+    if (row) row.classList.toggle('selected', check.checked && selectMode);
+    updateBulkUI();
+    return;
+  }
+});
+
+// Body-menu actions
 bodyMenu.addEventListener('click', e => {
   const item = e.target.closest('.pc-menu-item[data-action]');
   if (!item) return;
   const action = item.dataset.action;
-  const pid    = item.dataset.pid;
+  const pid = item.dataset.pid;
   if (action === 'toggle') {
-    const c = document.querySelector(`.product-card[data-id="${pid}"]`);
+    const c = document.querySelector(`[data-id="${pid}"]`);
     const active = c ? c.dataset.status === 'active' : true;
     makeToggleHandler(pid, active)();
   } else if (action === 'delete') {
@@ -421,27 +532,11 @@ bodyMenu.addEventListener('click', e => {
   }
 });
 
-// Close menu when clicking outside
 document.addEventListener('click', e => {
-  if (!bodyMenu.contains(e.target) && !e.target.closest('.pc-menu-btn')) {
-    closeBodyMenu();
-  }
+  if (!bodyMenu.contains(e.target) && !e.target.closest('.pc-menu-btn')) closeBodyMenu();
 });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeBodyMenu(); });
 
-// Close menu on Escape
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeBodyMenu();
-});
-
-// ══════════════════════════════════════════════════════════════════════════════
-//  View detail routing
-// ══════════════════════════════════════════════════════════════════════════════
-function viewDetail(id) {
-  window.location.href = 'product-details.html#id=' + encodeURIComponent(id);
-}
-
-// ══════════════════════════════════════════════════════════════════════════════
-//  INIT
-// ══════════════════════════════════════════════════════════════════════════════
-lucide.createIcons();
+// ── Init ──────────────────────────────────────────────────────────────────────
+if (window.lucide) lucide.createIcons();
 fetchProducts();

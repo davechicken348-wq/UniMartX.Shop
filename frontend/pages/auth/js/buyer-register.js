@@ -1,95 +1,119 @@
-lucide.createIcons();
-
-// ── ENTRANCE ANIMATIONS ───────────────────────────────────────
-const formGroups = document.querySelectorAll('.form-group');
-formGroups.forEach((group, i) => {
-    group.style.opacity = '0';
-    group.style.transform = 'translateY(20px)';
-    group.style.transition = 'opacity 0.5s ease, transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)';
-    group.style.transitionDelay = `${0.2 + i * 0.08}s`;
-    requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-            group.style.opacity = '1';
-            group.style.transform = 'translateY(0)';
-        });
-    });
-});
+// UniMartX Auth V2 — Buyer Registration (vanilla, no dependencies)
 
 // ── PASSWORD TOGGLE ───────────────────────────────────────────
-function togglePassword(btn, input) {
-    const isHidden = input.type === 'password';
-    input.type = isHidden ? 'text' : 'password';
-    btn.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
+function bindToggle(btnId, inputId) {
+    const btn = document.getElementById(btnId);
+    const input = document.getElementById(inputId);
+    btn.addEventListener('click', () => {
+        const revealed = input.type === 'text';
+        input.type = revealed ? 'password' : 'text';
+        btn.setAttribute('aria-pressed', String(!revealed));
+        btn.setAttribute('aria-label', revealed ? 'Show password' : 'Hide password');
+        input.focus();
+    });
 }
+bindToggle('toggle-password', 'password');
+bindToggle('toggle-confirm', 'confirm-password');
 
-document.getElementById('toggle-password').addEventListener('click', function () {
-    togglePassword(this, document.getElementById('password'));
-});
-
-document.getElementById('toggle-confirm').addEventListener('click', function () {
-    togglePassword(this, document.getElementById('confirm-password'));
-});
-
-// ── PASSWORD STRENGTH ─────────────────────────────────────────
+// ── PASSWORD STRENGTH + CHECKLIST ────────────────────────────
 const passwordInput = document.getElementById('password');
+const confirmInput = document.getElementById('confirm-password');
 const strengthBar = document.getElementById('strength-bar');
 const strengthLabel = document.getElementById('strength-label');
+const reqItems = document.querySelectorAll('#req-list li');
 
-function getStrength(pw) {
-    let score = 0;
-    if (pw.length >= 8) score++;
-    if (pw.length >= 12) score++;
-    if (/[a-z]/.test(pw) && /[A-Z]/.test(pw)) score++;
-    if (/\d/.test(pw)) score++;
-    if (/[^a-zA-Z0-9]/.test(pw)) score++;
-    if (score <= 2) return 'weak';
-    if (score <= 4) return 'medium';
-    return 'strong';
+function passwordChecks(pw) {
+    return {
+        length: pw.length >= 8,
+        upper: /[A-Z]/.test(pw),
+        lower: /[a-z]/.test(pw),
+        number: /\d/.test(pw),
+        special: /[^A-Za-z0-9]/.test(pw),
+    };
 }
 
-passwordInput.addEventListener('input', function () {
-    strengthBar.className = 'password-strength-bar';
-    if (this.value) {
-        const strength = getStrength(this.value);
-        strengthBar.classList.add(strength);
-        strengthLabel.textContent = strength === 'weak'
-            ? 'Weak password'
-            : strength === 'medium'
-                ? 'Medium strength'
-                : 'Strong password! 🔐';
-        strengthLabel.className = `strength-label visible ${strength}`;
+function getStrength(pw) {
+    const c = passwordChecks(pw);
+    let points = 0;
+    if (c.length) points++;
+    if (pw.length >= 12) points++;
+    if (c.upper && c.lower) points++;
+    if (c.number) points++;
+    if (c.special) points++;
+    if (points <= 2) return 'weak';
+    if (points === 3) return 'fair';
+    if (points === 4) return 'strong';
+    return 'excellent';
+}
 
+function refreshStrength() {
+    const pw = passwordInput.value;
+    const checks = passwordChecks(pw);
+
+    reqItems.forEach((li) => {
+        li.classList.toggle('met', checks[li.dataset.req]);
+    });
+
+    strengthBar.className = 'pw-strength-bar';
+    strengthLabel.className = 'pw-strength-label';
+    strengthLabel.textContent = '';
+
+    if (pw) {
+        const level = getStrength(pw);
+        strengthBar.classList.add(level);
+        const text = {
+            weak: 'Weak password',
+            fair: 'Fair — add more variety',
+            strong: 'Strong password',
+            excellent: 'Excellent password',
+        }[level];
+        strengthLabel.textContent = text;
+        strengthLabel.classList.add('visible', level);
     }
+}
+
+function refreshMatch() {
+    const indicator = document.getElementById('match-indicator');
+    const match = confirmInput.value && confirmInput.value === passwordInput.value;
+    indicator.classList.toggle('visible', match);
+    if (match) {
+        confirmInput.classList.add('success');
+        confirmInput.classList.remove('error');
+    } else {
+        confirmInput.classList.remove('success');
+    }
+}
+
+passwordInput.addEventListener('input', () => {
+    refreshStrength();
+    if (confirmInput.value) refreshMatch();
+    if (passwordInput.classList.contains('error')) validateField('password');
+});
+
+confirmInput.addEventListener('input', () => {
+    refreshMatch();
+    if (confirmInput.classList.contains('error')) validateField('confirm-password');
 });
 
 // ── FORM VALIDATION ───────────────────────────────────────────
 function setError(id, message) {
     const input = document.getElementById(id);
-    input.classList.add('error');
-    input.classList.remove('success');
+    if (input) {
+        input.classList.add('error');
+        input.classList.remove('success');
+    }
     const err = document.getElementById(`${id}-error`);
-    err.textContent = message;
-    err.classList.add('visible');
+    if (err) { err.textContent = message; err.classList.add('visible'); }
 }
 
 function setSuccess(id) {
     const input = document.getElementById(id);
-    input.classList.remove('error');
-    input.classList.add('success');
+    if (input) {
+        input.classList.remove('error');
+        input.classList.add('success');
+    }
     const err = document.getElementById(`${id}-error`);
     if (err) err.classList.remove('visible');
-}
-
-function clearAllFieldErrors() {
-    ['name', 'email', 'phone', 'password', 'confirm-password'].forEach(id => {
-        const input = document.getElementById(id);
-        if (input) {
-            input.classList.remove('error');
-            input.classList.remove('success');
-        }
-        const err = document.getElementById(`${id}-error`);
-        if (err) err.classList.remove('visible');
-    });
 }
 
 function validateField(id) {
@@ -104,7 +128,7 @@ function validateField(id) {
     if (id === 'email') {
         if (!value) return setError(id, 'Please enter your email address.'), false;
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return setError(id, 'Please enter a valid email address.'), false;
-        if (!/^[^\s@]+@gmail\.com$/i.test(value)) return setError(id, 'Only Gmail addresses are allowed. Please use a @gmail.com email.'), false;
+        if (!/^[^\s@]+@gmail\.com$/i.test(value)) return setError(id, 'Please use a valid @gmail.com email address.'), false;
         return setSuccess(id), true;
     }
     if (id === 'phone') {
@@ -115,8 +139,8 @@ function validateField(id) {
     if (id === 'password') {
         if (!value) return setError(id, 'Please enter a password.'), false;
         if (value.length < 8) return setError(id, 'Password must be at least 8 characters.'), false;
-        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-        if (!passwordRegex.test(value)) return setError(id, 'Password must contain uppercase, lowercase, number, and special character (@$!%*?&).'), false;
+        const re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        if (!re.test(value)) return setError(id, 'Use uppercase, lowercase, number & a special character (@$!%*?&).'), false;
         return setSuccess(id), true;
     }
     if (id === 'confirm-password') {
@@ -125,54 +149,49 @@ function validateField(id) {
         return setSuccess(id), true;
     }
     if (id === 'terms') {
-        const termsErr = document.getElementById('terms-error');
+        const err = document.getElementById('terms-error');
         if (!el.checked) {
-            termsErr.textContent = 'You must agree to the terms.';
-            termsErr.classList.add('visible');
+            err.textContent = 'You must agree to the Terms and Privacy Policy.';
+            err.classList.add('visible');
             return false;
         }
-        termsErr.classList.remove('visible');
+        err.classList.remove('visible');
         return true;
     }
     return true;
 }
 
-['name', 'email', 'phone', 'password', 'confirm-password'].forEach(id => {
+['name', 'email', 'phone', 'password', 'confirm-password'].forEach((id) => {
     document.getElementById(id).addEventListener('blur', () => validateField(id));
-});
-
-document.getElementById('confirm-password').addEventListener('input', function () {
-    if (this.value && this.value === passwordInput.value) setSuccess('confirm-password');
 });
 
 document.getElementById('terms').addEventListener('change', () => validateField('terms'));
 
-// ── FORM SUBMIT ───────────────────────────────────────────────
+// ── SUBMIT ────────────────────────────────────────────────────
 const form = document.getElementById('register-form');
 const submitBtn = document.getElementById('submit-btn');
 const alertSuccess = document.getElementById('alert-success');
 const alertError = document.getElementById('alert-error');
 const errorText = document.getElementById('error-text');
 
-// Backend API endpoint (adjust for production)
 const API_BASE = (window.APP_CONFIG && window.APP_CONFIG.BACKEND_URL) || 'http://localhost:5000';
 
-form.addEventListener('submit', async function (e) {
+form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const valid = ['name', 'email', 'password', 'confirm-password', 'terms']
-        .map(id => validateField(id))
+    const valid = ['name', 'email', 'phone', 'password', 'confirm-password', 'terms']
+        .map(validateField)
         .every(Boolean);
-
     if (!valid) return;
 
     submitBtn.classList.add('loading');
     submitBtn.disabled = true;
-    alertSuccess.classList.remove('visible');
-    alertError.classList.remove('visible');
+    alertError.hidden = true;
+    alertSuccess.hidden = true;
 
     try {
-        const response = await fetch(`${API_BASE}/api/auth/register/buyer`, { credentials: 'include', 
+        const response = await fetch(`${API_BASE}/api/auth/register/buyer`, {
+            credentials: 'include',
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -186,27 +205,26 @@ form.addEventListener('submit', async function (e) {
         const result = await response.json();
 
         if (response.ok && result.success) {
-            alertSuccess.classList.add('visible');
+            alertSuccess.hidden = false;
             form.reset();
-            strengthBar.className = 'password-strength-bar';
-            strengthLabel.className = 'strength-label';
-            strengthLabel.textContent = '';
-            document.querySelectorAll('.input-wrapper.success').forEach(w => w.classList.remove('success'));
-            setTimeout(() => { window.location.href = '../login.html'; }, 1500);
+            refreshStrength();
+            confirmInput.classList.remove('success');
+            document.getElementById('match-indicator').classList.remove('visible');
+            setTimeout(() => { window.location.href = '../login.html'; }, 2000);
         } else {
-            if (result.error) {
-                errorText.textContent = result.error;
-            } else {
-                errorText.textContent = 'Registration failed. Please try again.';
+            const msg = result?.error || 'Registration failed. Please try again.';
+            errorText.textContent = msg;
+            alertError.hidden = false;
+            if (result?.error && /already registered/i.test(result.error)) {
+                setError('email', result.error);
             }
-            alertError.classList.add('visible');
             submitBtn.classList.remove('loading');
             submitBtn.disabled = false;
         }
     } catch (err) {
         console.error('Registration error:', err);
         errorText.textContent = 'Network error. Please check your connection and try again.';
-        alertError.classList.add('visible');
+        alertError.hidden = false;
         submitBtn.classList.remove('loading');
         submitBtn.disabled = false;
     }

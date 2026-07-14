@@ -326,12 +326,12 @@
         </div>
     </div>
 
-    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
-    <script>lucide.createIcons();</script>
-    <script src="../shared/polling.js"></script>
-    <script src="../shared/sidebar.js"></script>
-    <script src="../shared/topnav.js"></script>
-    <script src="../assets/js/product-details.js?v=2"></script>
+    <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script>if(window.lucide)lucide.createIcons();else window.addEventListener('DOMContentLoaded',function(){if(window.lucide)lucide.createIcons();});</script>
+    <script defer src="../shared/polling.js"></script>
+    <script defer src="../shared/sidebar.js"></script>
+    <script defer src="../shared/topnav.js"></script>
+    <script defer src="../assets/js/product-details.js?v=2"></script>
 
 </body>
 </html>

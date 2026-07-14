@@ -70,6 +70,8 @@ export const sellerTypeSchema = z.object({
   studentId: z.string().optional(),
   businessType: z.enum(['individual', 'small-business']).optional(),
   currentPlatform: z.enum(['whatsapp', 'instagram', 'facebook', 'physical', 'other', 'none']).optional(),
+  studentEmail: z.string().email().optional().or(z.literal('')),
+  verificationMethod: z.enum(['student_id', 'student_email', 'both']).optional(),
 });
 
 export const storeInfoSchema = z.object({
@@ -84,8 +86,8 @@ export const storeInfoSchema = z.object({
     'beauty',
     'sports',
     'books',
-    'food',
     'services',
+    'food',
     'other',
   ]),
   storeDescription: z
@@ -98,6 +100,14 @@ export const storeInfoSchema = z.object({
   city: z
     .string()
     .min(2, 'Please enter a valid city name'),
+  storeTagline: z.string().max(80).optional().or(z.literal('')),
+  accentColor: z.string().regex(/^#[0-9a-fA-F]{6}$/).optional().or(z.literal('')),
+  storeLogo: z.string().startsWith('data:image/').optional(),
+  storeBanner: z.string().startsWith('data:image/').optional(),
+  campus: z.string().max(120).optional().or(z.literal('')),
+  pickupLocation: z.string().max(160).optional().or(z.literal('')),
+  deliveryOptions: z.array(z.string()).optional(),
+  businessHours: z.string().max(80).optional().or(z.literal('')),
 });
 
 export const forgotPasswordSchema = z.object({

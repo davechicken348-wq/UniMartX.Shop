@@ -2,6 +2,12 @@
    SELLER DASHBOARD
 ═══════════════════════════════════════════ */
 
+/* ── Full-width layout (use all available space) ── */
+.dashboard-content {
+    max-width: none;
+    padding: clamp(1.25rem, 2.5vw, 2.5rem);
+}
+
 /* ── Topnav add button ── */
 .topnav-add-btn {
     display: inline-flex; align-items: center; gap: 0.4rem;
@@ -549,4 +555,374 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+/* ── GETTING STARTED (new sellers) ── */
+.getting-started {
+    position: relative;
+    margin-bottom: 1.75rem;
+    padding: 1.5rem 1.6rem;
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(251, 191, 36, 0.06));
+    border: 1px solid var(--border-2);
+    border-radius: 18px;
+    overflow: hidden;
+}
+.getting-started[hidden] { display: none; }
+.getting-started::before {
+    content: '';
+    position: absolute;
+    top: -40px;
+    right: -40px;
+    width: 160px;
+    height: 160px;
+    background: radial-gradient(circle, rgba(245, 158, 11, 0.18), transparent 70%);
+    pointer-events: none;
+}
+.gs-header {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    margin-bottom: 1.1rem;
+}
+.gs-emoji {
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    flex-shrink: 0;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 6px 16px -6px rgba(245, 158, 11, 0.5);
+    font-size: 1.4rem;
+}
+.gs-header-text { flex: 1; min-width: 0; }
+.gs-header h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.01em;
+}
+.gs-header p {
+    font-size: 0.85rem;
+    color: var(--text-2);
+    margin-top: 0.15rem;
+}
+.gs-dismiss {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    color: var(--text-3);
+    font-family: inherit;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0.35rem 0.5rem;
+    border-radius: 8px;
+    transition: color 0.2s, background 0.2s;
+}
+.gs-dismiss:hover { color: var(--text); background: rgba(0,0,0,0.04); }
+.gs-progress {
+    height: 6px;
+    background: rgba(245, 158, 11, 0.14);
+    border-radius: 50px;
+    overflow: hidden;
+    margin-bottom: 0.4rem;
+}
+.gs-progress-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--primary-d), var(--primary-b));
+    border-radius: 50px;
+    transition: width 0.5s ease;
+}
+.gs-progress-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-3);
+    margin-bottom: 1rem;
+}
+.gs-steps {
+    list-style: none;
+    display: grid;
+    gap: 0.6rem;
+}
+.gs-step {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.7rem 0.85rem;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(245, 158, 11, 0.14);
+    border-radius: 12px;
+    transition: border-color 0.2s ease, background 0.2s ease;
+}
+.gs-step.is-done {
+    background: rgba(245, 158, 11, 0.10);
+    border-color: var(--border-2);
+}
+.gs-check {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background: #fff;
+    position: relative;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+.gs-step.is-done .gs-check {
+    background: var(--primary);
+    border-color: var(--primary);
+}
+.gs-step.is-done .gs-check::after {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 4px;
+    width: 5px;
+    height: 10px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+.gs-step-text { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+.gs-step-text strong { font-size: 0.9rem; font-weight: 700; color: var(--text); }
+.gs-step-text span { font-size: 0.8rem; color: var(--text-2); line-height: 1.35; }
+.gs-cta {
+    flex-shrink: 0;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #fff;
+    background: var(--primary);
+    padding: 0.45rem 0.85rem;
+    border-radius: 9px;
+    text-decoration: none;
+    transition: transform 0.15s ease, background 0.2s ease;
+    white-space: nowrap;
+}
+.gs-cta:hover { transform: translateY(-1px); background: var(--primary-d); }
+.gs-primary-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-top: 1.1rem;
+}
+.gs-primary-cta svg { width: 16px; height: 16px; stroke: currentColor; }
+
+/* ── WELCOME MODAL (post-registration) ── */
+.welcome-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    background: rgba(28, 25, 23, 0.45);
+    backdrop-filter: blur(4px);
+    animation: welcomeFade 0.25s ease both;
+}
+.welcome-overlay[hidden] { display: none; }
+@keyframes welcomeFade { from { opacity: 0; } to { opacity: 1; } }
+.welcome-modal {
+    position: relative;
+    width: 100%;
+    max-width: 460px;
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    padding: 2rem 1.75rem 1.75rem;
+    text-align: center;
+    animation: welcomePop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes welcomePop { from { opacity: 0; transform: translateY(16px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+.welcome-close {
+    position: absolute;
+    top: 0.85rem; right: 0.95rem;
+    width: 32px; height: 32px;
+    border: none; background: none;
+    color: var(--text-3);
+    font-size: 1.5rem; line-height: 1;
+    cursor: pointer; border-radius: 8px;
+    transition: color 0.2s, background 0.2s;
+}
+.welcome-close:hover { color: var(--text); background: var(--bg-3); }
+.welcome-emoji { font-size: 2.4rem; margin-bottom: 0.5rem; }
+.welcome-modal h2 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.02em;
+}
+.welcome-sub {
+    font-size: 0.9rem;
+    color: var(--text-2);
+    margin: 0.5rem auto 1.25rem;
+    max-width: 340px;
+    line-height: 1.5;
+}
+.welcome-steps {
+    list-style: none;
+    display: grid;
+    gap: 0.6rem;
+    text-align: left;
+    margin-bottom: 1.5rem;
+}
+.welcome-steps li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 0.85rem;
+    background: var(--bg-3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+}
+.welcome-steps .ws-num {
+    flex-shrink: 0;
+    width: 26px; height: 26px;
+    display: grid; place-items: center;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-d), var(--primary-b));
+    color: #1c1917;
+    font-size: 0.8rem; font-weight: 800;
+}
+.welcome-steps strong { display: block; font-size: 0.88rem; font-weight: 700; color: var(--text); }
+.welcome-steps span { font-size: 0.78rem; color: var(--text-3); }
+.welcome-actions {
+    display: flex;
+    gap: 0.6rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+.welcome-cta { flex: 1; justify-content: center; min-width: 200px; }
+
+/* ── DASHBOARD PAGE HEADER ── */
+.dash-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+.dash-header-text h1 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.02em;
+}
+.dash-header-text p {
+    color: var(--text-2);
+    font-size: 0.9rem;
+    margin-top: 0.2rem;
+}
+.dash-header-actions { display: flex; gap: 0.6rem; flex-shrink: 0; }
+.dash-header-actions svg { width: 16px; height: 16px; stroke: currentColor; }
+
+/* ── Revenue chart ── */
+.chart-figure {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.02em;
+}
+.chart-wrap { margin-top: 1rem; }
+.area-chart { width: 100%; height: 200px; }
+.area-svg { width: 100%; height: 100%; display: block; }
+.area-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.5rem;
+    font-size: 0.7rem;
+    color: var(--text-3);
+}
+.area-labels .is-today { color: var(--primary-ink); font-weight: 700; }
+.chart-empty {
+    height: 200px;
+    display: grid;
+    place-items: center;
+    color: var(--text-3);
+    font-size: 0.85rem;
+    text-align: center;
+    padding: 0 1rem;
+}
+
+/* ── Split row (orders + status) ── */
+.dash-split {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 1.25rem;
+    align-items: start;
+}
+
+/* ── Order status breakdown ── */
+.order-status { display: grid; gap: 0.85rem; padding: 0.25rem 0; }
+.os-row { display: grid; grid-template-columns: 84px 1fr 28px; align-items: center; gap: 0.6rem; }
+.os-name { font-size: 0.8rem; font-weight: 600; color: var(--text-2); }
+.os-track {
+    height: 8px;
+    background: var(--bg-3);
+    border-radius: 50px;
+    overflow: hidden;
+}
+.os-fill {
+    height: 100%;
+    border-radius: 50px;
+    transition: width 0.6s ease;
+}
+.os-fill--pending   { background: var(--primary); }
+.os-fill--confirmed { background: #d97706; }
+.os-fill--shipped   { background: #38bdf8; }
+.os-fill--delivered { background: #22c55e; }
+.os-fill--cancelled { background: #ef4444; }
+.os-count { font-size: 0.82rem; font-weight: 700; color: var(--text); text-align: right; }
+.os-empty { font-size: 0.85rem; color: var(--text-3); padding: 0.5rem 0; }
+
+/* ── Store health ring ── */
+.store-health { text-align: center; }
+.health-ring {
+    position: relative;
+    width: 124px;
+    height: 124px;
+    margin: 0.5rem auto 0;
+}
+.health-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.ring-bg {
+    fill: none;
+    stroke: var(--border);
+    stroke-width: 6;
+}
+.ring-progress {
+    fill: none;
+    stroke: var(--primary);
+    stroke-width: 6;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.8s ease;
+}
+.health-pct {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--text);
+}
+.health-label {
+    font-size: 0.82rem;
+    color: var(--text-2);
+    margin: 0.9rem 0 1rem;
+    line-height: 1.5;
+}
+.health-cta { width: 100%; justify-content: center; }
+
+/* ── Responsive dashboard ── */
+@media (max-width: 1100px) {
+    .dash-split { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+    .dash-header { align-items: flex-start; }
+    .dash-header-actions { width: 100%; }
+    .dash-header-actions .btn { flex: 1; justify-content: center; }
 }

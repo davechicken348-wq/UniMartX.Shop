@@ -14,6 +14,7 @@ import {
 import { AppError } from '../middleware/errorHandler';
 import prisma from '../lib/prisma';
 import { generateToken, getTokenExpiry } from '../utils/token';
+import { uploadToR2, parseBase64, sellerStoreAvatarKey, sellerBannerKey, isR2Ready } from '../services/r2.service';
 import {
   sendVerificationEmail,
   sendWelcomeEmail,
@@ -90,6 +91,12 @@ export const registerSeller = async (req: Request, res: Response): Promise<void>
           city: storeData.city,
           businessType: businessType,
           universityAffiliation: universityAffiliation,
+          storeTagline: storeData.storeTagline || null,
+          campus: storeData.campus || null,
+          pickupAddress: storeData.pickupLocation || null,
+          deliveryOptions: storeData.deliveryOptions ? JSON.stringify(storeData.deliveryOptions) : null,
+          businessHours: storeData.businessHours || null,
+          storeColor: storeData.accentColor || null,
         },
       });
 
@@ -110,8 +117,33 @@ export const registerSeller = async (req: Request, res: Response): Promise<void>
         data: {
           sellerId: seller.id,
           status: 'pending',
+          studentId: typeData.studentId || null,
+          studentEmail: typeData.studentEmail || null,
+          verificationMethod: typeData.verificationMethod || null,
         },
       });
+
+      // Upload store logo & banner (base64 -> R2) if provided
+      if (storeData.storeLogo || storeData.storeBanner) {
+        try {
+          let storeAvatar: string | undefined;
+          let storeBannerUrl: string | undefined;
+          if (storeData.storeLogo) {
+            const { buffer, mime, ext } = parseBase64(storeData.storeLogo);
+            storeAvatar = isR2Ready() ? await uploadToR2(sellerStoreAvatarKey(seller.id, ext), buffer, mime) : storeData.storeLogo;
+          }
+          if (storeData.storeBanner) {
+            const { buffer, mime, ext } = parseBase64(storeData.storeBanner);
+            storeBannerUrl = isR2Ready() ? await uploadToR2(sellerBannerKey(seller.id, ext), buffer, mime) : storeData.storeBanner;
+          }
+          await tx.seller.update({
+            where: { id: seller.id },
+            data: { storeAvatar: storeAvatar ?? undefined, storeBanner: storeBannerUrl ?? undefined },
+          });
+        } catch (uploadErr) {
+          console.error('Store media upload failed (non-blocking):', uploadErr);
+        }
+      }
 
       // Generate and store verification token
       const verificationToken = generateToken(32);

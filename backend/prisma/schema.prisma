@@ -75,13 +75,17 @@ model Seller {
   storeDescription      String?
   businessType          String
   universityAffiliation String?
+  storeTagline          String?
+  campus                String?
+  pickupAddress         String?
+  deliveryOptions       String?
+  businessHours         String?
   isActive              Boolean             @default(false)
   createdAt             DateTime            @default(now())
   updatedAt             DateTime            @updatedAt
   category              String?
   city                  String?
   country               String?
-  pickupAddress         String?
   storeAvatar           String?
   storeBanner           String?
   storeColor            String?
@@ -106,16 +110,19 @@ model Seller {
 }
 
 model SellerVerification {
-  id              String             @id @default(cuid())
-  sellerId        String             @unique
-  status          VerificationStatus @default(pending)
-  rejectionReason String?
-  submittedAt     DateTime           @default(now())
-  reviewedAt      DateTime?
-  reviewedBy      String?
-  documents       String[]           @default([])
-  createdAt       DateTime           @default(now())
-  updatedAt       DateTime           @updatedAt
+  id                String             @id @default(cuid())
+  sellerId          String             @unique
+  status            VerificationStatus @default(pending)
+  rejectionReason   String?
+  submittedAt       DateTime           @default(now())
+  reviewedAt        DateTime?
+  reviewedBy        String?
+  documents         String[]           @default([])
+  studentId         String?
+  studentEmail      String?
+  verificationMethod String?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime            @updatedAt
   seller          Seller             @relation(fields: [sellerId], references: [id], onDelete: Cascade)
 
   @@map("seller_verifications")

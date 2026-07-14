@@ -154,7 +154,72 @@
 
     <!-- MAIN -->
     <div class="seller-main" id="seller-main">
-        <div class="page-content">
+        <div class="page-content dashboard-content">
+
+            <!-- ── GETTING STARTED (new sellers) ── -->
+            <div class="getting-started" id="getting-started" hidden>
+                <div class="gs-header">
+                    <div class="gs-emoji" aria-hidden="true">🚀</div>
+                    <div class="gs-header-text">
+                        <h2>Your store is live — let's set it up</h2>
+                        <p>Finish these steps to make your storefront shine and get your first order.</p>
+                    </div>
+                    <button class="gs-dismiss" id="gs-dismiss" type="button">Skip for now</button>
+                </div>
+                <div class="gs-progress" aria-hidden="true">
+                    <div class="gs-progress-bar" id="gs-progress-bar"></div>
+                </div>
+                <p class="gs-progress-label" id="gs-progress-label"></p>
+                <ul class="gs-steps" id="gs-steps">
+                    <li class="gs-step" data-step="verify">
+                        <span class="gs-check" aria-hidden="true"></span>
+                        <div class="gs-step-text">
+                            <strong>Verify your account</strong>
+                            <span>Confirm your email so buyers trust your store.</span>
+                        </div>
+                    </li>
+                    <li class="gs-step" data-step="product">
+                        <span class="gs-check" aria-hidden="true"></span>
+                        <div class="gs-step-text">
+                            <strong>Add your first product</strong>
+                            <span>This is what buyers will see and buy.</span>
+                        </div>
+                        <a href="../products/add-product.html" class="gs-cta">Add product</a>
+                    </li>
+                    <li class="gs-step" data-step="branding">
+                        <span class="gs-check" aria-hidden="true"></span>
+                        <div class="gs-step-text">
+                            <strong>Add a logo &amp; banner</strong>
+                            <span>Make your store recognizable on campus.</span>
+                        </div>
+                        <a href="../profile/customize-store.html" class="gs-cta">Customize</a>
+                    </li>
+                    <li class="gs-step" data-step="share">
+                        <span class="gs-check" aria-hidden="true"></span>
+                        <div class="gs-step-text">
+                            <strong>Share your store</strong>
+                            <span>Send the link to friends and coursemates.</span>
+                        </div>
+                        <a href="#" class="gs-cta" id="gs-share">Share</a>
+                    </li>
+                </ul>
+                <a href="../products/add-product.html" class="btn btn-primary gs-primary-cta">
+                    <i data-lucide="plus"></i> Add your first product
+                </a>
+            </div>
+
+            <!-- ── PAGE HEADER ── -->
+            <header class="dash-header">
+                <div class="dash-header-text">
+                    <h1 id="dash-title">Welcome back 👋</h1>
+                    <p id="dash-sub">Here's how your store is performing today.</p>
+                </div>
+                <div class="dash-header-actions">
+                    <a href="../products/add-product.html" class="btn btn-primary">
+                        <i data-lucide="plus"></i> Add Product
+                    </a>
+                </div>
+            </header>
 
             <!-- ── STATS ── -->
             <div class="stats-grid">
@@ -200,31 +265,55 @@
                 </div>
             </div>
 
-
-            <!-- ── MAIN GRID ── -->
+            <!-- ── DASHBOARD GRID ── -->
             <div class="dashboard-grid">
 
                 <!-- Main column -->
                 <div class="main-col">
 
-                    <!-- Recent Orders -->
-                    <div class="card">
+                    <!-- Revenue chart -->
+                    <div class="card chart-card">
                         <div class="card-header">
                             <div>
-                                <h2>Recent Orders</h2>
-                                <p>Needs your attention</p>
+                                <h2>Revenue</h2>
+                                <p id="rev-range">Last 7 days</p>
                             </div>
-                            <a href="../orders/order-list.html" class="btn btn-ghost btn-sm">View all</a>
+                            <span class="revenue-total chart-figure" id="rev-figure">GH₵ 0</span>
                         </div>
-                        <div class="orders-table">
-                            <div class="orders-table-head">
-                                <span>Order</span>
-                                <span>Product</span>
-                                <span>Amount</span>
-                                <span>Status</span>
-                                <span></span>
+                        <div class="chart-wrap">
+                            <div class="area-chart" id="area-chart"></div>
+                            <div class="area-labels" id="area-labels"></div>
+                        </div>
+                    </div>
+
+                    <!-- Split: orders + status -->
+                    <div class="dash-split">
+                        <div class="card">
+                            <div class="card-header">
+                                <div>
+                                    <h2>Recent Orders</h2>
+                                    <p>Needs your attention</p>
+                                </div>
+                                <a href="../orders/order-list.html" class="btn btn-ghost btn-sm">View all</a>
                             </div>
-                            <!-- Orders will be loaded here -->
+                            <div class="orders-table">
+                                <div class="orders-table-head">
+                                    <span>Order</span>
+                                    <span>Product</span>
+                                    <span>Amount</span>
+                                    <span>Status</span>
+                                    <span></span>
+                                </div>
+                                <!-- Orders will be loaded here -->
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <div><h2>Order Status</h2></div>
+                                <p>From recent activity</p>
+                            </div>
+                            <div class="order-status" id="order-status"></div>
                         </div>
                     </div>
 
@@ -247,12 +336,26 @@
                 <!-- Side column -->
                 <div class="dashboard-side">
 
+                    <!-- Store health -->
+                    <div class="card store-health">
+                        <div class="card-header"><div><h2>Store Health</h2></div></div>
+                        <div class="health-ring" id="health-ring">
+                            <svg viewBox="0 0 64 64" aria-hidden="true">
+                                <circle class="ring-bg" cx="32" cy="32" r="26"></circle>
+                                <circle class="ring-progress" cx="32" cy="32" r="26"></circle>
+                            </svg>
+                            <div class="health-pct" id="health-pct">0%</div>
+                        </div>
+                        <p class="health-label" id="health-label">Set up your store to start selling.</p>
+                        <a href="../profile/customize-store.html" class="btn btn-ghost btn-sm health-cta">Complete setup</a>
+                    </div>
+
                     <!-- Followers -->
                     <div class="card">
                         <div class="card-header">
                             <div>
                                 <h2>Followers</h2>
-                                <p>Buyers who are following your store</p>
+                                <p>Buyers following your store</p>
                             </div>
                             <span class="btn btn-ghost btn-sm" id="followers-count-badge">0 followers</span>
                         </div>
@@ -264,25 +367,9 @@
                         </div>
                     </div>
 
-                    <!-- Revenue chart placeholder -->
-                    <div class="card revenue-card">
-                        <div class="card-header">
-                            <div>
-                                <h2>Revenue</h2>
-                                <p>Last 7 days</p>
-                            </div>
-                            <span class="revenue-total">GH₵ 0</span>
-                        </div>
-                        <div class="mini-chart" id="mini-chart">
-                            <!-- Chart data will be loaded here -->
-                        </div>
-                    </div>
-
                     <!-- Quick actions -->
                     <div class="card">
-                        <div class="card-header">
-                            <div><h2>Quick Actions</h2></div>
-                        </div>
+                        <div class="card-header"><div><h2>Quick Actions</h2></div></div>
                         <div class="quick-actions">
                             <a href="../products/add-product.html" class="qa-item">
                                 <div class="qa-icon"><i data-lucide="plus-circle"></i></div>
@@ -309,12 +396,32 @@
         </div>
     </div>
 
-    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
-    <script>lucide.createIcons();</script>
-    <script src="../shared/polling.js"></script>
-    <script src="../shared/sidebar.js"></script>
-    <script src="../shared/topnav.js"></script>
-    <script src="../assets/js/dashboard.js"></script>
+        <!-- ── WELCOME MODAL (post-registration) ── -->
+        <div class="welcome-overlay" id="welcome-overlay" hidden>
+            <div class="welcome-modal" role="dialog" aria-modal="true" aria-labelledby="welcome-title">
+                <button class="welcome-close" id="welcome-close" type="button" aria-label="Close">×</button>
+                <div class="welcome-emoji" aria-hidden="true">🎉</div>
+                <h2 id="welcome-title">Welcome to UniMartX!</h2>
+                <p class="welcome-sub">Your storefront is created. Here's exactly what to do next to get your first sale.</p>
+                <ol class="welcome-steps">
+                    <li><span class="ws-num">1</span><div><strong>Verify your email</strong><span>Builds trust with buyers.</span></div></li>
+                    <li><span class="ws-num">2</span><div><strong>Add your first product</strong><span>This is what buyers browse and buy.</span></div></li>
+                    <li><span class="ws-num">3</span><div><strong>Add a logo &amp; banner</strong><span>Make your store recognizable.</span></div></li>
+                    <li><span class="ws-num">4</span><div><strong>Share your store link</strong><span>Send it to coursemates.</span></div></li>
+                </ol>
+                <div class="welcome-actions">
+                    <a href="../products/add-product.html" class="btn btn-primary welcome-cta">Add your first product</a>
+                    <button class="btn btn-ghost" id="welcome-explore" type="button">Explore dashboard</button>
+                </div>
+            </div>
+        </div>
+
+    <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script>if(window.lucide)lucide.createIcons();else window.addEventListener('DOMContentLoaded',function(){if(window.lucide)lucide.createIcons();});</script>
+    <script defer src="../shared/polling.js"></script>
+    <script defer src="../shared/sidebar.js"></script>
+    <script defer src="../shared/topnav.js"></script>
+    <script defer src="../assets/js/dashboard.js"></script>
 
 </body>
 </html>

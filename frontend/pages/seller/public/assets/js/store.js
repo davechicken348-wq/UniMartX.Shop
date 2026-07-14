@@ -169,6 +169,30 @@ function formatJoinDate(dateStr) {
   return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
 }
 
+function businessHoursLabel(v) {
+  const map = {
+    'mon-fri-9-17': 'Mon–Fri, 9:00–17:00',
+    'mon-sat-8-18': 'Mon–Sat, 8:00–18:00',
+    'flexible': 'Flexible / By appointment',
+    '247': '24 / 7',
+  };
+  return map[v] || v || '';
+}
+
+const DELIVERY_OPTION_LABELS = {
+  pickup: 'Pickup',
+  campus_delivery: 'Campus Delivery',
+  standard: 'Delivery',
+};
+
+function parseDeliveryOptions(raw) {
+  if (!raw) return [];
+  let arr = [];
+  try { arr = typeof raw === 'string' ? JSON.parse(raw) : raw; } catch { return []; }
+  if (!Array.isArray(arr)) return [];
+  return arr.map(o => DELIVERY_OPTION_LABELS[o] || o).filter(Boolean);
+}
+
 function getInitials(name) {
   return (name || '?').split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2) || '?';
 }
@@ -408,6 +432,12 @@ function renderStoreHero(profile, stats) {
   if (descEl) {
     descEl.textContent = fullDesc;
     if (descToggle) descToggle.classList.toggle('hidden', fullDesc.length <= DESC_LIMIT);
+  }
+
+  const taglineEl = document.getElementById('store-hero-tagline');
+  if (taglineEl) {
+    taglineEl.textContent = profile.storeTagline || '';
+    taglineEl.classList.toggle('hidden', !profile.storeTagline);
   }
 
   const badgesEl = document.getElementById('store-hero-badges');
@@ -707,7 +737,13 @@ async function loadStoreData() {
     renderSellerSnapshot(profile, stats);
     renderStorePolicies(profile);
     initShareModal();
-    loadBrowseMoreShops();
+
+    const moreShops = document.getElementById('more-shops-section');
+    if (stats && stats.productCount > 0) {
+      loadBrowseMoreShops();
+    } else if (moreShops) {
+      moreShops.hidden = true;
+    }
 
     setupStoreLiveSync();
 
@@ -859,6 +895,10 @@ function renderSellerSnapshot(profile, stats) {
   if (profile.city || profile.country) {
     tiles.push(snapshotInfoTile('map-pin', 'Based in', [profile.city, profile.country].filter(Boolean).join(', ')));
   }
+  if (profile.universityAffiliation || profile.campus) {
+    const affiliation = [profile.universityAffiliation, profile.campus].filter(Boolean).join(' · ');
+    tiles.push(snapshotInfoTile('graduation-cap', 'Affiliation', affiliation));
+  }
   if (profile.joinedDate) {
     tiles.push(snapshotInfoTile('calendar', 'Joined', formatJoinDate(profile.joinedDate)));
   }
@@ -870,10 +910,20 @@ function renderSellerSnapshot(profile, stats) {
   }
   if (profile.deliveryFee != null) {
     const fee = profile.deliveryFee === 0 ? 'Free' : `$${profile.deliveryFee.toFixed(2)}`;
-    tiles.push(snapshotInfoTile('truck', 'Delivery', fee));
+    tiles.push(snapshotInfoTile('truck', 'Delivery Fee', fee));
   }
   if (profile.processingTime) {
     tiles.push(snapshotInfoTile('clock', 'Processing', profile.processingTime));
+  }
+  if (profile.businessHours) {
+    tiles.push(snapshotInfoTile('clock', 'Hours', businessHoursLabel(profile.businessHours)));
+  }
+  const deliveryOpts = parseDeliveryOptions(profile.deliveryOptions);
+  if (deliveryOpts.length) {
+    tiles.push(snapshotInfoTile('package', 'Options', deliveryOpts.join(', ')));
+  }
+  if (profile.pickupAddress) {
+    tiles.push(snapshotInfoTile('store', 'Pickup', profile.pickupAddress));
   }
 
   grid.innerHTML = tiles.join('');
@@ -977,7 +1027,12 @@ async function liveFetchStore() {
     renderReviewsInto(reviews, ratingBreakdown, stats.totalReviews, pagination, { avgRating: stats.avgRating });
     renderStorePolicies(profile);
 
-    loadBrowseMoreShops().catch(() => {});
+    const moreShops = document.getElementById('more-shops-section');
+    if (stats && stats.productCount > 0) {
+      loadBrowseMoreShops().catch(() => {});
+    } else if (moreShops) {
+      moreShops.hidden = true;
+    }
 
     if (window.lucide) window.lucide.createIcons();
     const grid = document.getElementById('store-products');
@@ -996,7 +1051,7 @@ function startStoreLiveSync() {
     if (state.loading || _isFetching) return;
     if (!initialized) { initialized = true; return; }
     await liveFetchStore();
-  }, 60000);
+  }, 120000);
   window.addEventListener('beforeunload', () => { if (_pollId) { clearInterval(_pollId); _pollId = null; } });
 }
 

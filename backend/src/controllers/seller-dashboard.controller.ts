@@ -53,6 +53,7 @@ export const getSellerDashboard = async (req: Request, res: Response): Promise<v
       followersCount,
       recentFollowers,
       lowStockCount,
+      userVerified,
     ] = await Promise.all([
       prisma.order.aggregate({
         where: { sellerId, status: { in: ['processing', 'shipped', 'delivered'] } },
@@ -124,6 +125,10 @@ export const getSellerDashboard = async (req: Request, res: Response): Promise<v
         },
       }),
       prisma.product.count({ where: { sellerId, stock: { lte: 5 } } }),
+      prisma.user.findUnique({
+        where: { id: seller.userId },
+        select: { emailVerified: true },
+      }),
     ]);
 
     // Compute top products
@@ -188,6 +193,12 @@ export const getSellerDashboard = async (req: Request, res: Response): Promise<v
           lowStock: lowStockCount,
         },
         recentOrders: formattedRecentOrders,
+        verified: !!(userVerified && userVerified.emailVerified),
+        profile: {
+          verified: !!(userVerified && userVerified.emailVerified),
+          storeAvatar: seller.storeAvatar || null,
+          storeBanner: seller.storeBanner || null,
+        },
         topProducts,
         chartData: last7Days.map(d => d.revenue),
         chartLabels: last7Days.map(d => d.day),

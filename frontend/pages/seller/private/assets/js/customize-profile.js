@@ -22,19 +22,19 @@ function getAuthToken() {
 }
 
 // ── Toast Notification Helper ─────────────────────────────
-function showToast(message, type = 'info', duration = 3000) {
-  // reuse existing toast pattern if present, else simple alert fallback
-  const container = document.getElementById('toast-container') || document.body;
+// Uses the same Toast implementation as the Store Studio page
+// (see window.Toast defined in customize-profile.html).
+function showToast(message, type = 'info', duration = 3500) {
+  if (window.Toast && typeof window.Toast.show === 'function') {
+    window.Toast.show(message, type, duration);
+    return;
+  }
+  // Fallback if the shared Toast helper is unavailable
   const toast = document.createElement('div');
-  toast.className = `toast toast-${type}`;
   toast.textContent = message;
-  toast.style.cssText = 'position:fixed;top:1.5rem;right:1.5rem;padding:0.85rem 1.25rem;background:var(--color-bg);color:var(--color-text);border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.15);z-index:9999;animation:toast-in 0.3s ease-out forwards;';
-  container.appendChild(toast);
-  setTimeout(() => {
-    toast.style.opacity = '0';
-    toast.style.transform = 'translateY(-10px)';
-    setTimeout(() => toast.remove(), 300);
-  }, duration);
+  toast.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:9999;background:var(--bg-2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius);padding:0.8rem 1.1rem;font-family:\'Quicksand\',sans-serif;font-weight:600;font-size:0.85rem;box-shadow:0 8px 32px rgba(0,0,0,0.35);max-width:340px;';
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), duration);
 }
 
 // ── Update shared navigation UI (topnav + sidebar) ───
@@ -130,6 +130,7 @@ async function loadProfile() {
 
     // ── Contact Tab ──
     document.getElementById('profile-email').value = p.email || '';
+    document.getElementById('profile-student-email').value = p.studentEmail || '';
     document.getElementById('profile-phone').value = p.phone || '';
     document.getElementById('profile-whatsapp').value = p.whatsapp || '';
     document.getElementById('profile-address').value = p.pickupAddress || '';
@@ -671,6 +672,7 @@ function buildPayloadFromForm(form) {
         data.phone = (document.getElementById('profile-phone')?.value || '').trim() || null;
         data.whatsapp = (document.getElementById('profile-whatsapp')?.value || '').trim() || null;
         data.pickupAddress = (document.getElementById('profile-address')?.value || '').trim() || null;
+        data.studentEmail = (document.getElementById('profile-student-email')?.value || '').trim() || null;
         // email is readonly — not included
     } else if (formId === 'form-social') {
         data.instagram = (document.getElementById('social-instagram')?.value || '').trim() || null;

@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { changePassword, getSessions, revokeSession, logoutAll, deleteAccount, exportUserData, getNotificationPreferences, updateNotificationPreferences } from '../controllers/user.controller';
+import { changePassword, verifyPassword, getSessions, revokeSession, logoutAll, deleteAccount, exportUserData, getNotificationPreferences, updateNotificationPreferences } from '../controllers/user.controller';
 import { validate } from '../middleware/validate';
-import { changePasswordSchema, deleteAccountSchema, notificationPreferencesSchema } from '../schemas/user.schema';
+import { changePasswordSchema, deleteAccountSchema, currentPasswordSchema, notificationPreferencesSchema } from '../schemas/user.schema';
 import { asyncHandler } from '../middleware/asyncHandler';
 
 const router = Router();
@@ -12,6 +12,13 @@ const router = Router();
  * @access  Private
  */
 router.patch('/password', validate(changePasswordSchema), asyncHandler(changePassword));
+
+/**
+ * @route   POST /api/users/verify-password
+ * @desc    Verify the current password matches the stored hash
+ * @access  Private
+ */
+router.post('/verify-password', validate(currentPasswordSchema), asyncHandler(verifyPassword));
 
 /**
  * @route   GET /api/users/sessions

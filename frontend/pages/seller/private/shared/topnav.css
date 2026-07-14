@@ -11,7 +11,7 @@
     position: fixed; top: 0;
     left: var(--sidebar-w); right: 0;
     height: var(--topnav-h);
-    background: rgba(10,10,15,0.88);
+    background: rgba(255,255,255,0.82);
     backdrop-filter: blur(16px);
     border-bottom: 1px solid var(--border);
     display: flex; align-items: center;
@@ -61,6 +61,19 @@
 .topnav-btn:hover { color: var(--primary); border-color: var(--border-2); background: var(--primary-l); }
 .topnav-btn svg { width: 17px; height: 17px; stroke: currentColor; }
 
+/* Add / primary topnav action button (shared so every private page matches) */
+.topnav-add-btn {
+    display: inline-flex; align-items: center; gap: 0.45rem;
+    padding: 0.55rem 1rem; border-radius: var(--radius);
+    font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 0.85rem;
+    background: linear-gradient(135deg, var(--primary-d), var(--primary-b));
+    color: #1c1917; text-decoration: none; white-space: nowrap;
+    cursor: pointer; transition: all 0.2s; border: none;
+}
+.topnav-add-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(245,158,11,0.35); }
+.topnav-add-btn svg { width: 15px; height: 15px; stroke: currentColor; }
+.topnav-add-btn span { display: block; }
+
 .topnav-badge {
     position: absolute; top: -4px; right: -4px;
     width: 17px; height: 17px; border-radius: 50%;
@@ -81,8 +94,8 @@
 
 .topnav-avatar {
     width: 30px; height: 30px; border-radius: 50%;
-    background: linear-gradient(135deg, var(--primary-d), var(--primary));
-    color: #0a0a0f; font-size: 0.72rem; font-weight: 700;
+    background: linear-gradient(135deg, var(--primary-d), var(--primary-b));
+    color: #1c1917; font-size: 0.72rem; font-weight: 700;
     display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
 .topnav-username { font-size: 0.88rem; font-weight: 700; color: var(--text); white-space: nowrap; }
@@ -122,7 +135,7 @@
     position: absolute; top: calc(100% + 8px); right: 0;
     width: 340px; background: var(--bg-3);
     border: 1px solid var(--border); border-radius: var(--radius-lg);
-    box-shadow: 0 16px 40px rgba(0,0,0,0.4);
+    box-shadow: var(--shadow-xl);
     display: none; z-index: 500;
     animation: dropIn 0.2s ease both; overflow: hidden;
 }
@@ -135,7 +148,7 @@
 .notif-header h3 { font-size: 0.9rem; font-weight: 700; color: var(--text); }
 .notif-mark-read {
     font-size: 0.78rem; font-weight: 600;
-    color: var(--primary); background: none; border: none;
+    color: var(--primary-ink); background: none; border: none;
     cursor: pointer; transition: opacity 0.2s;
 }
 .notif-mark-read:hover { opacity: 0.75; }
@@ -163,7 +176,7 @@
 .notif-time { font-size: 0.72rem; color: var(--text-3); margin-top: 0.25rem; }
 
 .notif-footer { padding: 0.85rem 1.25rem; border-top: 1px solid var(--border); text-align: center; }
-.notif-footer a { font-size: 0.82rem; font-weight: 700; color: var(--primary); transition: opacity 0.2s; }
+.notif-footer a { font-size: 0.82rem; font-weight: 700; color: var(--primary-ink); transition: opacity 0.2s; }
 .notif-footer a:hover { opacity: 0.75; }
 
 /* ── Responsive ── */

@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 import { z } from 'zod';
 import { AppError } from '../middleware/errorHandler';
 import prisma from '../lib/prisma';
-import { changePasswordSchema, deleteAccountSchema } from '../schemas/user.schema';
+import { changePasswordSchema, deleteAccountSchema, currentPasswordSchema } from '../schemas/user.schema';
 import { authenticate, type JwtPayload } from '../controllers/auth.controller';
 import { notificationPreferencesSchema, type NotificationPreferencesInput } from '../schemas/user.schema';
 
@@ -74,6 +74,45 @@ export const changePassword = async (req: Request, res: Response): Promise<void>
       throw error;
     }
     throw new AppError('Failed to change password', 500);
+  }
+};
+
+/**
+ * POST /api/users/verify-password
+ * Verify the current password against the stored hash (used to gate password changes)
+ */
+export const verifyPassword = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const userPayload = authenticate(req);
+    if (!userPayload) {
+      throw new AppError('Authentication required', 401);
+    }
+
+    const { currentPassword } = currentPasswordSchema.parse(req.body);
+
+    const user = await prisma.user.findUnique({
+      where: { id: userPayload.userId },
+      select: { password: true },
+    });
+
+    if (!user) {
+      throw new AppError('User not found', 404);
+    }
+
+    const isValid = await bcrypt.compare(currentPassword, user.password);
+
+    res.status(200).json({
+      success: true,
+      valid: isValid,
+    });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      throw new AppError('Current password is required', 400);
+    }
+    if (error instanceof AppError) {
+      throw error;
+    }
+    throw new AppError('Failed to verify password', 500);
   }
 };
 

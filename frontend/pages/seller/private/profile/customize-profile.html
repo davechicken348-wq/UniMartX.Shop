@@ -71,7 +71,7 @@
                 <div class="nav-item-icon"><i data-lucide="home"></i></div>
                 <span class="nav-item-label">Home</span>
             </a>
-            <a href="../../public/info/faq.html" class="nav-item" data-tooltip="Help">
+            <a href="../../../public/info/faq.html" class="nav-item" data-tooltip="Help">
                 <div class="nav-item-icon"><i data-lucide="help-circle"></i></div>
                 <span class="nav-item-label">Help & FAQ</span>
             </a>
@@ -155,6 +155,16 @@
                 </a>
             </div>
 
+            <!-- Profile completeness -->
+            <div class="profile-completeness" id="profile-completeness">
+                <div class="pc-head">
+                    <span class="pc-label"><i data-lucide="list-check"></i> Profile completeness</span>
+                    <span class="pc-pct" id="pc-pct">0%</span>
+                </div>
+                <div class="pc-bar"><div class="pc-fill" id="pc-fill"></div></div>
+                <div class="pc-steps" id="pc-steps"></div>
+            </div>
+
             <div class="profile-grid">
 
                 <!-- Avatar Card -->
@@ -190,6 +200,7 @@
                     <!-- General -->
                     <div class="card">
                         <h2 class="card-title"><i data-lucide="user"></i> General Info</h2>
+                        <p class="card-sub">Your name and bio as buyers see them on your public profile.</p>
                         <form id="form-general" novalidate autocomplete="on">
                             <div class="field">
                                 <label for="profile-name">Display Name <span class="req">*</span></label>
@@ -222,18 +233,29 @@
                     <!-- Contact -->
                     <div class="card">
                         <h2 class="card-title"><i data-lucide="phone"></i> Contact Info</h2>
+                        <p class="card-sub">How buyers reach you. Email is fixed; add phone, WhatsApp or a pickup address.</p>
                         <form id="form-contact" novalidate autocomplete="on">
-                            <div class="field">
-                                <label for="profile-email">Email <span class="req">*</span></label>
-                                <div class="input-icon">
-                                    <i data-lucide="mail"></i>
-                                    <input type="email" id="profile-email" name="profile_email" placeholder="your@email.com" required readonly>
-                                </div>
-                                <div class="field-error" id="err-email" role="alert"></div>
+                        <div class="field">
+                            <label for="profile-email">Email <span class="req">*</span></label>
+                            <div class="input-icon">
+                                <i data-lucide="mail"></i>
+                                <input type="email" id="profile-email" name="profile_email" placeholder="your@email.com" required readonly>
                             </div>
-                            <div class="field-row">
-                                <div class="field">
-                                    <label for="profile-phone">Phone</label>
+                            <div class="field-error" id="err-email" role="alert"></div>
+                        </div>
+
+                        <div class="field">
+                            <label for="profile-student-email">Student Email <span class="optional">(optional)</span></label>
+                            <div class="input-icon">
+                                <i data-lucide="graduation-cap"></i>
+                                <input type="email" id="profile-student-email" name="student_email" placeholder="e.g. ama@st.ug.edu.gh">
+                            </div>
+                            <span class="field-hint">Used for student verification. Separate from your login email.</span>
+                        </div>
+
+                        <div class="field-row">
+                            <div class="field">
+                                <label for="profile-phone">Phone</label>
                                     <div class="input-icon">
                                         <i data-lucide="phone"></i>
                                         <input type="tel" id="profile-phone" name="profile_phone" placeholder="+233 24 000 0000" maxlength="15">
@@ -266,6 +288,7 @@
                     <!-- Social -->
                     <div class="card">
                         <h2 class="card-title"><i data-lucide="share-2"></i> Social Links</h2>
+                        <p class="card-sub">Connect your socials so buyers can follow your store beyond UnimartX.</p>
                         <form id="form-social" novalidate>
                             <div class="field">
                                 <label for="social-instagram">Instagram</label>
@@ -320,11 +343,82 @@
         </div>
     </div>
 
-    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
-    <script>lucide.createIcons();</script>
-    <script src="../shared/polling.js"></script>
-    <script src="../shared/sidebar.js"></script>
-    <script src="../shared/topnav.js"></script>
-    <script src="../assets/js/customize-profile.js"></script>
+    <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script>if(window.lucide)lucide.createIcons();else window.addEventListener('DOMContentLoaded',function(){if(window.lucide)lucide.createIcons();});</script>
+    <script defer src="../shared/polling.js"></script>
+    <script defer src="../shared/sidebar.js"></script>
+    <script defer src="../shared/topnav.js"></script>
+    <script defer src="../assets/js/customize-profile.js"></script>
+    <script>
+        // ── Shared Toast (matches Store Studio) ──
+        window.Toast = {
+            show(message, type = 'success', duration = 3500) {
+                const toast = document.createElement('div');
+                toast.style.cssText = `
+                    position:fixed;bottom:24px;right:24px;z-index:9999;
+                    background:${type === 'error' ? '#ef4444' : 'var(--bg-2)'};
+                    color:${type === 'error' ? '#fff' : 'var(--text)'};
+                    border:1px solid ${type === 'error' ? 'transparent' : 'var(--border)'};
+                    border-radius:var(--radius);padding:0.8rem 1.1rem;
+                    display:flex;align-items:center;gap:0.6rem;
+                    font-family:'Quicksand',sans-serif;font-weight:600;font-size:0.85rem;
+                    box-shadow:0 8px 32px rgba(0,0,0,0.35);max-width:340px;
+                    animation:toastIn 0.3s cubic-bezier(0.4,0,0.2,1);
+                `;
+                toast.textContent = message;
+                document.body.appendChild(toast);
+                setTimeout(() => {
+                    toast.style.animation = 'toastOut 0.25s ease forwards';
+                    setTimeout(() => toast.remove(), 250);
+                }, duration);
+            }
+        };
+        const _toastStyle = document.createElement('style');
+        _toastStyle.textContent = `
+            @keyframes toastIn  { from{opacity:0;transform:translateY(12px) scale(0.96)} to{opacity:1;transform:translateY(0) scale(1)} }
+            @keyframes toastOut { from{opacity:1} to{opacity:0;transform:translateY(6px)} }
+        `;
+        document.head.appendChild(_toastStyle);
+    </script>
+    <script>
+        // ── Profile completeness meter (isolated, non-breaking) ──
+        (function () {
+            const STEPS = [
+                { key: 'name',     label: 'Name',     icon: 'user',      done: () => !!v('profile-name') },
+                { key: 'bio',      label: 'Bio',      icon: 'file-text', done: () => v('profile-bio').length >= 20 },
+                { key: 'photo',    label: 'Photo',    icon: 'camera',    done: () => !!document.querySelector('#avatar-img.show') },
+                { key: 'location', label: 'Location', icon: 'map-pin',   done: () => !!v('profile-location') },
+                { key: 'contact',  label: 'Contact',  icon: 'phone',     done: () => !!(v('profile-phone') || v('profile-whatsapp') || v('profile-address')) },
+                { key: 'social',   label: 'Social',   icon: 'share-2',   done: () => !!(v('social-instagram') || v('social-twitter') || v('social-tiktok') || v('social-website')) },
+            ];
+            function v(id) { const el = document.getElementById(id); return el ? (el.value || '').trim() : ''; }
+            const fill = document.getElementById('pc-fill');
+            const pctEl = document.getElementById('pc-pct');
+            const stepsEl = document.getElementById('pc-steps');
+
+            function render() {
+                let done = 0;
+                const chips = STEPS.map(s => {
+                    const ok = s.done();
+                    if (ok) done++;
+                    return `<span class="pc-step${ok ? ' done' : ''}" title="${s.label}"><i data-lucide="${s.icon}"></i>${s.label}</span>`;
+                }).join('');
+                if (stepsEl) stepsEl.innerHTML = chips;
+                const pct = Math.round((done / STEPS.length) * 100);
+                if (fill) fill.style.width = pct + '%';
+                if (pctEl) pctEl.textContent = pct + '%';
+                if (window.lucide) lucide.createIcons();
+            }
+
+            ['input', 'change'].forEach(ev => {
+                document.addEventListener(ev, e => {
+                    if (e.target && e.target.closest && e.target.closest('#seller-main')) render();
+                });
+            });
+            if (window.lucide) lucide.createIcons();
+            function start() { render(); let t = 0; const poll = setInterval(() => { render(); if (++t >= 14) clearInterval(poll); }, 500); }
+            if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
+        })();
+    </script>
 </body>
 </html>

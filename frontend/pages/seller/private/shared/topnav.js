@@ -290,4 +290,44 @@
     if (userTrigger) userTrigger.classList.remove('open');
   });
 
+  // ── My Shop button (shared across private pages) ──
+  (async function initMyShopBtn() {
+    const btn = document.getElementById('view-my-shop-btn');
+    if (!btn) return;
+
+    const wireShare = () => {
+      const shareEl = document.getElementById('gs-share');
+      if (!shareEl || !btn.href) return;
+      shareEl.addEventListener('click', async (e) => {
+        e.preventDefault();
+        try {
+          await navigator.clipboard.writeText(btn.href);
+          if (typeof showGsToast === 'function') showGsToast('Store link copied to clipboard!');
+          else alert('Store link copied to clipboard!');
+        } catch {
+          window.open(btn.href, '_blank', 'noopener');
+        }
+      });
+    };
+
+    const cached = localStorage.getItem('seller_id');
+    if (cached) {
+      btn.href = '/pages/seller/public/store/store.html?sellerId=' + cached;
+      wireShare();
+      return;
+    }
+    try {
+      const token = getAuthToken();
+      const res = await fetch(`${API_BASE}/api/seller/profile`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const json = await res.json();
+      if (json.success && json.data && json.data.sellerId) {
+        localStorage.setItem('seller_id', json.data.sellerId);
+        btn.href = `../../../seller/public/store/store.html?sellerId=${json.data.sellerId}`;
+      }
+    } catch {}
+    wireShare();
+  })();
+
 })();

@@ -28,11 +28,18 @@ export const updateProfileSchema = z.object({
    category: z.string().optional(),
    country: z.string().min(2).optional().nullable(),
    city: z.string().min(2).optional().nullable(),
+   storeTagline: z.string().max(60).optional().nullable(),
+   universityAffiliation: z.string().max(120).optional().nullable(),
+   campus: z.string().max(120).optional().nullable(),
+   businessHours: z.string().max(100).optional().nullable(),
+   deliveryOptions: z.string().optional().nullable(),
     // Branding fields
     storeBanner: z.string().optional().nullable(),
     storeAvatar: z.string().optional().nullable(),
     storeColor: z.string().optional().nullable(),
     deliveryFee: z.coerce.number().nonnegative().optional().nullable(),
+    // Verification field
+    studentEmail: z.string().email().optional().nullable(),
 
    // Store policies
    returnPolicy: z.string().max(1000).optional().nullable(),

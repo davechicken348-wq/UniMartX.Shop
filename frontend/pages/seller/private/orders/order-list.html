@@ -138,16 +138,83 @@
 
     <!-- MAIN -->
     <div class="seller-main" id="seller-main">
-        <div class="page-content">
+        <div class="page-content orders-content">
+
+            <!-- Page header -->
+            <div class="orders-page-header">
+                <div>
+                    <h1 class="page-title">Orders</h1>
+                    <p class="page-subtitle">Track, fulfil and manage every order from your customers.</p>
+                </div>
+                <div class="orders-header-actions">
+                    <button class="btn btn-primary" id="export-orders" type="button">
+                        <i data-lucide="download"></i> Export
+                    </button>
+                </div>
+            </div>
+
+            <!-- KPI summary -->
+            <div class="orders-kpis">
+                <div class="stat-card">
+                    <div class="stat-icon"><i data-lucide="shopping-bag"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="kpi-total">0</div>
+                        <div class="stat-label">Total Orders</div>
+                    </div>
+                </div>
+                <div class="stat-card stat-card--pending">
+                    <div class="stat-icon stat-icon--warning"><i data-lucide="clock"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="kpi-pending">0</div>
+                        <div class="stat-label">Pending</div>
+                    </div>
+                </div>
+                <div class="stat-card stat-card--processing">
+                    <div class="stat-icon stat-icon--indigo"><i data-lucide="package-search"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="kpi-processing">0</div>
+                        <div class="stat-label">Processing</div>
+                    </div>
+                </div>
+                <div class="stat-card stat-card--shipped">
+                    <div class="stat-icon stat-icon--blue"><i data-lucide="truck"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="kpi-shipped">0</div>
+                        <div class="stat-label">Shipped</div>
+                    </div>
+                </div>
+                <div class="stat-card stat-card--delivered">
+                    <div class="stat-icon stat-icon--success"><i data-lucide="check-circle"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="kpi-delivered">0</div>
+                        <div class="stat-label">Delivered</div>
+                    </div>
+                </div>
+            </div>
 
             <!-- Toolbar -->
             <div class="orders-toolbar">
                 <div class="filter-tabs" id="filter-tabs">
                     <button class="filter-tab active" data-filter="all">All <span class="tab-num" id="count-all">0</span></button>
                     <button class="filter-tab" data-filter="pending">Pending <span class="tab-num" id="count-pending">0</span></button>
+                    <button class="filter-tab" data-filter="processing">Processing <span class="tab-num" id="count-processing">0</span></button>
                     <button class="filter-tab" data-filter="shipped">Shipped <span class="tab-num" id="count-shipped">0</span></button>
                     <button class="filter-tab" data-filter="delivered">Delivered <span class="tab-num" id="count-delivered">0</span></button>
                     <button class="filter-tab" data-filter="cancelled">Cancelled <span class="tab-num" id="count-cancelled">0</span></button>
+                </div>
+                <div class="toolbar-controls">
+                    <div class="sort-wrap">
+                        <i data-lucide="arrow-down-up"></i>
+                        <select id="sort-select" class="sort-select" aria-label="Sort orders">
+                            <option value="newest">Newest first</option>
+                            <option value="oldest">Oldest first</option>
+                            <option value="amount_desc">Highest amount</option>
+                            <option value="amount_asc">Lowest amount</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-ghost" id="refresh-orders" type="button">
+                        <i data-lucide="refresh-cw"></i> Refresh
+                    </button>
                 </div>
                 <div class="orders-search-mobile">
                     <i data-lucide="search"></i>
@@ -155,9 +222,22 @@
                 </div>
             </div>
 
-            <!-- Empty state -->
+            <!-- Bulk action bar (hidden until selection) -->
+            <div class="bulk-bar hidden" id="bulk-bar">
+                <div class="bulk-bar-info">
+                    <span class="bulk-count" id="bulk-count">0 selected</span>
+                    <button class="bulk-clear" id="bulk-clear" type="button">Clear</button>
+                </div>
+                <div class="bulk-actions">
+                    <button class="btn btn-ghost btn-sm" id="bulk-ship" type="button"><i data-lucide="truck"></i> Mark as shipped</button>
+                    <button class="btn btn-ghost btn-sm" id="bulk-cancel" type="button"><i data-lucide="x-circle"></i> Cancel</button>
+                    <button class="btn btn-ghost btn-sm" id="bulk-export" type="button"><i data-lucide="download"></i> Export selected</button>
+                </div>
+            </div>
+
+            <!-- Empty states -->
             <div class="empty-state hidden" id="no-results">
-                <div class="empty-state-icon"><i data-lucide="shopping-bag"></i></div>
+                <div class="empty-state-icon"><i data-lucide="search-x"></i></div>
                 <h3>No orders found</h3>
                 <p>Try a different filter or search term.</p>
             </div>
@@ -170,14 +250,17 @@
             <!-- Orders table -->
             <div class="card orders-card">
                 <div class="orders-table-head">
-                    <span>Order</span>
-                    <span>Buyer</span>
-                    <span>Product</span>
-                    <span>Amount</span>
-                    <span>Type</span>
-                    <span>Date</span>
-                    <span>Status</span>
-                    <span></span>
+                    <label class="head-check">
+                        <input type="checkbox" id="select-all" aria-label="Select all orders">
+                        <span class="check-box"><i data-lucide="check"></i></span>
+                    </label>
+                    <span class="head-order">Order</span>
+                    <span class="head-buyer">Customer</span>
+                    <span class="head-fulfil">Fulfilment</span>
+                    <span class="head-amount">Total</span>
+                    <span class="head-date">Date</span>
+                    <span class="head-status">Status</span>
+                    <span class="head-actions"></span>
                 </div>
 
                 <div id="orders-list"></div>
@@ -193,12 +276,36 @@
         </div>
     </div>
 
-    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
-    <script>lucide.createIcons();</script>
-    <script src="../shared/polling.js"></script>
-    <script src="../shared/sidebar.js"></script>
-    <script src="../shared/topnav.js"></script>
-    <script src="../assets/js/order-list.js"></script>
+    <!-- ══ Order detail drawer ══ -->
+    <div class="order-drawer-overlay" id="drawer-overlay"></div>
+    <aside class="order-drawer" id="order-drawer" aria-hidden="true" aria-label="Order details">
+        <div class="drawer-header">
+            <div class="drawer-header-text">
+                <span class="drawer-eyebrow">Order</span>
+                <h2 id="dw-order-number">#—</h2>
+            </div>
+            <button class="drawer-close" id="dw-close" type="button" aria-label="Close">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+        <div class="drawer-body" id="dw-body">
+            <div class="drawer-skeleton">
+                <div class="sk sk-line w60"></div>
+                <div class="sk sk-line w40"></div>
+                <div class="sk sk-block"></div>
+                <div class="sk sk-line w80"></div>
+                <div class="sk sk-line w70"></div>
+            </div>
+        </div>
+        <div class="drawer-footer" id="dw-footer"></div>
+    </aside>
+
+    <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script>if(window.lucide)lucide.createIcons();else window.addEventListener('DOMContentLoaded',function(){if(window.lucide)lucide.createIcons();});</script>
+    <script defer src="../shared/polling.js"></script>
+    <script defer src="../shared/sidebar.js"></script>
+    <script defer src="../shared/topnav.js"></script>
+    <script defer src="../assets/js/order-list.js"></script>
 
 </body>
 </html>

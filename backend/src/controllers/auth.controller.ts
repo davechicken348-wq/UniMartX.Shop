@@ -67,6 +67,9 @@ export const registerBuyer = async (req: Request, res: Response): Promise<void> 
     });
 
     if (existingUser) {
+      if (existingUser.role === 'seller') {
+        throw new AppError('This email is already registered to a seller account. Please use a different email or log in as a seller.', 409);
+      }
       throw new AppError('Email already registered', 409);
     }
 

@@ -71,7 +71,7 @@
                 <div class="nav-item-icon"><i data-lucide="home"></i></div>
                 <span class="nav-item-label">Home</span>
             </a>
-            <a href="../../public/info/faq.html" class="nav-item" data-tooltip="Help">
+            <a href="../../../public/info/faq.html" class="nav-item" data-tooltip="Help">
                 <div class="nav-item-icon"><i data-lucide="help-circle"></i></div>
                 <span class="nav-item-label">Help & FAQ</span>
             </a>
@@ -142,10 +142,26 @@
                 <!-- Editor header -->
                 <div class="editor-header">
                     <div class="editor-header-top">
-                        <span class="editor-title">Store Studio</span>
-                        <a href="../../public/store/store.html" id="view-store-btn" target="_blank" rel="noopener noreferrer" class="editor-open-btn" title="Open live store">
-                            <i data-lucide="external-link"></i>
+                        <div class="editor-brand">
+                            <div class="editor-brand-avatar" id="hdr-avatar">S</div>
+                            <div class="editor-brand-text">
+                                <span class="editor-title">Store Studio</span>
+                                <span class="editor-subtitle">Design your storefront</span>
+                            </div>
+                        </div>
+                        <a href="../../public/store/store.html" id="view-store-btn" target="_blank" rel="noopener noreferrer" class="editor-view-btn" title="Open live store">
+                            <i data-lucide="external-link"></i><span>View store</span>
                         </a>
+                    </div>
+
+                    <!-- Store setup completeness -->
+                    <div class="setup-progress" id="setup-progress">
+                        <div class="setup-progress-head">
+                            <span class="setup-label"><i data-lucide="list-check"></i> Store setup</span>
+                            <span class="setup-pct" id="setup-pct">0%</span>
+                        </div>
+                        <div class="setup-bar"><div class="setup-bar-fill" id="setup-fill"></div></div>
+                        <div class="setup-steps" id="setup-steps"></div>
                     </div>
 
                     <!-- Unsaved banner -->
@@ -158,19 +174,19 @@
 
                     <!-- Section nav -->
                     <nav class="section-nav" aria-label="Store sections">
-                        <button class="section-btn settings-nav-item active" data-target="general">
+                        <button class="section-btn settings-nav-item active" data-target="general" title="Store information">
                             <i data-lucide="store"></i> Info
                         </button>
-                        <button class="section-btn settings-nav-item" data-target="branding">
+                        <button class="section-btn settings-nav-item" data-target="branding" title="Logo &amp; banner">
                             <i data-lucide="image"></i> Branding
                         </button>
-                        <button class="section-btn settings-nav-item" data-target="colors">
+                        <button class="section-btn settings-nav-item" data-target="colors" title="Brand color">
                             <i data-lucide="palette"></i> Colors
                         </button>
-                        <button class="section-btn settings-nav-item" data-target="fulfillment">
+                        <button class="section-btn settings-nav-item" data-target="fulfillment" title="Delivery &amp; pickup">
                             <i data-lucide="truck"></i> Delivery
                         </button>
-                        <button class="section-btn settings-nav-item" data-target="policies">
+                        <button class="section-btn settings-nav-item" data-target="policies" title="Buyer policies">
                             <i data-lucide="file-text"></i> Policies
                         </button>
                     </nav>
@@ -181,6 +197,13 @@
 
                     <!-- GENERAL -->
                     <div class="editor-section settings-section active" id="general" data-section="general">
+                        <div class="section-head">
+                            <div class="section-head-icon"><i data-lucide="store"></i></div>
+                            <div class="section-head-text">
+                                <h2 class="section-head-title">Store Information</h2>
+                                <p class="section-head-sub">The essentials buyers see first — name, category and description.</p>
+                            </div>
+                        </div>
                         <form id="store-general-form" novalidate autocomplete="on">
                             <div class="field">
                                 <label for="store-name">Store Name <span class="req">*</span></label>
@@ -209,19 +232,54 @@
                                     <div class="field-error" id="store-description-error" role="alert"></div>
                                     <span class="char-counter" id="description-count" role="status" aria-live="polite">0/1000</span>
                                 </div>
-                                <div class="char-progress"><div class="char-progress-bar" id="description-progress"></div></div>
+                        <div class="char-progress"><div class="char-progress-bar" id="description-progress"></div></div>
+                    </div>
+                    <div class="field">
+                        <label for="store-tagline">Store Tagline <span class="field-hint-inline">Max 60</span></label>
+                        <input type="text" id="store-tagline" name="storeTagline" placeholder="e.g. Homemade meals, delivered fresh" maxlength="60">
+                        <span class="field-hint">One line that captures what you sell.</span>
+                    </div>
+                        <div class="field-row">
+                            <div class="field">
+                                <label for="store-country">Country <span class="req">*</span></label>
+                                <input type="text" id="store-country" name="country" placeholder="e.g. Ghana" required maxlength="100">
                             </div>
-                            <div class="field-row">
-                                <div class="field">
-                                    <label for="store-country">Country <span class="req">*</span></label>
-                                    <input type="text" id="store-country" name="country" placeholder="e.g. Ghana" required maxlength="100">
-                                </div>
-                                <div class="field">
-                                    <label for="store-city">City <span class="req">*</span></label>
-                                    <input type="text" id="store-city" name="city" placeholder="e.g. Sunyani" required maxlength="100">
-                                </div>
+                            <div class="field">
+                                <label for="store-city">City <span class="req">*</span></label>
+                                <input type="text" id="store-city" name="city" placeholder="e.g. Sunyani" required maxlength="100">
                             </div>
-                            <div class="form-actions">
+                        </div>
+                        <div class="field-row">
+                            <div class="field">
+                                <label for="store-university">University</label>
+                                <select id="store-university" name="universityAffiliation">
+                                    <option value="">Select university</option>
+                                    <option value="University of Ghana">University of Ghana</option>
+                                    <option value="KNUST">Kwame Nkrumah University of Science and Technology</option>
+                                    <option value="UCC">University of Cape Coast</option>
+                                    <option value="UPSA">University of Professional Studies, Accra</option>
+                                    <option value="UEW">University of Education, Winneba</option>
+                                    <option value="Ashesi">Ashesi University</option>
+                                    <option value="GIJ">Ghana Institute of Journalism</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="field">
+                                <label for="store-campus">Campus</label>
+                                <input type="text" id="store-campus" name="campus" placeholder="e.g. Legon Campus" maxlength="120">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label for="store-hours">Business Hours</label>
+                            <select id="store-hours" name="businessHours">
+                                <option value="">Select availability</option>
+                                <option value="mon-fri-9-17">Mon–Fri, 9:00–17:00</option>
+                                <option value="mon-sat-8-18">Mon–Sat, 8:00–18:00</option>
+                                <option value="flexible">Flexible / By appointment</option>
+                                <option value="247">24 / 7</option>
+                            </select>
+                        </div>
+                        <div class="form-actions">
                                 <button type="button" class="btn btn-ghost btn-sm" id="general-reset"><i data-lucide="rotate-ccw"></i> Reset</button>
                                 <button type="submit" class="btn btn-primary btn-sm" id="general-save"><i data-lucide="save"></i> Save</button>
                             </div>
@@ -230,6 +288,13 @@
 
                     <!-- BRANDING -->
                     <div class="editor-section settings-section" id="branding" data-section="branding">
+                        <div class="section-head">
+                            <div class="section-head-icon"><i data-lucide="image"></i></div>
+                            <div class="section-head-text">
+                                <h2 class="section-head-title">Branding</h2>
+                                <p class="section-head-sub">Upload your banner and logo so your store feels recognizable.</p>
+                            </div>
+                        </div>
                         <form id="store-branding-form" novalidate>
                             <input type="file" id="banner-input" name="store_banner" accept="image/jpeg,image/png,image/webp" hidden>
                             <input type="file" id="avatar-input" name="store_avatar" accept="image/jpeg,image/png,image/webp" hidden>
@@ -284,6 +349,13 @@
 
                     <!-- COLORS -->
                     <div class="editor-section settings-section" id="colors" data-section="colors">
+                        <div class="section-head">
+                            <div class="section-head-icon"><i data-lucide="palette"></i></div>
+                            <div class="section-head-text">
+                                <h2 class="section-head-title">Brand Color</h2>
+                                <p class="section-head-sub">Choose the accent that ties your whole storefront together.</p>
+                            </div>
+                        </div>
                         <form id="store-colors-form" novalidate>
                             <p class="section-desc">Pick a brand color shown across your store page.</p>
                             <div id="color-presets" class="color-presets" role="radiogroup" aria-label="Color presets"></div>
@@ -312,6 +384,13 @@
 
                     <!-- DELIVERY -->
                     <div class="editor-section settings-section" id="fulfillment" data-section="fulfillment">
+                        <div class="section-head">
+                            <div class="section-head-icon"><i data-lucide="truck"></i></div>
+                            <div class="section-head-text">
+                                <h2 class="section-head-title">Delivery & Pickup</h2>
+                                <p class="section-head-sub">Tell buyers how they'll receive their orders.</p>
+                            </div>
+                        </div>
                         <form id="store-fulfillment-form" novalidate>
                             <div class="field">
                                 <label for="delivery-fee">Delivery Fee (GH₵)</label>
@@ -323,6 +402,15 @@
                                 <input type="text" id="pickup-address" name="pickupAddress" placeholder="e.g. Block C, Room 12, Legon Hall" maxlength="200">
                                 <span class="field-hint">Shown to buyers at checkout.</span>
                             </div>
+                            <div class="field">
+                                <label>Delivery Options</label>
+                                <div class="chip-group" id="store-delivery-options">
+                                    <label class="chip"><input type="checkbox" name="deliveryOptions" value="pickup"><span>Pickup on Campus</span></label>
+                                    <label class="chip"><input type="checkbox" name="deliveryOptions" value="campus_delivery"><span>Campus Delivery</span></label>
+                                    <label class="chip"><input type="checkbox" name="deliveryOptions" value="standard"><span>Standard Delivery</span></label>
+                                </div>
+                                <span class="field-hint">How buyers can receive their orders.</span>
+                            </div>
                             <div class="form-actions">
                                 <button type="submit" class="btn btn-primary btn-sm" id="fulfillment-save"><i data-lucide="save"></i> Save</button>
                             </div>
@@ -331,6 +419,13 @@
 
                     <!-- POLICIES -->
                     <div class="editor-section settings-section" id="policies" data-section="policies">
+                        <div class="section-head">
+                            <div class="section-head-icon"><i data-lucide="file-text"></i></div>
+                            <div class="section-head-text">
+                                <h2 class="section-head-title">Store Policies</h2>
+                                <p class="section-head-sub">Clear policies build buyer trust and reduce disputes.</p>
+                            </div>
+                        </div>
                         <form id="store-policies-form" novalidate>
                             <p class="section-desc">Set the policies buyers see on your store. Clear policies build trust.</p>
                             <div class="field">
@@ -403,8 +498,9 @@
                                         <span class="sp-store-name" id="preview-store-name">Your Store</span>
                                         <span class="sp-badge" id="preview-category"></span>
                                     </div>
-                                    <p class="sp-bio" id="preview-bio">Your store description will appear here</p>
-                                    <div class="sp-location" id="preview-location">
+                                <p class="sp-bio" id="preview-bio">Your store description will appear here</p>
+                                <p class="sp-tagline" id="preview-tagline"></p>
+                                <div class="sp-location" id="preview-location">
                                         <i data-lucide="map-pin"></i> Location
                                     </div>
                                 </div>
@@ -431,6 +527,7 @@
                     <div class="sp-fulfillment" id="sp-fulfillment" style="display:none;">
                         <span id="mock-delivery-row" style="display:none;"><i data-lucide="truck"></i> <span id="mock-delivery-text"></span></span>
                         <span id="mock-pickup-row" style="display:none;"><i data-lucide="map-pin"></i> <span id="mock-pickup-text"></span></span>
+                        <span id="mock-hours-row" style="display:none;"><i data-lucide="clock"></i> <span id="mock-hours-text"></span></span>
                     </div>
 
                     <!-- Products grid -->
@@ -459,12 +556,12 @@
         </div><!-- end studio-body -->
     </div><!-- end studio-main -->
 
-    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
-    <script>lucide.createIcons();</script>
-    <script src="../shared/polling.js"></script>
-    <script src="../shared/sidebar.js"></script>
-    <script src="../shared/topnav.js"></script>
-    <script src="../assets/js/customize-store.js"></script>
+    <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script>if(window.lucide)lucide.createIcons();else window.addEventListener('DOMContentLoaded',function(){if(window.lucide)lucide.createIcons();});</script>
+    <script defer src="../shared/polling.js"></script>
+    <script defer src="../shared/sidebar.js"></script>
+    <script defer src="../shared/topnav.js"></script>
+    <script defer src="../assets/js/customize-store.js"></script>
     <script>
         window.Toast = {
             show(message, type = 'success', duration = 3500) {
@@ -508,6 +605,77 @@
                 update();
             }
         });
+    </script>
+    <script>
+        // ── Store setup completeness + editor header identity (isolated, non-breaking) ──
+        (function () {
+            const STEPS = [
+                { key: 'info',       label: 'Info',       icon: 'store',       done: () => {
+                    const n = v('store-name'), c = v('store-category'), d = v('store-description'),
+                          co = v('store-country'), ci = v('store-city');
+                    return !!(n && c && d && d.length >= 20 && co && ci);
+                }},
+                { key: 'branding',   label: 'Logo',       icon: 'image',      done: () => {
+                    return !!document.querySelector('#avatar-inner img') || !!v('banner-img', 'src');
+                }},
+                { key: 'colors',     label: 'Color',      icon: 'palette',    done: () => !!v('store-color') },
+                { key: 'delivery',   label: 'Delivery',   icon: 'truck',      done: () => !!(v('delivery-fee') || v('pickup-address')) },
+                { key: 'policies',   label: 'Policies',   icon: 'file-text',  done: () => {
+                    return ['processing-time','return-policy','shipping-policy','refund-policy','exchange-policy','cancellation-policy']
+                        .some(id => v(id));
+                }},
+            ];
+            function v(id, attr) {
+                const el = document.getElementById(id);
+                if (!el) return '';
+                return (attr ? el.getAttribute(attr) : el.value || '').trim();
+            }
+            const fill = document.getElementById('setup-fill');
+            const pctEl = document.getElementById('setup-pct');
+            const stepsEl = document.getElementById('setup-steps');
+            const hdrAvatar = document.getElementById('hdr-avatar');
+
+            function render() {
+                let done = 0;
+                const chips = STEPS.map(s => {
+                    const ok = s.done();
+                    if (ok) done++;
+                    return `<span class="setup-step${ok ? ' done' : ''}" title="${s.label}">
+                        <i data-lucide="${s.icon}"></i>${s.label}</span>`;
+                }).join('');
+                if (stepsEl) stepsEl.innerHTML = chips;
+                const pct = Math.round((done / STEPS.length) * 100);
+                if (fill) fill.style.width = pct + '%';
+                if (pctEl) pctEl.textContent = pct + '%';
+                if (window.lucide) lucide.createIcons();
+                updateIdentity();
+            }
+
+            function updateIdentity() {
+                const name = v('store-name') || 'Store';
+                if (hdrAvatar) {
+                    hdrAvatar.textContent = name.trim().charAt(0).toUpperCase() || 'S';
+                    const color = v('store-color');
+                    if (color) { hdrAvatar.style.background = color; hdrAvatar.style.color = '#0a0a0f'; }
+                }
+            }
+
+            ['input', 'change'].forEach(ev => {
+                document.addEventListener(ev, e => {
+                    if (e.target && e.target.closest && e.target.closest('.studio-editor')) render();
+                });
+            });
+            if (window.lucide) lucide.createIcons();
+
+            // Run after deferred customize-store.js + its async data load; poll briefly to catch populated values.
+            function start() {
+                render();
+                let ticks = 0;
+                const poll = setInterval(() => { render(); if (++ticks >= 14) clearInterval(poll); }, 500);
+            }
+            if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
+            else start();
+        })();
     </script>
 </body>
 </html>

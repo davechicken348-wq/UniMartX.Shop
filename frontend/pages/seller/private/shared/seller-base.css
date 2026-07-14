@@ -1,29 +1,39 @@
 /* ═══════════════════════════════════════════
-   SELLER BASE — Variables, Reset, Utilities
-   Import this on every seller page FIRST
-═══════════════════════════════════════════ */
+    SELLER BASE — Variables, Reset, Utilities
+    Light / warm theme (matches public pages) with an
+    orange-gold brand accent.
+    Import this on every seller page FIRST
+   ═══════════════════════════════════════════ */
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
 :root {
-    /* Backgrounds */
-    --bg:        #0a0a0f;
-    --bg-2:      #111118;
-    --bg-3:      #16161f;
-    --bg-4:      #1c1c28;
+    /* Backgrounds — warm, light (public theme) */
+    --bg:        #fafaf9;
+    --bg-2:      #ffffff;
+    --bg-3:      #f5f5f4;
+    --bg-4:      #f0f0ef;
 
     /* Borders */
-    --border:    rgba(255,255,255,0.07);
-    --border-2:  rgba(245,158,11,0.2);
+    --border:    #e7e5e4;
+    --border-2:  rgba(245,158,11,0.35);
 
-    /* Primary — Amber */
+    /* Primary — Orange / Gold (brand)
+       --primary      : vivid gold for fills, badges, gradients
+       --primary-b    : brighter gold pop for gradient ends
+       --primary-d    : deeper gold for hover / active fills
+       --primary-ink  : deep amber for text/links on light (readable)
+       --primary-l    : soft gold tint for backgrounds          */
     --primary:   #f59e0b;
+    --primary-b: #fbbf24;
     --primary-d: #d97706;
-    --primary-l: rgba(245,158,11,0.1);
+    --primary-ink: #b45309;
+    --primary-l: rgba(245,158,11,0.12);
 
     /* Text */
-    --text:      #f1f0ee;
-    --text-2:    #a09f9c;
-    --text-3:    #6b6a68;
+    --text:      #1c1917;
+    --text-2:    #57534e;
+    --text-3:    #78716c;
+    --text-4:    #a8a29e;
 
     /* Status */
     --success:   #22c55e;
@@ -31,10 +41,16 @@
     --danger:    #ef4444;
     --info:      #38bdf8;
 
-    /* Radius */
-    --radius:    12px;
-    --radius-lg: 18px;
-    --radius-xl: 24px;
+    /* Radius — softer / rounder like public */
+    --radius:    16px;
+    --radius-lg: 24px;
+    --radius-xl: 32px;
+
+    /* Soft shadows (public aesthetic) */
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+    --shadow:    0 4px 12px rgba(0,0,0,0.06);
+    --shadow-lg: 0 12px 32px rgba(0,0,0,0.08);
+    --shadow-xl: 0 20px 48px rgba(0,0,0,0.12);
 
     /* Sidebar */
     --sidebar-w:         260px;
@@ -50,6 +66,8 @@ body {
     color: var(--text);
     line-height: 1.6;
     overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 a { text-decoration: none; color: inherit; }
@@ -57,6 +75,25 @@ img { display: block; max-width: 100%; }
 button { font-family: 'Quicksand', sans-serif; }
 
 .hidden { display: none !important; }
+
+*:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-3); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-4); }
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
 
 /* ── Layout shell ── */
 .seller-shell { display: flex; min-height: 100vh; }
@@ -72,9 +109,9 @@ button { font-family: 'Quicksand', sans-serif; }
 
 .page-content {
     padding: 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
     width: 100%;
+    max-width: 100%;
+    margin: 0;
 }
 
 /* ── Page header ── */
@@ -91,6 +128,7 @@ button { font-family: 'Quicksand', sans-serif; }
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
     padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
 }
 
 .card-header {
@@ -110,15 +148,16 @@ button { font-family: 'Quicksand', sans-serif; }
     border-radius: var(--radius-lg);
     padding: 1.5rem;
     display: flex; align-items: center; gap: 1.1rem;
-    transition: border-color 0.2s, transform 0.2s;
+    transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    box-shadow: var(--shadow-sm);
 }
-.stat-card:hover { border-color: var(--border-2); transform: translateY(-2px); }
+.stat-card:hover { border-color: var(--border-2); transform: translateY(-2px); box-shadow: var(--shadow); }
 
 .stat-icon {
     width: 48px; height: 48px; border-radius: 13px;
     background: var(--primary-l); border: 1px solid var(--border-2);
     display: flex; align-items: center; justify-content: center;
-    color: var(--primary); flex-shrink: 0;
+    color: var(--primary-ink); flex-shrink: 0;
 }
 .stat-icon svg { width: 22px; height: 22px; stroke: currentColor; }
 
@@ -134,12 +173,12 @@ button { font-family: 'Quicksand', sans-serif; }
     text-transform: uppercase; letter-spacing: 0.04em;
 }
 .badge-status--pending   { background: rgba(245,158,11,0.12); color: var(--warning); border: 1px solid rgba(245,158,11,0.2); }
-.badge-status--confirmed { background: rgba(245,158,11,0.12); color: var(--primary); border: 1px solid var(--border-2); }
-.badge-status--shipped   { background: rgba(56,189,248,0.12); color: var(--info);    border: 1px solid rgba(56,189,248,0.2); }
-.badge-status--delivered { background: rgba(34,197,94,0.12);  color: var(--success); border: 1px solid rgba(34,197,94,0.2); }
-.badge-status--cancelled { background: rgba(239,68,68,0.12);  color: var(--danger);  border: 1px solid rgba(239,68,68,0.2); }
-.badge-status--active    { background: rgba(34,197,94,0.12);  color: var(--success); border: 1px solid rgba(34,197,94,0.2); }
-.badge-status--draft     { background: rgba(107,106,104,0.12); color: var(--text-3); border: 1px solid rgba(107,106,104,0.2); }
+.badge-status--confirmed { background: rgba(245,158,11,0.14); color: var(--primary-ink); border: 1px solid var(--border-2); }
+.badge-status--shipped   { background: rgba(56,189,248,0.12); color: #0369a1; border: 1px solid rgba(56,189,248,0.2); }
+.badge-status--delivered { background: rgba(34,197,94,0.12);  color: #15803d; border: 1px solid rgba(34,197,94,0.2); }
+.badge-status--cancelled { background: rgba(239,68,68,0.12);  color: #b91c1c; border: 1px solid rgba(239,68,68,0.2); }
+.badge-status--active    { background: rgba(34,197,94,0.12);  color: #15803d; border: 1px solid rgba(34,197,94,0.2); }
+.badge-status--draft     { background: rgba(120,113,108,0.12); color: var(--text-3); border: 1px solid rgba(120,113,108,0.2); }
 
 /* ── Buttons ── */
 .btn {
@@ -151,8 +190,9 @@ button { font-family: 'Quicksand', sans-serif; }
 .btn svg { width: 16px; height: 16px; stroke: currentColor; }
 
 .btn-primary {
-    background: linear-gradient(135deg, var(--primary-d), var(--primary));
-    color: #0a0a0f; padding: 0.65rem 1.4rem; font-size: 0.9rem;
+    background: linear-gradient(135deg, var(--primary-d), var(--primary-b));
+    color: #1c1917; padding: 0.65rem 1.4rem; font-size: 0.9rem;
+    box-shadow: var(--shadow-sm);
 }
 .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(245,158,11,0.35); }
 
@@ -160,7 +200,7 @@ button { font-family: 'Quicksand', sans-serif; }
     background: transparent; color: var(--text-2);
     border: 1px solid var(--border); padding: 0.65rem 1.4rem; font-size: 0.9rem;
 }
-.btn-ghost:hover { color: var(--text); border-color: rgba(255,255,255,0.15); }
+.btn-ghost:hover { color: var(--text); border-color: var(--text-4); background: var(--bg-3); }
 
 .btn-sm { padding: 0.45rem 1rem; font-size: 0.82rem; }
 
@@ -173,7 +213,7 @@ button { font-family: 'Quicksand', sans-serif; }
 
 /* ── Shimmer ── */
 .shimmer {
-    background: linear-gradient(135deg, var(--bg-3) 0%, var(--bg-2) 50%, var(--bg-3) 100%);
+    background: linear-gradient(135deg, var(--bg-3) 0%, var(--bg-4) 50%, var(--bg-3) 100%);
     background-size: 200% 200%;
     animation: shimmer 2s ease-in-out infinite;
     border-radius: var(--radius);
@@ -203,7 +243,7 @@ button { font-family: 'Quicksand', sans-serif; }
     width: 64px; height: 64px; border-radius: 50%;
     background: var(--primary-l); border: 1px solid var(--border-2);
     display: flex; align-items: center; justify-content: center;
-    color: var(--primary);
+    color: var(--primary-ink);
 }
 .empty-state-icon svg { width: 28px; height: 28px; stroke: currentColor; }
 .empty-state h3 { font-size: 1rem; font-weight: 700; color: var(--text); }

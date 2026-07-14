@@ -2,346 +2,549 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Become a seller on UnimartX and start growing your campus business today.">
-    <meta name="theme-color" content="#0a0a0f">
-    <title>Become a Seller — UnimartX</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="Open your own student store on UniMartX — Ghana's marketplace for student entrepreneurs.">
+    <meta name="theme-color" content="#f7f9f8">
+    <meta name="color-scheme" content="light">
+    <title>Become a Seller — UniMartX</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/auth-system.css">
     <link rel="stylesheet" href="../css/seller-register.css">
 </head>
 <body>
-    <div class="bg-shapes">
-        <div class="shape shape-1"></div>
-        <div class="shape shape-2"></div>
-        <div class="shape shape-3"></div>
-        <div class="shape shape-4"></div>
-        <div class="shape shape-5"></div>
+    <div class="bg" aria-hidden="true">
+        <div class="bg-glow bg-glow-1"></div>
+        <div class="bg-glow bg-glow-2"></div>
     </div>
 
-    <div class="page">
-        <a href="../../public/home.html" class="logo">
-            <span class="logo-icon">🏪</span> Unimart<span>X</span>
+    <main class="page onboarding">
+        <a href="../../public/home.html" class="logo" aria-label="UniMartX home">
+            <span class="logo-mark" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path>
+                    <path d="M3 6h18"></path>
+                    <path d="M16 10a4 4 0 0 1-8 0"></path>
+                </svg>
+            </span>
+            <span class="logo-text">Unimart<span class="logo-x">X</span></span>
         </a>
 
-        <div class="split-layout">
-            <!-- LEFT VISUAL PANEL -->
-            <div class="visual-panel">
-                <div class="visual-content">
-                    <div class="visual-icon">
-                        <i data-lucide="store"></i>
-                    </div>
-                    <h2>Open Your Store</h2>
-                    <p>Join a community of student entrepreneurs. Build your brand, reach customers, and grow your business — all in one place.</p>
-
-                    <div class="step-visual-preview" id="step-visual-preview">
-                        <div class="visual-step active" data-step="1">
-                            <div class="visual-step-icon"><i data-lucide="user"></i></div>
-                            <div class="visual-step-text">
-                                <strong>Create Account</strong>
-                                <span>Set up your profile</span>
-                            </div>
-                        </div>
-                        <div class="visual-step" data-step="2">
-                            <div class="visual-step-icon"><i data-lucide="users"></i></div>
-                            <div class="visual-step-text">
-                                <strong>Choose Your Type</strong>
-                                <span>Campus or independent?</span>
-                            </div>
-                        </div>
-                        <div class="visual-step" data-step="3">
-                            <div class="visual-step-icon"><i data-lucide="store"></i></div>
-                            <div class="visual-step-text">
-                                <strong>Launch Store</strong>
-                                <span>Name, category, and go live</span>
-                            </div>
-                        </div>
-                    </div>
+        <section class="card onb-card" aria-labelledby="pane-title">
+            <!-- PROGRESS -->
+            <div class="onb-progress" id="progress" hidden>
+                <div class="onb-progress-head">
+                    <span id="step-count" class="onb-step-count">Step 1 of 6</span>
+                    <span id="step-name" class="onb-step-name">Personal Info</span>
                 </div>
-
-                <div class="panel-decoration">
-                    <div class="deco-circle deco-1"></div>
-                    <div class="deco-circle deco-2"></div>
-                    <div class="deco-circle deco-3"></div>
+                <div class="onb-track" role="progressbar" aria-valuemin="1" aria-valuemax="6" aria-valuenow="1">
+                    <div class="onb-fill" id="onb-fill"></div>
+                    <span class="onb-dot" data-dot="1"></span>
+                    <span class="onb-dot" data-dot="2"></span>
+                    <span class="onb-dot" data-dot="3"></span>
+                    <span class="onb-dot" data-dot="4"></span>
+                    <span class="onb-dot" data-dot="5"></span>
+                    <span class="onb-dot" data-dot="6"></span>
                 </div>
             </div>
 
-            <!-- RIGHT FORM PANEL -->
-            <div class="form-panel">
-                <div class="card">
-                    <!-- STEP PROGRESS BAR -->
-                    <div class="progress-bar-wrap">
-                        <div class="progress-bar">
-                            <div class="progress-fill" id="progress-fill"></div>
-                        </div>
-                        <div class="progress-labels">
-                            <span class="progress-label active" data-step="1">Account</span>
-                            <span class="progress-label" data-step="2">Seller Type</span>
-                            <span class="progress-label" data-step="3">Store</span>
-                        </div>
-                    </div>
-
-                    <div id="alert-success" class="alert alert-success" role="alert">
-                        <i data-lucide="check-circle" class="alert-icon"></i>
-                        <span>Store created! Redirecting to your dashboard...</span>
-                    </div>
-                    <div id="alert-error" class="alert alert-error" role="alert">
-                        <i data-lucide="alert-circle" class="alert-icon"></i>
-                        <span id="error-text"></span>
-                    </div>
-
-                    <div class="card-body">
-                        <form id="register-form" novalidate class="form-main">
-
-                            <!-- STEP 1: Account -->
-                            <div class="form-step active" id="step-1">
-                                <div class="form-group">
-                                    <label for="name">Full Name</label>
-                                    <div class="input-wrapper">
-                                        <i data-lucide="user" class="input-icon"></i>
-                                        <input type="text" id="name" name="name" placeholder="Enter your full name" required minlength="2" autocomplete="name" aria-describedby="name-error">
-                                        <div class="input-glow"></div>
-                                    </div>
-                                    <div id="name-error" class="error-message" role="alert"></div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="email">Email Address</label>
-                                    <div class="input-wrapper">
-                                        <i data-lucide="mail" class="input-icon"></i>
-                                        <input type="email" id="email" name="email" placeholder="you@gmail.com" required autocomplete="email" aria-describedby="email-error">
-                                        <div class="input-glow"></div>
-                                    </div>
-                                    <div id="email-error" class="error-message" role="alert"></div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="phone">Phone Number</label>
-                                    <div class="input-wrapper">
-                                        <i data-lucide="phone" class="input-icon"></i>
-                                        <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required autocomplete="tel" aria-describedby="phone-error">
-                                        <div class="input-glow"></div>
-                                    </div>
-                                    <div id="phone-error" class="error-message" role="alert"></div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="password">Password</label>
-                                    <div class="input-wrapper">
-                                        <i data-lucide="lock" class="input-icon"></i>
-                                        <input type="password" id="password" name="password" placeholder="Create a password" required minlength="8" autocomplete="new-password" aria-describedby="password-error">
-                                        <button type="button" class="password-toggle" id="toggle-password" aria-label="Show password">
-                                            <i data-lucide="eye" class="eye-icon"></i>
-                                        </button>
-                                        <div class="input-glow"></div>
-                                    </div>
-                                    <div id="password-error" class="error-message" role="alert"></div>
-                                    <div class="password-strength">
-                                        <div id="strength-bar" class="password-strength-bar"></div>
-                                    </div>
-                                    <div class="strength-label" id="strength-label"></div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="confirm-password">Confirm Password</label>
-                                    <div class="input-wrapper">
-                                        <i data-lucide="lock" class="input-icon"></i>
-                                        <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm your password" required autocomplete="new-password" aria-describedby="confirm-password-error">
-                                        <button type="button" class="password-toggle" id="toggle-confirm" aria-label="Show password">
-                                            <i data-lucide="eye" class="eye-icon"></i>
-                                        </button>
-                                        <div class="input-glow"></div>
-                                    </div>
-                                    <div id="confirm-password-error" class="error-message" role="alert"></div>
-                                </div>
-
-                                <button type="button" class="auth-btn next-btn" id="next-1">
-                                    <span class="btn-text">Next: Seller Type <i data-lucide="arrow-right" style="width:18px;height:18px;display:inline-block;vertical-align:middle;"></i></span>
-                                    <div class="spinner"></div>
-                                </button>
-                            </div>
-
-                            <!-- STEP 2: Seller Type -->
-                            <div class="form-step" id="step-2">
-                                <div class="form-group">
-                                    <label for="seller-type">How would you describe yourself as a seller?</label>
-                                    <div class="persona-grid">
-                                        <label class="persona-card" for="type-campus">
-                                            <input type="radio" id="type-campus" name="seller-type" value="campus">
-                                            <div class="persona-body">
-                                                <span class="persona-icon"><i data-lucide="graduation-cap"></i></span>
-                                                <span class="persona-title">Campus Seller</span>
-                                                <span class="persona-desc">Student or staff selling within a university</span>
-                                            </div>
-                                        </label>
-                                        <label class="persona-card" for="type-independent">
-                                            <input type="radio" id="type-independent" name="seller-type" value="independent">
-                                            <div class="persona-body">
-                                                <span class="persona-icon"><i data-lucide="briefcase"></i></span>
-                                                <span class="persona-title">Independent Seller</span>
-                                                <span class="persona-desc">Selling outside campus — WhatsApp, social media, or a physical shop</span>
-                                            </div>
-                                        </label>
-                                    </div>
-                                    <div id="seller-type-error" class="error-message" role="alert"></div>
-                                </div>
-
-                                <div class="type-fields" id="campus-fields">
-                                    <div class="form-group">
-                                        <label for="university">University / Institution</label>
-                                        <div class="input-wrapper">
-                                            <i data-lucide="building-2" class="input-icon"></i>
-                                            <input type="text" id="university" name="university" placeholder="Enter your university name" aria-describedby="university-error">
-                                            <div class="input-glow"></div>
-                                        </div>
-                                        <div id="university-error" class="error-message" role="alert"></div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="student-id">Student / Staff ID <span class="optional">(optional)</span></label>
-                                        <div class="input-wrapper">
-                                            <i data-lucide="credit-card" class="input-icon"></i>
-                                            <input type="text" id="student-id" name="student-id" placeholder="Enter your student/staff ID">
-                                            <div class="input-glow"></div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="type-fields" id="independent-fields">
-                                    <div class="form-group">
-                                        <label for="biz-type">Business Type</label>
-                                        <div class="input-wrapper select-wrapper">
-                                            <i data-lucide="user-check" class="input-icon"></i>
-                                            <select id="biz-type" name="biz-type" aria-describedby="biz-type-error">
-                                                <option value="" disabled selected>Select type</option>
-                                                <option value="individual">Individual / Solo seller</option>
-                                                <option value="small-business">Small Business</option>
-                                            </select>
-                                            <i data-lucide="chevron-down" class="select-chevron"></i>
-                                        </div>
-                                        <div id="biz-type-error" class="error-message" role="alert"></div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="current-platform">Where do you currently sell? <span class="optional">(optional)</span></label>
-                                        <div class="input-wrapper select-wrapper">
-                                            <i data-lucide="share-2" class="input-icon"></i>
-                                            <select id="current-platform" name="current-platform">
-                                                <option value="" disabled selected>Select platform</option>
-                                                <option value="whatsapp">WhatsApp</option>
-                                                <option value="instagram">Instagram</option>
-                                                <option value="facebook">Facebook</option>
-                                                <option value="physical">Physical Shop</option>
-                                                <option value="other">Other</option>
-                                                <option value="none">Not selling yet</option>
-                                            </select>
-                                            <i data-lucide="chevron-down" class="select-chevron"></i>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="step-nav">
-                                    <button type="button" class="auth-btn ghost-btn" id="back-1">
-                                        <i data-lucide="arrow-left" style="width:18px;height:18px;"></i> Back
-                                    </button>
-                                    <button type="button" class="auth-btn next-btn" id="next-2">
-                                        <span class="btn-text">Next: Store Info <i data-lucide="arrow-right" style="width:18px;height:18px;display:inline-block;vertical-align:middle;"></i></span>
-                                        <div class="spinner"></div>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- STEP 3: Store -->
-                            <div class="form-step" id="step-3">
-                                <div class="form-group">
-                                    <label for="store-name">Store Name</label>
-                                    <div class="input-wrapper">
-                                        <i data-lucide="store" class="input-icon"></i>
-                                        <input type="text" id="store-name" name="store-name" placeholder="Enter your store name" required aria-describedby="store-name-error">
-                                        <div class="input-glow"></div>
-                                    </div>
-                                    <div id="store-name-error" class="error-message" role="alert"></div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="category">Store Category</label>
-                                    <div class="input-wrapper select-wrapper">
-                                        <i data-lucide="tag" class="input-icon"></i>
-                                        <select id="category" name="category" required aria-describedby="category-error">
-                                            <option value="" disabled selected>Select a category</option>
-                                            <option value="electronics">Electronics</option>
-                                            <option value="fashion">Fashion &amp; Apparel</option>
-                                            <option value="home">Home &amp; Living</option>
-                                            <option value="beauty">Beauty &amp; Health</option>
-                                            <option value="sports">Sports &amp; Outdoors</option>
-                                            <option value="books">Books &amp; Stationery</option>
-                                            <option value="food">Food &amp; Snacks</option>
-                                            <option value="other">Other</option>
-                                        </select>
-                                        <i data-lucide="chevron-down" class="select-chevron"></i>
-                                    </div>
-                                    <div id="category-error" class="error-message" role="alert"></div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="store-desc">Store Description</label>
-                                    <div class="input-wrapper">
-                                        <i data-lucide="file-text" class="input-icon textarea-icon"></i>
-                                        <textarea id="store-desc" name="store-desc" placeholder="Describe your store and what you sell" required minlength="20" maxlength="300" aria-describedby="store-desc-error"></textarea>
-                                    </div>
-                                    <div class="char-count"><span id="desc-count">0</span> / 300</div>
-                                    <div id="store-desc-error" class="error-message" role="alert"></div>
-                                </div>
-
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label for="country">Country</label>
-                                        <div class="input-wrapper">
-                                            <i data-lucide="globe" class="input-icon"></i>
-                                            <input type="text" id="country" name="country" placeholder="Enter your country" required aria-describedby="country-error">
-                                            <div class="input-glow"></div>
-                                        </div>
-                                        <div id="country-error" class="error-message" role="alert"></div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="city">City</label>
-                                        <div class="input-wrapper">
-                                            <i data-lucide="map-pin" class="input-icon"></i>
-                                            <input type="text" id="city" name="city" placeholder="Enter your city" required aria-describedby="city-error">
-                                            <div class="input-glow"></div>
-                                        </div>
-                                        <div id="city-error" class="error-message" role="alert"></div>
-                                    </div>
-                                </div>
-
-                                <div class="form-check">
-                                    <input type="checkbox" id="terms" name="terms" required>
-                                    <label for="terms">
-                                        I agree to the <a href="../../public/info/terms.html" target="_blank" rel="noopener">Terms of Service</a>, <a href="../../public/info/privacy.html" target="_blank" rel="noopener">Privacy Policy</a>, and <a href="../../public/info/seller-policy.html" target="_blank" rel="noopener">Seller Policy</a>
-                                    </label>
-                                </div>
-                                <div id="terms-error" class="error-message" role="alert"></div>
-
-                                <div class="step-nav">
-                                    <button type="button" class="auth-btn ghost-btn" id="back-2">
-                                        <i data-lucide="arrow-left" style="width:18px;height:18px;"></i> Back
-                                    </button>
-                                    <button type="submit" class="auth-btn" id="submit-btn">
-                                        <span class="btn-text">Create Store 🏪</span>
-                                        <div class="spinner"></div>
-                                    </button>
-                                </div>
-                            </div>
-
-                        </form>
-                    </div>
-                </div>
-
-                <div class="auth-footer">
-                    already have an account? <a href="../login.html">log in</a>
-                </div>
+            <div id="alert-error" class="alert alert-error" role="alert" hidden>
+                <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <span id="error-text"></span>
             </div>
+
+            <form id="register-form" novalidate>
+                <!-- ═══════════ WELCOME ═══════════ -->
+                <section class="step-pane" data-pane="welcome" aria-labelledby="pane-title">
+                    <div class="welcome-art" aria-hidden="true">
+                        <svg viewBox="0 0 200 168" width="150" height="126" fill="none" xmlns="http://www.w3.org/2000/svg" role="img">
+                            <circle cx="100" cy="74" r="56" fill="#059669" opacity="0.07"></circle>
+                            <path d="M52 150V66a6 6 0 0 1 6-6h84a6 6 0 0 1 6 6v84" stroke="#0f172a" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"></path>
+                            <path d="M44 66h112v9H44z" fill="#059669"></path>
+                            <path d="M44 75q14 15 28 0q14 15 28 0q14 15 28 0q14 15 28 0" stroke="#059669" stroke-width="3" fill="none" stroke-linecap="round"></path>
+                            <rect x="64" y="92" width="46" height="50" rx="7" stroke="#0f172a" stroke-width="2.5"></rect>
+                            <path d="M78 104h18l3 32H75z" fill="#059669" opacity="0.14" stroke="#059669" stroke-width="2.2" stroke-linejoin="round"></path>
+                            <path d="M83 104v-4a4 4 0 0 1 8 0v4" stroke="#059669" stroke-width="2.2" stroke-linecap="round"></path>
+                            <rect x="120" y="100" width="26" height="50" rx="7" stroke="#0f172a" stroke-width="2.5"></rect>
+                            <circle cx="140" cy="126" r="2.4" fill="#0f172a"></circle>
+                            <path d="M152 40l2.2 6.6L161 49l-6.8 2.4L152 58l-2.2-6.6L143 49l6.8-2.4z" fill="#059669"></path>
+                        </svg>
+                    </div>
+                    <h1 id="pane-title" class="onb-title">Launch Your Student Business</h1>
+                    <p class="onb-sub">Create your own online storefront, reach thousands of students across campus, and start growing your business — all from one platform.</p>
+
+                    <div class="onb-step-hint">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg>
+                        <span>6 quick steps · about 3 minutes</span>
+                    </div>
+
+                    <ul class="welcome-benefits">
+                        <li class="wb-row">
+                            <span class="wb-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg></span>
+                            <span class="wb-text">
+                                <span class="wb-title">Launch in Minutes</span>
+                                <span class="wb-desc">Create your online store with a guided, step-by-step setup.</span>
+                            </span>
+                        </li>
+                        <li class="wb-row">
+                            <span class="wb-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></span>
+                            <span class="wb-text">
+                                <span class="wb-title">Reach Campus Buyers</span>
+                                <span class="wb-desc">Connect with verified students across your university.</span>
+                            </span>
+                        </li>
+                        <li class="wb-row">
+                            <span class="wb-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg></span>
+                            <span class="wb-text">
+                                <span class="wb-title">Grow Your Brand</span>
+                                <span class="wb-desc">Customize your storefront and build lasting customer trust.</span>
+                            </span>
+                        </li>
+                    </ul>
+
+                    <button type="button" class="auth-btn" id="start-btn">
+                        <span class="btn-text">Start My Store</span>
+                        <span class="btn-arrow" aria-hidden="true">→</span>
+                    </button>
+
+                    <p class="trust-line">Built for student entrepreneurs across Ghana.</p>
+
+                    <div class="auth-footer">Already have an account? <a href="../login.html">Log in</a></div>
+                </section>
+
+                <!-- ═══════════ STEP 1: PERSONAL ═══════════ -->
+                <section class="step-pane" data-pane="1" hidden aria-labelledby="pane-title-1">
+                    <h2 id="pane-title-1" class="onb-title sm">Your Details</h2>
+                    <p class="onb-sub">Let's set up your seller account. This is just like creating a regular account.</p>
+
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <div class="input-wrapper">
+                            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                            <input type="text" id="name" name="name" placeholder="e.g. Ama Owusu" required minlength="2" autocomplete="name" aria-describedby="name-error">
+                        </div>
+                        <div id="name-error" class="error-message" role="alert"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <div class="input-wrapper">
+                            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-10 6L2 7"></path></svg>
+                            <input type="email" id="email" name="email" placeholder="you@gmail.com" required autocomplete="email" aria-describedby="email-error" inputmode="email">
+                        </div>
+                        <div id="email-error" class="error-message" role="alert"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <div class="input-wrapper">
+                            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92Z"></path></svg>
+                            <input type="tel" id="phone" name="phone" placeholder="e.g. 0551234567" required autocomplete="tel" aria-describedby="phone-error">
+                        </div>
+                        <div id="phone-error" class="error-message" role="alert"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <div class="input-wrapper">
+                            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                            <input type="password" id="password" name="password" class="has-toggle" placeholder="Min. 8 characters" required minlength="8" autocomplete="new-password" aria-describedby="password-error">
+                            <button type="button" class="password-toggle" id="toggle-password" aria-label="Show password" aria-pressed="false">
+                                <svg class="eye-icon eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                <svg class="eye-icon eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.88 9.88a3 3 0 0 0 4.24 4.24"></path><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c6.5 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3.5 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path><line x1="2" y1="2" x2="22" y2="22"></line></svg>
+                            </button>
+                        </div>
+                        <div id="password-error" class="error-message" role="alert"></div>
+                        <div class="pw-strength"><div id="strength-bar" class="pw-strength-bar"></div></div>
+                        <div id="strength-label" class="pw-strength-label" aria-live="polite"></div>
+                        <ul class="req-list" id="req-list" aria-label="Password requirements">
+                            <li data-req="length"><span class="req-check" aria-hidden="true"></span> At least 8 characters</li>
+                            <li data-req="upper"><span class="req-check" aria-hidden="true"></span> Uppercase letter</li>
+                            <li data-req="lower"><span class="req-check" aria-hidden="true"></span> Lowercase letter</li>
+                            <li data-req="number"><span class="req-check" aria-hidden="true"></span> Number</li>
+                            <li data-req="special"><span class="req-check" aria-hidden="true"></span> Special character</li>
+                        </ul>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirm-password">Confirm Password</label>
+                        <div class="input-wrapper">
+                            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                            <input type="password" id="confirm-password" name="confirm-password" class="has-toggle" placeholder="Re-enter your password" required autocomplete="new-password" aria-describedby="confirm-password-error">
+                            <span class="match-indicator" id="match-indicator" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span>
+                            <button type="button" class="password-toggle" id="toggle-confirm" aria-label="Show password" aria-pressed="false">
+                                <svg class="eye-icon eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                <svg class="eye-icon eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.88 9.88a3 3 0 0 0 4.24 4.24"></path><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c6.5 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3.5 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path><line x1="2" y1="2" x2="22" y2="22"></line></svg>
+                            </button>
+                        </div>
+                        <div id="confirm-password-error" class="error-message" role="alert"></div>
+                    </div>
+
+                    <div class="onb-nav">
+                        <button type="button" class="auth-btn" data-next="2"><span class="btn-text">Continue</span></button>
+                    </div>
+                </section>
+
+                <!-- ═══════════ STEP 2: STORE DETAILS ═══════════ -->
+                <section class="step-pane" data-pane="2" hidden aria-labelledby="pane-title-2">
+                    <h2 id="pane-title-2" class="onb-title sm">Build Your Store</h2>
+                    <p class="onb-sub">Give your shop its identity. You can refine these later.</p>
+
+                    <div class="form-group">
+                        <label for="store-name">Store Name</label>
+                        <div class="input-wrapper">
+                            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path><path d="M3 6h18"></path><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                            <input type="text" id="store-name" name="store-name" placeholder="e.g. Ama's Campus Kitchen" required aria-describedby="store-name-error">
+                        </div>
+                        <div id="store-name-error" class="error-message" role="alert"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="category">Business Category</label>
+                        <div class="input-wrapper select-wrapper">
+                            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.59 13.41 11 3.83A2 2 0 0 0 9.59 3H4v5.59A2 2 0 0 0 4.59 11l9.58 9.59a2 2 0 0 0 2.83 0l3.59-3.59a2 2 0 0 0 0-2.83Z"></path><circle cx="7.5" cy="7.5" r="1.5"></circle></svg>
+                            <select id="category" name="category" required aria-describedby="category-error">
+                                <option value="" disabled selected>Select a category</option>
+                                <option value="electronics">Electronics</option>
+                                <option value="fashion">Fashion &amp; Apparel</option>
+                                <option value="home">Home &amp; Living</option>
+                                <option value="beauty">Beauty &amp; Health</option>
+                                <option value="sports">Sports &amp; Outdoors</option>
+                                <option value="books">Books &amp; Stationery</option>
+                                <option value="food">Food &amp; Snacks</option>
+                                <option value="services">Services</option>
+                                <option value="other">Other</option>
+                            </select>
+                            <svg class="select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+                        </div>
+                        <div id="category-error" class="error-message" role="alert"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tagline">Short Tagline <span class="optional">(optional)</span></label>
+                        <div class="input-wrapper">
+                            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7V4h16v3M9 20h6M12 4v16"></path></svg>
+                            <input type="text" id="tagline" name="tagline" placeholder="e.g. Homemade meals, delivered fresh" maxlength="60" aria-describedby="tagline-help">
+                        </div>
+                        <div class="field-help" id="tagline-help">One line that captures what you sell.</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="store-desc">Store Description</label>
+                        <div class="input-wrapper">
+                            <svg class="input-icon textarea-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"></path><path d="M14 2v6h6"></path><line x1="8" y1="13" x2="16" y2="13"></line><line x1="8" y1="17" x2="16" y2="17"></line></svg>
+                            <textarea id="store-desc" name="store-desc" placeholder="Tell buyers what makes your store special (min. 20 characters)" required minlength="20" maxlength="300" aria-describedby="desc-count"></textarea>
+                        </div>
+                        <div class="char-count"><span id="desc-count">0</span> / 300</div>
+                        <div id="store-desc-error" class="error-message" role="alert"></div>
+                    </div>
+
+                    <div class="onb-nav">
+                        <button type="button" class="auth-btn ghost-btn" data-back="1"><span class="btn-text">Back</span></button>
+                        <button type="button" class="auth-btn" data-next="3"><span class="btn-text">Continue</span></button>
+                    </div>
+                </section>
+
+                <!-- ═══════════ STEP 3: BRANDING ═══════════ -->
+                <section class="step-pane" data-pane="3" hidden aria-labelledby="pane-title-3">
+                    <h2 id="pane-title-3" class="onb-title sm">Make It Yours</h2>
+                    <p class="onb-sub">Add your logo and banner. Watch your store come to life.</p>
+
+                    <div class="upload-grid">
+                        <div class="upload-card">
+                            <span class="upload-label">Store Logo</span>
+                            <label class="dropzone" id="logo-drop" for="logo-input" tabindex="0">
+                                <input type="file" id="logo-input" accept="image/*" hidden>
+                                <div class="upload-preview" id="logo-preview" hidden>
+                                    <img id="logo-img" alt="Store logo preview">
+                                    <button type="button" class="upload-remove" id="logo-remove" aria-label="Remove logo">×</button>
+                                </div>
+                                <div class="upload-empty">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="m17 8-5-5-5 5"></path><path d="M12 3v12"></path></svg>
+                                    <span>Upload logo</span>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="upload-card upload-card-wide">
+                            <span class="upload-label">Store Banner</span>
+                            <label class="dropzone dropzone-banner" id="banner-drop" for="banner-input" tabindex="0">
+                                <input type="file" id="banner-input" accept="image/*" hidden>
+                                <div class="upload-preview" id="banner-preview" hidden>
+                                    <img id="banner-img" alt="Store banner preview">
+                                    <button type="button" class="upload-remove" id="banner-remove" aria-label="Remove banner">×</button>
+                                </div>
+                                <div class="upload-empty">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="9" cy="9" r="2"></circle><path d="m21 15-3.6-3.6a2 2 0 0 0-2.8 0L6 20"></path></svg>
+                                    <span>Upload banner</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group accent-group">
+                        <label>Brand Accent Color <span class="optional">(optional)</span></label>
+                        <div class="accent-swatches" id="accent-swatches" role="radiogroup" aria-label="Brand accent color">
+                            <button type="button" class="accent-swatch" role="radio" aria-checked="false" data-color="#059669" style="--sw:#059669"></button>
+                            <button type="button" class="accent-swatch" role="radio" aria-checked="false" data-color="#0ea5e9" style="--sw:#0ea5e9"></button>
+                            <button type="button" class="accent-swatch" role="radio" aria-checked="false" data-color="#8b5cf6" style="--sw:#8b5cf6"></button>
+                            <button type="button" class="accent-swatch" role="radio" aria-checked="false" data-color="#f59e0b" style="--sw:#f59e0b"></button>
+                            <button type="button" class="accent-swatch" role="radio" aria-checked="false" data-color="#ef4444" style="--sw:#ef4444"></button>
+                            <label class="accent-custom" title="Custom color">
+                                <input type="color" id="accent-custom" value="#059669" aria-label="Custom accent color">
+                                <span class="accent-custom-ring"></span>
+                            </label>
+                        </div>
+                        <input type="hidden" id="accent-color" name="accent-color" value="">
+                    </div>
+
+                    <div class="onb-nav">
+                        <button type="button" class="auth-btn ghost-btn" data-back="2"><span class="btn-text">Back</span></button>
+                        <button type="button" class="auth-btn" data-next="4"><span class="btn-text">Continue</span></button>
+                    </div>
+                </section>
+
+                <!-- ═══════════ STEP 4: LOCATION & OPS ═══════════ -->
+                <section class="step-pane" data-pane="4" hidden aria-labelledby="pane-title-4">
+                    <h2 id="pane-title-4" class="onb-title sm">Where You Operate</h2>
+                    <p class="onb-sub">Help buyers know how and where to get your products.</p>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="university">University</label>
+                            <div class="input-wrapper select-wrapper">
+                                <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5Z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>
+                                <select id="university" name="university" required aria-describedby="university-error">
+                                    <option value="" disabled selected>Select university</option>
+                                    <option value="University of Ghana">University of Ghana</option>
+                                    <option value="KNUST">Kwame Nkrumah University of Science and Technology</option>
+                                    <option value="UCC">University of Cape Coast</option>
+                                    <option value="UPSA">University of Professional Studies, Accra</option>
+                                    <option value="UEW">University of Education, Winneba</option>
+                                    <option value="Ashesi">Ashesi University</option>
+                                    <option value="GIJ">Ghana Institute of Journalism</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                                <svg class="select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+                            </div>
+                            <div id="university-error" class="error-message" role="alert"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="campus">Campus</label>
+                            <div class="input-wrapper">
+                                <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                                <input type="text" id="campus" name="campus" placeholder="e.g. Legon Campus" required aria-describedby="campus-error">
+                            </div>
+                            <div id="campus-error" class="error-message" role="alert"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="city">City / Town</label>
+                            <div class="input-wrapper">
+                                <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                                <input type="text" id="city" name="city" placeholder="e.g. Accra" required aria-describedby="city-error">
+                            </div>
+                            <div id="city-error" class="error-message" role="alert"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="country">Country</label>
+                            <div class="input-wrapper select-wrapper">
+                                <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10Z"></path></svg>
+                                <select id="country" name="country" required aria-describedby="country-error">
+                                    <option value="Ghana" selected>Ghana</option>
+                                    <option value="Nigeria">Nigeria</option>
+                                    <option value="Kenya">Kenya</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                                <svg class="select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+                            </div>
+                            <div id="country-error" class="error-message" role="alert"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pickup">Pickup Location</label>
+                        <div class="input-wrapper">
+                            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                            <input type="text" id="pickup" name="pickup" placeholder="e.g. Near Commonwealth Hall" required aria-describedby="pickup-error">
+                        </div>
+                        <div id="pickup-error" class="error-message" role="alert"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Delivery Options</label>
+                        <div class="chip-group" id="delivery-group">
+                            <label class="chip"><input type="checkbox" name="delivery" value="pickup"><span>Pickup on Campus</span></label>
+                            <label class="chip"><input type="checkbox" name="delivery" value="campus_delivery"><span>Campus Delivery</span></label>
+                            <label class="chip"><input type="checkbox" name="delivery" value="standard"><span>Standard Delivery</span></label>
+                        </div>
+                        <div id="delivery-error" class="error-message" role="alert"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="hours">Business Hours</label>
+                        <div class="input-wrapper select-wrapper">
+                            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
+                            <select id="hours" name="hours" required aria-describedby="hours-error">
+                                <option value="" disabled selected>Select availability</option>
+                                <option value="mon-fri-9-17">Mon–Fri, 9:00–17:00</option>
+                                <option value="mon-sat-8-18">Mon–Sat, 8:00–18:00</option>
+                                <option value="flexible">Flexible / By appointment</option>
+                                <option value="247">24 / 7</option>
+                            </select>
+                            <svg class="select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+                        </div>
+                        <div id="hours-error" class="error-message" role="alert"></div>
+                    </div>
+
+                    <div class="onb-nav">
+                        <button type="button" class="auth-btn ghost-btn" data-back="3"><span class="btn-text">Back</span></button>
+                        <button type="button" class="auth-btn" data-next="5"><span class="btn-text">Continue</span></button>
+                    </div>
+                </section>
+
+                <!-- ═══════════ STEP 5: VERIFICATION ═══════════ -->
+                <section class="step-pane" data-pane="5" hidden aria-labelledby="pane-title-5">
+                    <h2 id="pane-title-5" class="onb-title sm">Verify Your Identity</h2>
+                    <p class="onb-sub">We verify student sellers to build a safer, more trustworthy marketplace for everyone. It only takes a moment.</p>
+
+                    <div class="verify-note">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path><path d="m9 12 2 2 4-4"></path></svg>
+                        <span>Your details stay private and are only used for verification.</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="student-id">Student / Staff ID</label>
+                        <div class="input-wrapper">
+                            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"></rect><circle cx="9" cy="11" r="2"></circle><path d="M15 8h4M15 12h4M7 16h10"></path></svg>
+                            <input type="text" id="student-id" name="student-id" placeholder="e.g. UG/2021/008" required aria-describedby="student-id-error">
+                        </div>
+                        <div id="student-id-error" class="error-message" role="alert"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="student-email">Student Email <span class="optional">(optional)</span></label>
+                        <div class="input-wrapper">
+                            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-10 6L2 7"></path></svg>
+                            <input type="email" id="student-email" name="student-email" placeholder="e.g. ama@st.ug.edu.gh" autocomplete="email" aria-describedby="student-email-error" inputmode="email">
+                        </div>
+                        <div id="student-email-error" class="error-message" role="alert"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="verify-method">Verification Method</label>
+                        <div class="input-wrapper select-wrapper">
+                            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 12l2 2 4-4"></path><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6Z"></path></svg>
+                            <select id="verify-method" name="verify-method" required aria-describedby="verify-method-error">
+                                <option value="" disabled selected>How should we verify you?</option>
+                                <option value="student_id">Upload Student ID</option>
+                                <option value="student_email">Verify via Student Email</option>
+                                <option value="both">Both</option>
+                            </select>
+                            <svg class="select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+                        </div>
+                        <div id="verify-method-error" class="error-message" role="alert"></div>
+                    </div>
+
+                    <div class="onb-nav">
+                        <button type="button" class="auth-btn ghost-btn" data-back="4"><span class="btn-text">Back</span></button>
+                        <button type="button" class="auth-btn" data-next="6"><span class="btn-text">Review</span></button>
+                    </div>
+                </section>
+
+                <!-- ═══════════ STEP 6: REVIEW & LAUNCH ═══════════ -->
+                <section class="step-pane" data-pane="6" hidden aria-labelledby="pane-title-6">
+                    <div class="review-head">
+                        <span class="review-badge">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7"></path></svg>
+                            Final step
+                        </span>
+                        <h2 id="pane-title-6" class="onb-title sm">Review &amp; Launch</h2>
+                        <p class="onb-sub">Take a final look at your storefront. When you're ready, launch it to the campus.</p>
+                    </div>
+
+                    <div class="review-card" id="review-card">
+                        <div class="review-banner" id="review-banner">
+                            <span class="review-flag">Store Preview</span>
+                            <span class="review-banner-empty">No banner yet</span>
+                        </div>
+                        <div class="review-body">
+                            <div class="review-logo" id="review-logo"><span class="review-logo-empty">LOGO</span></div>
+                            <div class="review-info">
+                                <h3 id="review-name">Your Store</h3>
+                                <p id="review-tagline" class="review-tagline"></p>
+                                <span id="review-category" class="review-pill">Category</span>
+                            </div>
+                        </div>
+                        <dl class="review-meta">
+                            <div><dt>University</dt><dd id="review-university">—</dd></div>
+                            <div><dt>Campus</dt><dd id="review-campus">—</dd></div>
+                            <div><dt>Pickup</dt><dd id="review-pickup">—</dd></div>
+                            <div><dt>Delivery</dt><dd id="review-delivery">—</dd></div>
+                        </dl>
+                    </div>
+
+                    <div class="review-edit">
+                        <button type="button" class="review-edit-btn" data-edit="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>Edit Account</button>
+                        <button type="button" class="review-edit-btn" data-edit="2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>Edit Store</button>
+                        <button type="button" class="review-edit-btn" data-edit="3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>Edit Branding</button>
+                        <button type="button" class="review-edit-btn" data-edit="4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>Edit Location</button>
+                        <button type="button" class="review-edit-btn" data-edit="5"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>Edit Verification</button>
+                    </div>
+
+                    <div class="form-group" style="margin-top:0.75rem">
+                        <label class="checkbox terms">
+                            <input type="checkbox" id="terms" name="terms" required>
+                            <span class="checkbox-box" aria-hidden="true"></span>
+                            <span class="checkbox-label">I agree to the <a href="../../public/info/terms.html" target="_blank" rel="noopener">Terms of Service</a> and <a href="../../public/info/privacy.html" target="_blank" rel="noopener">Privacy Policy</a></span>
+                        </label>
+                        <div id="terms-error" class="error-message" role="alert"></div>
+                    </div>
+
+                    <p class="launch-note">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-10 6L2 7"></path></svg>
+                        <span>We'll email you a verification link to activate your store. You can keep polishing your storefront anytime after launch.</span>
+                    </p>
+
+                    <div class="onb-nav">
+                        <button type="button" class="auth-btn ghost-btn" data-back="5"><span class="btn-text">Back</span></button>
+                        <button type="submit" class="auth-btn" id="submit-btn">
+                            <span class="btn-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"></path><path d="M22 2 15 22l-4-9-9-4Z"></path></svg></span>
+                            <span class="btn-text">Launch My Store</span>
+                            <span class="spinner" aria-hidden="true"></span>
+                        </button>
+                    </div>
+                </section>
+
+                <!-- ═══════════ SUCCESS ═══════════ -->
+                <section class="step-pane" data-pane="success" hidden aria-labelledby="pane-title-success">
+                    <div class="success-art" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" width="64" height="64" fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path></svg>
+                    </div>
+                    <h2 id="pane-title-success" class="onb-title">Congratulations! 🎉</h2>
+                    <p class="onb-sub">Your store has been created successfully. You're now part of the UniMartX campus marketplace.</p>
+                    <ul class="next-steps">
+                        <li><span class="ns-ic" aria-hidden="true">✉</span> Verify your email</li>
+                        <li><span class="ns-ic" aria-hidden="true">＋</span> Add your first product</li>
+                        <li><span class="ns-ic" aria-hidden="true">★</span> Customize your storefront</li>
+                        <li><span class="ns-ic" aria-hidden="true">↗</span> Start selling</li>
+                    </ul>
+                    <a href="../login.html" class="auth-btn" id="verify-login-btn"><span class="btn-text">Verify your account and login</span></a>
+                </section>
+            </form>
+        </section>
+
+        <footer class="copyright">© 2026 UniMartX. Made with care for the University of Ghana community</footer>
+    </main>
+
     <script src="../../../config.js"></script>
-    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
     <script src="../js/seller-register.js"></script>
 </body>
 </html>

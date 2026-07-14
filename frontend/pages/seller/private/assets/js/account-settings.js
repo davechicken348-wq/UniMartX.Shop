@@ -2,18 +2,30 @@
 const settingsNavItems = document.querySelectorAll('.settings-nav-item');
 const settingsSections = document.querySelectorAll('.settings-section');
 
+function showSettingsSection(target) {
+    if (!target) return;
+    settingsNavItems.forEach(nav => nav.classList.toggle('active', nav.getAttribute('data-target') === target));
+    settingsSections.forEach(section => {
+        section.style.display = section.id === target ? 'block' : 'none';
+    });
+}
+
 if (settingsNavItems.length) {
     settingsNavItems.forEach(item => {
         item.addEventListener('click', e => {
             e.preventDefault();
-            const target = item.getAttribute('data-target');
+            showSettingsSection(item.getAttribute('data-target'));
+        });
+    });
 
-            settingsNavItems.forEach(nav => nav.classList.remove('active'));
-            item.classList.add('active');
+    const initial = document.querySelector('.settings-nav-item.active');
+    showSettingsSection(initial ? initial.getAttribute('data-target') : settingsNavItems[0].getAttribute('data-target'));
 
-            settingsSections.forEach(section => {
-                section.style.display = section.id === target ? 'block' : 'none';
-            });
+    document.querySelectorAll('.settings-link[data-target]').forEach(link => {
+        link.addEventListener('click', e => {
+            e.preventDefault();
+            showSettingsSection(link.getAttribute('data-target'));
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         });
     });
 }
@@ -74,11 +86,59 @@ async function fetchJSON(url, options = {}) {
 
 // ── Change Password ──────────────────────────────
 const passwordForm = document.getElementById('password-form');
+const currentPwInput = document.getElementById('current-password');
+const currentPwStatus = document.getElementById('current-pw-status');
+let currentPwVerified = false;
+
+function setCurrentPwStatus(state, message) {
+    if (!currentPwStatus) return;
+    currentPwStatus.className = 'field-status' + (state ? ` field-status--${state}` : '');
+    currentPwStatus.textContent = message || '';
+    if (currentPwInput) {
+        currentPwInput.classList.toggle('input-valid', state === 'valid');
+        currentPwInput.classList.toggle('input-invalid', state === 'invalid');
+    }
+}
+
+async function verifyCurrentPassword() {
+    if (!currentPwInput || !currentPwStatus) return;
+    const value = currentPwInput.value;
+    if (!value) {
+        currentPwVerified = false;
+        setCurrentPwStatus('', '');
+        return;
+    }
+    setCurrentPwStatus('checking', 'Verifying…');
+    try {
+        const data = await fetchJSON(`${API_BASE}/api/users/verify-password`, {
+            method: 'POST',
+            body: JSON.stringify({ currentPassword: value }),
+        });
+        currentPwVerified = !!data.valid;
+        if (currentPwVerified) {
+            setCurrentPwStatus('valid', 'Password verified');
+        } else {
+            setCurrentPwStatus('invalid', 'Current password is incorrect');
+        }
+    } catch (err) {
+        currentPwVerified = false;
+        setCurrentPwStatus('invalid', err.message || 'Could not verify password');
+    }
+}
+
+if (currentPwInput) {
+    currentPwInput.addEventListener('blur', verifyCurrentPassword);
+    currentPwInput.addEventListener('input', () => {
+        currentPwVerified = false;
+        if (currentPwInput.value) setCurrentPwStatus('', '');
+        else setCurrentPwStatus('', '');
+    });
+}
 
 if (passwordForm) {
     passwordForm.addEventListener('submit', async e => {
         e.preventDefault();
-        const currentPw = document.getElementById('current-password').value.trim();
+        const currentPw = currentPwInput ? currentPwInput.value.trim() : '';
         const newPw = document.getElementById('new-password').value.trim();
         const confirmPw = document.getElementById('confirm-password').value.trim();
 
@@ -92,6 +152,19 @@ if (passwordForm) {
             return;
         }
 
+        if (!currentPwVerified) {
+            if (!currentPw) {
+                alert('Please enter your current password');
+                return;
+            }
+            await verifyCurrentPassword();
+            if (!currentPwVerified) {
+                alert('Current password is incorrect');
+                currentPwInput && currentPwInput.focus();
+                return;
+            }
+        }
+
         try {
             await fetchJSON(`${API_BASE}/api/users/password`, {
                 method: 'PATCH',
@@ -99,6 +172,8 @@ if (passwordForm) {
             });
             alert('Password changed successfully');
             passwordForm.reset();
+            currentPwVerified = false;
+            setCurrentPwStatus('', '');
         } catch (err) {
             alert(err.message || 'Failed to change password');
         }
