@@ -1,6 +1,5 @@
-import { PrismaClient, type NotificationPreference, type NotificationType, type NotificationPriority } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { type NotificationPreference, type NotificationType, type NotificationPriority } from '@prisma/client';
+import prisma from '../lib/prisma';
 
 type NotificationPrefs = {
   orderUpdates: boolean;

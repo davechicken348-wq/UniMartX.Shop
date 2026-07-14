@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
-import { PrismaClient } from '@prisma/client';
+import prisma from './lib/prisma';
 import authRoutes from './routes/auth.routes';
 import verificationRoutes from './routes/verification.routes';
 import cartRoutes from './routes/cart.routes';
@@ -25,7 +25,6 @@ import { initializeR2 } from './services/r2.service';
 dotenv.config();
 
 const app = express();
-const prisma = new PrismaClient();
 
 // ── Process-level handlers ──
 process.on('unhandledRejection', (err: any) => {
