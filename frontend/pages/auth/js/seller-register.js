@@ -230,7 +230,7 @@ function bindUpload(inputId, previewId, imgId, removeId, setter) {
     input.addEventListener('change', () => {
         const file = input.files[0];
         if (!file) return;
-        if (file.size > 5 * 1024 * 1024) { alert('Please choose an image under 5MB.'); input.value = ''; return; }
+        if (file.size > 2 * 1024 * 1024) { alert('Please choose an image under 2MB.'); input.value = ''; return; }
         const reader = new FileReader();
         reader.onload = () => {
             preview.hidden = false;

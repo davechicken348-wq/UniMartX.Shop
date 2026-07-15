@@ -24,7 +24,7 @@ export const errorHandler = (
   if (err.name === 'PayloadTooLargeError' || (err as any).type === 'entity.too.large') {
     res.status(413).json({
       success: false,
-      error: 'The uploaded file is too large. Please choose an image under 5MB.',
+      error: 'The uploaded file is too large. Please choose a smaller image.',
     });
     return;
   }

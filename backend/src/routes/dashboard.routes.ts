@@ -23,7 +23,7 @@ const storage = multer.diskStorage({
 
 const refundUpload = multer({
   storage,
-  limits: { fileSize: 5 * 1024 * 1024 },
+  limits: { fileSize: 2 * 1024 * 1024 },
   fileFilter: (_req, file, cb) => {
     cb(null, file.mimetype.startsWith('image/') || file.mimetype === 'image/svg+xml');
   },

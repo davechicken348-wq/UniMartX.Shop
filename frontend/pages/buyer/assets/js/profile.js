@@ -328,9 +328,9 @@ document.getElementById('avatar-input').addEventListener('change', async functio
         showToast('Please select an image file (JPEG, PNG, etc.).', 'error');
         return;
     }
-    const maxSizeBytes = 5 * 1024 * 1024;
+    const maxSizeBytes = 2 * 1024 * 1024;
     if (file.size > maxSizeBytes) {
-        showToast('Image is too large. Please choose a file under 5MB.', 'error');
+        showToast('Image is too large. Please choose a file under 2MB.', 'error');
         return;
     }
 
