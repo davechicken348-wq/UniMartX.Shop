@@ -253,8 +253,8 @@ function bindUpload(inputId, previewId, imgId, removeId, setter) {
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); input.click(); }
     });
 }
-bindUpload('logo-input', 'logo-preview', 'logo-img', 'logo-remove', (d) => { state.logo = d; });
-bindUpload('banner-input', 'banner-preview', 'banner-img', 'banner-remove', (d) => { state.banner = d; });
+bindUpload('logo-input', 'logo-preview', 'logo-img', 'logo-remove', (d) => { state.logo = d; updateLiveBranding(); });
+bindUpload('banner-input', 'banner-preview', 'banner-img', 'banner-remove', (d) => { state.banner = d; updateLiveBranding(); });
 
 // ── ACCENT COLOR ─────────────────────────────────────────────
 const accentSwatches = document.querySelectorAll('.accent-swatch');
@@ -268,9 +268,62 @@ function setAccent(color, sourceEl) {
     if (sourceEl !== accentCustom) accentCustom.value = color;
     const banner = document.getElementById('review-banner');
     if (banner) banner.style.background = `linear-gradient(120deg, ${color}, ${shade(color, -18)})`;
+    const liveBanner = document.getElementById('live-banner');
+    if (liveBanner) liveBanner.style.background = `linear-gradient(120deg, ${color}, ${shade(color, -18)})`;
 }
 accentSwatches.forEach((s) => s.addEventListener('click', () => setAccent(s.dataset.color, s)));
 accentCustom.addEventListener('input', () => setAccent(accentCustom.value, accentCustom));
+
+// ── LIVE STORE PREVIEW (Step 3) ──────────────────────────
+function updateLiveBranding() {
+    const liveLogo = document.getElementById('live-logo');
+    if (liveLogo) {
+        liveLogo.innerHTML = '';
+        if (state.logo) {
+            const im = document.createElement('img');
+            im.src = state.logo;
+            liveLogo.appendChild(im);
+        } else {
+            const s = document.createElement('span');
+            s.className = 'review-logo-empty';
+            s.textContent = 'LOGO';
+            liveLogo.appendChild(s);
+        }
+    }
+    const liveBanner = document.getElementById('live-banner');
+    if (liveBanner) {
+        liveBanner.querySelectorAll('img').forEach((n) => n.remove());
+        let empty = liveBanner.querySelector('.review-banner-empty');
+        if (state.banner) {
+            if (empty) empty.remove();
+            const im = document.createElement('img');
+            im.src = state.banner;
+            liveBanner.appendChild(im);
+        } else if (!empty) {
+            empty = document.createElement('span');
+            empty.className = 'review-banner-empty';
+            empty.textContent = 'Your banner appears here';
+            liveBanner.appendChild(empty);
+        }
+    }
+}
+function updateLiveText() {
+    const name = document.getElementById('live-name');
+    const tag = document.getElementById('live-tagline');
+    const cat = document.getElementById('live-category');
+    if (name) name.textContent = val('store-name') || 'Your Store';
+    if (tag) tag.textContent = val('tagline') || '';
+    const sel = document.getElementById('category');
+    if (cat) cat.textContent = sel && sel.value ? sel.options[sel.selectedIndex].textContent : 'Category';
+}
+['store-name', 'tagline'].forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', updateLiveText);
+});
+const liveCatEl = document.getElementById('category');
+if (liveCatEl) liveCatEl.addEventListener('change', updateLiveText);
+updateLiveBranding();
+updateLiveText();
 
 function shade(hex, percent) {
     const n = parseInt(hex.replace('#', ''), 16);

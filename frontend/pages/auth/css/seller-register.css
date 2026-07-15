@@ -240,11 +240,12 @@
 /* ── UPLOADS ───────────────────────────────────────────────── */
 .upload-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(116px, 132px) 1fr;
+    align-items: start;
     gap: 0.85rem;
-    margin-bottom: 1.4rem;
+    margin-bottom: 1.2rem;
 }
-.upload-card-wide { grid-column: 1 / -1; }
+.upload-card-wide { grid-column: auto; }
 
 .upload-label {
     display: block;
@@ -252,6 +253,14 @@
     font-weight: 600;
     color: var(--ink-2);
     margin-bottom: 0.45rem;
+}
+
+.upload-hint {
+    display: block;
+    margin-top: 0.4rem;
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--ink-3);
 }
 
 .dropzone {
@@ -349,6 +358,33 @@
     background: conic-gradient(#ef4444, #f59e0b, #059669, #0ea5e9, #8b5cf6, #ef4444);
 }
 .accent-custom:focus-within .accent-custom-ring { box-shadow: 0 0 0 3px var(--brand-ring); }
+
+/* ── LIVE STORE PREVIEW (Step 3) ─────────────────────────── */
+.live-preview { margin: 0 0 1.4rem; }
+.live-preview-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-bottom: 0.6rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+}
+.live-preview-tag::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--brand);
+    box-shadow: 0 0 0 3px var(--brand-soft);
+}
+.live-review {
+    margin-bottom: 0;
+    transition: box-shadow 0.2s var(--ease);
+}
+.live-review .review-logo-empty { font-size: 0.62rem; }
 
 /* ── CHIPS (delivery) ─────────────────────────────────────── */
 .chip-group { display: flex; flex-wrap: wrap; gap: 0.5rem; }
@@ -566,12 +602,21 @@
 /* ── MOBILE ────────────────────────────────────────────────── */
 @media (max-width: 480px) {
     .form-row { grid-template-columns: 1fr; gap: 0; }
-    .upload-grid { grid-template-columns: 1fr; }
-    .upload-card:not(.upload-card-wide) { aspect-ratio: 16 / 7; }
+    .upload-grid { grid-template-columns: 1fr; gap: 1rem; }
+    .upload-card:not(.upload-card-wide) .dropzone { aspect-ratio: 16 / 9; }
+    .upload-card:not(.upload-card-wide) { order: 2; }
+    .upload-card-wide { order: 1; }
+    .live-preview { margin-bottom: 1.2rem; }
     .onb-card { padding: 1.6rem 1.3rem; }
     .onb-title { font-size: 1.4rem; }
     .onb-step-hint { font-size: 0.68rem; }
     .wb-ic { width: 38px; height: 38px; }
     .wb-ic svg { width: 19px; height: 19px; }
     .review-meta { grid-template-columns: 1fr; }
+}
+
+/* ── SMALL PHONES ──────────────────────────────────────────── */
+@media (max-width: 360px) {
+    .accent-swatches { gap: 0.5rem; }
+    .accent-swatch, .accent-custom, .accent-custom-ring { width: 28px; height: 28px; }
 }
