@@ -137,14 +137,40 @@
     <div class="buyer-main" id="buyer-main">
         <div class="page-content">
 
+            <!-- ── Page header ── -->
+            <section class="notif-header">
+                <div class="notif-header-text">
+                    <p class="notif-eyebrow"><i data-lucide="bell"></i> Your alerts</p>
+                    <h1 class="notif-title">Notifications</h1>
+                    <p class="notif-sub">Stay on top of orders, price drops and account activity.</p>
+                </div>
+                <a class="btn btn-ghost" href="../account/settings.html"><i data-lucide="settings-2"></i> Preferences</a>
+            </section>
+
+            <!-- ── Summary strip ── -->
+            <div class="notif-summary">
+                <div class="ns-card">
+                    <span class="ns-ico"><i data-lucide="bell"></i></span>
+                    <div><span class="ns-val" id="ns-total">0</span><span class="ns-label">All</span></div>
+                </div>
+                <div class="ns-card">
+                    <span class="ns-ico ns-ico--unread"><i data-lucide="mail"></i></span>
+                    <div><span class="ns-val" id="ns-unread">0</span><span class="ns-label">Unread</span></div>
+                </div>
+                <div class="ns-card">
+                    <span class="ns-ico ns-ico--week"><i data-lucide="calendar-clock"></i></span>
+                    <div><span class="ns-val" id="ns-week">0</span><span class="ns-label">This Week</span></div>
+                </div>
+            </div>
+
             <!-- Toolbar -->
             <div class="notif-toolbar">
                 <div class="notif-filter-tabs" id="notif-filter-tabs">
                     <button class="notif-tab active" data-filter="all">All <span class="tab-num" id="tab-all">0</span></button>
                     <button class="notif-tab" data-filter="unread">Unread <span class="tab-num" id="tab-unread">0</span></button>
-                    <button class="notif-tab" data-filter="orders">Orders</button>
-                    <button class="notif-tab" data-filter="wishlist">Wishlist</button>
-                    <button class="notif-tab" data-filter="account">Account</button>
+                    <button class="notif-tab" data-filter="orders">Orders <span class="tab-num" id="tab-orders">0</span></button>
+                    <button class="notif-tab" data-filter="wishlist">Wishlist <span class="tab-num" id="tab-wishlist">0</span></button>
+                    <button class="notif-tab" data-filter="account">Account <span class="tab-num" id="tab-account">0</span></button>
                 </div>
                 <button class="btn btn-ghost btn-sm" id="mark-all-read-btn">
                     <i data-lucide="check-check"></i>
@@ -166,6 +192,14 @@
 
             <!-- Notifications list -->
             <div class="notif-list-full" id="notif-list-full"></div>
+
+            <!-- Load more -->
+            <div class="notif-loadmore hidden" id="load-more">
+                <button class="btn btn-ghost" id="load-more-btn">
+                    <i data-lucide="plus"></i>
+                    Load more
+                </button>
+            </div>
 
         </div>
     </div>

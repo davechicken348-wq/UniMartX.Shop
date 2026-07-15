@@ -134,6 +134,36 @@
     <div class="buyer-main" id="buyer-main">
         <div class="page-content">
 
+            <!-- ── Page header ── -->
+            <section class="orders-header">
+                <div class="orders-header-text">
+                    <p class="orders-eyebrow"><i data-lucide="package"></i> Your purchases</p>
+                    <h1 class="orders-title">My Orders</h1>
+                    <p class="orders-sub" id="orders-sub">Track, manage and review everything you've bought on UniMartX.</p>
+                </div>
+                <a class="btn btn-primary" href="../../public/shop/shop.html"><i data-lucide="shopping-bag"></i> Continue Shopping</a>
+            </section>
+
+            <!-- ── Order summary strip ── -->
+            <div class="order-summary" id="order-summary">
+                <div class="os-card">
+                    <span class="os-ico"><i data-lucide="package"></i></span>
+                    <div><span class="os-val" id="os-all">0</span><span class="os-label">All Orders</span></div>
+                </div>
+                <div class="os-card">
+                    <span class="os-ico os-ico--transit"><i data-lucide="truck"></i></span>
+                    <div><span class="os-val" id="os-transit">0</span><span class="os-label">In Transit</span></div>
+                </div>
+                <div class="os-card">
+                    <span class="os-ico os-ico--done"><i data-lucide="check-circle"></i></span>
+                    <div><span class="os-val" id="os-delivered">0</span><span class="os-label">Delivered</span></div>
+                </div>
+                <div class="os-card">
+                    <span class="os-ico os-ico--cancel"><i data-lucide="x-circle"></i></span>
+                    <div><span class="os-val" id="os-cancelled">0</span><span class="os-label">Cancelled</span></div>
+                </div>
+            </div>
+
             <!-- Filter tabs + search -->
             <div class="orders-toolbar">
                 <div class="filter-tabs" id="filter-tabs">
@@ -171,6 +201,19 @@
                 <div id="page-buttons"></div>
                 <button class="page-btn" id="next-page"><i data-lucide="chevron-right"></i></button>
             </div>
+
+            <!-- ── You might also like ── -->
+            <section class="orders-rec" id="recommended-section">
+                <div class="section-head">
+                    <div>
+                        <h2 class="section-title"><i data-lucide="sparkles"></i> You Might Also Like</h2>
+                        <p class="section-sub">Hand-picked from campus sellers</p>
+                    </div>
+                    <a class="section-link" href="../../public/shop/shop.html?sort=popular">Explore more <i data-lucide="arrow-right"></i></a>
+                </div>
+                <div class="prod-grid" id="recommended-grid"></div>
+                <div class="discovery" id="recommended-empty" style="display:none;"></div>
+            </section>
 
         </div>
     </div>

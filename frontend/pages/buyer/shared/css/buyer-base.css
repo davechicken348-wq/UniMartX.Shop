@@ -6,14 +6,14 @@
 
 :root {
     /* Backgrounds */
-    --bg:        #080d14;
-    --bg-2:      #0f1623;
-    --bg-3:      #151f2e;
-    --bg-4:      #1a2640;
+    --bg:        #ffffff;
+    --bg-2:      #f8fafc;
+    --bg-3:      #f1f5f9;
+    --bg-4:      #e2e8f0;
 
     /* Borders */
-    --border:    rgba(255,255,255,0.07);
-    --border-2:  rgba(59,130,246,0.15);
+    --border:    rgba(15,23,42,0.08);
+    --border-2:  rgba(59,130,246,0.20);
 
     /* Primary — Blue */
     --primary:   #3b82f6;
@@ -21,9 +21,9 @@
     --primary-l: rgba(59,130,246,0.12);
 
     /* Text */
-    --text:      #f0f4ff;
-    --text-2:    #94a3b8;
-    --text-3:    #4b5e7a;
+    --text:      #0f172a;
+    --text-2:    #475569;
+    --text-3:    #94a3b8;
 
     /* Status */
     --success:   #22c55e;
@@ -76,8 +76,6 @@ button { font-family: 'Quicksand', sans-serif; }
 
 .page-content {
     padding: 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
     width: 100%;
 }
 
@@ -173,7 +171,7 @@ button { font-family: 'Quicksand', sans-serif; }
     background: transparent; color: var(--text-2);
     border: 1px solid var(--border); padding: 0.65rem 1.4rem; font-size: 0.9rem;
 }
-.btn-ghost:hover { color: var(--text); border-color: rgba(255,255,255,0.15); }
+.btn-ghost:hover { color: var(--text); border-color: rgba(15,23,42,0.15); }
 
 .btn-sm { padding: 0.45rem 1rem; font-size: 0.82rem; }
 
@@ -254,7 +252,7 @@ button { font-family: 'Quicksand', sans-serif; }
     background: var(--bg-3);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    box-shadow: 0 12px 32px rgba(0,0,0,0.45);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.12);
     color: var(--text);
     font-size: 0.88rem;
     font-weight: 600;

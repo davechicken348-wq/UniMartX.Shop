@@ -2,6 +2,25 @@
    PROFILE PAGE
 ═══════════════════════════════════════════ */
 
+/* ── Page header ── */
+.profile-header {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 1rem; margin-bottom: 1.5rem;
+}
+.profile-header-text { min-width: 0; }
+.profile-eyebrow {
+    display: inline-flex; align-items: center; gap: 0.35rem;
+    font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em;
+    color: var(--primary);
+    background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.18);
+    padding: 0.25rem 0.6rem; border-radius: 50px; margin-bottom: 0.6rem;
+}
+.profile-eyebrow svg { width: 13px; height: 13px; stroke: currentColor; }
+.profile-title { font-size: 1.8rem; font-weight: 800; color: var(--text); letter-spacing: -0.02em; line-height: 1.1; }
+.profile-sub { font-size: 0.92rem; color: var(--text-2); margin-top: 0.4rem; max-width: 60ch; }
+.profile-header .btn { flex-shrink: 0; padding: 0.7rem 1.3rem; }
+.profile-header .btn svg { width: 16px; height: 16px; stroke: currentColor; }
+
 /* ── Layout ── */
 .profile-layout {
     display: grid;
@@ -275,6 +294,8 @@
 }
 
 @media (max-width: 768px) {
+    .profile-header { flex-direction: column; align-items: flex-start; }
+    .profile-header .btn { width: 100%; justify-content: center; }
     .profile-layout { grid-template-columns: 1fr; }
     .profile-side { position: static; }
     .avatar-card { padding: 1.5rem 1.25rem; }
@@ -309,7 +330,7 @@
     display: flex;
     align-items: center;
     gap: 0.6rem;
-    box-shadow: 0 6px 24px rgba(0,0,0,0.25);
+    box-shadow: 0 6px 24px rgba(0,0,0,0.1);
     animation: slideIn 0.3s ease-out;
 }
 .toast.success { background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.3); color: #22c55e; }

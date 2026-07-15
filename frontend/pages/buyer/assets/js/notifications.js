@@ -45,22 +45,44 @@ let _lastSnapshot = null;
 let _isFetching = false;
 
 // ── Helpers ───────────────────────────────────
-function getNotificationIcon(type) {
-  if (!type) return 'bell';
-  if (type.startsWith('order_') || type === 'new_order_seller') return 'package';
-  if (type.startsWith('wishlist_')) return 'heart';
-  if (type.startsWith('review_')) return 'message-square';
-  if (['login_alert', 'password_changed', 'email_verified'].includes(type)) return 'shield';
-  return 'bell';
+function getNotifMeta(type) {
+  if (!type) return { icon: 'bell', cat: 'default', label: 'Notification' };
+  if (type.startsWith('order_') || type === 'new_order_seller') return { icon: 'package', cat: 'order', label: 'Order' };
+  if (type.startsWith('wishlist_')) return { icon: 'heart', cat: 'wishlist', label: 'Wishlist' };
+  if (type.startsWith('review_') || type === 'rating') return { icon: 'star', cat: 'review', label: 'Review' };
+  if (['login_alert', 'password_changed', 'email_verified'].includes(type) || type.startsWith('account_') || type.startsWith('security_'))
+    return { icon: 'shield', cat: 'account', label: 'Account' };
+  if (type.startsWith('promo') || type.startsWith('deal') || type.startsWith('marketing'))
+    return { icon: 'tag', cat: 'promo', label: 'Promo' };
+  return { icon: 'bell', cat: 'default', label: 'Alert' };
+}
+
+function getCta(n) {
+  if (n.actionUrl) return n.actionUrl;
+  if (n.orderId) return `../orders/order-details.html?id=${encodeURIComponent(n.orderId)}`;
+  if (n.productId) return `../../public/shop/product-details.html?id=${encodeURIComponent(n.productId)}`;
+  return null;
+}
+
+function priorityClass(p) {
+  return p === 'urgent' ? 'notif-card--urgent' : p === 'high' ? 'notif-card--high' : '';
+}
+
+function dayBucket(dateStr) {
+  const d = new Date(dateStr);
+  const now = new Date();
+  const a = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const b = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const diff = Math.round((b - a) / 86400000);
+  if (diff <= 0) return 'Today';
+  if (diff === 1) return 'Yesterday';
+  if (diff < 7) return 'This Week';
+  return d.toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: d.getFullYear() === now.getFullYear() ? undefined : 'numeric' });
 }
 
 function getSnapshot(arr) {
   if (!arr || !arr.length) return '';
   return arr.map(n => n.id + ':' + (n.read ? '1' : '0')).join(',');
-}
-
-function getTypeLabel(type) {
-  return type.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 }
 
 function escapeHtml(text) {
@@ -93,7 +115,7 @@ async function loadNotifications(reset = true, skipRerender = false) {
     allNotifications = [];
     if (loadingEl) loadingEl.style.display = 'block';
     if (listEl) listEl.innerHTML = '';
-    if (loadMoreEl) loadMoreEl.style.display = 'none';
+    if (loadMoreEl) loadMoreEl.classList.add('hidden');
   }
 
   const readParam = currentFilter === 'unread' ? 'false' : undefined;
@@ -121,7 +143,7 @@ async function loadNotifications(reset = true, skipRerender = false) {
     currentPage++;
 
     renderNotifications(skipRerender);
-    if (loadMoreEl) loadMoreEl.style.display = hasMore ? 'block' : 'none';
+    if (loadMoreEl) loadMoreEl.classList.toggle('hidden', !hasMore);
 
     syncBadge();
   } catch (err) {
@@ -140,84 +162,128 @@ function renderNotifications() {
         <div class="empty-state">
           <i data-lucide="bell-off"></i>
           <h3>No notifications</h3>
-          <p>You're all caught up! Check back later.</p>
+          <p>${emptyMessage()}</p>
         </div>
       `;
       lucide.createIcons();
+      updateSummary();
       return;
     }
 
-    listEl.innerHTML = filtered.map(notif => {
-      const isUnread = !notif.read;
-      const icon = getNotificationIcon(notif.type);
-      const typeLabel = getTypeLabel(notif.type);
+    const groups = [];
+    let current = null;
+    filtered.forEach(n => {
+      const label = dayBucket(n.createdAt);
+      if (!current || current.label !== label) { current = { label, items: [] }; groups.push(current); }
+      current.items.push(n);
+    });
 
-      return `
-        <div class="notif-card ${isUnread ? 'unread' : ''}" data-id="${notif.id}" data-type="${notif.type}">
-          <div class="notif-card-icon">
-            <i data-lucide="${icon}"></i>
-          </div>
-          <div class="notif-card-body">
-            <div class="notif-card-title">
-              ${escapeHtml(notif.title)}
-              <span class="type-badge">${typeLabel}</span>
-            </div>
-            <div class="notif-card-message">${escapeHtml(notif.message)}</div>
-            <div class="notif-card-meta">
-              <span><i data-lucide="clock"></i> ${formatRelativeTime(notif.createdAt)}</span>
-              ${notif.orderId ? `<span><i data-lucide="file-text"></i> Order #${notif.orderId.slice(0,8)}</span>` : ''}
-            </div>
-          </div>
-          <div class="notif-card-actions">
-            ${!notif.read ? `<button class="notif-action-btn mark-read-btn">Mark read</button>` : ''}
-            <button class="notif-action-btn delete delete-btn">Delete</button>
-          </div>
-        </div>
-      `;
-    }).join('');
+    listEl.innerHTML = groups.map(g => `
+      <div class="notif-group">
+        <div class="notif-group-label">${g.label}</div>
+        ${g.items.map(buildCard).join('')}
+      </div>
+    `).join('');
 
     lucide.createIcons();
-
-    // Bind events
-    document.querySelectorAll('.mark-read-btn').forEach(btn => {
-      btn.addEventListener('click', async (e) => {
-        e.stopPropagation();
-        const card = e.target.closest('.notif-card');
-        const id = card.dataset.id;
-        try {
-          await fetch(`${API_BASE}/api/notifications/${id}/read`, { credentials: 'include',
-            method: 'PATCH',
-            headers: authHeaders()
-          });
-          // Update local state
-          const notif = allNotifications.find(n => n.id === id);
-          if (notif) notif.read = true;
-          // Re-render to apply filter changes (e.g., remove from Unread view)
-          renderNotifications();
-          syncBadge();
-        } catch (err) { alert('Failed: ' + err.message); }
-      });
-    });
-
-    document.querySelectorAll('.delete-btn').forEach(btn => {
-      btn.addEventListener('click', async (e) => {
-        e.stopPropagation();
-        const card = e.target.closest('.notif-card');
-        const id = card.dataset.id;
-        if (!confirm('Delete this notification?')) return;
-        try {
-          await fetch(`${API_BASE}/api/notifications/${id}`, { credentials: 'include',
-            method: 'DELETE',
-            headers: authHeaders()
-          });
-          card.remove();
-          syncBadge();
-        } catch (err) { alert('Failed: ' + err.message); }
-      });
-    });
+    bindCardEvents();
   }
 
   updateSummary();
+}
+
+function buildCard(n) {
+  const isUnread = !n.read;
+  const meta = getNotifMeta(n.type);
+  const cta = getCta(n);
+  const pClass = priorityClass(n.priority);
+  const tag = n.orderId
+    ? `<span class="notif-tag"><i data-lucide="file-text"></i> Order #${escapeHtml(n.orderId.slice(0, 8))}</span>` : '';
+  const pTag = n.priority === 'urgent'
+    ? `<span class="notif-tag notif-tag--urgent"><i data-lucide="alert-octagon"></i> Urgent</span>`
+    : n.priority === 'high'
+      ? `<span class="notif-tag notif-tag--high"><i data-lucide="arrow-up"></i> High</span>` : '';
+  const ctaHtml = cta
+    ? `<a class="notif-cta" href="${cta}">View <i data-lucide="arrow-right"></i></a>` : '';
+
+  return `
+    <div class="notif-card ${isUnread ? 'unread' : ''} ${pClass}" data-id="${n.id}" data-type="${n.type}">
+      <div class="notif-card-icon notif-card-icon--${meta.cat}">
+        <i data-lucide="${meta.icon}"></i>
+      </div>
+      <div class="notif-card-body">
+        <div class="notif-card-top">
+          <h3 class="notif-card-title">${escapeHtml(n.title)}</h3>
+          ${isUnread ? '<span class="notif-dot" title="Unread"></span>' : ''}
+        </div>
+        <p class="notif-card-message">${escapeHtml(n.message)}</p>
+        <div class="notif-card-meta">
+          <span><i data-lucide="clock"></i> ${formatRelativeTime(n.createdAt)}</span>
+          ${tag}
+          ${pTag}
+        </div>
+        ${ctaHtml}
+      </div>
+      <div class="notif-card-actions">
+        ${isUnread ? `<button class="notif-action-btn mark-read mark-read-btn"><i data-lucide="check"></i> Mark read</button>` : ''}
+        <button class="notif-action-btn delete delete-btn"><i data-lucide="trash-2"></i> Delete</button>
+      </div>
+    </div>`;
+}
+
+function emptyMessage() {
+  switch (currentFilter) {
+    case 'unread': return "You're all caught up. No unread notifications.";
+    case 'orders': return 'No order updates yet. We\'ll notify you when something changes.';
+    case 'wishlist': return 'No wishlist alerts yet. Price drops and restocks will show up here.';
+    case 'account': return 'No account activity yet.';
+    default: return 'You\'re all caught up! New notifications will appear here.';
+  }
+}
+
+function bindCardEvents() {
+  document.querySelectorAll('.mark-read-btn').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const card = e.target.closest('.notif-card');
+      await markRead(card.dataset.id);
+    });
+  });
+
+  document.querySelectorAll('.delete-btn').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const card = e.target.closest('.notif-card');
+      const id = card.dataset.id;
+      if (!confirm('Delete this notification?')) return;
+      try {
+        await fetch(`${API_BASE}/api/notifications/${id}`, { credentials: 'include',
+          method: 'DELETE', headers: authHeaders()
+        });
+        card.remove();
+        syncBadge();
+      } catch (err) { alert('Failed: ' + err.message); }
+    });
+  });
+
+  document.querySelectorAll('.notif-card').forEach(card => {
+    card.addEventListener('click', async (e) => {
+      if (e.target.closest('.notif-action-btn') || e.target.closest('.notif-cta')) return;
+      if (card.classList.contains('unread')) await markRead(card.dataset.id);
+    });
+  });
+}
+
+async function markRead(id) {
+  try {
+    await fetch(`${API_BASE}/api/notifications/${id}/read`, { credentials: 'include',
+      method: 'PATCH', headers: authHeaders()
+    });
+    const notif = allNotifications.find(n => n.id === id);
+    if (notif) notif.read = true;
+    renderNotifications();
+    syncBadge();
+  } catch (err) { alert('Failed: ' + err.message); }
 }
 
 function filterNotifications(notifs) {
@@ -236,20 +302,30 @@ function filterNotifications(notifs) {
 
 function updateSummary() {
   const unread = allNotifications.filter(n => !n.read).length;
+  const weekAgo = Date.now() - 7 * 86400000;
+  const week = allNotifications.filter(n => new Date(n.createdAt).getTime() >= weekAgo).length;
+
   const summaryEl = document.getElementById('unread-summary');
-  if (summaryEl) {
-    summaryEl.textContent = `${unread} unread notification${unread !== 1 ? 's' : ''}`;
-  }
+  if (summaryEl) summaryEl.textContent = `${unread} unread notification${unread !== 1 ? 's' : ''}`;
+
+  const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  set('ns-total', allNotifications.length);
+  set('ns-unread', unread);
+  set('ns-week', week);
 }
 
 function syncBadge() {
   const unread = allNotifications.filter(n => !n.read).length;
 
-  // Update tab counts
-  const tabUnread = document.getElementById('tab-unread');
-  const tabAll = document.getElementById('tab-all');
-  if (tabUnread) tabUnread.textContent = unread;
-  if (tabAll) tabAll.textContent = allNotifications.length;
+  const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  set('tab-all', allNotifications.length);
+  set('tab-unread', unread);
+  set('tab-orders', allNotifications.filter(n => n.type.startsWith('order_') || n.type === 'new_order_seller').length);
+  set('tab-wishlist', allNotifications.filter(n => n.type.startsWith('wishlist_')).length);
+  set('tab-account', allNotifications.filter(n =>
+    ['login_alert', 'password_changed', 'email_verified'].includes(n.type) ||
+    n.type.startsWith('account_') || n.type.startsWith('security_')
+  ).length);
 
   // Update topnav badge
   const topnavBadge = document.getElementById('notif-badge');
@@ -257,7 +333,8 @@ function syncBadge() {
     if (unread > 0) {
       topnavBadge.textContent = unread > 99 ? '99+' : String(unread);
       topnavBadge.style.display = 'block';
-
+    } else {
+      topnavBadge.style.display = 'none';
     }
   }
 

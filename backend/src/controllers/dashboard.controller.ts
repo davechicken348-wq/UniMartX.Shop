@@ -26,6 +26,10 @@ export const getBuyerDashboard = async (req: Request, res: Response): Promise<vo
 
     const userId = userPayload.userId;
 
+    // Live "marketplace movement" counters
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+
     // Fetch all dashboard data in parallel
     const [
       user,
@@ -36,6 +40,7 @@ export const getBuyerDashboard = async (req: Request, res: Response): Promise<vo
       cartCount,
       recentOrders,
       addresses,
+      newProductsToday,
     ] = await Promise.all([
       prisma.user.findUnique({
         where: { id: userId },
@@ -67,12 +72,13 @@ export const getBuyerDashboard = async (req: Request, res: Response): Promise<vo
           items: {
             select: {
               quantity: true,
-              product: { select: { name: true, image: true } },
+              product: { select: { name: true, image: true, seller: { select: { storeName: true } } } },
             },
           },
         },
       }),
       prisma.address.findMany({ where: { userId }, take: 1 }),
+      prisma.product.count({ where: { isActive: true, createdAt: { gte: startOfDay } } }),
     ]);
 
     // Look up buyer record and followed sellers in parallel
@@ -86,7 +92,8 @@ export const getBuyerDashboard = async (req: Request, res: Response): Promise<vo
         orderBy: { createdAt: 'desc' },
         include: {
           seller: {
-            include: {
+            select: {
+              isActive: true,
               user: { select: { firstName: true, lastName: true } },
               products: { where: { isActive: true }, take: 1, select: { name: true, image: true } },
             },
@@ -94,6 +101,8 @@ export const getBuyerDashboard = async (req: Request, res: Response): Promise<vo
         },
       });
     }
+
+    const followedSellersActive = (followedSellers || []).filter((f: any) => f.seller?.isActive).length;
 
     // Normalize image URLs to absolute backend URLs
     const normalizedRecentOrders = (recentOrders || []).map((o: any) => ({
@@ -123,11 +132,16 @@ export const getBuyerDashboard = async (req: Request, res: Response): Promise<vo
           delivered: deliveredCount,
           wishlistItems: wishlistCount,
           cartItems: cartCount,
+          followingSellers: (followedSellers || []).length,
         },
         recentOrders: normalizedRecentOrders,
         profileCompletion: {
           percentage: completionPct,
           items: completionItems,
+        },
+        liveStats: {
+          newProductsToday,
+          followedSellersActive,
         },
       },
     });
@@ -183,7 +197,7 @@ export const getBuyerOrders = async (req: Request, res: Response): Promise<void>
           items: {
             select: {
               quantity: true,
-              product: { select: { name: true, image: true } },
+              product: { select: { name: true, image: true, seller: { select: { storeName: true } } } },
             },
           },
         },

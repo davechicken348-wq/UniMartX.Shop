@@ -149,15 +149,22 @@
     // ── Render ───────────────────────────────────
     function renderOrderCard(order) {
         const items = order.items || [];
-        const itemThumbs = items.slice(0, 3).map(item => {
+        const maxThumbs = 3;
+        const shown = items.slice(0, maxThumbs);
+        let thumbsHtml = shown.map(item => {
             const img = item.product?.image || '';
             const bg = img ? `background-image:url('${img}');background-size:cover;background-position:center` : '';
             const shimmer = img ? '' : ' shimmer';
             return `<div class="order-thumb${shimmer}" style="${bg}"></div>`;
         }).join('');
+        if (items.length > maxThumbs) {
+            thumbsHtml += `<div class="order-thumb-more">+${items.length - maxThumbs}</div>`;
+        }
 
         const itemNames = items.map(i => i.product?.name || 'Unknown Product').join(', ');
         const itemCount = items.reduce((sum, i) => sum + i.quantity, 0);
+        const sellerName = items[0]?.product?.seller?.storeName;
+        const isActive = ['pending', 'processing', 'shipped'].includes(order.status);
 
         return `
             <div class="order-card" data-order-id="${order.id}" data-status="${order.status}">
@@ -169,9 +176,10 @@
                     <span class="badge-status ${getStatusClass(order.status)}">${getStatusLabel(order.status)}</span>
                 </div>
                 <div class="order-card-items">
-                    ${itemThumbs}
+                    <div class="order-thumbs">${thumbsHtml}</div>
                     <div class="order-items-info">
                         <p class="order-items-names">${esc(itemNames)}</p>
+                        ${sellerName ? `<p class="order-seller">Sold by ${esc(sellerName)}</p>` : ''}
                         <p class="order-items-count">${itemCount} item${itemCount !== 1 ? 's' : ''}</p>
                     </div>
                 </div>
@@ -181,6 +189,7 @@
                         <strong>${formatCurrency(order.totalAmount)}</strong>
                     </div>
                     <div class="order-card-actions">
+                        ${isActive ? `<a href="order-details.html?id=${order.id}" class="btn btn-ghost"><i data-lucide="truck"></i> Track Order</a>` : ''}
                         <a href="order-details.html?id=${order.id}" class="btn btn-primary">
                             <i data-lucide="eye"></i> View Details
                         </a>
@@ -188,6 +197,51 @@
                 </div>
             </div>
         `;
+    }
+
+    function productCardHTML(p) {
+        const img = p.image || (p.images && p.images[0]) || '';
+        const cat = (p.category || '').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+        const rating = p.rating ? Number(p.rating).toFixed(1) : '0.0';
+        return `
+            <a class="prod-card" href="../../public/shop/product-details.html?id=${encodeURIComponent(p.id)}">
+                <div class="prod-card-media">
+                    ${img ? `<img src="${img}" alt="${esc(p.name)}" loading="lazy">` : ''}
+                    <span class="prod-card-cat">${esc(cat)}</span>
+                </div>
+                <div class="prod-card-body">
+                    <p class="prod-card-store"><i data-lucide="store"></i> ${esc(p.storeName || 'Campus Store')}</p>
+                    <h3 class="prod-card-name">${esc(p.name)}</h3>
+                    <div class="prod-card-foot">
+                        <span class="prod-card-price">GH₵ ${Number(p.price || 0).toFixed(2)}</span>
+                        <span class="prod-card-rating"><i data-lucide="star"></i> ${rating}</span>
+                    </div>
+                </div>
+            </a>`;
+    }
+
+    async function loadRecommended() {
+        const grid = document.getElementById('recommended-grid');
+        const empty = document.getElementById('recommended-empty');
+        const section = document.getElementById('recommended-section');
+        if (!grid) return;
+        try {
+            const res = await fetch(`${API_BASE}/api/public/products?sort=popular&limit=8`, { credentials: 'include' });
+            const json = await res.json();
+            const products = (json && json.data) || [];
+            if (products.length) {
+                grid.innerHTML = products.map(productCardHTML).join('');
+                grid.style.display = '';
+                if (empty) empty.style.display = 'none';
+                lucide.createIcons();
+            } else {
+                grid.innerHTML = '';
+                grid.style.display = 'none';
+                if (empty) { empty.innerHTML = '<p class="discovery-title">Explore the shop to discover more campus products</p>'; empty.style.display = ''; }
+            }
+        } catch (e) {
+            if (section) section.style.display = 'none';
+        }
     }
 
     function renderOrders(orders, total = 0) {
@@ -238,8 +292,18 @@
         }
     }
 
+    function updateSummary(counts) {
+        if (!counts) return;
+        const setV = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v ?? 0; };
+        setV('os-all', counts.all);
+        setV('os-transit', (counts.processing || 0) + (counts.shipped || 0));
+        setV('os-delivered', counts.delivered);
+        setV('os-cancelled', counts.cancelled);
+    }
+
     function updateCounts(counts) {
         if (!counts) return;
+        updateSummary(counts);
         if (countAll) countAll.textContent = counts.all ?? 0;
         if (countPending) countPending.textContent = counts.pending ?? 0;
         if (countConfirmed) countConfirmed.textContent = counts.processing ?? 0;
@@ -357,6 +421,7 @@
             return;
         }
         loadOrders(1);
+        loadRecommended();
         startOrdersLiveSync();
 
         document.addEventListener('visibilitychange', () => {

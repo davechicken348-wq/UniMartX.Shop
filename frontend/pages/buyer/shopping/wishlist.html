@@ -134,34 +134,88 @@
     <div class="buyer-main" id="buyer-main">
         <div class="page-content">
 
-            <!-- Toolbar -->
-            <div class="wishlist-toolbar">
-                <div class="wishlist-meta">
-                    <span class="wishlist-count" id="wishlist-count"></span>
-                    <span class="wishlist-meta-sep" id="wishlist-meta-sep" style="display:none">·</span>
-                    <span class="wishlist-on-sale" id="on-sale-count"></span>
+            <!-- ── Page header ── -->
+            <section class="wishlist-header">
+                <div class="wishlist-header-text">
+                    <p class="wishlist-eyebrow"><i data-lucide="heart"></i> Your saved items</p>
+                    <h1 class="wishlist-title">My Wishlist</h1>
+                    <p class="wishlist-sub">Items you've saved for later, all in one place.</p>
                 </div>
-                <div class="wishlist-actions">
-                    <div class="wishlist-search-mobile">
-                        <i data-lucide="search"></i>
-                        <input type="search" id="wishlist-search-mobile" placeholder="Search wishlist…">
-                    </div>
-                    <button class="btn btn-ghost btn-sm" id="clear-all-btn">
-                        <i data-lucide="trash-2"></i>
-                        Clear All
-                    </button>
-                    <a href="../../public/shop/shop.html" class="btn btn-primary btn-sm">
-                        <i data-lucide="shopping-bag"></i>
-                        Add More
-                    </a>
+                <a class="btn btn-primary" href="../../public/shop/shop.html"><i data-lucide="shopping-bag"></i> Browse Shop</a>
+            </section>
+
+            <!-- ── Summary strip ── -->
+            <div class="wishlist-summary" id="wishlist-summary">
+                <div class="ws-card">
+                    <span class="ws-ico"><i data-lucide="heart"></i></span>
+                    <div><span class="ws-val" id="wl-total">0</span><span class="ws-label">Saved Items</span></div>
+                </div>
+                <div class="ws-card">
+                    <span class="ws-ico ws-ico--sale"><i data-lucide="tag"></i></span>
+                    <div><span class="ws-val" id="wl-sale">0</span><span class="ws-label">On Sale</span></div>
+                </div>
+                <div class="ws-card">
+                    <span class="ws-ico ws-ico--value"><i data-lucide="wallet"></i></span>
+                    <div><span class="ws-val" id="wl-value">GH₵ 0</span><span class="ws-label">Total Value</span></div>
+                </div>
+                <div class="ws-card">
+                    <span class="ws-ico ws-ico--stock"><i data-lucide="package-check"></i></span>
+                    <div><span class="ws-val" id="wl-stock">0</span><span class="ws-label">In Stock</span></div>
+                </div>
+                <div class="ws-card ws-card--save">
+                    <span class="ws-ico ws-ico--save"><i data-lucide="piggy-bank"></i></span>
+                    <div><span class="ws-val" id="wl-savings">GH₵ 0</span><span class="ws-label">Potential Savings</span></div>
                 </div>
             </div>
+
+            <!-- ── Selection toolbar ── -->
+            <div class="wishlist-toolbar">
+                <div class="wishlist-search-mobile">
+                    <i data-lucide="search"></i>
+                    <input type="search" id="wishlist-search-mobile" placeholder="Search wishlist…">
+                </div>
+                <div class="filter-tabs" id="filter-tabs">
+                    <button class="filter-tab active" data-filter="all">All <span class="tab-num" id="count-all">0</span></button>
+                    <button class="filter-tab" data-filter="instock">In Stock <span class="tab-num" id="count-instock">0</span></button>
+                    <button class="filter-tab" data-filter="sale">On Sale <span class="tab-num" id="count-sale">0</span></button>
+                    <button class="filter-tab" data-filter="out">Sold Out <span class="tab-num" id="count-out">0</span></button>
+                </div>
+                <div class="wishlist-toolbar-right">
+                    <label class="wishlist-sort">
+                        <i data-lucide="arrow-down-up"></i>
+                        <select id="sort-select" aria-label="Sort wishlist">
+                            <option value="recent">Recently added</option>
+                            <option value="price-asc">Price: Low to High</option>
+                            <option value="price-desc">Price: High to Low</option>
+                            <option value="name">Name (A–Z)</option>
+                            <option value="saving">Biggest saving</option>
+                        </select>
+                    </label>
+                    <div class="wishlist-actions">
+                        <button class="btn btn-ghost btn-sm" id="add-all-btn">
+                            <i data-lucide="shopping-cart"></i>
+                            Add All to Cart
+                        </button>
+                        <button class="btn btn-ghost btn-sm" id="share-btn" title="Share your wishlist">
+                            <i data-lucide="share-2"></i>
+                            Share
+                        </button>
+                        <button class="btn btn-ghost btn-sm" id="clear-all-btn">
+                            <i data-lucide="trash-2"></i>
+                            Clear All
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active filter hint -->
+            <p class="wishlist-result-meta" id="result-meta"></p>
 
             <!-- Empty state -->
             <div class="empty-state hidden" id="wishlist-empty">
                 <div class="empty-state-icon"><i data-lucide="heart"></i></div>
                 <h3>Your wishlist is empty</h3>
-                <p>Save items you love while browsing the shop. They'll appear here so you never lose track of them.</p>
+                <p>Tap the heart on any product while browsing the shop to save it here. Build your shortlist, track price drops, and check out in one go whenever you're ready.</p>
                 <a href="../../public/shop/shop.html" class="btn btn-primary">
                     <i data-lucide="shopping-bag"></i>
                     Browse Shop
@@ -171,12 +225,29 @@
             <!-- No search results -->
             <div class="empty-state hidden" id="no-results">
                 <div class="empty-state-icon"><i data-lucide="search-x"></i></div>
-                <h3>No items found</h3>
-                <p>Try a different search term.</p>
+                <h3>No matching items</h3>
+                <p>Nothing in your wishlist matches the current filter. Try clearing the search or switching tabs.</p>
+                <button class="btn btn-ghost" id="reset-filters-btn">
+                    <i data-lucide="rotate-ccw"></i>
+                    Reset filters
+                </button>
             </div>
 
             <!-- Wishlist grid -->
             <div class="wishlist-grid" id="wishlist-grid"></div>
+
+            <!-- ── You might also like ── -->
+            <section class="wishlist-rec" id="recommended-section">
+                <div class="section-head">
+                    <div>
+                        <h2 class="section-title"><i data-lucide="sparkles"></i> You Might Also Like</h2>
+                        <p class="section-sub">Hand-picked from campus sellers</p>
+                    </div>
+                    <a class="section-link" href="../../public/shop/shop.html?sort=popular">Explore more <i data-lucide="arrow-right"></i></a>
+                </div>
+                <div class="prod-grid" id="recommended-grid"></div>
+                <div class="discovery" id="recommended-empty" style="display:none;"></div>
+            </section>
 
         </div>
     </div>

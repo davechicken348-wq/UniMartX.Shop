@@ -338,6 +338,31 @@ function renderProduct(product) {
     document.getElementById('tab-description').querySelector('.skel')?.remove();
     document.getElementById('tab-specifications').querySelector('.skel')?.remove();
     lucide.createIcons();
+    recordRecentlyViewed(product);
+}
+
+function recordRecentlyViewed(product) {
+    try {
+        const id = product._id || product.id;
+        if (!id) return;
+        const entry = {
+            id,
+            name: product.name,
+            price: product.price,
+            image: product.image || (product.images && product.images[0]) || '',
+            category: product.category || '',
+            storeName: product.storeName || (product.seller && product.seller.storeName) || '',
+            sellerId: product.seller && product.seller.id,
+        };
+        const KEY = 'unimartx_recently_viewed';
+        let list = [];
+        try { list = JSON.parse(localStorage.getItem(KEY)) || []; } catch {}
+        if (!Array.isArray(list)) list = [];
+        list = list.filter(p => (p.id || p._id) !== id);
+        list.unshift(entry);
+        if (list.length > 12) list = list.slice(0, 12);
+        localStorage.setItem(KEY, JSON.stringify(list));
+    } catch {}
 }
 
 function renderVariants(product) {

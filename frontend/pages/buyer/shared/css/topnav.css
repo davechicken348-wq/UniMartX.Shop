@@ -13,7 +13,7 @@
     left: var(--sidebar-w);
     right: 0;
     height: var(--topnav-h);
-    background: rgba(8,13,20,0.88);
+    background: rgba(255,255,255,0.85);
     backdrop-filter: blur(16px);
     border-bottom: 1px solid var(--border);
     display: flex;
@@ -166,7 +166,7 @@
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
     padding: 0.5rem;
-    box-shadow: 0 16px 40px rgba(0,0,0,0.4);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.12);
     display: none;
     z-index: 500;
     animation: dropIn 0.2s ease both;
@@ -206,7 +206,7 @@
     background: var(--bg-3);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
-    box-shadow: 0 16px 40px rgba(0,0,0,0.4);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.12);
     display: none;
     z-index: 500;
     animation: dropIn 0.2s ease both;

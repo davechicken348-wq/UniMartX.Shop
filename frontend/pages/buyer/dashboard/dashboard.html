@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - UnimartX</title>
+    <title>Dashboard - UniMartX</title>
     <script src="../../../config.js"></script>
     <script>if(localStorage.getItem('sidebar_collapsed')==='true')document.documentElement.classList.add('no-transition')</script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../shared/css/buyer-base.css">
     <link rel="stylesheet" href="../shared/css/sidebar.css">
     <link rel="stylesheet" href="../shared/css/topnav.css">
@@ -62,6 +62,7 @@
                 <span class="nav-item-label">Notifications</span>
                 <span class="nav-item-badge" id="sidebar-notif-count" style="display:none"></span>
             </a>
+
                         <span class="nav-section-label">Account</span>
 
             <a href="../account/profile.html" class="nav-item" data-tooltip="Profile">
@@ -192,83 +193,118 @@
     <div class="buyer-main" id="buyer-main">
         <div class="page-content">
 
+            <!-- ── WELCOME HERO ── -->
+            <section class="dash-hero">
+                <div class="dash-hero-avatar" id="hero-avatar"></div>
+                <div class="dash-hero-text">
+                    <p class="dash-hero-eyebrow"><i data-lucide="sparkles"></i> UniMartX Member</p>
+                    <h1 class="dash-hero-title">Good <span id="hero-greeting-time">afternoon</span>, <span id="hero-firstname">there</span> <span class="dash-hero-wave">&#128075;</span></h1>
+                    <p class="dash-hero-sub" id="hero-sub">Ready to discover what's new around campus?</p>
+                    <div class="dash-hero-live" id="hero-live">
+                        <span class="live-pill"><i data-lucide="store"></i> <b id="live-new-products">0</b>&nbsp;new products today</span>
+                        <span class="live-pill"><i data-lucide="users"></i> <b id="live-follow-active">0</b>&nbsp;stores you follow are active</span>
+                    </div>
+                </div>
+                <div class="dash-hero-actions">
+                    <a class="btn btn-primary" href="../../public/shop/shop.html"><i data-lucide="shopping-bag"></i> Browse Products</a>
+                    <a class="btn btn-ghost" href="../orders/orders.html"><i data-lucide="package"></i> My Orders</a>
+                </div>
+            </section>
 
-            <!-- ── STATS ── -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon"><i data-lucide="package"></i></div>
-                    <div class="stat-info">
-                        <div class="stat-value">0</div>
-                        <div class="stat-label">Total Orders</div>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon stat-icon--warning"><i data-lucide="clock"></i></div>
-                    <div class="stat-info">
-                        <div class="stat-value">0</div>
-                        <div class="stat-label">Pending Delivery</div>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon stat-icon--success"><i data-lucide="check-circle"></i></div>
-                    <div class="stat-info">
-                        <div class="stat-value">0</div>
-                        <div class="stat-label">Delivered</div>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon stat-icon--pink"><i data-lucide="heart"></i></div>
-                    <div class="stat-info">
-                        <div class="stat-value">0</div>
-                        <div class="stat-label">Wishlist Items</div>
-                    </div>
-                </div>
-                <div class="stat-card stat-card--follows" id="stat-card-follows">
-                    <div class="stat-icon stat-icon--purple"><i data-lucide="heart"></i></div>
-                    <div class="stat-info">
-                        <div class="stat-value" id="stat-following-count">0</div>
-                        <div class="stat-label">Followed Sellers</div>
-                    </div>
-                </div>
+            <!-- ── SNAPSHOT CHIPS ── -->
+            <div class="dash-chips">
+                <a class="dash-chip" href="../orders/orders.html">
+                    <span class="dash-chip-ico"><i data-lucide="package"></i></span>
+                    <span class="dash-chip-val" id="chip-orders">0</span>
+                    <span class="dash-chip-label">Orders</span>
+                </a>
+                <a class="dash-chip" href="../shopping/wishlist.html">
+                    <span class="dash-chip-ico"><i data-lucide="heart"></i></span>
+                    <span class="dash-chip-val" id="chip-wishlist">0</span>
+                    <span class="dash-chip-label">Saved</span>
+                </a>
+                <a class="dash-chip" href="../../public/stores/stores.html">
+                    <span class="dash-chip-ico"><i data-lucide="store"></i></span>
+                    <span class="dash-chip-val" id="chip-following">0</span>
+                    <span class="dash-chip-label">Following</span>
+                </a>
+                <a class="dash-chip" href="../notifications/notifications.html">
+                    <span class="dash-chip-ico"><i data-lucide="bell"></i></span>
+                    <span class="dash-chip-val" id="chip-messages">0</span>
+                    <span class="dash-chip-label">Messages</span>
+                </a>
             </div>
 
-
-            <!-- ── FOLLOWED SELLERS ── -->
-            <div class="card" id="followed-sellers-card">
-                <div class="card-header">
+            <!-- ── CAMPUS TRENDING ── -->
+            <section class="dash-section">
+                <div class="section-head">
                     <div>
-                        <h2>Followed Sellers</h2>
-                        <p>Sellers you're keeping up with</p>
+                        <h2 class="section-title"><i data-lucide="flame"></i> Trending On Campus</h2>
+                        <p class="section-sub">Most viewed by students this week</p>
                     </div>
-                    <a href="../../public/stores/stores.html" class="btn btn-ghost btn-sm">Browse more</a>
+                    <a class="section-link" href="../../public/shop/shop.html?sort=popular">View all <i data-lucide="arrow-right"></i></a>
                 </div>
-                <div class="followed-grid" id="followed-grid"></div>
-                <div class="empty-state hidden" id="followed-empty">
-                    <div class="empty-icon"><i data-lucide="heart"></i></div>
-                    <h3>No followed sellers yet</h3>
-                    <p>Explore the marketplace and follow sellers you like.</p>
-                    <a href="../../public/stores/stores.html" class="btn btn-primary btn-sm" style="margin-top:0.5rem;">Discover Sellers</a>
+                <div class="prod-grid" id="trending-grid"></div>
+                <div class="discovery" id="trending-empty" style="display:none;"></div>
+            </section>
+
+            <!-- ── YOUR FAVORITE STORES ── -->
+            <section class="dash-section">
+                <div class="section-head">
+                    <div>
+                        <h2 class="section-title"><i data-lucide="store"></i> Your Favorite Stores</h2>
+                        <p class="section-sub">Campus sellers you follow</p>
+                    </div>
+                    <a class="section-link" href="../../public/stores/stores.html">Discover stores <i data-lucide="arrow-right"></i></a>
                 </div>
-            </div>
+                <div class="store-grid" id="followed-grid"></div>
+                <div class="discovery" id="followed-empty" style="display:none;"></div>
+            </section>
 
+            <!-- ── CONTINUE SHOPPING (RECENTLY VIEWED) ── -->
+            <section class="dash-section">
+                <div class="section-head">
+                    <div>
+                        <h2 class="section-title"><i data-lucide="history"></i> Continue Shopping</h2>
+                        <p class="section-sub">Pick up where you left off</p>
+                    </div>
+                    <a class="section-link" href="../../public/shop/shop.html">Browse shop <i data-lucide="arrow-right"></i></a>
+                </div>
+                <div class="prod-grid" id="recent-grid"></div>
+                <div class="discovery" id="recent-empty" style="display:none;"></div>
+            </section>
 
-            <!-- ── RECENT ORDERS + QUICK ACTIONS ── -->
+            <!-- ── RECOMMENDED FOR YOU ── -->
+            <section class="dash-section">
+                <div class="section-head">
+                    <div>
+                        <h2 class="section-title"><i data-lucide="sparkles"></i> Recommended For You</h2>
+                        <p class="section-sub">Hand-picked from campus sellers</p>
+                    </div>
+                    <a class="section-link" href="../../public/shop/shop.html?sort=popular">Explore more <i data-lucide="arrow-right"></i></a>
+                </div>
+                <div class="prod-grid" id="recommended-grid"></div>
+                <div class="discovery" id="recommended-empty" style="display:none;"></div>
+            </section>
+
+            <!-- ── ORDERS + SIDE ── -->
             <div class="dashboard-grid">
 
-                <!-- Recent Orders -->
+                <!-- Recent Orders + current order tracking -->
                 <div class="card">
                     <div class="card-header">
                         <div>
                             <h2>Recent Orders</h2>
-                            <p>Latest orders</p>
+                            <p>Your latest purchases</p>
                         </div>
                         <a href="../orders/orders.html" class="btn btn-ghost btn-sm">View all</a>
                     </div>
 
-                    <div class="orders-list"></div>
+                    <div id="current-order"></div>
+                    <div class="orders-list" id="orders-list"></div>
                 </div>
 
-                <!-- Quick Actions + Profile Completion -->
+                <!-- Quick actions + Profile completion -->
                 <div class="dashboard-side">
 
                     <!-- Quick Actions -->
@@ -277,25 +313,21 @@
                             <div><h2>Quick Actions</h2></div>
                         </div>
                         <div class="quick-actions">
-                            <a href="../../public/home.html" class="qa-item">
-                                <div class="qa-icon"><i data-lucide="home"></i></div>
-                                <span>Main Home</span>
-                            </a>
                             <a href="../../public/shop/shop.html" class="qa-item">
-                                <div class="qa-icon"><i data-lucide="shopping-bag"></i></div>
-                                <span>Browse Shop</span>
+                                <div class="qa-icon"><i data-lucide="search"></i></div>
+                                <span>Search Products</span>
                             </a>
-                            <a href="../orders/orders.html" class="qa-item">
-                                <div class="qa-icon"><i data-lucide="package"></i></div>
-                                <span>Track Order</span>
+                            <a href="../../public/stores/stores.html" class="qa-item">
+                                <div class="qa-icon"><i data-lucide="store"></i></div>
+                                <span>Followed Stores</span>
                             </a>
                             <a href="../shopping/wishlist.html" class="qa-item">
                                 <div class="qa-icon"><i data-lucide="heart"></i></div>
-                                <span>Wishlist</span>
+                                <span>Saved Items</span>
                             </a>
-                            <a href="../../public/contact/contact.html" class="qa-item">
-                                <div class="qa-icon"><i data-lucide="headphones"></i></div>
-                                <span>Support</span>
+                            <a href="../../auth/seller/register.html" class="qa-item">
+                                <div class="qa-icon"><i data-lucide="store"></i></div>
+                                <span>Become Seller</span>
                             </a>
                         </div>
                     </div>
@@ -334,7 +366,6 @@
                 </div>
 
             </div>
-
 
         </div>
     </div>
