@@ -316,9 +316,13 @@ img { display: block; max-width: 100%; }
 ══════════════════════════════════════════ */
 .featured-section { background: var(--bg); }
 .featured-grid {
-    display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px;
+    display: flex; gap: 18px; overflow-x: auto; scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch; scroll-behavior: smooth;
+    padding: 6px 4px 18px; scrollbar-width: none;
 }
+.featured-grid::-webkit-scrollbar { display: none; }
 .featured-card {
+    flex: 0 0 520px; scroll-snap-align: start;
     position: relative; display: block; text-decoration: none; color: inherit;
     background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--radius-xl);
     overflow: hidden; cursor: pointer;
@@ -646,8 +650,9 @@ img { display: block; max-width: 100%; }
     .filter-chips::-webkit-scrollbar { display: none; }
     .sort-wrap { order: 3; flex-shrink: 0; }
 
-    .featured-grid { grid-template-columns: 1fr; gap: 16px; }
-    .featured-banner { height: 200px; }
+    .featured-grid { gap: 16px; }
+    .featured-card { flex-basis: 440px; }
+    .featured-banner { height: 220px; }
 
     .stores-container { padding: 0 18px; }
     .stores-toolbar { margin-bottom: 18px; }
@@ -672,18 +677,36 @@ img { display: block; max-width: 100%; }
     .hero-actions { flex-direction: column; width: 100%; }
     .hero-actions .btn { width: 100%; justify-content: center; }
 
-    .stores-grid { grid-template-columns: 1fr; gap: 16px; }
-    .store-card-banner { height: 150px; }
-    .store-products { grid-template-columns: repeat(4, 1fr); }
-    .store-cta { font-size: 0.85rem; }
+    .stores-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .store-card-banner { height: 104px; }
+    .store-logo { width: 44px; height: 44px; }
+    .store-logo-row { margin-top: -22px; }
+    .store-name { font-size: 0.9rem; }
+    .store-cat { font-size: 0.68rem; }
+    .store-products { grid-template-columns: repeat(3, 1fr); gap: 5px; }
+    .store-cta { font-size: 0.76rem; padding: 9px; }
+    .store-identity { padding: 0 13px 14px; }
 
     .filter-chips { gap: 6px; }
     .filter-chip { padding: 8px 13px; font-size: 0.78rem; }
 
     .disc-card { flex-basis: 160px; }
 
+    .featured-card { flex-basis: 380px; }
+
     .category-rail { gap: 8px; }
     .cat-pill { padding: 9px 14px; font-size: 0.82rem; }
+}
+
+@media (max-width: 380px) {
+    .stores-grid { gap: 10px; }
+    .store-card-banner { height: 92px; }
+    .store-logo { width: 40px; height: 40px; }
+    .store-logo-row { margin-top: -20px; }
+    .store-name { font-size: 0.85rem; }
+    .store-products { gap: 4px; }
+    .store-cta { padding: 8px; font-size: 0.72rem; }
+    .store-identity { padding: 0 11px 13px; }
 }
 
 #store-search, #category-nav { scroll-margin-top: 90px; }

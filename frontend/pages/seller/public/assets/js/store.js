@@ -151,7 +151,7 @@ function categoryIcon(cat) {
 }
 
 function formatPrice(price) {
-  return '$' + Number(price).toFixed(2);
+  return 'GH₵' + Number(price).toFixed(2);
 }
 
 function formatRelativeDate(dateStr) {
