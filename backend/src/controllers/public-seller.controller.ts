@@ -432,13 +432,17 @@ export const getTrendingProducts = async (_req: Request, res: Response): Promise
  * @access Public
  */
 export const getPublicStores = async (req: Request, res: Response): Promise<void> => {
-  const category = (req.query.category as string) || 'all';
-  const search   = (req.query.search   as string) || '';
-  const sort     = (req.query.sort     as string) || 'featured';
+  const category   = (req.query.category   as string) || 'all';
+  const search     = (req.query.search     as string) || '';
+  const sort       = (req.query.sort       as string) || 'trending';
   const sellerType = (req.query.sellerType as string) || 'all';
-  const page     = Math.max(1, parseInt(req.query.page  as string) || 1);
-  const limit    = Math.min(50, parseInt(req.query.limit as string) || 18);
-  const skip     = (page - 1) * limit;
+  const verified   = (req.query.verified   as string) === 'true';
+  const openNow    = (req.query.open       as string) === 'true';
+  const newStores  = (req.query.new        as string) === 'true';
+  const topRated   = (req.query.topRated   as string) === 'true';
+  const page       = Math.max(1, parseInt(req.query.page  as string) || 1);
+  const limit      = Math.min(50, parseInt(req.query.limit as string) || 18);
+  const skip       = (page - 1) * limit;
 
   const where: any = {};
   if (category !== 'all') where.category = category;
@@ -456,7 +460,7 @@ export const getPublicStores = async (req: Request, res: Response): Promise<void
     sort === 'newest'   ? { createdAt: 'desc' } :
     sort === 'az'       ? { storeName: 'asc'  } :
     sort === 'products' ? { products: { _count: 'desc' } } :
-    { createdAt: 'asc' }; // featured / rating — post-sorted below
+    { createdAt: 'asc' }; // trending / popular / active / featured — post-sorted below
 
   const [sellers, total] = await Promise.all([
     prisma.seller.findMany({
@@ -473,22 +477,37 @@ export const getPublicStores = async (req: Request, res: Response): Promise<void
         storeBanner: true,
         storeColor: true,
         category: true,
+        isActive: true,
         createdAt: true,
+        businessHours: true,
         _count: { select: { products: { where: { isActive: true } } } },
         products: {
           where: { isActive: true },
-          select: { rating: true, reviewCount: true },
+          orderBy: { createdAt: 'desc' },
+          take: 4,
+          select: { id: true, name: true, image: true, rating: true, reviewCount: true },
         },
       },
     }),
     prisma.seller.count({ where }),
   ]);
 
+  const NEW_STORE_DAYS = 14;
+  const now = Date.now();
   let data = sellers.map(s => {
     const reviews      = s.products.reduce((a, p) => a + p.reviewCount, 0);
     const ratingSum    = s.products.reduce((a, p) => a + p.rating * p.reviewCount, 0);
     const avgRating    = reviews > 0 ? parseFloat((ratingSum / reviews).toFixed(1)) : 0;
     const productCount = s._count.products;
+    const ageDays      = (now - new Date(s.createdAt).getTime()) / (1000 * 60 * 60 * 24);
+    const isNewStore   = ageDays <= NEW_STORE_DAYS;
+    const isVerified   = s.isActive === true;
+    const isOpen       = !!s.businessHours;
+    const featuredProducts = s.products.slice(0, 4).map(p => ({
+      id:    p.id,
+      name:  p.name,
+      image: absUrl(p.image),
+    }));
 
     return {
       id:               s.id,
@@ -502,12 +521,25 @@ export const getPublicStores = async (req: Request, res: Response): Promise<void
       createdAt:        s.createdAt,
       productCount,
       avgRating,
-      totalReviews: reviews,
+      totalReviews:     reviews,
+      isVerified,
+      isOpen,
+      isNewStore,
+      featuredProducts,
     };
   });
 
-  if (sort === 'rating')   data.sort((a, b) => b.avgRating    - a.avgRating);
-  if (sort === 'featured') data.sort((a, b) => b.totalReviews - a.totalReviews);
+  // ── Client-side trust/sort filters (computed from derived flags) ──
+  if (verified) data = data.filter(s => s.isVerified);
+  if (openNow)  data = data.filter(s => s.isOpen);
+  if (newStores) data = data.filter(s => s.isNewStore);
+  if (topRated) data = data.filter(s => s.avgRating >= 4.5 && s.totalReviews >= 3);
+
+  // ── Sort ──
+  if (sort === 'rating' || sort === 'popular') data.sort((a, b) => b.avgRating - a.avgRating);
+  if (sort === 'trending')   data.sort((a, b) => b.totalReviews - a.totalReviews);
+  if (sort === 'active')     data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  if (sort === 'featured')   data.sort((a, b) => (b.isVerified ? 1 : 0) - (a.isVerified ? 1 : 0) || b.totalReviews - a.totalReviews);
 
   res.json({ success: true, data, total, page, limit, hasMore: skip + limit < total });
 };

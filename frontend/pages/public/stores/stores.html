@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Discover Student Shops — UniMartX</title>
-    <meta name="description" content="Discover student entrepreneurs and their unique online shops on UniMartX. Fashion, food, tech, beauty, and more — built by students, for students.">
+    <title>Discover Student Businesses — UniMartX</title>
+    <meta name="description" content="Discover student-owned businesses on UniMartX. Explore stores by talented university students and find everything you need in one trusted marketplace.">
     <link rel="canonical" href="https://unimartx.com/stores">
-    <meta property="og:title" content="Discover Student Shops — UniMartX">
-    <meta property="og:description" content="Discover student entrepreneurs and their unique online shops. Fashion, food, tech, beauty, and more — built by students, for students.">
+    <meta property="og:title" content="Discover Student Businesses — UniMartX">
+    <meta property="og:description" content="Explore stores created by talented university students and find everything you need in one trusted marketplace.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://unimartx.com/stores">
     <meta property="og:image" content="https://unimartx.com/assets/og-stores.png">
@@ -50,70 +50,67 @@
     </nav>
 
     <!-- ═══════════════════════════════════════════
-         HERO
+         SECTION 1 — COMPACT HERO
     ═══════════════════════════════════════════ -->
     <section class="stores-hero">
-        <div class="hero-bg" aria-hidden="true"></div>
-        <div class="hero-decor" aria-hidden="true">
-            <img class="hero-decor-img hero-decor-img--1" src="../assets/images/stores-hero/store5.webp" alt="">
-            <img class="hero-decor-img hero-decor-img--2" src="../assets/images/stores-hero/store6.webp" alt="">
-            <img class="hero-decor-img hero-decor-img--3" src="../assets/images/stores-hero/store7.webp" alt="">
-        </div>
         <div class="hero-inner">
             <div class="hero-content">
-                <div class="hero-badge reveal">
-                    <i data-lucide="store"></i>
-                    Student Seller Marketplace
-                </div>
-                <h1 class="hero-title reveal">Your gateway to <span>student sellers.</span></h1>
-                <p class="hero-sub reveal" id="hero-subtitle">Discover unique shops built by student entrepreneurs across campus. From fashion and food to tech and tutoring — find what you need, directly from the people who make it.</p>
-                <div class="hero-search reveal">
-                    <i data-lucide="search"></i>
-                    <input type="search" id="hero-search-input" placeholder="Search by store name, category…" autocomplete="off">
-                    <button id="hero-search-btn" aria-label="Search"><i data-lucide="arrow-right"></i></button>
-                </div>
-                <div class="hero-stats reveal">
-                    <div class="stat">
-                        <strong id="mp-stat-sellers">0</strong>
-                        <span>Active Shops</span>
-                    </div>
-                    <div class="stat-divider"></div>
-                    <div class="stat">
-                        <strong id="mp-stat-products">0</strong>
-                        <span>Products</span>
-                    </div>
-                    <div class="stat-divider"></div>
-                    <div class="stat">
-                        <strong id="mp-stat-reviews">0</strong>
-                        <span>Reviews</span>
-                    </div>
-                </div>
-            </div>
-            <div class="hero-showcase reveal delay-200">
-                <div class="hero-store-grid">
-                    <div class="hero-store-card"><img src="../assets/images/stores-hero/store1.webp" alt="Student store showcase" loading="eager"></div>
-                    <div class="hero-store-card"><img src="../assets/images/stores-hero/store2.webp" alt="Student store showcase" loading="lazy"></div>
-                    <div class="hero-store-card"><img src="../assets/images/stores-hero/store3.webp" alt="Student store showcase" loading="lazy"></div>
-                    <div class="hero-store-card"><img src="../assets/images/stores-hero/store4.webp" alt="Student store showcase" loading="lazy"></div>
+                <h1 class="hero-title">Discover Student Businesses</h1>
+                <p class="hero-sub">Explore stores created by talented university students and find everything you need in one trusted marketplace.</p>
+                <div class="hero-actions">
+                    <a href="#store-search" class="btn btn-primary">Search Stores</a>
+                    <a href="#category-nav" class="btn btn-ghost">Explore Categories</a>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- ═══════════════════════════════════════════
-         CATEGORY RAIL
+         DISCOVERY BAR — search + filters + categories
+         Sticks as ONE unit so the two bars never collide.
     ═══════════════════════════════════════════ -->
-    <div class="category-rail-wrap">
-        <div class="category-rail" id="category-rail">
-            <button class="cat-pill active" data-cat="all"><i data-lucide="grid-2x2"></i> All Stores</button>
-            <button class="cat-pill" data-cat="electronics"><i data-lucide="cpu"></i> Electronics</button>
-            <button class="cat-pill" data-cat="fashion"><i data-lucide="shirt"></i> Fashion</button>
-            <button class="cat-pill" data-cat="books"><i data-lucide="book-open"></i> Books</button>
-            <button class="cat-pill" data-cat="beauty"><i data-lucide="sparkles"></i> Beauty</button>
-            <button class="cat-pill" data-cat="food"><i data-lucide="utensils"></i> Food &amp; Snacks</button>
-            <button class="cat-pill" data-cat="sports"><i data-lucide="dumbbell"></i> Sports</button>
-            <button class="cat-pill" data-cat="home"><i data-lucide="sofa"></i> Home &amp; Living</button>
-            <button class="cat-pill" data-cat="other"><i data-lucide="more-horizontal"></i> Other</button>
+    <div class="discovery-bar" id="discovery-bar">
+        <div class="search-sticky" id="store-search">
+            <div class="search-controls">
+                <div class="search-bar">
+                    <i data-lucide="search"></i>
+                    <input type="search" id="store-search-input" placeholder="Search stores by name or category..." autocomplete="off" aria-label="Search stores by name or category">
+                    <button id="store-search-clear" class="search-clear hidden" aria-label="Clear search"><i data-lucide="x"></i></button>
+                </div>
+
+                <div class="filter-chips" id="filter-chips" role="group" aria-label="Filter stores">
+                    <button class="filter-chip active" data-filter="all">All</button>
+                    <button class="filter-chip" data-filter="verified"><i data-lucide="badge-check"></i> Verified</button>
+                    <button class="filter-chip" data-filter="open"><i data-lucide="clock"></i> Open Now</button>
+                    <button class="filter-chip" data-filter="new"><i data-lucide="sparkles"></i> New Stores</button>
+                    <button class="filter-chip" data-filter="top"><i data-lucide="star"></i> Top Rated</button>
+                </div>
+
+                <div class="sort-wrap">
+                    <i data-lucide="arrow-up-down"></i>
+                    <label class="visually-hidden" for="sort-select">Sort stores</label>
+                    <select id="sort-select" aria-label="Sort stores">
+                        <option value="trending">Trending</option>
+                        <option value="newest">Newest</option>
+                        <option value="popular">Most Popular</option>
+                        <option value="active">Recently Active</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="category-rail-wrap" id="category-nav">
+            <div class="category-rail" id="category-rail">
+                <button class="cat-pill active" data-cat="all"><i data-lucide="grid-2x2"></i> All</button>
+                <button class="cat-pill" data-cat="electronics"><i data-lucide="cpu"></i> Electronics</button>
+                <button class="cat-pill" data-cat="fashion"><i data-lucide="shirt"></i> Fashion</button>
+                <button class="cat-pill" data-cat="food"><i data-lucide="utensils"></i> Food</button>
+                <button class="cat-pill" data-cat="beauty"><i data-lucide="sparkles"></i> Beauty</button>
+                <button class="cat-pill" data-cat="books"><i data-lucide="book-open"></i> Books</button>
+                <button class="cat-pill" data-cat="services"><i data-lucide="wrench"></i> Services</button>
+                <button class="cat-pill" data-cat="accessories"><i data-lucide="watch"></i> Accessories</button>
+                <button class="cat-pill" data-cat="home"><i data-lucide="sofa"></i> Home &amp; Living</button>
+            </div>
         </div>
     </div>
 
@@ -123,49 +120,32 @@
     <main class="stores-main" id="main-content">
         <div class="stores-container">
 
-            <!-- Toolbar -->
-            <div class="stores-toolbar">
-                <p class="results-label">Showing <strong id="results-count">0</strong> stores</p>
-                <div class="toolbar-right">
-                    <div class="sort-wrap">
-                        <i data-lucide="arrow-up-down"></i>
-                        <select id="sort-select" aria-label="Sort stores">
-                            <option value="featured">Featured</option>
-                            <option value="rating">Top Rated</option>
-                            <option value="products">Most Products</option>
-                            <option value="newest">Newest</option>
-                            <option value="az">A → Z</option>
-                        </select>
-                    </div>
-                    <div class="view-toggle">
-                        <button class="view-btn active" id="btn-grid" aria-label="Grid view"><i data-lucide="layout-grid"></i></button>
-                        <button class="view-btn" id="btn-list" aria-label="List view"><i data-lucide="list"></i></button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Spotlight top 3 -->
-            <section class="section spotlight-section" id="spotlight-section">
+            <!-- SECTION 4 — FEATURED STORES -->
+            <section class="section featured-section" id="featured-section">
                 <div class="section-header">
                     <div>
-                        <h2>Featured Student Shops</h2>
-                        <p class="section-sub">Real businesses. Real students.</p>
+                        <h2>Featured Stores</h2>
+                        <p class="section-sub">Hand-picked student businesses worth exploring.</p>
                     </div>
-                    <span class="spotlight-label"><i data-lucide="flame"></i> Hand-picked</span>
                 </div>
-                <div class="spotlight-grid" id="spotlight-grid"></div>
+                <div class="featured-grid" id="featured-grid"></div>
             </section>
 
-            <!-- All stores -->
+            <!-- SECTION 5 — STORE GRID -->
             <section class="section stores-list-section">
-                <div class="stores-grid grid-view" id="stores-grid"></div>
+                <div class="stores-toolbar">
+                    <p class="results-label">Showing <strong id="results-count">0</strong> stores</p>
+                </div>
+
+                <div class="stores-grid" id="stores-grid"></div>
 
                 <!-- Empty state -->
                 <div class="empty-state hidden" id="empty-state">
                     <div class="empty-icon"><i data-lucide="store"></i></div>
-                    <h3>No stores found</h3>
-                    <p>Try a different search or category.</p>
-                    <button class="empty-reset" id="empty-reset">Clear filters</button>
+                    <h3>No stores found.</h3>
+                    <p>Try another category or search term.</p>
+                    <div class="empty-suggestions" id="empty-suggestions"></div>
+                    <button class="empty-reset" id="empty-reset">Clear all filters</button>
                 </div>
 
                 <!-- Load more -->
@@ -174,6 +154,48 @@
                         Load More Stores <i data-lucide="chevron-down"></i>
                     </button>
                 </div>
+            </section>
+
+            <!-- ADDITIONAL DISCOVERY SECTIONS -->
+            <section class="section discovery-section" id="trending-section">
+                <div class="section-header">
+                    <div>
+                        <h2><i data-lucide="flame"></i> Trending Stores</h2>
+                        <p class="section-sub">What students are loving right now.</p>
+                    </div>
+                    <a href="#main-content" class="see-all">See all <i data-lucide="arrow-right"></i></a>
+                </div>
+                <div class="discovery-scroller" id="trending-grid"></div>
+            </section>
+
+            <section class="section discovery-section" id="active-section">
+                <div class="section-header">
+                    <div>
+                        <h2><i data-lucide="zap"></i> Recently Active</h2>
+                        <p class="section-sub">Stores that just added new products.</p>
+                    </div>
+                </div>
+                <div class="discovery-scroller" id="active-grid"></div>
+            </section>
+
+            <section class="section discovery-section" id="new-section">
+                <div class="section-header">
+                    <div>
+                        <h2><i data-lucide="sparkles"></i> New This Week</h2>
+                        <p class="section-sub">Fresh student businesses that just opened.</p>
+                    </div>
+                </div>
+                <div class="discovery-scroller" id="new-grid"></div>
+            </section>
+
+            <section class="section discovery-section" id="favorites-section">
+                <div class="section-header">
+                    <div>
+                        <h2><i data-lucide="heart"></i> Student Favorites</h2>
+                        <p class="section-sub">Highest-rated stores in the marketplace.</p>
+                    </div>
+                </div>
+                <div class="discovery-scroller" id="favorites-grid"></div>
             </section>
 
         </div>
@@ -185,10 +207,10 @@
     <section class="cta-section seller-cta">
         <div class="container">
             <div class="cta-inner">
-                <h2>Ready to launch <span>your shop?</span></h2>
+                <h2>Ready to launch <span>your store?</span></h2>
                 <p>Join student entrepreneurs already selling on UniMartX. Set up your storefront in minutes.</p>
                 <div class="cta-actions">
-                    <a href="../../auth/seller/register.html" class="btn btn-primary btn-lg">Create My Shop</a>
+                    <a href="../../auth/seller/register.html" class="btn btn-primary btn-lg">Create My Store</a>
                     <a href="../shop/shop.html" class="btn btn-ghost btn-lg">Browse Products</a>
                 </div>
             </div>

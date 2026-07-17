@@ -10,62 +10,45 @@ function escapeHtml(str) {
         .replace(/'/g, '&#39;');
 }
 
-function showToast(message) {
-    let toast = document.querySelector('.toast');
-    if (!toast) {
-        toast = document.createElement('div');
-        toast.className = 'toast';
-        toast.style.cssText = 'position:fixed;bottom:2rem;right:2rem;background:var(--bg-2);border:1px solid var(--primary);color:var(--text);padding:1rem 1.5rem;border-radius:var(--radius);box-shadow:0 8px 32px rgba(0,0,0,0.4);z-index:999;transform:translateY(120%);opacity:0;transition:transform 0.3s,opacity 0.3s;';
-        document.body.appendChild(toast);
-    }
-    toast.textContent = message;
-    toast.classList.add('show');
-    clearTimeout(toast._timeout);
-    toast._timeout = setTimeout(() => toast.classList.remove('show'), 2500);
+const API_URL = window.APP_CONFIG.BACKEND_URL;
+
+function storeHref(store) {
+    return `/pages/seller/public/store/store.html?sellerId=${encodeURIComponent(store.id)}&slug=${encodeURIComponent(store.slug || '')}`;
 }
 
 // ═══════════════════════════════════════════
-// STATE
+// STATE — discovery first
 // ═══════════════════════════════════════════
-let state = {
+const state = {
     query:    '',
     category: 'all',
-    sort:     'featured',
-    view:     'grid',
+    filter:   'all',
+    sort:     'trending',
     page:     1,
     total:    0,
     data:     [],
     loading:  false,
 };
 
-const PAGE_SIZE = 9;
+const PAGE_SIZE = 12;
 const storeProductsCache = new Map();
 let _enriching = false;
 
 // ═══════════════════════════════════════════
 // HELPERS
 // ═══════════════════════════════════════════
-function stars(rating) {
-    if (!rating) return '';
-    const full  = Math.floor(rating);
-    const half  = rating % 1 >= 0.5 ? 1 : 0;
-    const empty = 5 - full - half;
-    return '★'.repeat(full) + (half ? '½' : '') + '☆'.repeat(empty);
-}
+const CATEGORY_MAP = {
+    electronics: 'Electronics', fashion: 'Fashion', food: 'Food', beauty: 'Beauty',
+    books: 'Books', services: 'Services', accessories: 'Accessories', home: 'Home & Living',
+    clothing: 'Fashion', other: 'Other',
+};
+function categoryLabel(cat) { return CATEGORY_MAP[cat] || cat || 'Store'; }
 
-function categoryLabel(cat) {
-    const map = { electronics:'Electronics', fashion:'Fashion', books:'Books', beauty:'Beauty',
-                  food:'Food & Snacks',
-                  sports:'Sports', home:'Home & Living', clothing:'Fashion', other:'Other' };
-    return map[cat] || cat;
-}
-
-function categoryIcon(cat) {
-    const map = { electronics:'cpu', fashion:'shirt', clothing:'shirt', books:'book-open',
-                  beauty:'sparkles', food:'utensils',
-                  sports:'dumbbell', home:'sofa', other:'more-horizontal' };
-    return map[cat] || 'store';
-}
+const CATEGORY_ICON = {
+    electronics: 'cpu', fashion: 'shirt', clothing: 'shirt', food: 'utensils', beauty: 'sparkles',
+    books: 'book-open', services: 'wrench', accessories: 'watch', home: 'sofa', other: 'store',
+};
+function categoryIcon(cat) { return CATEGORY_ICON[cat] || 'store'; }
 
 const FALLBACK_GRADIENTS = [
     'linear-gradient(135deg,#10b981,#34d399)',
@@ -77,260 +60,234 @@ const FALLBACK_GRADIENTS = [
     'linear-gradient(135deg,#84cc16,#bef264)',
     'linear-gradient(135deg,#7c3aed,#a78bfa)',
 ];
-
 function storeGradient(s) {
     if (s.storeColor) return s.storeColor;
-    const idx = s.id.split('').reduce((a, c) => a + c.charCodeAt(0), 0) % FALLBACK_GRADIENTS.length;
+    const key = s.id || s.storeName || 'x';
+    const idx = key.split('').reduce((a, c) => a + c.charCodeAt(0), 0) % FALLBACK_GRADIENTS.length;
     return FALLBACK_GRADIENTS[idx];
 }
-
-function avatarStyle(s) {
-    if (s.storeAvatar) return `background-image:url('${s.storeAvatar}');background-size:cover;background-position:center`;
-    return `background:${storeGradient(s)}`;
-}
-
 function bannerStyle(s) {
-    if (s.storeBanner) return `background-image:url('${s.storeBanner}');background-size:cover;background-position:center`;
-    return `background:${storeGradient(s)}`;
+    return s.storeBanner ? `background-image:url('${escapeHtml(s.storeBanner)}');background-size:cover;background-position:center` : `background:${storeGradient(s)}`;
+}
+function logoStyle(s) {
+    return s.storeAvatar ? `background-image:url('${escapeHtml(s.storeAvatar)}');background-size:cover;background-position:center` : `background:${storeGradient(s)}`;
+}
+function logoFallback(s) {
+    return `<span class="store-logo-fallback">${escapeHtml((s.storeName || '?').charAt(0).toUpperCase())}</span>`;
+}
+function discLogoFallback(s) {
+    return `<span class="disc-logo-fallback">${escapeHtml((s.storeName || '?').charAt(0).toUpperCase())}</span>`;
 }
 
-function bannerUrl(s) {
-    return s.storeBanner || '';
-}
-
-function colorizeName(name, storeColor) {
-    const chars = (name || '').split('');
-    return chars.map((ch, i) => {
-        const safe = ch.replace(/[<>&'"]/g, m => ({ '<':'&lt;', '>':'&gt;', '&':'&amp;', "'":'&#39;', '"':'&quot;' })[m]);
-        if (i % 3 === 0 && i !== 0) return `<span style="color:${storeColor || 'var(--primary)'}">${safe}</span>`;
-        return safe;
-    }).join('');
-}
+// Trust derivation (kept minimal — only 1-2 indicators shown)
+// Now driven by real backend flags (isVerified / isOpen / isNewStore / avgRating).
+function isVerified(s) { return !!s.isVerified; }
+function isTopSeller(s) { return (s.avgRating && s.avgRating >= 4.8 && (s.totalReviews || 0) >= 3); }
+function isOpen(s) { return !!s.isOpen; }
+function isNew(s) { return !!s.isNewStore; }
 
 // ═══════════════════════════════════════════
 // SKELETONS
 // ═══════════════════════════════════════════
-function spotlightSkeleton() {
-    return `<div class="spotlight-card" style="pointer-events:none">
-        <div class="spotlight-skeleton-avatar skel-banner"></div>
-        <div class="spotlight-skeleton-name skel"></div>
-    </div>`;
-}
-
 function storeSkeleton() {
-    return `<div class="store-card skeleton-card" style="pointer-events:none" aria-hidden="true">
-        <div class="store-skeleton-banner skel-banner"></div>
-        <div class="store-card-body">
-            <div class="store-skeleton">
-                <div class="store-skeleton-avatar skel-banner"></div>
-                <div class="store-skeleton-body">
-                    <div class="store-skeleton-line skel-banner skel-md"></div>
-                    <div class="store-skeleton-line skel sm"></div>
-                    <div class="store-skeleton-line skel sm"></div>
-                    <div class="store-skeleton-line skel-banner" style="height:10px;margin-top:8px;width:100%;border-radius:50px"></div>
-                </div>
-            </div>
+    return `<div class="store-card skeleton-card" aria-hidden="true">
+        <div class="store-skeleton-banner skel"></div>
+        <div class="store-skeleton-body">
+            <div class="store-skeleton-logo skel"></div>
+            <div class="store-skeleton-line lg skel"></div>
+            <div class="store-skeleton-line sm skel"></div>
+            <div class="store-skeleton-line md skel"></div>
         </div>
     </div>`;
 }
 
 // ═══════════════════════════════════════════
 // CARD BUILDERS
-// ═══════════════════════════════════════════
-function buildSpotlightCard(store, rank) {
-    const initial = (store.storeName || '?').charAt(0).toUpperCase();
-    const avatarInner = store.storeAvatar
-        ? `<img src="${escapeHtml(store.storeAvatar)}" alt="${escapeHtml(store.storeName)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" /><span class="spotlight-avatar-fallback" style="display:none">${initial}</span>`
-        : `<span class="spotlight-avatar-fallback">${initial}</span>`;
-
-    return `
-    <a class="spotlight-card reveal delay-${rank}" href="/pages/seller/public/store/store.html?sellerId=${escapeHtml(store.id)}&slug=${escapeHtml(store.slug || '')}" aria-label="Store ${escapeHtml(store.storeName)}, rank ${rank}">
-        <div class="spotlight-avatar-ring">
-            <div class="spotlight-avatar" style="${store.storeAvatar ? `background-image:url('${escapeHtml(store.storeAvatar)}');background-size:cover;background-position:center` : `background:${storeGradient(store)}`}">
-                ${avatarInner}
-            </div>
-        </div>
-        <span class="spotlight-store-name">${escapeHtml(store.storeName)}</span>
-    </a>`;
+// ══════════════════════════════════════════
+function trustIndicators(s) {
+    // Show at most two trust elements, prioritize the most meaningful.
+    const out = [];
+    if (isVerified(s)) out.push(`<span class="trust-pill verified"><i data-lucide="badge-check"></i> Verified Student</span>`);
+    if (s.avgRating) out.push(`<span class="trust-pill rating"><i data-lucide="star"></i> ${s.avgRating}</span>`);
+    else if (isTopSeller(s)) out.push(`<span class="trust-pill top"><i data-lucide="crown"></i> Top Seller</span>`);
+    return out.slice(0, 2).join('');
 }
 
-function productPreviewMini(store, index) {
-    if (store.featuredProducts && store.featuredProducts[index]) {
-        const p = store.featuredProducts[index];
-        return `
-        <span class="preview-product" aria-hidden="true">
-            <div class="preview-product-img" style="${p.image ? `background-image:url('${escapeHtml(p.image)}');background-size:cover;background-position:center` : `background:${storeGradient(store)}`}">
-                ${!p.image ? `<i data-lucide="package" aria-hidden="true"></i>` : ''}
-            </div>
-            <span class="preview-product-name">${escapeHtml(p.name || 'Product')}</span>
-            <span class="preview-product-price">${p.price ? '$' + Number(p.price).toFixed(2) : ''}</span>
-        </span>`;
+function productPreview(s) {
+    const items = (s.featuredProducts && s.featuredProducts.slice(0, 4)) || [];
+    const count = Math.max(3, Math.min(4, items.length || 3));
+    let html = '';
+    for (let i = 0; i < count; i++) {
+        const p = items[i];
+        if (p && p.image) {
+            html += `<div class="preview-thumb" aria-hidden="true"><img src="${escapeHtml(p.image)}" alt="" loading="lazy"></div>`;
+        } else if (p && p.name) {
+            html += `<div class="preview-thumb" aria-hidden="true"><span style="font-size:0.6rem;font-weight:700;color:var(--text-3)">${escapeHtml(p.name.slice(0,2))}</span></div>`;
+        } else {
+            html += `<div class="preview-thumb" aria-hidden="true"><i data-lucide="package"></i></div>`;
+        }
     }
-    if (store.productCount === 0) {
-        return '';
-    }
-    return `
-    <span class="preview-product preview-product--placeholder" aria-hidden="true">
-        <div class="preview-product-img">
-            <i data-lucide="package" aria-hidden="true"></i>
-        </div>
-        <span class="preview-product-name">Loading products…</span>
-        <span class="preview-product-price"></span>
-    </span>`;
+    return html;
 }
 
 function buildStoreCard(store) {
-    const storeColor = store.storeColor || null;
-    const totalSales = store.totalSales || 0;
-    const isVerified = store.isVerified || store.totalReviews >= 5;
-    const isTopSeller = totalSales >= 50 || (store.avgRating && store.avgRating >= 4.8);
-    const isTrending = store.isTrending || (store.productCount >= 10);
-    const joinedLabel = store.joinedLabel || (store.createdAt ? 'Member' : '');
-    const activeLabel = store.activeLabel || '';
-    const responseLabel = store.responseLabel || '';
-    
-    let badgesHtml = '';
-    if (isVerified) badgesHtml += `<span class="store-badge store-badge--verified">Verified Student</span>`;
-    if (isTopSeller) badgesHtml += `<span class="store-badge store-badge--top">Top Seller</span>`;
-    if (isTrending) badgesHtml += `<span class="store-badge store-badge--trending">Trending</span>`;
-    
-    let statsHtml = '';
-    if (store.avgRating) statsHtml += `<span class="store-stat"><i data-lucide="star" aria-hidden="true"></i> ${store.avgRating}</span>`;
-    if (totalSales) statsHtml += `<span class="store-stat"><i data-lucide="shopping-bag" aria-hidden="true"></i> ${totalSales} Sales</span>`;
-    statsHtml += `<span class="store-stat"><i data-lucide="package" aria-hidden="true"></i> ${store.productCount || 0} Products</span>`;
-    if (activeLabel) statsHtml += `<span class="store-stat"><i data-lucide="zap" aria-hidden="true"></i> ${escapeHtml(activeLabel)}</span>`;
-    if (responseLabel) statsHtml += `<span class="store-stat"><i data-lucide="clock" aria-hidden="true"></i> ${escapeHtml(responseLabel)}</span>`;
-    if (joinedLabel && !activeLabel && !responseLabel) statsHtml += `<span class="store-stat"><i data-lucide="calendar" aria-hidden="true"></i> ${escapeHtml(joinedLabel)}</span>`;
+    const av = store.storeAvatar
+        ? `<img src="${escapeHtml(store.storeAvatar)}" alt="${escapeHtml(store.storeName)} logo" loading="lazy">`
+        : logoFallback(store);
 
     return `
-    <div class="store-card reveal" data-href="/pages/seller/public/store/store.html?sellerId=${escapeHtml(store.id)}&slug=${escapeHtml(store.slug || '')}" onclick="location.href=this.dataset.href" role="link" tabindex="0" aria-label="Store ${escapeHtml(store.storeName)}">
-        <div class="store-card-banner" style="${bannerStyle(store)}" aria-hidden="true">
+    <a class="store-card reveal" href="${storeHref(store)}" aria-label="Visit ${escapeHtml(store.storeName)} store">
+        <div class="store-card-banner" aria-hidden="true">
             <div class="store-banner-bg" style="${bannerStyle(store)}"></div>
             <div class="store-banner-overlay"></div>
         </div>
-        <div class="store-card-body">
-            <div class="store-avatar-ring">
-                <div class="store-avatar" style="${avatarStyle(store)}"></div>
-                ${isVerified ? `<div class="store-verified-dot" title="Verified Student"><i data-lucide="badge-check" aria-hidden="true"></i></div>` : ''}
+        <div class="store-identity">
+            <div class="store-logo-row">
+                <div class="store-logo">${av}</div>
+                <div class="store-verified ${isVerified(store) ? '' : 'hidden'}" aria-hidden="true"><i data-lucide="badge-check"></i></div>
             </div>
-            
-            <div class="store-identity">
-                <h3 class="store-name">${colorizeName(store.storeName, storeColor)}</h3>
-                <p class="store-cat-label"><i data-lucide="${categoryIcon(store.category)}" aria-hidden="true"></i> ${escapeHtml(categoryLabel(store.category))}</p>
-                <p class="store-tagline">${escapeHtml(store.storeDescription) || 'Student entrepreneur building their brand.'}</p>
-            </div>
-            
-            ${badgesHtml ? `<div class="store-badges">${badgesHtml}</div>` : ''}
-            
-            ${statsHtml ? `<div class="store-stats">${statsHtml}</div>` : ''}
-            
-            <div class="store-products-preview" data-store-id="${escapeHtml(store.id)}">
-                ${productPreviewMini(store, 0)}
-                ${productPreviewMini(store, 1)}
-                ${productPreviewMini(store, 2)}
-            </div>
-            
-            <div class="store-card-cta-row">
-                <span class="btn-visit-store" aria-hidden="true">Visit Store →</span>
+            <h3 class="store-name">${escapeHtml(store.storeName)}</h3>
+            <span class="store-cat"><i data-lucide="${categoryIcon(store.category)}"></i> ${escapeHtml(categoryLabel(store.category))}</span>
+            ${trustIndicators(store) ? `<div class="store-trust">${trustIndicators(store)}</div>` : ''}
+            <div class="store-products" data-store-id="${escapeHtml(store.id)}">${productPreview(store)}</div>
+            <span class="store-cta" aria-hidden="true">Visit Store <i data-lucide="arrow-right"></i></span>
+        </div>
+    </a>`;
+}
+
+function buildFeaturedCard(store) {
+    const av = store.storeAvatar
+        ? `<img src="${escapeHtml(store.storeAvatar)}" alt="${escapeHtml(store.storeName)} logo" loading="lazy">`
+        : `<span class="store-logo-fallback" style="font-size:1.4rem">${escapeHtml((store.storeName||'?').charAt(0).toUpperCase())}</span>`;
+
+    const trust = [];
+    if (isVerified(store)) trust.push(`<span><i data-lucide="badge-check"></i> Verified</span>`);
+    if (store.avgRating) trust.push(`<span class="star"><i data-lucide="star"></i> ${store.avgRating}</span>`);
+    else if (isTopSeller(store)) trust.push(`<span><i data-lucide="crown"></i> Top Seller</span>`);
+
+    return `
+    <a class="featured-card reveal" href="${storeHref(store)}" aria-label="Visit featured store ${escapeHtml(store.storeName)}">
+        <div class="featured-banner" aria-hidden="true">
+            <div class="featured-banner-bg" style="${bannerStyle(store)}"></div>
+            <div class="featured-banner-overlay"></div>
+            <div class="featured-brand">
+                <div class="featured-logo">${av}</div>
             </div>
         </div>
-    </div>`;
+        <div class="featured-info">
+            <h3 class="featured-name">${escapeHtml(store.storeName)}</h3>
+            <span class="featured-cat"><i data-lucide="${categoryIcon(store.category)}"></i> ${escapeHtml(categoryLabel(store.category))}</span>
+            ${trust.length ? `<div class="featured-trust">${trust.join('')}</div>` : ''}
+            <span class="featured-cta">Visit Store <i data-lucide="arrow-right"></i></span>
+        </div>
+    </a>`;
+}
+
+function buildDiscCard(store) {
+    const av = store.storeAvatar
+        ? `<img src="${escapeHtml(store.storeAvatar)}" alt="" loading="lazy">`
+        : discLogoFallback(store);
+
+    const trust = store.avgRating
+        ? `<span class="star"><i data-lucide="star"></i> ${store.avgRating}</span>`
+        : (isVerified(store) ? `<span><i data-lucide="badge-check"></i> Verified</span>` : '');
+
+    return `
+    <a class="disc-card" href="${storeHref(store)}" aria-label="Visit ${escapeHtml(store.storeName)} store">
+        <div class="disc-banner" aria-hidden="true"><div class="disc-banner-bg" style="${bannerStyle(store)}"></div></div>
+        <div class="disc-logo-row">
+            <div class="disc-logo">${av}</div>
+        </div>
+        <div class="disc-body">
+            <span class="disc-name">${escapeHtml(store.storeName)}</span>
+            <span class="disc-cat">${escapeHtml(categoryLabel(store.category))}</span>
+            ${trust ? `<span class="disc-trust">${trust}</span>` : ''}
+        </div>
+    </a>`;
 }
 
 // ═══════════════════════════════════════════
 // FETCH
 // ═══════════════════════════════════════════
+function buildParams(extra = {}) {
+    const p = new URLSearchParams({
+        page: state.page,
+        limit: PAGE_SIZE,
+        sort: state.sort,
+        ...extra,
+    });
+    if (state.category !== 'all') p.set('category', state.category);
+    if (state.query) p.set('search', state.query);
+    if (state.filter !== 'all') p.set(state.filter === 'top' ? 'topRated' : state.filter, 'true');
+    return p;
+}
+
 async function fetchStores(append = false) {
     if (state.loading) return;
     state.loading = true;
 
-    const params = new URLSearchParams({
-        page:  state.page,
-        limit: PAGE_SIZE,
-        sort:  state.sort,
-    });
-    if (state.category !== 'all') params.set('category', state.category);
-    if (state.query)              params.set('search',   state.query);
+    const gridEl = document.getElementById('stores-grid');
+    const emptyEl = document.getElementById('empty-state');
+    const loadWrap = document.getElementById('load-more-wrap');
 
     if (!append) {
-        document.getElementById('stores-grid').innerHTML = Array(PAGE_SIZE).fill(storeSkeleton()).join('');
-        document.getElementById('empty-state').classList.add('hidden');
-        document.getElementById('load-more-wrap').classList.add('hidden');
+        gridEl.innerHTML = Array(PAGE_SIZE).fill(storeSkeleton()).join('');
+        emptyEl.classList.add('hidden');
+        loadWrap.classList.add('hidden');
     }
 
     try {
-        const res = await fetch(`${API}/api/public/stores?${params}`);
+        const res = await fetch(`${API_URL}/api/public/stores?${buildParams()}`);
         if (!res.ok) throw new Error();
         const json = await res.json();
-
-        state.data  = append ? [...state.data, ...json.data] : json.data;
+        state.data = append ? [...state.data, ...json.data] : json.data;
         state.total = json.total;
-
         renderGrid();
     } catch {
-        document.getElementById('stores-grid').innerHTML =
-            '<p class="empty-msg" style="grid-column:1/-1;text-align:center;color:var(--text-3);padding:3rem">Could not load stores. Is the server running?</p>';
+        gridEl.innerHTML = '<p class="empty-msg" style="grid-column:1/-1;text-align:center;color:var(--text-3);padding:3rem">Could not load stores. Is the server running?</p>';
     } finally {
         state.loading = false;
     }
 }
 
-
-async function fetchSpotlight() {
-    const grid = document.getElementById('spotlight-grid');
-    grid.innerHTML = Array(3).fill(spotlightSkeleton()).join('');
-
+async function fetchFeatured() {
+    const grid = document.getElementById('featured-grid');
     try {
-        const res = await fetch(`${API}/api/public/stores?limit=3&sort=featured`);
+        const res = await fetch(`${API_URL}/api/public/stores?limit=2&sort=featured`);
         if (!res.ok) throw new Error();
         const { data } = await res.json();
-        grid.innerHTML = data.slice(0, 3).map((s, i) => buildSpotlightCard(s, i + 1)).join('');
+        grid.innerHTML = data.slice(0, 2).map(buildFeaturedCard).join('');
         lucide.createIcons();
-        observeNewRevealElements(grid);
-    } catch(e) {}
+        observeReveal(grid);
+    } catch (e) {
+        grid.innerHTML = '';
+    }
 }
 
-
-async function fetchHeroStats() {
-    const mpSellersEl = document.getElementById('mp-stat-sellers');
-    const mpProductsEl = document.getElementById('mp-stat-products');
-    const mpReviewsEl = document.getElementById('mp-stat-reviews');
-
-    if (!mpSellersEl && !mpProductsEl && !mpReviewsEl) return;
-
-    const FALLBACKS = {
-        sellers: '0',
-        products: '0',
-        reviews: '0',
-    };
-
-    const apply = (sellers, products, reviews) => {
-        if (mpSellersEl) mpSellersEl.textContent = sellers ?? FALLBACKS.sellers;
-        if (mpProductsEl) mpProductsEl.textContent = products ?? FALLBACKS.products;
-        if (mpReviewsEl) mpReviewsEl.textContent = reviews ?? FALLBACKS.reviews;
-    };
-
+async function fetchDiscovery(id, sort, limit = 8) {
+    const grid = document.getElementById(id);
+    if (!grid) return;
     try {
-        const res = await fetch(`${API}/api/public/stats`);
-        const json = (await res.json()) || {};
-        const s = json.data || json;
-
-        apply(
-            s.totalSellers || s.sellers || null,
-            s.totalProducts || s.products || null,
-            s.totalReviews || s.reviews || null,
-        );
-    } catch(e) {}
+        const p = new URLSearchParams({ limit, sort });
+        const res = await fetch(`${API_URL}/api/public/stores?${p}`);
+        if (!res.ok) throw new Error();
+        const { data } = await res.json();
+        if (!data.length) { grid.closest('.discovery-section').classList.add('hidden'); return; }
+        grid.innerHTML = data.map(buildDiscCard).join('');
+        lucide.createIcons();
+    } catch (e) {
+        grid.closest('.discovery-section').classList.add('hidden');
+    }
 }
 
 // ═══════════════════════════════════════════
 // RENDER
 // ═══════════════════════════════════════════
 function renderGrid() {
-    const gridEl   = document.getElementById('stores-grid');
-    const emptyEl  = document.getElementById('empty-state');
+    const gridEl = document.getElementById('stores-grid');
+    const emptyEl = document.getElementById('empty-state');
     const loadWrap = document.getElementById('load-more-wrap');
-    const countEl  = document.getElementById('results-count');
+    const countEl = document.getElementById('results-count');
 
     countEl.textContent = state.total;
 
@@ -338,6 +295,7 @@ function renderGrid() {
         gridEl.innerHTML = '';
         emptyEl.classList.remove('hidden');
         loadWrap.classList.add('hidden');
+        renderEmptySuggestions();
         return;
     }
 
@@ -349,41 +307,46 @@ function renderGrid() {
     const cards = gridEl.querySelectorAll('.store-card.reveal');
     cards.forEach((card, i) => {
         card.classList.remove('delay-100', 'delay-200', 'delay-300');
-        if (i % 3 === 0) card.classList.add('delay-100');
-        else if (i % 3 === 1) card.classList.add('delay-200');
-        else card.classList.add('delay-300');
+        if (i % 4 === 0) card.classList.add('delay-100');
+        else if (i % 4 === 1) card.classList.add('delay-200');
+        else if (i % 4 === 2) card.classList.add('delay-300');
     });
 
-    observeNewRevealElements(gridEl);
+    observeReveal(gridEl);
     enrichStoreProducts();
+}
+
+function renderEmptySuggestions() {
+    const box = document.getElementById('empty-suggestions');
+    const cats = ['Electronics', 'Fashion', 'Food', 'Beauty', 'Books'];
+    box.innerHTML = cats.map(c => `<button class="empty-suggest" data-cat="${escapeHtml(c.toLowerCase())}">${c}</button>`).join('');
+    box.querySelectorAll('.empty-suggest').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const pill = document.querySelector(`.cat-pill[data-cat="${btn.dataset.cat}"]`);
+            if (pill) pill.click();
+        });
+    });
 }
 
 // ═══════════════════════════════════════════
 // EVENTS
 // ═══════════════════════════════════════════
+const searchInput = document.getElementById('store-search-input');
+const searchClear = document.getElementById('store-search-clear');
 
-// Store card navigation (keyboard)
-document.getElementById('stores-grid').addEventListener('keydown', e => {
-    const card = e.target.closest('.store-card');
-    if (!card) return;
-    if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        location.href = card.dataset.href;
-    }
-});
-
-// Hero search
-const heroInput = document.getElementById('hero-search-input');
-const heroBtn   = document.getElementById('hero-search-btn');
-
+let searchTimer = null;
 function applySearch() {
-    state.query = heroInput.value.trim();
-    state.page  = 1;
-    if (state.query) document.querySelector('.stores-main').scrollIntoView({ behavior: 'smooth' });
+    state.query = searchInput.value.trim();
+    searchClear.classList.toggle('hidden', !state.query);
+    state.page = 1;
     fetchStores();
 }
-heroInput.addEventListener('keydown', e => { if (e.key === 'Enter') applySearch(); });
-heroBtn.addEventListener('click', applySearch);
+searchInput.addEventListener('input', () => {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(applySearch, 220);
+});
+searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); applySearch(); } });
+searchClear.addEventListener('click', () => { searchInput.value = ''; searchInput.focus(); applySearch(); });
 
 // Category pills
 document.getElementById('category-rail').addEventListener('click', e => {
@@ -393,10 +356,17 @@ document.getElementById('category-rail').addEventListener('click', e => {
     pill.classList.add('active');
     state.category = pill.dataset.cat;
     state.page = 1;
+    fetchStores();
+});
 
-    const showSpotlight = state.category === 'all' && !state.query;
-    document.getElementById('spotlight-section').classList.toggle('hidden', !showSpotlight);
-
+// Filter chips
+document.getElementById('filter-chips').addEventListener('click', e => {
+    const chip = e.target.closest('.filter-chip');
+    if (!chip) return;
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    state.filter = chip.dataset.filter;
+    state.page = 1;
     fetchStores();
 });
 
@@ -407,49 +377,27 @@ document.getElementById('sort-select').addEventListener('change', e => {
     fetchStores();
 });
 
-// View toggle
-document.getElementById('btn-grid').addEventListener('click', () => {
-    state.view = 'grid';
-    document.getElementById('stores-grid').className = 'stores-grid grid-view';
-    document.getElementById('btn-grid').classList.add('active');
-    document.getElementById('btn-list').classList.remove('active');
-});
-
-document.getElementById('btn-list').addEventListener('click', () => {
-    state.view = 'list';
-    document.getElementById('stores-grid').className = 'stores-grid list-view';
-    document.getElementById('btn-list').classList.add('active');
-    document.getElementById('btn-grid').classList.remove('active');
-});
-
 // Load more
 document.getElementById('load-more-btn').addEventListener('click', () => {
     state.page++;
     fetchStores(true);
 });
 
-// Empty state reset
+// Empty reset
 document.getElementById('empty-reset').addEventListener('click', () => {
-    state.query    = '';
-    state.category = 'all';
-    state.page     = 1;
-    heroInput.value = '';
+    state.query = ''; state.category = 'all'; state.filter = 'all'; state.page = 1; state.sort = 'trending';
+    searchInput.value = '';
+    searchClear.classList.add('hidden');
     document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
     document.querySelector('.cat-pill[data-cat="all"]').classList.add('active');
-    document.getElementById('spotlight-section').classList.remove('hidden');
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    document.querySelector('.filter-chip[data-filter="all"]').classList.add('active');
+    document.getElementById('sort-select').value = 'trending';
     fetchStores();
-    fetchSpotlight();
+    fetchFeatured();
 });
 
-// Navbar + category rail: shadow lives on the rail so both feel unified
-window.addEventListener('scroll', () => {
-    const scrolled = window.scrollY > 10;
-    const navbar = document.getElementById('navbar');
-    const catRail = document.querySelector('.category-rail-wrap');
-    if (navbar) navbar.style.boxShadow = 'none';
-    if (catRail) catRail.style.boxShadow = scrolled ? '0 4px 24px rgba(0,0,0,0.4)' : 'none';
-});
-
+// Mobile nav
 const hamburger = document.getElementById('nav-hamburger');
 const mobileNav = document.getElementById('nav-mobile');
 if (hamburger && mobileNav) {
@@ -464,201 +412,43 @@ if (hamburger && mobileNav) {
 }
 
 // ═══════════════════════════════════════════
-// INIT
+// PRODUCT PREVIEW ENRICHMENT (only images)
 // ═══════════════════════════════════════════
-const urlParams = new URLSearchParams(location.search);
-const urlCat    = urlParams.get('category');
-
-if (urlCat) {
-    state.category = urlCat;
-    const pill = document.querySelector(`.cat-pill[data-cat="${urlCat}"]`);
-    if (pill) {
-        document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
-        pill.classList.add('active');
-    }
-    document.getElementById('spotlight-section').classList.add('hidden');
-}
-
-fetchStores();
-if (!urlCat) fetchSpotlight();
-fetchHeroStats();
-fetchCartCount();
-
-// ── Live sync ─────────────────────────────────
-let _isFetching = false;
-
-function getSnapshot(ids) { return ids && ids.length ? ids.join(',') : '__empty__'; }
-
-async function liveFetchStores() {
-    if (_isFetching) return;
-    _isFetching = true;
-    try {
-        const token = getToken && getToken();
-        const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
-
-        const [statsRes, spotRes, storesRes, cartRes] = await Promise.all([
-            fetch(`${API}/api/public/stats`, { credentials: 'include',  cache: 'no-store' }),
-            fetch(`${API}/api/public/stores?limit=3&sort=featured`, { credentials: 'include',  cache: 'no-store' }),
-            fetch(`${API}/api/public/stores?${new URLSearchParams({
-                page: state.page, limit: PAGE_SIZE, sort: state.sort,
-                ...(state.category !== 'all' ? { category: state.category } : {}),
-                ...(state.query ? { search: state.query } : {}),
-            })}`, { credentials: 'include',  cache: 'no-store' }),
-            token ? fetch(`${API}/api/cart`, { credentials: 'include',  headers, cache: 'no-store' }) : Promise.resolve(null),
-        ]);
-
-        if (statsRes.ok) {
-            const s = (await statsRes.json()).data;
-            if (s && Object.values(s).some(v => v !== null && v !== undefined && v !== '' && v !== 0)) {
-                fetchHeroStatsFromData(s);
-            }
-        }
-
-        if (spotRes.ok) {
-            const { data } = await spotRes.json();
-            const grid = document.getElementById('spotlight-grid');
-            grid.innerHTML = data.slice(0, 3).map((s, i) => buildSpotlightCard(s, i + 1)).join('');
-            lucide.createIcons();
-            observeNewRevealElements(grid);
-        }
-
-        if (storesRes.ok) {
-            const { data, total } = await storesRes.json();
-            state.data  = data;
-            state.total = total;
-            renderGridQuiet();
-        }
-
-        if (cartRes && cartRes.ok) {
-            const json = await cartRes.json();
-            if (json?.data?.itemCount != null && window.__updateCartBadge) {
-                window.__updateCartBadge(json.data.itemCount);
-            }
-        }
-    } catch(e) {}
-    _isFetching = false;
-}
-
-function fetchHeroStatsFromData(s) {
-    const mpSellersEl = document.getElementById('mp-stat-sellers');
-    const mpProductsEl = document.getElementById('mp-stat-products');
-    const mpReviewsEl = document.getElementById('mp-stat-reviews');
-
-    if (mpSellersEl) mpSellersEl.textContent = s.totalSellers || s.sellers || mpSellersEl.textContent;
-    if (mpProductsEl) mpProductsEl.textContent = s.totalProducts || s.products || mpProductsEl.textContent;
-    if (mpReviewsEl) mpReviewsEl.textContent = s.totalReviews || s.reviews || mpReviewsEl.textContent;
-}
-
-function renderGridQuiet() {
-    const gridEl   = document.getElementById('stores-grid');
-    const emptyEl  = document.getElementById('empty-state');
-    const loadWrap = document.getElementById('load-more-wrap');
-    const countEl  = document.getElementById('results-count');
-
-    countEl.textContent = state.total ?? gridEl.querySelectorAll('.store-card').length;
-    lucide.createIcons();
-
-    if (!state.data.length) {
-        gridEl.innerHTML = '';
-        emptyEl.classList.remove('hidden');
-        loadWrap.classList.add('hidden');
-        return;
-    }
-
-    emptyEl.classList.add('hidden');
-    gridEl.innerHTML = state.data.map(buildStoreCard).join('');
-    loadWrap.classList.toggle('hidden', state.data.length >= state.total);
-    lucide.createIcons();
-
-    const cards = gridEl.querySelectorAll('.store-card.reveal');
-    cards.forEach((card, i) => {
-        card.classList.remove('delay-100', 'delay-200', 'delay-300');
-        if (i % 3 === 0) card.classList.add('delay-100');
-        else if (i % 3 === 1) card.classList.add('delay-200');
-        else card.classList.add('delay-300');
-    });
-
-    observeNewRevealElements(gridEl);
-    enrichStoreProducts();
-}
-
+// Product previews are returned directly by /api/public/stores (featuredProducts).
+// Only fall back to the per-store endpoint when a store has no preview data.
 async function enrichStoreProducts() {
+    const missing = state.data.filter(s =>
+        (s.productCount > 0) && (!s.featuredProducts || !s.featuredProducts.length) && !storeProductsCache.has(s.id)
+    );
+    if (!missing.length) return;
     if (_enriching) return;
     _enriching = true;
     try {
-        const storesToFetch = state.data.filter(s => s.productCount > 0 && !storeProductsCache.has(s.id));
-        if (!storesToFetch.length) return;
-
         const results = await Promise.allSettled(
-            storesToFetch.map(s =>
-                fetch(`${API}/api/public/seller/${encodeURIComponent(s.id)}?limit=3`).then(r => r.ok ? r.json() : Promise.reject()).then(j => ({ store: s, json: j })).catch(() => null)
-            )
+            missing.map(s => fetch(`${API_URL}/api/public/seller/${encodeURIComponent(s.id)}?limit=4`)
+                .then(r => r.ok ? r.json() : Promise.reject())
+                .then(j => ({ store: s, products: (j?.data?.products || []).slice(0, 4) }))
+                .catch(() => null))
         );
-
-        results.forEach(result => {
-            if (!result || result.status !== 'fulfilled' || !result.value) return;
-            const { store: s, json } = result.value;
-            const products = (json && json.data && json.data.products && json.data.products.slice(0, 3)) || [];
-            storeProductsCache.set(s.id, products);
-            updateStoreProductPreview(s.id, products);
+        results.forEach(r => {
+            if (!r || r.status !== 'fulfilled' || !r.value) return;
+            const { store, products } = r.value;
+            storeProductsCache.set(store.id, products);
+            const container = document.querySelector(`.store-products[data-store-id="${store.id}"]`);
+            if (!container || products.length === 0) return;
+            container.innerHTML = products.map(p => p.image
+                ? `<div class="preview-thumb" aria-hidden="true"><img src="${escapeHtml(p.image)}" alt="" loading="lazy"></div>`
+                : `<div class="preview-thumb" aria-hidden="true"><span style="font-size:0.6rem;font-weight:700;color:var(--text-3)">${escapeHtml((p.name||'?').slice(0,2))}</span></div>`
+            ).join('');
+            lucide.createIcons();
         });
-    } catch (e) {
-        // Silently fail; cards keep their loading/empty state
-    } finally {
-        _enriching = false;
-    }
+    } catch (e) { /* silent */ } finally { _enriching = false; }
 }
 
-function updateStoreProductPreview(storeId, products) {
-    const container = document.querySelector(`.store-products-preview[data-store-id="${storeId}"]`);
-    if (!container) return;
-
-    if (!products.length) {
-        container.innerHTML = '';
-    } else {
-        container.innerHTML = products.map((p, idx) => `
-            <span class="preview-product" aria-hidden="true">
-                <div class="preview-product-img" style="${p.image ? `background-image:url('${escapeHtml(p.image)}');background-size:cover;background-position:center` : `background:var(--bg-3)`}">
-                    ${!p.image ? `<i data-lucide="package" aria-hidden="true"></i>` : ''}
-                </div>
-                <span class="preview-product-name">${escapeHtml(p.name || 'Product')}</span>
-                <span class="preview-product-price">${p.price != null ? '$' + Number(p.price).toFixed(2) : ''}</span>
-            </span>
-        `).join('');
-    }
-
-    lucide.createIcons();
-}
-
-function startStoresLiveSync() {
-    let initialized = false;
-    _pollId = setInterval(async () => {
-        if (state.loading || _isFetching) return;
-        if (!initialized) {
-            initialized = true;
-            return;
-        }
-        await liveFetchStores();
-    }, 5000);
-}
-
-function stopStoresLiveSync() {
-    if (_pollId) { clearInterval(_pollId); _pollId = null; }
-}
-
-window.addEventListener('focus', () => {
-    _isFetching = false;
-    liveFetchStores();
-});
-
-window.addEventListener('online', () => {
-    _isFetching = false;
-    liveFetchStores();
-});
-
-// ── Scroll reveal ────────────────────────────
+// ═══════════════════════════════════════════
+// REVEAL OBSERVER
+// ═══════════════════════════════════════════
 let revealObserver = null;
-
 function setupRevealObserver() {
     if (revealObserver) return;
     if (!('IntersectionObserver' in window)) {
@@ -673,16 +463,51 @@ function setupRevealObserver() {
             }
         });
     }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-
     document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 }
-
-function observeNewRevealElements(container) {
+function observeReveal(container) {
     if (!revealObserver) return;
-    const els = container.querySelectorAll('.reveal:not(.in-view)');
-    els.forEach(el => revealObserver.observe(el));
+    container.querySelectorAll('.reveal:not(.in-view)').forEach(el => revealObserver.observe(el));
 }
-
 setupRevealObserver();
 
-liveFetchStores();
+// ═══════════════════════════════════════════
+// CART BADGE (optional on this page)
+// ═══════════════════════════════════════════
+function updateCartBadge(count) {
+    const el = document.getElementById('cart-count');
+    if (el) {
+        el.textContent = String(count);
+        el.classList.toggle('hidden', count <= 0);
+    }
+}
+async function fetchCartCount() {
+    try {
+        const res = await fetch(`${API_URL}/api/cart`, { credentials: 'include' });
+        if (!res.ok) return;
+        const json = await res.json();
+        if (json?.data?.itemCount != null) updateCartBadge(json.data.itemCount);
+    } catch { /* ignore — cart badge is optional here */ }
+}
+
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
+const urlParams = new URLSearchParams(location.search);
+const urlCat = urlParams.get('category');
+if (urlCat) {
+    state.category = urlCat;
+    const pill = document.querySelector(`.cat-pill[data-cat="${urlCat}"]`);
+    if (pill) {
+        document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+    }
+}
+
+fetchStores();
+fetchFeatured();
+fetchDiscovery('trending-grid', 'trending');
+fetchDiscovery('active-grid', 'active');
+fetchDiscovery('new-grid', 'newest');
+fetchDiscovery('favorites-grid', 'popular');
+fetchCartCount();
