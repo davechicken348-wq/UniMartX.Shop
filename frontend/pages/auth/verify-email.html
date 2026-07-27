@@ -60,6 +60,15 @@
                         <input type="text" id="url-input" class="url-input" placeholder="Paste the complete verification link here...">
                         <button id="submit-url-btn" class="auth-btn submit-url-btn">Verify</button>
                     </div>
+
+                    <div class="divider"><span>OR</span></div>
+
+                    <p class="recovery-label">Verify via SMS (if you provided a phone number):</p>
+                    <div class="sms-input-wrapper">
+                        <input type="text" id="sms-code-input" class="sms-code-input" placeholder="Enter 6-digit SMS code" maxlength="6" inputmode="numeric">
+                        <button id="verify-sms-btn" class="auth-btn verify-sms-btn">Verify SMS</button>
+                    </div>
+                    <p id="sms-status" class="sms-status"></p>
                 </div>
 
                 <p class="back-to-login">Or <a href="login.html">go to login</a></p>

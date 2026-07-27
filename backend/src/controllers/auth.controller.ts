@@ -8,6 +8,7 @@ import { AppError } from '../middleware/errorHandler';
 import prisma from '../lib/prisma';
 import { generateToken, getTokenExpiry } from '../utils/token';
 import { sendVerificationEmail, sendWelcomeEmail, getVerificationBaseUrl, getBackendBaseUrl, sendPasswordResetEmail, sendPasswordChangedEmail } from '../services/email.service';
+import { sendSmsVerificationCode } from '../services/sms.service';
 import { NotificationService } from '../services/notification.service';
 import { redirectVerification } from './verification.controller';
 
@@ -178,6 +179,12 @@ export const registerBuyer = async (req: Request, res: Response): Promise<void> 
           console.error('Failed to send verification email (non-blocking):', err);
         });
 
+        if (input.phone) {
+          sendSmsVerificationCode(input.phone, user.id).catch((err) => {
+            console.error('Failed to send SMS verification code (non-blocking):', err);
+          });
+        }
+
         return { user, token };
     });
 
@@ -232,9 +239,9 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       throw new AppError('Incorrect password', 401);
     }
 
-    // Check email verification
-    if (!user.emailVerified) {
-      throw new AppError('Please verify your email before logging in. Check your inbox for the verification link.', 403);
+    // Check email/SMS verification
+    if (!user.emailVerified && !user.smsVerified) {
+      throw new AppError('Please verify your email or phone number before logging in. Check your inbox for the verification link or SMS for the code.', 403);
     }
 
     let role = user.role;

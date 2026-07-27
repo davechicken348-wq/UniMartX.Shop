@@ -1,8 +1,8 @@
 // UniMartX Auth V2 — Seller Onboarding wizard (vanilla, no dependencies)
 
-const API_BASE = (window.APP_CONFIG && window.APP_CONFIG.BACKEND_URL) || 'http://localhost:5000';
-const STEP_NAMES = { 1: 'Personal Info', 2: 'Store Details', 3: 'Branding', 4: 'Location', 5: 'Verification', 6: 'Review' };
-const TOTAL_STEPS = 6;
+var API_BASE = (window.APP_CONFIG && window.APP_CONFIG.BACKEND_URL) || 'http://localhost:5000';
+const STEP_NAMES = { 1: 'Account & Store', 2: 'What You Sell', 3: 'Location', 4: 'Launch' };
+const TOTAL_STEPS = 4;
 
 const form = document.getElementById('register-form');
 const progress = document.getElementById('progress');
@@ -11,11 +11,11 @@ const stepCount = document.getElementById('step-count');
 const stepName = document.getElementById('step-name');
 const dots = document.querySelectorAll('.onb-dot');
 
-let current = 0; // 0 = welcome
-const state = { logo: null, banner: null, accent: '' };
+let current = 0;
+const state = {};
 let buyerConflict = false;
+let sellerType = 'campus';
 
-// ── PANE NAVIGATION ──────────────────────────────────────────
 function showPane(n) {
     document.querySelectorAll('.step-pane').forEach((p) => { p.hidden = true; });
     const target = document.querySelector(`.step-pane[data-pane="${n === 0 ? 'welcome' : n}"]`);
@@ -35,7 +35,7 @@ function showPane(n) {
         });
     }
 
-    if (n === 6) populateReview();
+    if (n === 4) populateReview();
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
     if (target) { target.tabIndex = -1; target.focus({ preventScroll: true }); }
@@ -52,11 +52,10 @@ document.querySelectorAll('[data-next]').forEach((btn) => {
 document.querySelectorAll('[data-back]').forEach((btn) => {
     btn.addEventListener('click', () => showPane(Number(btn.dataset.back)));
 });
-document.querySelectorAll('[data-edit]').forEach((btn) => {
-    btn.addEventListener('click', () => showPane(Number(btn.dataset.edit)));
+document.querySelectorAll('.skip-btn').forEach((btn) => {
+    btn.addEventListener('click', () => showPane(Number(btn.dataset.skip)));
 });
 
-// ── VALIDATION HELPERS ───────────────────────────────────────
 function setError(id, message) {
     const input = document.getElementById(id);
     if (input) { input.classList.add('error'); input.classList.remove('success'); }
@@ -71,17 +70,13 @@ function setSuccess(id) {
 }
 const val = (id) => (document.getElementById(id).value || '').trim();
 
-// ── STEP VALIDATORS ──────────────────────────────────────────
 function validateStep(n) {
-    if (n === 1) return validatePersonal();
-    if (n === 2) return validateStore();
-    if (n === 3) return true; // branding optional
-    if (n === 4) return validateLocation();
-    if (n === 5) return validateVerify();
+    if (n === 1) return validatePersonalStore();
+    if (n === 2) return validateDetails();
     return true;
 }
 
-function validatePersonal() {
+function validatePersonalStore() {
     let ok = true;
     if (!val('name') || val('name').length < 2) { setError('name', 'Please enter your full name.'); ok = false; } else setSuccess('name');
     if (!val('email') || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val('email'))) { setError('email', 'Please enter a valid email address.'); ok = false; }
@@ -91,46 +86,19 @@ function validatePersonal() {
     if (!val('password') || val('password').length < 8) { setError('password', 'Password must be at least 8 characters.'); ok = false; }
     else setSuccess('password');
     if (!val('confirm-password') || val('confirm-password') !== document.getElementById('password').value) { setError('confirm-password', 'Passwords do not match.'); ok = false; } else setSuccess('confirm-password');
-    return ok;
-}
-
-function validateStore() {
-    let ok = true;
     if (!val('store-name') || val('store-name').length < 2) { setError('store-name', 'Please enter a store name.'); ok = false; } else setSuccess('store-name');
-    const cat = document.getElementById('category');
-    if (!cat.value) { setError('category', 'Please select a category.'); ok = false; } else setSuccess('category');
+    if (!document.getElementById('seller-type').value) { setError('seller-type', 'Please select a seller type.'); ok = false; } else setSuccess('seller-type');
+    return ok;
+}
+
+function validateDetails() {
+    let ok = true;
+    if (!document.getElementById('category').value) { setError('category', 'Please select a category.'); ok = false; } else setSuccess('category');
     const desc = val('store-desc');
-    if (!desc || desc.length < 20) { setError('store-desc', 'Description must be at least 20 characters.'); ok = false; } else setSuccess('store-desc');
+    if (desc && desc.length < 10) { setError('store-desc', 'Description must be at least 10 characters.'); ok = false; } else setSuccess('store-desc');
     return ok;
 }
 
-function validateLocation() {
-    let ok = true;
-    if (!val('university')) { setError('university', 'Please select your university.'); ok = false; } else setSuccess('university');
-    if (!val('campus')) { setError('campus', 'Please enter your campus.'); ok = false; } else setSuccess('campus');
-    if (!val('city')) { setError('city', 'Please enter your city.'); ok = false; } else setSuccess('city');
-    if (!val('country')) { setError('country', 'Please select your country.'); ok = false; } else setSuccess('country');
-    if (!val('pickup')) { setError('pickup', 'Please enter a pickup location.'); ok = false; } else setSuccess('pickup');
-
-    const delivery = Array.from(document.querySelectorAll('input[name="delivery"]:checked')).map((c) => c.value);
-    const deliveryErr = document.getElementById('delivery-error');
-    if (!delivery.length) { deliveryErr.textContent = 'Select at least one delivery option.'; deliveryErr.classList.add('visible'); ok = false; }
-    else deliveryErr.classList.remove('visible');
-
-    if (!val('hours')) { setError('hours', 'Please select your availability.'); ok = false; } else setSuccess('hours');
-    return ok;
-}
-
-function validateVerify() {
-    let ok = true;
-    if (!val('student-id')) { setError('student-id', 'Please enter your student/staff ID.'); ok = false; } else setSuccess('student-id');
-    const semail = val('student-email');
-    if (semail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(semail)) { setError('student-email', 'Please enter a valid email.'); ok = false; } else setSuccess('student-email');
-    if (!val('verify-method')) { setError('verify-method', 'Please choose a verification method.'); ok = false; } else setSuccess('verify-method');
-    return ok;
-}
-
-// ── PASSWORD (reused from buyer flow) ────────────────────────
 const passwordInput = document.getElementById('password');
 const confirmInput = document.getElementById('confirm-password');
 const strengthBar = document.getElementById('strength-bar');
@@ -178,10 +146,9 @@ function refreshMatch() {
     if (match) { confirmInput.classList.add('success'); confirmInput.classList.remove('error'); }
     else confirmInput.classList.remove('success');
 }
-passwordInput.addEventListener('input', () => { refreshStrength(); if (confirmInput.value) refreshMatch(); if (passwordInput.classList.contains('error')) validatePersonal(); });
-confirmInput.addEventListener('input', () => { refreshMatch(); if (confirmInput.classList.contains('error')) validatePersonal(); });
+passwordInput.addEventListener('input', () => { refreshStrength(); if (confirmInput.value) refreshMatch(); if (passwordInput.classList.contains('error')) validatePersonalStore(); });
+confirmInput.addEventListener('input', () => { refreshMatch(); if (passwordInput.classList.contains('error')) validatePersonalStore(); });
 
-// ── PASSWORD TOGGLE ──────────────────────────────────────────
 function bindToggle(btnId, inputId) {
     const btn = document.getElementById(btnId);
     const input = document.getElementById(inputId);
@@ -196,12 +163,10 @@ function bindToggle(btnId, inputId) {
 bindToggle('toggle-password', 'password');
 bindToggle('toggle-confirm', 'confirm-password');
 
-// ── CHAR COUNT ───────────────────────────────────────────────
 document.getElementById('store-desc').addEventListener('input', function () {
     document.getElementById('desc-count').textContent = this.value.length;
 });
 
-// ── BUYER EMAIL CHECK ────────────────────────────────────────
 const emailInput = document.getElementById('email');
 emailInput.addEventListener('blur', async () => {
     const email = emailInput.value.trim();
@@ -218,155 +183,35 @@ emailInput.addEventListener('blur', async () => {
     } catch { /* non-blocking */ }
 });
 
-// ── UPLOADS ──────────────────────────────────────────────────
-function bindUpload(inputId, previewId, imgId, removeId, setter) {
-    const input = document.getElementById(inputId);
-    const preview = document.getElementById(previewId);
-    const img = document.getElementById(imgId);
-    const remove = document.getElementById(removeId);
-    const zone = input.closest('.dropzone');
-    const empty = zone.querySelector('.upload-empty');
-
-    input.addEventListener('change', () => {
-        const file = input.files[0];
-        if (!file) return;
-        if (file.size > 2 * 1024 * 1024) { alert('Please choose an image under 2MB.'); input.value = ''; return; }
-        const reader = new FileReader();
-        reader.onload = () => {
-            preview.hidden = false;
-            img.src = reader.result;
-            empty.style.display = 'none';
-            setter(reader.result);
-        };
-        reader.readAsDataURL(file);
-    });
-
-    remove.addEventListener('click', (e) => {
-        e.preventDefault(); e.stopPropagation();
-        preview.hidden = true; img.src = '';
-        empty.style.display = '';
-        input.value = '';
-        setter(null);
-    });
-
-    zone.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); input.click(); }
+const sellerTypeInput = document.getElementById('seller-type');
+if (sellerTypeInput) {
+    sellerTypeInput.addEventListener('change', () => {
+        sellerType = sellerTypeInput.value;
+        const campusFields = document.getElementById('review-campus-fields');
+        const indepFields = document.getElementById('review-independent-fields');
+        if (campusFields) campusFields.hidden = sellerType !== 'campus';
+        if (indepFields) indepFields.hidden = sellerType !== 'independent';
     });
 }
-bindUpload('logo-input', 'logo-preview', 'logo-img', 'logo-remove', (d) => { state.logo = d; updateLiveBranding(); });
-bindUpload('banner-input', 'banner-preview', 'banner-img', 'banner-remove', (d) => { state.banner = d; updateLiveBranding(); });
 
-// ── ACCENT COLOR ─────────────────────────────────────────────
-const accentSwatches = document.querySelectorAll('.accent-swatch');
-const accentCustom = document.getElementById('accent-custom');
-const accentHidden = document.getElementById('accent-color');
-
-function setAccent(color, sourceEl) {
-    state.accent = color;
-    accentHidden.value = color;
-    accentSwatches.forEach((s) => s.setAttribute('aria-checked', String(s === sourceEl)));
-    if (sourceEl !== accentCustom) accentCustom.value = color;
-    const banner = document.getElementById('review-banner');
-    if (banner) banner.style.background = `linear-gradient(120deg, ${color}, ${shade(color, -18)})`;
-    const liveBanner = document.getElementById('live-banner');
-    if (liveBanner) liveBanner.style.background = `linear-gradient(120deg, ${color}, ${shade(color, -18)})`;
-}
-accentSwatches.forEach((s) => s.addEventListener('click', () => setAccent(s.dataset.color, s)));
-accentCustom.addEventListener('input', () => setAccent(accentCustom.value, accentCustom));
-
-// ── LIVE STORE PREVIEW (Step 3) ──────────────────────────
-function updateLiveBranding() {
-    const liveLogo = document.getElementById('live-logo');
-    if (liveLogo) {
-        liveLogo.innerHTML = '';
-        if (state.logo) {
-            const im = document.createElement('img');
-            im.src = state.logo;
-            liveLogo.appendChild(im);
-        } else {
-            const s = document.createElement('span');
-            s.className = 'review-logo-empty';
-            s.textContent = 'LOGO';
-            liveLogo.appendChild(s);
-        }
-    }
-    const liveBanner = document.getElementById('live-banner');
-    if (liveBanner) {
-        liveBanner.querySelectorAll('img').forEach((n) => n.remove());
-        let empty = liveBanner.querySelector('.review-banner-empty');
-        if (state.banner) {
-            if (empty) empty.remove();
-            const im = document.createElement('img');
-            im.src = state.banner;
-            liveBanner.appendChild(im);
-        } else if (!empty) {
-            empty = document.createElement('span');
-            empty.className = 'review-banner-empty';
-            empty.textContent = 'Your banner appears here';
-            liveBanner.appendChild(empty);
-        }
-    }
-}
-function updateLiveText() {
-    const name = document.getElementById('live-name');
-    const tag = document.getElementById('live-tagline');
-    const cat = document.getElementById('live-category');
-    if (name) name.textContent = val('store-name') || 'Your Store';
-    if (tag) tag.textContent = val('tagline') || '';
-    const sel = document.getElementById('category');
-    if (cat) cat.textContent = sel && sel.value ? sel.options[sel.selectedIndex].textContent : 'Category';
-}
-['store-name', 'tagline'].forEach((id) => {
-    const el = document.getElementById(id);
-    if (el) el.addEventListener('input', updateLiveText);
-});
-const liveCatEl = document.getElementById('category');
-if (liveCatEl) liveCatEl.addEventListener('change', updateLiveText);
-updateLiveBranding();
-updateLiveText();
-
-function shade(hex, percent) {
-    const n = parseInt(hex.replace('#', ''), 16);
-    let r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
-    r = Math.max(0, Math.min(255, r + Math.round(2.55 * percent)));
-    g = Math.max(0, Math.min(255, g + Math.round(2.55 * percent)));
-    b = Math.max(0, Math.min(255, b + Math.round(2.55 * percent)));
-    return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
-}
-
-// ── DELIVERY CHIPS (fallback for :has) ───────────────────────
-document.querySelectorAll('#delivery-group input').forEach((cb) => {
-    cb.addEventListener('change', () => cb.closest('.chip').classList.toggle('is-checked', cb.checked));
-});
-
-// ── REVIEW SUMMARY ───────────────────────────────────────────
 function populateReview() {
     const setText = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v || '—'; };
     setText('review-name', val('store-name') || 'Your Store');
-    setText('review-tagline', val('tagline'));
+    setText('review-tagline', val('tagline') || '');
     const cat = document.getElementById('category');
-    setText('review-category', cat.value ? cat.options[cat.selectedIndex].textContent : 'Category');
+    setText('review-category', cat && cat.value ? cat.options[cat.selectedIndex].textContent : 'Category');
+    setText('review-seller-type', sellerType === 'independent' ? 'Independent Seller' : 'Campus Seller');
+    setText('review-full-name', val('name'));
+    setText('review-email', val('email'));
+    setText('review-phone', val('phone'));
     setText('review-university', val('university'));
     setText('review-campus', val('campus'));
-    setText('review-pickup', val('pickup'));
-    const delivery = Array.from(document.querySelectorAll('input[name="delivery"]:checked')).map((c) => c.nextElementSibling.textContent);
-    setText('review-delivery', delivery.join(', '));
-
-    const logoReview = document.getElementById('review-logo');
-    logoReview.innerHTML = '';
-    if (state.logo) { const im = document.createElement('img'); im.src = state.logo; logoReview.appendChild(im); }
-    else { const s = document.createElement('span'); s.className = 'review-logo-empty'; s.textContent = 'LOGO'; logoReview.appendChild(s); }
-
-    const bannerReview = document.getElementById('review-banner');
-    bannerReview.querySelectorAll('.review-banner-empty, img').forEach((n) => n.remove());
-    if (state.banner) { const im = document.createElement('img'); im.src = state.banner; bannerReview.appendChild(im); }
-    else { const s = document.createElement('span'); s.className = 'review-banner-empty'; s.textContent = 'No banner'; bannerReview.appendChild(s); }
-
-    if (state.accent) bannerReview.style.background = `linear-gradient(120deg, ${state.accent}, ${shade(state.accent, -18)})`;
-    else bannerReview.style.background = '';
+    setText('review-city', val('city'));
+    setText('review-country', val('country') || 'Ghana');
+    const campusFields = document.getElementById('review-campus-fields');
+    if (campusFields) campusFields.hidden = sellerType !== 'campus';
 }
 
-// ── SUBMIT ───────────────────────────────────────────────────
 const submitBtn = document.getElementById('submit-btn');
 const alertError = document.getElementById('alert-error');
 const errorText = document.getElementById('error-text');
@@ -375,6 +220,7 @@ function showAlert(msg) { errorText.textContent = msg; alertError.hidden = false
 
 form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    populateReview();
 
     const termsEl = document.getElementById('terms');
     const termsErr = document.getElementById('terms-error');
@@ -385,32 +231,35 @@ form.addEventListener('submit', async (e) => {
     submitBtn.disabled = true;
     alertError.hidden = true;
 
-    const delivery = Array.from(document.querySelectorAll('input[name="delivery"]:checked')).map((c) => c.value);
-
     const payload = {
         name: val('name'),
         email: val('email'),
         phone: val('phone'),
         password: document.getElementById('password').value,
         confirmPassword: document.getElementById('confirm-password').value,
-        sellerType: 'campus',
-        university: val('university'),
-        studentId: val('student-id'),
+        sellerType: document.getElementById('seller-type')?.value || 'campus',
         storeName: val('store-name'),
         category: document.getElementById('category').value,
-        storeDescription: val('store-desc'),
-        country: val('country'),
-        city: val('city'),
-        storeTagline: val('tagline') || undefined,
-        accentColor: state.accent || undefined,
-        storeLogo: state.logo || undefined,
-        storeBanner: state.banner || undefined,
-        pickupLocation: val('pickup'),
-        deliveryOptions: delivery,
-        businessHours: val('hours'),
-        studentEmail: val('student-email') || undefined,
-        verificationMethod: val('verify-method'),
     };
+
+    const storeDesc = val('store-desc');
+    if (storeDesc) payload.storeDescription = storeDesc;
+
+    const city = val('city');
+    if (city) payload.city = city;
+    payload.country = val('country') || 'Ghana';
+
+    const campus = val('campus');
+    if (campus) payload.campus = campus;
+
+    const university = val('university');
+    if (university) payload.university = university;
+
+    const tagline = val('tagline');
+    if (tagline) payload.storeTagline = tagline;
+
+    const tags = (val('store-tags') || '').split(',').map((t) => t.trim().toLowerCase()).filter((t) => t.length > 0).slice(0, 12);
+    if (tags.length) payload.storeTags = tags;
 
     try {
         const response = await fetch(`${API_BASE}/api/seller-auth/register`, {
@@ -430,11 +279,9 @@ form.addEventListener('submit', async (e) => {
                 localStorage.setItem('pnav_firstname', u.firstName || '');
                 localStorage.setItem('pnav_lastname', u.lastName || '');
                 localStorage.setItem('pnav_role', 'seller');
-                // Already signed in — send them straight to the dashboard (skips login)
                 const wb = document.getElementById('verify-login-btn');
                 if (wb) wb.href = '../../seller/private/dashboard/overview.html';
             }
-            // Tell the dashboard to show the post-registration welcome flow
             localStorage.setItem('umx_show_welcome', '1');
             showPane('success');
         } else {
@@ -454,5 +301,4 @@ form.addEventListener('submit', async (e) => {
     }
 });
 
-// ── INIT ─────────────────────────────────────────────────────
 showPane(0);

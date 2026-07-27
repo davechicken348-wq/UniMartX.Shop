@@ -1,5 +1,5 @@
 /* UniMartX — Seller Onboarding (extends auth-system.css)
-   Welcome + 6-step wizard + success. Shares tokens, inputs, buttons, alerts. */
+   Welcome + 4-step wizard + success. Shares tokens, inputs, buttons, alerts. */
 
 .onboarding { justify-content: flex-start; padding-top: 2rem; }
 .onb-card { max-width: 480px; }
@@ -237,196 +237,23 @@
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; }
 .form-row .form-group { margin-bottom: 1.05rem; }
 
-/* ── UPLOADS ───────────────────────────────────────────────── */
-.upload-grid {
-    display: grid;
-    grid-template-columns: minmax(116px, 132px) 1fr;
-    align-items: start;
-    gap: 0.85rem;
-    margin-bottom: 1.2rem;
-}
-.upload-card-wide { grid-column: auto; }
-
-.upload-label {
-    display: block;
-    font-size: 0.82rem;
-    font-weight: 600;
-    color: var(--ink-2);
-    margin-bottom: 0.45rem;
-}
-
-.upload-hint {
-    display: block;
-    margin-top: 0.4rem;
-    font-size: 0.72rem;
-    font-weight: 500;
-    color: var(--ink-3);
-}
-
-.dropzone {
-    display: block;
-    position: relative;
-    border: 1px dashed var(--line-2);
-    border-radius: var(--radius);
-    background: #fafbfb;
-    cursor: pointer;
-    transition: border-color 0.2s var(--ease), background 0.2s var(--ease);
-    overflow: hidden;
-}
-.dropzone:hover, .dropzone:focus-visible {
-    border-color: var(--brand);
-    background: var(--brand-soft);
-    outline: none;
-}
-.dropzone-banner { aspect-ratio: 16 / 7; }
-.dropzone:not(.dropzone-banner) { aspect-ratio: 1 / 1; }
-
-.upload-empty {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 0.4rem;
-    color: var(--ink-3);
-    font-size: 0.82rem;
-    font-weight: 600;
-}
-.upload-empty svg { width: 22px; height: 22px; }
-
-.upload-preview { position: absolute; inset: 0; }
-.upload-preview img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    animation: paneIn 0.35s var(--ease-out) both;
-}
-.upload-remove {
-    position: absolute;
-    top: 0.4rem;
-    right: 0.4rem;
-    width: 24px;
-    height: 24px;
-    border: none;
-    border-radius: 50%;
-    background: rgba(15, 23, 42, 0.6);
-    color: #fff;
-    font-size: 1.1rem;
-    line-height: 1;
-    cursor: pointer;
-    display: grid;
-    place-items: center;
-    transition: background 0.2s var(--ease);
-}
-.upload-remove:hover { background: rgba(15, 23, 42, 0.85); }
-
-/* ── ACCENT COLOR ──────────────────────────────────────────── */
+/* ── UPLOADS (removed from form; styles retained for auth-system references) */
+.upload-grid { display: none; }
+.upload-card { display: none; }
+.upload-label { display: none; }
+.upload-hint { display: none; }
+.dropzone { display: none; }
+.upload-empty { display: none; }
+.upload-preview { display: none; }
+.upload-remove { display: none; }
 .accent-group { margin-top: 0.25rem; }
-.accent-swatches { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
-.accent-swatch {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    border: 2px solid #fff;
-    background: var(--sw);
-    cursor: pointer;
-    box-shadow: 0 0 0 1px var(--line-2);
-    transition: transform 0.15s var(--ease), box-shadow 0.2s var(--ease);
-}
-.accent-swatch:hover { transform: scale(1.1); }
-.accent-swatch[aria-checked="true"] {
-    box-shadow: 0 0 0 2px var(--sw), 0 0 0 4px #fff, 0 0 0 5px var(--line-2);
-    transform: scale(1.12);
-}
-.accent-swatch:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--brand-ring); }
-.accent-custom { position: relative; width: 30px; height: 30px; cursor: pointer; }
-.accent-custom input {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    width: 100%;
-    height: 100%;
-    cursor: pointer;
-}
-.accent-custom-ring {
-    display: block;
-    width: 30px; height: 30px;
-    border-radius: 50%;
-    border: 2px dashed var(--line-2);
-    background: conic-gradient(#ef4444, #f59e0b, #059669, #0ea5e9, #8b5cf6, #ef4444);
-}
-.accent-custom:focus-within .accent-custom-ring { box-shadow: 0 0 0 3px var(--brand-ring); }
-
-/* ── LIVE STORE PREVIEW (Step 3) ─────────────────────────── */
-.live-preview { margin: 0 0 1.4rem; }
-.live-preview-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45rem;
-    margin-bottom: 0.6rem;
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    color: var(--ink-3);
-}
-.live-preview-tag::before {
-    content: "";
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--brand);
-    box-shadow: 0 0 0 3px var(--brand-soft);
-}
-.live-review {
-    margin-bottom: 0;
-    transition: box-shadow 0.2s var(--ease);
-}
-.live-review .review-logo-empty { font-size: 0.62rem; }
-
-/* ── CHIPS (delivery) ─────────────────────────────────────── */
-.chip-group { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-.chip {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    padding: 0.55rem 0.9rem;
-    border: 1px solid var(--line-2);
-    border-radius: 999px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--ink-2);
-    cursor: pointer;
-    user-select: none;
-    transition: border-color 0.2s var(--ease), background 0.2s var(--ease), color 0.2s var(--ease);
-}
-.chip input { position: absolute; opacity: 0; width: 1px; height: 1px; }
-.chip:hover { border-color: var(--brand); }
-.chip:has(input:checked),
-.chip.is-checked {
-    border-color: var(--brand);
-    background: var(--brand-soft);
-    color: var(--brand-strong);
-}
-.chip:has(input:focus-visible) { box-shadow: 0 0 0 3px var(--brand-ring); }
-
-/* ── VERIFY NOTE ───────────────────────────────────────────── */
-.verify-note {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.6rem;
-    padding: 0.8rem 0.9rem;
-    background: var(--brand-soft);
-    border: 1px solid rgba(5, 150, 105, 0.18);
-    border-radius: 12px;
-    font-size: 0.82rem;
-    color: var(--brand-strong);
-    line-height: 1.45;
-    margin-bottom: 1.2rem;
-}
-.verify-note svg { width: 18px; height: 18px; flex-shrink: 0; margin-top: 1px; }
+.accent-swatches { display: none; }
+.accent-swatch { display: none; }
+.accent-custom { display: none; }
+.accent-custom-ring { display: none; }
+.live-preview { display: none; }
+.live-preview-tag { display: none; }
+.live-review { display: none; }
 
 /* ── REVIEW CARD ───────────────────────────────────────────── */
 .review-head { margin-bottom: 1.1rem; }
@@ -521,8 +348,6 @@
     letter-spacing: 0.02em;
 }
 .review-logo img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.live-review .review-logo { width: 72px; height: 72px; border-radius: 20px; }
-.live-review .review-info { padding-bottom: 0.7rem; }
 .review-info { padding-bottom: 0.5rem; }
 .review-info h3 { font-size: 1.05rem; font-weight: 700; color: var(--ink); }
 .review-tagline { font-size: 0.8rem; color: var(--ink-2); margin: 0.15rem 0 0.4rem; }
@@ -614,6 +439,40 @@
     color: var(--brand-strong);
     font-size: 0.8rem;
     flex-shrink: 0;
+}
+
+/* ── REVIEW SIMPLIFIED (no banner/logo) ──────────────────── */
+.review-card:not(:has(.review-banner)) .review-body {
+    margin-top: 0;
+    padding: 1.1rem;
+    border-bottom: 1px solid var(--line);
+}
+.review-card:not(:has(.review-banner)) .review-info {
+    padding-bottom: 0;
+}
+.review-card:not(:has(.review-banner)) .review-info h3 {
+    font-size: 1.15rem;
+    margin: 0;
+}
+.review-card:not(:has(.review-banner)) .review-tagline {
+    margin-top: 0.35rem;
+}
+.review-card:not(:has(.review-banner)) .review-pill {
+    margin-top: 0.5rem;
+    display: inline-block;
+}
+.review-meta dt {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--ink-3);
+    font-weight: 700;
+    margin-bottom: 0.15rem;
+}
+.review-meta dd {
+    font-size: 0.88rem;
+    color: var(--ink);
+    font-weight: 600;
 }
 
 /* ── MOBILE ────────────────────────────────────────────────── */

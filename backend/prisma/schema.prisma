@@ -33,6 +33,7 @@ model User {
   website                String?
   whatsapp               String?
   role                   UserRole                @default(buyer)
+  smsVerified            Boolean                 @default(false)
   twoFactorSecret        String?
   twoFactorEnabled       Boolean                 @default(false)
   twoFactorBackupCodes   Json?
@@ -41,6 +42,7 @@ model User {
   buyer                  Buyer?
   cart                   Cart?
   verificationToken      EmailVerificationToken?
+  smsVerificationToken   SmsVerificationToken?
   notificationPreference NotificationPreference?
   notifications          Notification[]
   orders                 Order[]
@@ -97,6 +99,7 @@ model Seller {
   exchangePolicy        String?
   cancellationPolicy    String?
   processingTime        String?
+  storeTags             String[]            @default([])
   orders                Order[]
   products              Product[]
   sellerVerification    SellerVerification?
@@ -134,8 +137,10 @@ model Product {
   name          String
   description   String
   price         Decimal         @db.Decimal(10, 2)
-  category      ProductCategory
+  category      String
+  categoryId    String?         @map("category_id")
   subcategory   String?
+  subcategoryId String?         @map("subcategory_id")
   stock         Int
   image         String
   images        String[]        @default([])
@@ -154,12 +159,55 @@ model Product {
   notifications Notification[]
   orderItems    OrderItem[]
   seller        Seller          @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  categoryRef   Category?       @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  subcategoryRef Subcategory?   @relation(fields: [subcategoryId], references: [id], onDelete: SetNull)
   reviews       Review[]
   wishlists     Wishlist[]
 
   @@index([sellerId])
   @@index([category])
+  @@index([categoryId])
   @@map("products")
+}
+
+// ── Student-aware category system ──
+// Categories map to student life, not generic product types.
+model Category {
+  id          String       @id @default(cuid())
+  slug        String       @unique
+  name        String
+  icon        String?
+  description String?
+  // student-context signals that adapt the listing form
+  signals     String[]     @default([]) // e.g. needsCourseCode, isService, isPerishable, eventRelated
+  sortOrder   Int          @default(0)
+  isActive    Boolean      @default(true)
+  // seller-proposed categories go live immediately but are flagged for review
+  sellerCreated Boolean    @default(false)
+  status      String       @default("active") // active | pending_review | disabled
+  createdBy   String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  subcategories Subcategory[]
+  products      Product[]
+
+  @@map("categories")
+}
+
+model Subcategory {
+  id        String   @id @default(cuid())
+  categoryId String
+  slug      String
+  name      String
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  category  Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  products  Product[]
+
+  @@unique([categoryId, slug])
+  @@map("subcategories")
 }
 
 model Review {
@@ -374,6 +422,20 @@ model EmailVerificationToken {
   @@map("email_verification_tokens")
 }
 
+model SmsVerificationToken {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  phone     String
+  code      String   @db.VarChar(6)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([code])
+  @@index([userId])
+  @@map("sms_verification_tokens")
+}
+
 model PasswordResetToken {
   id        String    @id @default(cuid())
   userId    String
@@ -426,19 +488,6 @@ enum OrderStatus {
   disputed
   refunded
   denied
-}
-
-enum ProductCategory {
-  electronics
-  clothing
-  books
-  fashion
-  food
-  beauty
-  sports
-  home
-  art
-  other
 }
 
 enum NotificationType {

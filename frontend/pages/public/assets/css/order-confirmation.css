@@ -43,8 +43,21 @@ a { text-decoration: none; color: inherit; }
     display: flex; align-items: center;
     justify-content: space-between;
 }
-.nav-logo { font-size: 1.4rem; font-weight: 700; color: var(--text); }
+.nav-logo {
+    font-family: 'Quicksand', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text);
+    white-space: nowrap;
+    flex-shrink: 0;
+    letter-spacing: -0.02em;
+    text-decoration: none;
+    padding: 8px 4px;
+    border-radius: 10px;
+    transition: background 0.2s ease, color 0.2s ease;
+}
 .nav-logo span { color: var(--primary); }
+.nav-logo:hover { background: rgba(255,255,255,0.55); color: var(--text); }
 .nav-actions { display: flex; align-items: center; gap: 0.75rem; }
 .nav-btn {
     display: inline-flex; align-items: center; gap: 0.4rem;
@@ -532,6 +545,7 @@ a { text-decoration: none; color: inherit; }
     .progress-line { min-width: 24px; }
 
     /* navbar */
+    .nav-logo { font-size: 1.3rem; }
     .nav-actions .nav-btn-ghost { display: none; }
 }
 
@@ -591,8 +605,86 @@ a { text-decoration: none; color: inherit; }
     .seller-total-line--grand strong { font-size: 0.9rem; }
 
     /* main + ctas */
+    .nav-logo { font-size: 1.15rem; }
     .confirmation-main { padding: 0 1rem 4rem; }
     .confirmation-ctas { flex-direction: column; }
     .btn-primary-link,
     .btn-ghost-link { width: 100%; justify-content: center; }
+}
+
+@media (max-width: 400px) {
+    .nav-logo { font-size: 1.05rem; }
+    .confirmation-hero { padding: 2rem 0 1.75rem; }
+    .confirmation-hero-inner { gap: 1.25rem; }
+    .check-wrap { width: 80px; height: 80px; }
+    .confirmation-text h1 { font-size: 1.35rem; }
+    .confirmation-text p { font-size: 0.88rem; margin-bottom: 1rem; }
+    .order-ref { gap: 0.4rem; padding: 0.6rem 0.9rem; }
+    .order-ref strong { font-size: 0.9rem; }
+    .confirmation-main { padding: 0 0.75rem 3.5rem; }
+    .confirmation-grid { gap: 0.85rem; }
+    .conf-card { padding: 1rem; }
+    .conf-card-header { margin-bottom: 1rem; padding-bottom: 0.85rem; }
+    .conf-card-header h2 { font-size: 0.9rem; }
+    .conf-card-icon { width: 36px; height: 36px; }
+    .conf-card-icon svg { width: 16px; height: 16px; }
+    .next-step-content strong { font-size: 0.85rem; }
+    .next-step-content span { font-size: 0.78rem; }
+    .order-item-img { width: 36px; height: 36px; }
+    .order-item-name { font-size: 0.78rem; }
+    .order-item-price { font-size: 0.82rem; }
+    .delivery-row { font-size: 0.82rem; }
+    .seller-group { padding: 0.75rem 0.85rem; }
+    .seller-avatar { width: 32px; height: 32px; font-size: 0.75rem; }
+    .seller-info h4 { font-size: 0.9rem; }
+    .seller-info p { font-size: 0.75rem; }
+    .seller-delivery-fee { font-size: 0.82rem; }
+    .seller-item-img { width: 36px; height: 36px; }
+    .seller-item-name { font-size: 0.78rem; }
+    .seller-item-meta { font-size: 0.72rem; }
+    .seller-item-price { font-size: 0.82rem; }
+    .confirmation-ctas { gap: 0.75rem; }
+    .btn-primary-link, .btn-ghost-link { padding: 0.75rem 1.5rem; font-size: 0.9rem; }
+}
+
+@media (max-width: 380px) {
+    .nav-logo { font-size: 0.95rem; }
+    .confirmation-hero { padding: 1.75rem 0 1.5rem; }
+    .confirmation-hero-inner { gap: 1rem; }
+    .check-wrap { width: 72px; height: 72px; }
+    .confirmation-text h1 { font-size: 1.25rem; }
+    .confirmation-text p { font-size: 0.85rem; margin-bottom: 0.85rem; }
+    .order-ref { flex-direction: column; align-items: center; gap: 0.3rem; padding: 0.65rem 0.85rem; width: 100%; }
+    .order-ref span { font-size: 0.72rem; }
+    .order-ref strong { font-size: 0.88rem; }
+    .confirmation-main { padding: 0 0.6rem 3rem; }
+    .confirmation-grid { gap: 0.75rem; }
+    .conf-card { padding: 0.85rem; }
+    .conf-card-header { margin-bottom: 0.85rem; padding-bottom: 0.7rem; }
+    .conf-card-header h2 { font-size: 0.85rem; }
+    .conf-card-icon { width: 32px; height: 32px; border-radius: 9px; }
+    .conf-card-icon svg { width: 15px; height: 15px; }
+    .next-step-content { padding-bottom: 0.85rem; }
+    .next-step-content strong { font-size: 0.82rem; }
+    .next-step-content span { font-size: 0.75rem; }
+    .order-item-img { width: 32px; height: 32px; border-radius: 7px; }
+    .order-item-name { font-size: 0.72rem; }
+    .order-item-price { font-size: 0.78rem; }
+    .delivery-row { font-size: 0.78rem; }
+    .seller-group { padding: 0.65rem 0.75rem; }
+    .seller-avatar { width: 28px; height: 28px; font-size: 0.7rem; border-radius: 8px; }
+    .seller-info h4 { font-size: 0.85rem; }
+    .seller-info p { font-size: 0.72rem; }
+    .seller-delivery-fee { font-size: 0.78rem; }
+    .seller-item { gap: 0.5rem; }
+    .seller-item-img { width: 32px; height: 32px; border-radius: 6px; }
+    .seller-item-name { font-size: 0.72rem; }
+    .seller-item-meta { font-size: 0.68rem; }
+    .seller-item-price { font-size: 0.78rem; }
+    .seller-group-totals { margin-top: 0.5rem; padding-top: 0.5rem; }
+    .seller-total-line { font-size: 0.78rem; }
+    .seller-total-line--grand strong { font-size: 0.9rem; }
+    .confirmation-ctas { flex-direction: column; gap: 0.6rem; }
+    .btn-primary-link, .btn-ghost-link { width: 100%; justify-content: center; padding: 0.7rem 1.25rem; font-size: 0.85rem; }
+    .conf-card--help { flex-direction: column; align-items: flex-start; }
 }

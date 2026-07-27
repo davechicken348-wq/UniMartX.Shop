@@ -56,7 +56,7 @@ export const getSellerDashboard = async (req: Request, res: Response): Promise<v
       userVerified,
     ] = await Promise.all([
       prisma.order.aggregate({
-        where: { sellerId, status: { in: ['processing', 'shipped', 'delivered'] } },
+        where: { sellerId, status: { in: ['pending', 'processing', 'shipped', 'delivered'] } },
         _sum: { totalAmount: true },
       }),
       prisma.order.count({ where: { sellerId } }),
@@ -89,7 +89,7 @@ export const getSellerDashboard = async (req: Request, res: Response): Promise<v
         where: {
           order: {
             sellerId,
-            status: { in: ['processing', 'shipped', 'delivered'] },
+            status: { in: ['pending', 'processing', 'shipped', 'delivered'] },
             createdAt: { gte: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000) },
           },
         },
@@ -104,7 +104,7 @@ export const getSellerDashboard = async (req: Request, res: Response): Promise<v
         where: {
           sellerId,
           createdAt: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) },
-          status: { in: ['processing', 'shipped', 'delivered'] },
+          status: { in: ['pending', 'processing', 'shipped', 'delivered'] },
         },
         select: {
           createdAt: true,
@@ -176,7 +176,7 @@ export const getSellerDashboard = async (req: Request, res: Response): Promise<v
       productName: o.items?.[0]?.product?.name || 'Multiple items',
     }));
 
-    const estimatedRating = avgRatingAgg._avg.rating || 4.5;
+    const estimatedRating = avgRatingAgg._avg.rating || null;
 
     res.status(200).json({
       success: true,
@@ -187,7 +187,7 @@ export const getSellerDashboard = async (req: Request, res: Response): Promise<v
           pending: pendingOrders,
           processingOrShipped: processingOrShippedCount,
           delivered: deliveredOrders,
-          rating: Number(estimatedRating.toFixed(1)),
+          rating: estimatedRating ? Number(estimatedRating.toFixed(1)) : null,
           products: productsCount,
           followers: followersCount,
           lowStock: lowStockCount,

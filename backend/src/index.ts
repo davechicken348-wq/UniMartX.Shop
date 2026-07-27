@@ -2,9 +2,11 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
+import path from 'path';
 import prisma from './lib/prisma';
 import authRoutes from './routes/auth.routes';
 import verificationRoutes from './routes/verification.routes';
+import smsVerificationRoutes from './routes/sms-verification.routes';
 import cartRoutes from './routes/cart.routes';
 import userRoutes from './routes/user.routes';
 import notificationRoutes from './routes/notification.routes';
@@ -12,6 +14,7 @@ import dashboardRoutes from './routes/dashboard.routes';
 import sellerAuthRoutes from './routes/seller-auth.routes';
 import sellerDashboardRoutes from './routes/seller-dashboard.routes';
 import productRoutes from './routes/product.routes';
+import categoryRoutes from './routes/category.routes';
 import publicSellerRoutes from './routes/public-seller.routes';
 import wishlistRoutes from './routes/wishlist.routes';
 import followRoutes from './routes/follow.routes';
@@ -83,6 +86,7 @@ app.use(helmet({
 }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 // ── Health checks ──
 app.get('/health', (_req, res) => {
@@ -105,6 +109,7 @@ app.post('/api/test', express.json(), (req, res) => {
 // ── API Routes ──
 app.use('/api/auth', authRoutes);
 app.use('/api/auth', verificationRoutes);
+app.use('/api/auth', smsVerificationRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/notifications', notificationRoutes);
@@ -112,6 +117,7 @@ app.use('/api/buyer', dashboardRoutes);
 app.use('/api/seller-auth', sellerAuthRoutes);
 app.use('/api/seller', sellerDashboardRoutes);
 app.use('/api/seller', productRoutes);
+app.use('/api/categories', categoryRoutes);
 app.use('/api/public', publicSellerRoutes);
 app.use('/api/wishlist', wishlistRoutes);
 app.use('/api/follow', followRoutes);

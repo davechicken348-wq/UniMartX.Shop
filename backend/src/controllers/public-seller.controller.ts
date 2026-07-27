@@ -341,10 +341,11 @@ export const getProductReviews = async (req: Request, res: Response): Promise<vo
  * @access Public
  */
 export const getPublicStats = async (_req: Request, res: Response): Promise<void> => {
-  const [products, sellers, buyers] = await Promise.all([
+  const [products, sellers, buyers, orders] = await Promise.all([
     prisma.product.count({ where: { isActive: true } }),
     prisma.seller.count(),
     prisma.buyer.count(),
+    prisma.order.count({ where: { status: 'delivered' } }),
   ]);
 
   function fmt(n: number): string {
@@ -352,7 +353,7 @@ export const getPublicStats = async (_req: Request, res: Response): Promise<void
     return String(n);
   }
 
-  res.json({ success: true, data: { products: fmt(products), sellers: fmt(sellers), buyers: fmt(buyers) } });
+  res.json({ success: true, data: { products: fmt(products), sellers: fmt(sellers), buyers: fmt(buyers), orders: fmt(orders) } });
 };
 
 /**

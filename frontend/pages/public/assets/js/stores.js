@@ -37,17 +37,10 @@ let _enriching = false;
 // ═══════════════════════════════════════════
 // HELPERS
 // ═══════════════════════════════════════════
-const CATEGORY_MAP = {
-    electronics: 'Electronics', fashion: 'Fashion', food: 'Food', beauty: 'Beauty',
-    books: 'Books', services: 'Services', accessories: 'Accessories', home: 'Home & Living',
-    clothing: 'Fashion', other: 'Other',
-};
+const CATEGORY_MAP = window.APP_CONFIG.CATEGORY_MAP || {};
 function categoryLabel(cat) { return CATEGORY_MAP[cat] || cat || 'Store'; }
 
-const CATEGORY_ICON = {
-    electronics: 'cpu', fashion: 'shirt', clothing: 'shirt', food: 'utensils', beauty: 'sparkles',
-    books: 'book-open', services: 'wrench', accessories: 'watch', home: 'sofa', other: 'store',
-};
+const CATEGORY_ICON = window.APP_CONFIG.CATEGORY_ICON || {};
 function categoryIcon(cat) { return CATEGORY_ICON[cat] || 'store'; }
 
 const FALLBACK_GRADIENTS = [
@@ -97,6 +90,7 @@ function storeSkeleton() {
             <div class="store-skeleton-line lg skel"></div>
             <div class="store-skeleton-line sm skel"></div>
             <div class="store-skeleton-line md skel"></div>
+            <div class="store-skeleton-line sm skel" style="width:60%"></div>
         </div>
     </div>`;
 }
@@ -105,12 +99,13 @@ function storeSkeleton() {
 // CARD BUILDERS
 // ══════════════════════════════════════════
 function trustIndicators(s) {
-    // Show at most two trust elements, prioritize the most meaningful.
     const out = [];
     if (isVerified(s)) out.push(`<span class="trust-pill verified"><i data-lucide="badge-check"></i> Verified Student</span>`);
     if (s.avgRating) out.push(`<span class="trust-pill rating"><i data-lucide="star"></i> ${s.avgRating}</span>`);
     else if (isTopSeller(s)) out.push(`<span class="trust-pill top"><i data-lucide="crown"></i> Top Seller</span>`);
-    return out.slice(0, 2).join('');
+    if (s.peerCount > 0) out.push(`<span class="trust-pill peers"><i data-lucide="users"></i> ${s.peerCount} sold</span>`);
+    if (s.productCount) out.push(`<span class="trust-pill fresh"><i data-lucide="package"></i> ${s.productCount} items</span>`);
+    return out.slice(0, 3).join('');
 }
 
 function productPreview(s) {
@@ -135,6 +130,10 @@ function buildStoreCard(store) {
         ? `<img src="${escapeHtml(store.storeAvatar)}" alt="${escapeHtml(store.storeName)} logo" loading="lazy">`
         : logoFallback(store);
 
+    const tagline = store.tagline
+        ? `<p class="store-tagline">${escapeHtml(store.tagline)}</p>`
+        : '';
+
     return `
     <a class="store-card reveal" href="${storeHref(store)}" aria-label="Visit ${escapeHtml(store.storeName)} store">
         <div class="store-card-banner" aria-hidden="true">
@@ -147,6 +146,7 @@ function buildStoreCard(store) {
                 <div class="store-verified ${isVerified(store) ? '' : 'hidden'}" aria-hidden="true"><i data-lucide="badge-check"></i></div>
             </div>
             <h3 class="store-name">${escapeHtml(store.storeName)}</h3>
+            ${tagline}
             <span class="store-cat"><i data-lucide="${categoryIcon(store.category)}"></i> ${escapeHtml(categoryLabel(store.category))}</span>
             ${trustIndicators(store) ? `<div class="store-trust">${trustIndicators(store)}</div>` : ''}
             <div class="store-products" data-store-id="${escapeHtml(store.id)}">${productPreview(store)}</div>
@@ -158,29 +158,37 @@ function buildStoreCard(store) {
 function buildFeaturedCard(store) {
     const av = store.storeAvatar
         ? `<img src="${escapeHtml(store.storeAvatar)}" alt="${escapeHtml(store.storeName)} logo" loading="lazy">`
-        : `<span class="store-logo-fallback" style="font-size:1.4rem">${escapeHtml((store.storeName||'?').charAt(0).toUpperCase())}</span>`;
+        : `<span class="featured-logo-fallback">${escapeHtml((store.storeName||'?').charAt(0).toUpperCase())}</span>`;
 
     const trust = [];
-    if (isVerified(store)) trust.push(`<span><i data-lucide="badge-check"></i> Verified</span>`);
-    if (store.avgRating) trust.push(`<span class="star"><i data-lucide="star"></i> ${store.avgRating}</span>`);
-    else if (isTopSeller(store)) trust.push(`<span><i data-lucide="crown"></i> Top Seller</span>`);
+    if (isVerified(store)) trust.push(`<span class="feat-trust-item verified"><i data-lucide="badge-check"></i> Verified</span>`);
+    if (store.avgRating) trust.push(`<span class="feat-trust-item star"><i data-lucide="star"></i> ${store.avgRating}</span>`);
+    else if (isTopSeller(store)) trust.push(`<span class="feat-trust-item"><i data-lucide="crown"></i> Top Seller</span>`);
 
     return `
-    <a class="featured-card reveal" href="${storeHref(store)}" aria-label="Visit featured store ${escapeHtml(store.storeName)}">
-        <div class="featured-banner" aria-hidden="true">
+    <a class="featured-single-card reveal" href="${storeHref(store)}" aria-label="Visit featured store ${escapeHtml(store.storeName)}">
+        <div class="featured-single-banner" aria-hidden="true">
             <div class="featured-banner-bg" style="${bannerStyle(store)}"></div>
             <div class="featured-banner-overlay"></div>
-            <div class="featured-brand">
-                <div class="featured-logo">${av}</div>
-            </div>
         </div>
-        <div class="featured-info">
-            <h3 class="featured-name">${escapeHtml(store.storeName)}</h3>
-            <span class="featured-cat"><i data-lucide="${categoryIcon(store.category)}"></i> ${escapeHtml(categoryLabel(store.category))}</span>
-            ${trust.length ? `<div class="featured-trust">${trust.join('')}</div>` : ''}
-            <span class="featured-cta">Visit Store <i data-lucide="arrow-right"></i></span>
+        <div class="featured-single-body">
+            <div class="featured-single-brand">
+                <div class="featured-logo">${av}</div>
+                ${isVerified(store) ? '<span class="feat-verified-badge"><i data-lucide="badge-check"></i></span>' : ''}
+            </div>
+            <h3 class="featured-single-name">${escapeHtml(store.storeName)}</h3>
+            ${store.tagline ? `<p class="featured-single-tagline">${escapeHtml(store.tagline)}</p>` : ''}
+            <div class="featured-single-meta">
+                <span class="featured-single-cat"><i data-lucide="${categoryIcon(store.category)}"></i> ${escapeHtml(categoryLabel(store.category))}</span>
+                ${trust.length ? `<div class="featured-single-trust">${trust.join('')}</div>` : ''}
+            </div>
+            ${store.shortDesc ? `<p class="featured-single-desc">${escapeHtml(store.shortDesc)}</p>` : ''}
         </div>
     </a>`;
+}
+
+function buildFeaturedSingle(store) {
+    return buildFeaturedCard(store);
 }
 
 function buildDiscCard(store) {
@@ -193,15 +201,17 @@ function buildDiscCard(store) {
         : (isVerified(store) ? `<span><i data-lucide="badge-check"></i> Verified</span>` : '');
 
     return `
-    <a class="disc-card" href="${storeHref(store)}" aria-label="Visit ${escapeHtml(store.storeName)} store">
-        <div class="disc-banner" aria-hidden="true"><div class="disc-banner-bg" style="${bannerStyle(store)}"></div></div>
-        <div class="disc-logo-row">
-            <div class="disc-logo">${av}</div>
+    <a class="shelf-card" href="${storeHref(store)}" aria-label="Visit ${escapeHtml(store.storeName)} store">
+        <div class="shelf-card-banner" aria-hidden="true">
+            <div class="shelf-banner-bg" style="${bannerStyle(store)}"></div>
+            ${isVerified(store) ? '<span class="store-verified" aria-label="Verified student"><i data-lucide="badge-check"></i></span>' : ''}
         </div>
-        <div class="disc-body">
-            <span class="disc-name">${escapeHtml(store.storeName)}</span>
-            <span class="disc-cat">${escapeHtml(categoryLabel(store.category))}</span>
-            ${trust ? `<span class="disc-trust">${trust}</span>` : ''}
+        <div class="shelf-card-logo">${av}</div>
+        <div class="shelf-card-body">
+            <span class="shelf-card-name">${escapeHtml(store.storeName)}</span>
+            ${store.tagline ? `<span class="shelf-card-tag">${escapeHtml(store.tagline)}</span>` : ''}
+            <span class="shelf-card-cat"><i data-lucide="${categoryIcon(store.category)}"></i> ${escapeHtml(categoryLabel(store.category))}</span>
+            ${trust ? `<span class="shelf-card-trust">${trust}</span>` : ''}
         </div>
     </a>`;
 }
@@ -253,18 +263,19 @@ async function fetchStores(append = false) {
 async function fetchFeatured() {
     const grid = document.getElementById('featured-grid');
     try {
-        const res = await fetch(`${API_URL}/api/public/stores?limit=2&sort=featured`);
+        const res = await fetch(`${API_URL}/api/public/stores?limit=1&sort=featured`);
         if (!res.ok) throw new Error();
         const { data } = await res.json();
-        grid.innerHTML = data.slice(0, 2).map(buildFeaturedCard).join('');
+        if (!data.length) { grid.closest('.featured-section').classList.add('hidden'); return; }
+        grid.innerHTML = buildFeaturedSingle(data[0]);
         lucide.createIcons();
         observeReveal(grid);
     } catch (e) {
-        grid.innerHTML = '';
+        grid.closest('.featured-section').classList.add('hidden');
     }
 }
 
-async function fetchDiscovery(id, sort, limit = 8) {
+async function fetchShelf(id, sort, limit = 8) {
     const grid = document.getElementById(id);
     if (!grid) return;
     try {
@@ -272,11 +283,11 @@ async function fetchDiscovery(id, sort, limit = 8) {
         const res = await fetch(`${API_URL}/api/public/stores?${p}`);
         if (!res.ok) throw new Error();
         const { data } = await res.json();
-        if (!data.length) { grid.closest('.discovery-section').classList.add('hidden'); return; }
+        if (!data.length) { grid.closest('.shelf-section').classList.add('hidden'); return; }
         grid.innerHTML = data.map(buildDiscCard).join('');
         lucide.createIcons();
     } catch (e) {
-        grid.closest('.discovery-section').classList.add('hidden');
+        grid.closest('.shelf-section').classList.add('hidden');
     }
 }
 
@@ -319,8 +330,8 @@ function renderGrid() {
 function renderEmptySuggestions() {
     const box = document.getElementById('empty-suggestions');
     const cats = ['Electronics', 'Fashion', 'Food', 'Beauty', 'Books'];
-    box.innerHTML = cats.map(c => `<button class="empty-suggest" data-cat="${escapeHtml(c.toLowerCase())}">${c}</button>`).join('');
-    box.querySelectorAll('.empty-suggest').forEach(btn => {
+    box.innerHTML = cats.map(c => `<button class="suggestion-chip" data-cat="${escapeHtml(c.toLowerCase())}">${c}</button>`).join('');
+    box.querySelectorAll('.suggestion-chip').forEach(btn => {
         btn.addEventListener('click', () => {
             const pill = document.querySelector(`.cat-pill[data-cat="${btn.dataset.cat}"]`);
             if (pill) pill.click();
@@ -331,22 +342,64 @@ function renderEmptySuggestions() {
 // ═══════════════════════════════════════════
 // EVENTS
 // ═══════════════════════════════════════════
-const searchInput = document.getElementById('store-search-input');
-const searchClear = document.getElementById('store-search-clear');
+const searchInput   = document.getElementById('store-search-input');
+const searchClear   = document.getElementById('store-search-clear');
+const mobileInput   = document.getElementById('mobile-search-input');
+const mobileClear   = document.getElementById('mobile-search-clear');
 
 let searchTimer = null;
-function applySearch() {
-    state.query = searchInput.value.trim();
-    searchClear.classList.toggle('hidden', !state.query);
+function getActiveSearch() {
+    if (document.activeElement === mobileInput) return mobileInput;
+    return searchInput;
+}
+function applySearch(source) {
+    const q = (source || getActiveSearch()).value.trim();
+    state.query = q;
+    if (searchInput && searchInput !== source) searchInput.value = q;
+    if (mobileInput && mobileInput !== source) mobileInput.value = q;
+    searchClear.classList.toggle('hidden', !q);
+    if (mobileClear) mobileClear.classList.toggle('hidden', !q);
     state.page = 1;
     fetchStores();
 }
-searchInput.addEventListener('input', () => {
-    clearTimeout(searchTimer);
-    searchTimer = setTimeout(applySearch, 220);
-});
-searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); applySearch(); } });
-searchClear.addEventListener('click', () => { searchInput.value = ''; searchInput.focus(); applySearch(); });
+if (searchInput) {
+    searchInput.addEventListener('input', () => {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(() => applySearch(searchInput), 220);
+    });
+    searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); applySearch(searchInput); } });
+}
+if (searchClear) searchClear.addEventListener('click', () => { searchInput.value = ''; searchInput.focus(); applySearch(searchInput); });
+if (mobileInput) {
+    mobileInput.addEventListener('input', () => {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(() => applySearch(mobileInput), 220);
+    });
+    mobileInput.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); applySearch(mobileInput); } });
+}
+if (mobileClear) mobileClear.addEventListener('click', () => { mobileInput.value = ''; mobileInput.focus(); applySearch(mobileInput); });
+
+// Sidebar toggle (mobile drawer)
+const sidebar = document.getElementById('stores-sidebar');
+const sidebarOverlay = document.getElementById('sidebar-overlay');
+const sidebarToggle = document.getElementById('sidebar-toggle');
+const sidebarClose = document.getElementById('sidebar-close');
+
+function openSidebar() {
+    sidebar.classList.add('open');
+    sidebarOverlay.classList.add('active');
+    sidebarToggle.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+}
+function closeSidebar() {
+    sidebar.classList.remove('open');
+    sidebarOverlay.classList.remove('active');
+    sidebarToggle.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+}
+if (sidebarToggle) sidebarToggle.addEventListener('click', openSidebar);
+if (sidebarClose) sidebarClose.addEventListener('click', closeSidebar);
+if (sidebarOverlay) sidebarOverlay.addEventListener('click', closeSidebar);
 
 // Category pills
 document.getElementById('category-rail').addEventListener('click', e => {
@@ -386,8 +439,10 @@ document.getElementById('load-more-btn').addEventListener('click', () => {
 // Empty reset
 document.getElementById('empty-reset').addEventListener('click', () => {
     state.query = ''; state.category = 'all'; state.filter = 'all'; state.page = 1; state.sort = 'trending';
-    searchInput.value = '';
-    searchClear.classList.add('hidden');
+    if (searchInput) searchInput.value = '';
+    if (searchClear) searchClear.classList.add('hidden');
+    if (mobileInput) mobileInput.value = '';
+    if (mobileClear) mobileClear.classList.add('hidden');
     document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
     document.querySelector('.cat-pill[data-cat="all"]').classList.add('active');
     document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
@@ -396,6 +451,20 @@ document.getElementById('empty-reset').addEventListener('click', () => {
     fetchStores();
     fetchFeatured();
 });
+
+// View toggle
+const btnGrid = document.getElementById('btn-grid');
+const btnList = document.getElementById('btn-list');
+function setView(mode) {
+    const grid = document.getElementById('stores-grid');
+    if (!grid) return;
+    grid.classList.toggle('stores-grid-list', mode === 'list');
+    grid.classList.toggle('stores-grid', mode === 'grid');
+    btnGrid.classList.toggle('active', mode === 'grid');
+    btnList.classList.toggle('active', mode === 'list');
+}
+if (btnGrid) btnGrid.addEventListener('click', () => setView('grid'));
+if (btnList) btnList.addEventListener('click', () => setView('list'));
 
 // Mobile nav
 const hamburger = document.getElementById('nav-hamburger');
@@ -506,8 +575,6 @@ if (urlCat) {
 
 fetchStores();
 fetchFeatured();
-fetchDiscovery('trending-grid', 'trending');
-fetchDiscovery('active-grid', 'active');
-fetchDiscovery('new-grid', 'newest');
-fetchDiscovery('favorites-grid', 'popular');
+fetchShelf('shelf-new-grid', 'newest');
+fetchShelf('shelf-popular-grid', 'popular');
 fetchCartCount();

@@ -1,5 +1,6 @@
-const API_BASE = (window.APP_CONFIG && window.APP_CONFIG.BACKEND_URL) || 'http://localhost:5000';
-const TOKEN_KEY = 'authToken';
+var API_BASE = (window.APP_CONFIG && window.APP_CONFIG.BACKEND_URL) || 'http://localhost:5000';
+var TOKEN_KEY = 'authToken';
+(function () {
 
 // ── Auth ──────────────────────────────────────────────────────────────────────
 function authHeaders() {
@@ -394,4 +395,5 @@ async function init() {
 
 lucide.createIcons();
 init();
+})();
 

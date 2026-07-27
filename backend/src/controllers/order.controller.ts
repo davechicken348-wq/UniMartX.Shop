@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import { AppError } from '../middleware/errorHandler';
 import prisma from '../lib/prisma';
 import { sendBuyerOrderConfirmationEmail, sendSellerNewOrderEmail, sendLowStockEmail } from '../services/email.service';
+import { sendSms } from '../services/sms.service';
 
 const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:5000';
 function absUrl(path: string | null | undefined): string | null {
@@ -185,14 +186,14 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
   try {
     const buyerUser = await prisma.user.findUnique({
       where: { id: userId },
-      select: { id: true, email: true, firstName: true, lastName: true },
+      select: { id: true, email: true, firstName: true, lastName: true, phone: true },
     });
     const buyerName = buyerUser ? `${buyerUser.firstName} ${buyerUser.lastName}`.trim() : 'Customer';
 
     const uniqueSellerIds = Array.from(new Set(createdOrders.map(o => o.sellerId)));
     const sellerUsers = await prisma.seller.findMany({
       where: { id: { in: uniqueSellerIds } },
-      include: { user: { select: { id: true, email: true, firstName: true, lastName: true } } },
+      include: { user: { select: { id: true, email: true, firstName: true, lastName: true, phone: true } } },
     });
     const sellerEmailMap = new Map(sellerUsers.map(s => [s.id, s.user]));
     const frontendBase = process.env.FRONTEND_URL || 'http://localhost:3000';
@@ -221,6 +222,10 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
         );
       }
 
+      if (sellerUser?.phone) {
+        void sendSms(sellerUser.phone, `New order #${co.orderNumber} received from ${buyerName}. Check your email for details.`);
+      }
+
       if (buyerUser?.email) {
         void sendBuyerOrderConfirmationEmail(
           buyerUser.email,
@@ -232,8 +237,12 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
           (itemsBySeller.get(co.sellerId)?.[0]?.product as any)?.seller?.storeName || 'seller'
         );
       }
+
+      if (buyerUser?.phone) {
+        void sendSms(buyerUser.phone, `Your UnimartX order #${co.orderNumber} has been received. Check your email for full updates.`);
+      }
     }
-  } catch { /* ignore email failures */ }
+  } catch { /* ignore email/sms failures */ }
 
   const cart = await prisma.cart.findFirst({ where: { userId } });
   if (cart) {
@@ -253,6 +262,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
       firstOrderDbId: createdOrders[0]?.orderDbId,
       allOrderDbIds: createdOrders.map(o => o.orderDbId),
       emailsSent: createdOrders.length > 0 && !!process.env.EMAIL_USER,
+      smsSent: createdOrders.length > 0 && !!process.env.TEXTBEE_API_KEY,
     },
   });
 };

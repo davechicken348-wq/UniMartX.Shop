@@ -1,9 +1,10 @@
 // ══════════════════════════════════════════
 //  PRODUCT LIST JS — seller panel (dashboard)
 // ══════════════════════════════════════════
+(function () {
 
-const API_BASE = (window.APP_CONFIG && window.APP_CONFIG.BACKEND_URL) || 'http://localhost:5000';
-const TOKEN_KEY = 'authToken';
+var API_BASE = (window.APP_CONFIG && window.APP_CONFIG.BACKEND_URL) || 'http://localhost:5000';
+var TOKEN_KEY = 'authToken';
 const LOW_STOCK_THRESHOLD = 5;
 
 // ── State ──────────────────────────────────────────────────────────────────────
@@ -110,10 +111,7 @@ function statusBadgeHTML(isActive) {
   return `<span class="${cls}">${lbl}</span>`;
 }
 
-const CATEGORY_ICONS = {
-  electronics: 'smartphone', books: 'book-open', fashion: 'shirt',
-  food: 'utensils', beauty: 'sparkles', sports: 'dumbbell',
-};
+const CATEGORY_ICONS = window.APP_CONFIG.CATEGORY_ICON || {};
 
 function safeImgSrc(src) {
   if (!src) return '';
@@ -540,3 +538,4 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeBodyMen
 // ── Init ──────────────────────────────────────────────────────────────────────
 if (window.lucide) lucide.createIcons();
 fetchProducts();
+})();

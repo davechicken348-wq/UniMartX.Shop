@@ -139,15 +139,14 @@ function stars(rating) {
 }
 
 function categoryLabel(cat) {
-  const map = { electronics:'Electronics', fashion:'Fashion', books:'Books', beauty:'Beauty',
-                food:'Food & Snacks', sports:'Sports', home:'Home & Living', clothing:'Fashion', other:'Other' };
+  const map = window.APP_CONFIG.CATEGORY_MAP || {};
   return map[cat] || cat || 'Other';
 }
 
 function categoryIcon(cat) {
-  const map = { electronics:'💻', fashion:'👕', clothing:'👕', books:'📚',
-                beauty:'💄', food:'🍔', sports:'⚽', home:'🛋️', other:'📦' };
-  return map[cat] || '📦';
+  const emojiMap = { electronics:'💻', fashion:'👕', books:'📚',
+                 beauty:'💄', food:'🍔', sports:'⚽', home:'🛋️', other:'📦' };
+  return emojiMap[cat] || '📦';
 }
 
 function formatPrice(price) {
@@ -549,31 +548,47 @@ function renderStorePolicies(profile) {
 }
 
 // ═══════════════════════════════════════════
+// UPDATE FILTER INDICATOR
+// ═══════════════════════════════════════════
+function updateFilterIndicator() {
+  const tabsEl = document.getElementById('store-filter-tabs');
+  const indicator = document.getElementById('store-filter-indicator');
+  if (!tabsEl || !indicator) return;
+  const activeTab = tabsEl.querySelector('.store-tab.active');
+  if (!activeTab) return;
+  const tabsRect = tabsEl.getBoundingClientRect();
+  const tabRect = activeTab.getBoundingClientRect();
+  indicator.style.left = (tabRect.left - tabsRect.left) + 'px';
+  indicator.style.width = tabRect.width + 'px';
+}
+
+// ═══════════════════════════════════════════
 // RENDER: Category Tabs
 // ═══════════════════════════════════════════
 function renderCategoryTabs(products, categoryCounts) {
-  const tabsEl = document.getElementById('store-filter-tabs');
-  if (!tabsEl) return;
+   const tabsEl = document.getElementById('store-filter-tabs');
+   if (!tabsEl) return;
 
-  const allCount = products.length;
-  let html = `<button class="store-tab active" data-filter="all"><span class="tab-emoji">🛍️</span>All <span class="tab-num" id="tab-count-all">${allCount}</span></button>`;
+   const allCount = products.length;
+   let html = `<button class="store-tab active" data-filter="all"><span class="tab-emoji">🛍️</span>All <span class="tab-num" id="tab-count-all">${allCount}</span></button>`;
 
-  const catOrder = ['electronics', 'fashion', 'books', 'beauty', 'food', 'sports', 'home', 'other'];
-  const cats = Object.entries(categoryCounts || {}).sort((a, b) => {
-    const ia = catOrder.indexOf(a[0]);
-    const ib = catOrder.indexOf(b[0]);
-    if (ia === -1 && ib === -1) return 0;
-    if (ia === -1) return 1;
-    if (ib === -1) return -1;
-    return ia - ib;
-  });
+   const catOrder = ['electronics', 'fashion', 'books', 'beauty', 'food', 'sports', 'home', 'other'];
+   const cats = Object.entries(categoryCounts || {}).sort((a, b) => {
+     const ia = catOrder.indexOf(a[0]);
+     const ib = catOrder.indexOf(b[0]);
+     if (ia === -1 && ib === -1) return 0;
+     if (ia === -1) return 1;
+     if (ib === -1) return -1;
+     return ia - ib;
+   });
 
-  cats.forEach(([cat, count]) => {
-    html += `<button class="store-tab" data-filter="${escapeHtml(cat)}"><span class="tab-emoji">${categoryIcon(cat)}</span>${escapeHtml(categoryLabel(cat))} <span class="tab-num">${count}</span></button>`;
-  });
+   cats.forEach(([cat, count]) => {
+     html += `<button class="store-tab" data-filter="${escapeHtml(cat)}"><span class="tab-emoji">${categoryIcon(cat)}</span>${escapeHtml(categoryLabel(cat))} <span class="tab-num">${count}</span></button>`;
+   });
 
-  tabsEl.innerHTML = html;
-}
+   tabsEl.innerHTML = html;
+   requestAnimationFrame(updateFilterIndicator);
+ }
 
 // ═══════════════════════════════════════════
 // RENDER: Products
@@ -737,6 +752,7 @@ async function loadStoreData() {
     renderSellerSnapshot(profile, stats);
     renderStorePolicies(profile);
     initShareModal();
+    renderStickyContact(profile);
 
     const moreShops = document.getElementById('more-shops-section');
     if (stats && stats.productCount > 0) {
@@ -899,24 +915,11 @@ function renderSellerSnapshot(profile, stats) {
     const affiliation = [profile.universityAffiliation, profile.campus].filter(Boolean).join(' · ');
     tiles.push(snapshotInfoTile('graduation-cap', 'Affiliation', affiliation));
   }
-  if (profile.joinedDate) {
-    tiles.push(snapshotInfoTile('calendar', 'Joined', formatJoinDate(profile.joinedDate)));
-  }
-  if (typeof stats.followerCount === 'number') {
-    tiles.push(snapshotInfoTile('users', 'Followers', stats.followerCount.toLocaleString()));
-  }
   if (profile.verified) {
     tiles.push(snapshotInfoTile('badge-check', 'Verified', 'Seller'));
   }
-  if (profile.deliveryFee != null) {
-    const fee = profile.deliveryFee === 0 ? 'Free' : `$${profile.deliveryFee.toFixed(2)}`;
-    tiles.push(snapshotInfoTile('truck', 'Delivery Fee', fee));
-  }
   if (profile.processingTime) {
     tiles.push(snapshotInfoTile('clock', 'Processing', profile.processingTime));
-  }
-  if (profile.businessHours) {
-    tiles.push(snapshotInfoTile('clock', 'Hours', businessHoursLabel(profile.businessHours)));
   }
   const deliveryOpts = parseDeliveryOptions(profile.deliveryOptions);
   if (deliveryOpts.length) {
@@ -924,6 +927,26 @@ function renderSellerSnapshot(profile, stats) {
   }
   if (profile.pickupAddress) {
     tiles.push(snapshotInfoTile('store', 'Pickup', profile.pickupAddress));
+  }
+
+  const followTile = typeof stats.followerCount === 'number'
+    ? snapshotInfoTile('users', 'Followers', stats.followerCount.toLocaleString())
+    : '';
+  const joinedTile = profile.joinedDate
+    ? snapshotInfoTile('calendar', 'Joined', formatJoinDate(profile.joinedDate))
+    : '';
+  if (followTile || joinedTile) {
+    tiles.push(`<div class="snapshot-sub-grid snapshot-sub-grid--2">${followTile}${joinedTile}</div>`);
+  }
+
+  const deliveryTile = profile.deliveryFee != null
+    ? snapshotInfoTile('truck', 'Delivery Fee', profile.deliveryFee === 0 ? 'Free' : `GH₵ ${profile.deliveryFee.toFixed(2)}`)
+    : '';
+  const hoursTile = profile.businessHours
+    ? snapshotInfoTile('clock', 'Hours', businessHoursLabel(profile.businessHours))
+    : '';
+  if (deliveryTile || hoursTile) {
+    tiles.push(`<div class="snapshot-sub-grid snapshot-sub-grid--2">${deliveryTile}${hoursTile}</div>`);
   }
 
   grid.innerHTML = tiles.join('');
@@ -1026,6 +1049,7 @@ async function liveFetchStore() {
     profileReviewState.pagination = pagination || profileReviewState.pagination;
     renderReviewsInto(reviews, ratingBreakdown, stats.totalReviews, pagination, { avgRating: stats.avgRating });
     renderStorePolicies(profile);
+    renderStickyContact(profile);
 
     const moreShops = document.getElementById('more-shops-section');
     if (stats && stats.productCount > 0) {
@@ -1108,13 +1132,61 @@ function observeRevealElements(container) {
 // ERROR BANNER
 // ═══════════════════════════════════════════
 function showErrorBanner(message) {
-  const existing = document.getElementById('store-error-banner');
-  if (existing) return;
-  const banner = document.createElement('div');
-  banner.id = 'store-error-banner';
-  banner.style.cssText = 'position:fixed;top:1rem;left:50%;transform:translateX(-50%);background:#ef4444;color:#fff;padding:0.75rem 1.5rem;border-radius:8px;z-index:9999;font-size:0.9rem;font-weight:700;';
-  banner.textContent = message;
-  document.body.appendChild(banner);
+   const existing = document.getElementById('store-error-banner');
+   if (existing) return;
+   const banner = document.createElement('div');
+   banner.id = 'store-error-banner';
+   banner.style.cssText = 'position:fixed;top:1rem;left:50%;transform:translateX(-50%);background:#ef4444;color:#fff;padding:0.75rem 1.5rem;border-radius:8px;z-index:9999;font-size:0.9rem;font-weight:700;';
+   banner.textContent = message;
+   document.body.appendChild(banner);
+}
+
+// ═══════════════════════════════════════════
+// STICKY CONTACT BUTTON
+// ═══════════════════════════════════════════
+function renderStickyContact(profile) {
+   const container = document.getElementById('sticky-contact');
+   const linksEl = document.getElementById('sticky-contact-links');
+   if (!container || !linksEl) return;
+
+   const items = [];
+   if (profile.whatsapp) {
+     const wa = String(profile.whatsapp).replace(/\D/g, '');
+     items.push(`<a class="sticky-contact-link" href="https://wa.me/${wa}" target="_blank" rel="noopener noreferrer" role="menuitem">${WHATSAPP_SVG}<span>WhatsApp</span></a>`);
+   }
+   if (profile.email) {
+     items.push(`<a class="sticky-contact-link" href="mailto:${escapeHtml(profile.email)}" role="menuitem"><i data-lucide="mail"></i><span>${escapeHtml(profile.email)}</span></a>`);
+   }
+   if (profile.phone) {
+     const tel = String(profile.phone).replace(/\D/g, '');
+     items.push(`<a class="sticky-contact-link" href="tel:${tel}" role="menuitem"><i data-lucide="phone"></i><span>${escapeHtml(profile.phone)}</span></a>`);
+   }
+
+   if (!items.length) {
+     container.classList.add('hidden');
+     return;
+   }
+
+   container.classList.remove('hidden');
+   linksEl.innerHTML = items.join('');
+
+   const btn = document.getElementById('sticky-contact-btn');
+   const menu = document.getElementById('sticky-contact-menu');
+   if (btn && menu) {
+     btn.addEventListener('click', (e) => {
+       e.stopPropagation();
+       const isOpen = !menu.classList.contains('hidden');
+       menu.classList.toggle('hidden', isOpen);
+       btn.setAttribute('aria-expanded', String(!isOpen));
+     });
+   }
+
+   document.addEventListener('click', () => {
+     if (menu) menu.classList.add('hidden');
+     if (btn) btn.setAttribute('aria-expanded', 'false');
+   });
+
+   if (window.lucide) lucide.createIcons();
 }
 
 // ═══════════════════════════════════════════
@@ -1160,20 +1232,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  // Category tabs
-  const tabsEl = document.getElementById('store-filter-tabs');
-  if (tabsEl) {
-    tabsEl.addEventListener('click', e => {
-      const tab = e.target.closest('.store-tab');
-      if (!tab) return;
-      tabsEl.querySelectorAll('.store-tab').forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      state.category = tab.dataset.filter;
-      state.page = 1;
-      applyFiltersAndRender();
-    });
-  }
-
+// ═══════════════════════════════════════════
   // View toggle
   const btnGrid = document.getElementById('btn-grid');
   const btnList = document.getElementById('btn-list');
@@ -1194,10 +1253,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       btnList.classList.add('active');
       btnGrid.classList.remove('active');
     });
-  }
+   }
 
-  // Empty state reset
-  const emptyReset = document.getElementById('empty-reset');
+  const tabsEl = document.getElementById('store-filter-tabs');
+
+   // Empty state reset
+   const emptyReset = document.getElementById('empty-reset');
   if (emptyReset) {
     emptyReset.addEventListener('click', () => {
       state.search = '';
@@ -1208,6 +1269,20 @@ document.addEventListener('DOMContentLoaded', async () => {
       const allTab = tabsEl.querySelector('.store-tab[data-filter="all"]');
       if (allTab) allTab.classList.add('active');
       applyFiltersAndRender();
+    });
+  }
+
+  // Category tabs
+  if (tabsEl) {
+    tabsEl.addEventListener('click', e => {
+      const tab = e.target.closest('.store-tab');
+      if (!tab) return;
+      tabsEl.querySelectorAll('.store-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      state.category = tab.dataset.filter;
+      state.page = 1;
+      applyFiltersAndRender();
+      updateFilterIndicator();
     });
   }
 
@@ -1228,6 +1303,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   window.addEventListener('scroll', () => {
     const navbar = document.getElementById('navbar');
     if (navbar) navbar.style.boxShadow = window.scrollY > 10 ? '0 4px 24px rgba(0,0,0,0.4)' : 'none';
+  });
+
+  // Update filter indicator on resize
+  window.addEventListener('resize', () => {
+    requestAnimationFrame(updateFilterIndicator);
   });
 
   // Extra observer passes for late-rendered cards

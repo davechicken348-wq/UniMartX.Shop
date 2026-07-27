@@ -3,248 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - UnimartX Seller</title>
+    <title>My Dashboard - UnimartX Seller</title>
     <script src="../../../../config.js"></script>
-    <script>
-      if (localStorage.getItem("seller_sidebar_collapsed") === "true") {
-        document.documentElement.classList.add("no-transition");
-      }
-    </script>
+    <script src="../shared/head-shell.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../shared/seller-base.css">
     <link rel="stylesheet" href="../shared/sidebar.css">
     <link rel="stylesheet" href="../shared/topnav.css">
+    <link rel="stylesheet" href="../assets/css/seller-os.css">
     <link rel="stylesheet" href="../assets/css/dashboard.css">
 </head>
 <body>
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-logo">
-            <div class="sidebar-logo-icon"><i data-lucide="store"></i></div>
-            <span class="sidebar-logo-text">Unimart<span>X</span></span>
-        </div>
-        <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
-            <i data-lucide="chevron-left"></i>
-        </button>
-        <nav class="sidebar-nav">
-            <span class="nav-section-label">Main</span>
-            <a href="overview.html" class="nav-item active" data-tooltip="Dashboard">
-                <div class="nav-item-icon"><i data-lucide="layout-dashboard"></i></div>
-                <span class="nav-item-label">Dashboard</span>
-            </a>
-            <a href="../orders/order-list.html" class="nav-item" data-tooltip="Orders">
-                <div class="nav-item-icon"><i data-lucide="shopping-bag"></i></div>
-                <span class="nav-item-label">Orders</span>
-                <span class="nav-item-badge" id="sidebar-orders-count"></span>
-            </a>
-            <a href="../products/product-list.html" class="nav-item" data-tooltip="Products">
-                <div class="nav-item-icon"><i data-lucide="package"></i></div>
-                <span class="nav-item-label">Products</span>
-            </a>
-            <span class="nav-section-label">Store</span>
-            <a href="../products/add-product.html" class="nav-item" data-tooltip="Add Product">
-                <div class="nav-item-icon"><i data-lucide="plus-circle"></i></div>
-                <span class="nav-item-label">Add Product</span>
-            </a>
-            <a href="../profile/customize-store.html" class="nav-item" data-tooltip="My Store">
-                <div class="nav-item-icon"><i data-lucide="store"></i></div>
-                <span class="nav-item-label">My Store</span>
-            </a>
-            <a href="../profile/customize-profile.html" class="nav-item" data-tooltip="Profile">
-                <div class="nav-item-icon"><i data-lucide="user"></i></div>
-                <span class="nav-item-label">Profile</span>
-            </a>
-            <a href="../profile/account-settings.html" class="nav-item" data-tooltip="Settings">
-                <div class="nav-item-icon"><i data-lucide="settings"></i></div>
-                <span class="nav-item-label">Settings</span>
-            </a>
-            <span class="nav-section-label">More</span>
-            <a href="../notifications.html" class="nav-item" data-tooltip="Notifications">
-                <div class="nav-item-icon"><i data-lucide="bell"></i></div>
-                <span class="nav-item-label">Notifications</span>
-                <span class="nav-item-badge" id="sidebar-notif-count"></span>
-            </a>
-            <a href="../../../public/home.html" class="nav-item" data-tooltip="Home">
-                <div class="nav-item-icon"><i data-lucide="home"></i></div>
-                <span class="nav-item-label">Home</span>
-            </a>
-            <a href="../../../public/info/faq.html" class="nav-item" data-tooltip="Help">
-                <div class="nav-item-icon"><i data-lucide="help-circle"></i></div>
-                <span class="nav-item-label">Help & FAQ</span>
-            </a>
-        </nav>
-        <div class="sidebar-footer">
-            <div class="sidebar-user">
-                <div class="sidebar-avatar" id="sidebar-avatar"></div>
-                <div class="sidebar-user-info">
-                    <p class="sidebar-user-name" id="sidebar-name"></p>
-                    <p class="sidebar-user-role" id="sidebar-store"></p>
-                </div>
-                <a href="../../../auth/logout.html" class="sidebar-logout" aria-label="Log out">
-                    <i data-lucide="log-out"></i>
-                </a>
-            </div>
-        </div>
-    </aside>
-    <div class="sidebar-overlay" id="sidebar-overlay"></div>
-
-
-    <!-- TOPNAV -->
-    <header class="topnav" id="topnav">
-        <button class="topnav-hamburger" id="topnav-hamburger" aria-label="Open menu">
-            <i data-lucide="menu"></i>
-        </button>
-        <div class="topnav-title">
-            <h1>Dashboard</h1>
-            <p id="topnav-greeting"></p>
-        </div>
-        <div class="topnav-search">
-            <i data-lucide="search"></i>
-            <input type="search" placeholder="Search orders, products…" aria-label="Search">
-        </div>
-        <div class="topnav-actions">
-            <a href="#" id="view-my-shop-btn" class="topnav-add-btn" target="_blank" rel="noopener" style="background:linear-gradient(135deg,#10b981,#34d399);color:#0a0a0f;" title="View your public store">
-                <i data-lucide="store"></i>
-                <span>My Shop</span>
-            </a>
-            <a href="../products/add-product.html" class="topnav-add-btn">
-                <i data-lucide="plus"></i>
-                <span>Add Product</span>
-            </a>
-            <div style="position:relative;">
-                <button class="topnav-btn" id="notif-btn" aria-label="Notifications">
-                    <i data-lucide="bell"></i>
-                    <span class="topnav-badge" id="notif-badge">0</span>
-                </button>
-                <div class="notif-panel" id="notif-panel">
-                    <div class="notif-header">
-                        <h3>Notifications</h3>
-                        <button class="notif-mark-read" id="mark-read">Mark all read</button>
-                    </div>
-                    <div class="notif-list">
-                        <!-- Notifications will be loaded here -->
-                    </div>
-                    <div class="notif-footer"><a href="../notifications.html">View all</a></div>
-                </div>
-            </div>
-            <div style="position:relative;">
-                <div class="topnav-user" id="topnav-user">
-                    <div class="topnav-avatar" id="topnav-avatar"></div>
-                    <span class="topnav-username" id="topnav-username"></span>
-                    <i data-lucide="chevron-down" class="topnav-chevron"></i>
-                </div>
-                <div class="topnav-dropdown" id="topnav-dropdown">
-                    <a href="../profile/customize-profile.html" class="dropdown-item"><i data-lucide="user"></i> My Profile</a>
-                    <a href="../profile/customize-store.html" class="dropdown-item"><i data-lucide="store"></i> My Store</a>
-                    <a href="../profile/account-settings.html" class="dropdown-item"><i data-lucide="settings"></i> Settings</a>
-                    <div class="dropdown-divider"></div>
-                    <a href="../../../public/home.html" class="dropdown-item"><i data-lucide="globe"></i> Public Site</a>
-                    <div class="dropdown-divider"></div>
-                    <a href="../../../auth/logout.html" class="dropdown-item dropdown-item--danger"><i data-lucide="log-out"></i> Log Out</a>
-                </div>
-            </div>
-
-        </div>
-    </div>
-    </header>
-
+    <div id="app-shell">
 
     <!-- MAIN -->
-    <div class="seller-main" id="seller-main">
-        <div class="page-content dashboard-content">
+    <div class="os-main" id="seller-main">
+        <div class="os-page">
 
-            <!-- ── GETTING STARTED (new sellers) ── -->
-            <div class="getting-started" id="getting-started" hidden>
-                <div class="gs-header">
-                    <div class="gs-emoji" aria-hidden="true">🚀</div>
-                    <div class="gs-header-text">
-                        <h2>Your store is live — let's set it up</h2>
-                        <p>Finish these steps to make your storefront shine and get your first order.</p>
+            <!-- ── GROW YOUR BUSINESS ONBOARDING ── -->
+            <div class="os-card" id="onboarding-card" style="margin-bottom:var(--os-space-6);background:linear-gradient(135deg,rgba(245,158,11,0.06),rgba(251,191,36,0.03));border:1px solid var(--os-border-2);" hidden>
+                <div class="os-card-header" style="border-bottom:1px solid var(--os-border);margin-bottom:var(--os-space-4);">
+                    <div style="display:flex;align-items:center;gap:var(--os-space-3);">
+                        <div style="width:40px;height:40px;border-radius:var(--os-radius);background:var(--os-accent-l);border:1px solid var(--os-border-2);display:flex;align-items:center;justify-content:center;color:var(--os-accent);">
+                            <i data-lucide="rocket" style="width:20px;height:20px;stroke:currentColor;"></i>
+                        </div>
+                        <div>
+                            <h2 class="os-card-title" style="font-size:var(--os-text-lg);">Grow Your Business</h2>
+                            <p class="os-card-desc">Complete these steps to launch and grow your online store.</p>
+                        </div>
                     </div>
-                    <button class="gs-dismiss" id="gs-dismiss" type="button">Skip for now</button>
+                    <button class="os-btn os-btn-ghost os-btn-sm" id="onboarding-dismiss" type="button">Skip</button>
                 </div>
-                <div class="gs-progress" aria-hidden="true">
-                    <div class="gs-progress-bar" id="gs-progress-bar"></div>
+                <div class="os-progress" style="margin-bottom:var(--os-space-3);">
+                    <div class="os-progress-bar" id="onboarding-progress" style="width:0%;"></div>
                 </div>
-                <p class="gs-progress-label" id="gs-progress-label"></p>
-                <ul class="gs-steps" id="gs-steps">
-                    <li class="gs-step" data-step="verify">
-                        <span class="gs-check" aria-hidden="true"></span>
-                        <div class="gs-step-text">
-                            <strong>Verify your account</strong>
-                            <span>Confirm your email so buyers trust your store.</span>
+                <p style="font-size:var(--os-text-xs);color:var(--os-text-3);font-weight:600;margin-bottom:var(--os-space-4);" id="onboarding-label">0 of 4 completed</p>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:var(--os-space-3);" id="onboarding-steps">
+                    <div class="os-card" style="padding:var(--os-space-4);display:flex;align-items:center;gap:var(--os-space-3);" data-step="profile">
+                        <div style="width:28px;height:28px;border-radius:50%;border:2px solid var(--os-border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s;" class="step-check">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="opacity:0;transition:opacity 0.2s;"><polyline points="20 6 9 17 4 12"></polyline></svg>
                         </div>
-                    </li>
-                    <li class="gs-step" data-step="product">
-                        <span class="gs-check" aria-hidden="true"></span>
-                        <div class="gs-step-text">
-                            <strong>Add your first product</strong>
-                            <span>This is what buyers will see and buy.</span>
+                        <div style="flex:1;min-width:0;">
+                            <p style="font-size:var(--os-text-sm);font-weight:700;color:var(--os-text);">Complete your profile</p>
+                            <p style="font-size:var(--os-text-xs);color:var(--os-text-3);">Add your business info</p>
                         </div>
-                        <a href="../products/add-product.html" class="gs-cta">Add product</a>
-                    </li>
-                    <li class="gs-step" data-step="branding">
-                        <span class="gs-check" aria-hidden="true"></span>
-                        <div class="gs-step-text">
-                            <strong>Add a logo &amp; banner</strong>
-                            <span>Make your store recognizable on campus.</span>
+                        <a href="../profile/customize-profile.html" class="os-btn os-btn-ghost os-btn-sm">Go</a>
+                    </div>
+                    <div class="os-card" style="padding:var(--os-space-4);display:flex;align-items:center;gap:var(--os-space-3);" data-step="product">
+                        <div style="width:28px;height:28px;border-radius:50%;border:2px solid var(--os-border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s;" class="step-check">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="opacity:0;transition:opacity 0.2s;"><polyline points="20 6 9 17 4 12"></polyline></svg>
                         </div>
-                        <a href="../profile/customize-store.html" class="gs-cta">Customize</a>
-                    </li>
-                    <li class="gs-step" data-step="share">
-                        <span class="gs-check" aria-hidden="true"></span>
-                        <div class="gs-step-text">
-                            <strong>Share your store</strong>
-                            <span>Send the link to friends and coursemates.</span>
+                        <div style="flex:1;min-width:0;">
+                            <p style="font-size:var(--os-text-sm);font-weight:700;color:var(--os-text);">Add your first product</p>
+                            <p style="font-size:var(--os-text-xs);color:var(--os-text-3);">Create your first listing</p>
                         </div>
-                        <a href="#" class="gs-cta" id="gs-share">Share</a>
-                    </li>
-                </ul>
-                <a href="../products/add-product.html" class="btn btn-primary gs-primary-cta">
-                    <i data-lucide="plus"></i> Add your first product
-                </a>
+                        <a href="../products/add-product.html" class="os-btn os-btn-ghost os-btn-sm">Go</a>
+                    </div>
+                    <div class="os-card" style="padding:var(--os-space-4);display:flex;align-items:center;gap:var(--os-space-3);" data-step="branding">
+                        <div style="width:28px;height:28px;border-radius:50%;border:2px solid var(--os-border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s;" class="step-check">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="opacity:0;transition:opacity 0.2s;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        </div>
+                        <div style="flex:1;min-width:0;">
+                            <p style="font-size:var(--os-text-sm);font-weight:700;color:var(--os-text);">Brand your store</p>
+                            <p style="font-size:var(--os-text-xs);color:var(--os-text-3);">Add logo and banner</p>
+                        </div>
+                        <a href="../profile/customize-store.html" class="os-btn os-btn-ghost os-btn-sm">Go</a>
+                    </div>
+                    <div class="os-card" style="padding:var(--os-space-4);display:flex;align-items:center;gap:var(--os-space-3);" data-step="share">
+                        <div style="width:28px;height:28px;border-radius:50%;border:2px solid var(--os-border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s;" class="step-check">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="opacity:0;transition:opacity 0.2s;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        </div>
+                        <div style="flex:1;min-width:0;">
+                            <p style="font-size:var(--os-text-sm);font-weight:700;color:var(--os-text);">Share your store</p>
+                            <p style="font-size:var(--os-text-xs);color:var(--os-text-3);">Get your first order</p>
+                        </div>
+                        <button class="os-btn os-btn-ghost os-btn-sm" id="share-store-btn">Share</button>
+                    </div>
+                </div>
             </div>
 
             <!-- ── PAGE HEADER ── -->
-            <header class="dash-header">
-                <div class="dash-header-text">
-                    <h1 id="dash-title">Welcome back 👋</h1>
-                    <p id="dash-sub">Here's how your store is performing today.</p>
+            <header class="os-page-header" style="display:flex;align-items:flex-end;justify-content:space-between;gap:var(--os-space-4);flex-wrap:wrap;margin-bottom:var(--os-space-6);">
+                <div>
+                    <h1>My Dashboard</h1>
+                    <p id="dash-sub">Welcome back. Here's how your business is performing.</p>
                 </div>
-                <div class="dash-header-actions">
-                    <a href="../products/add-product.html" class="btn btn-primary">
-                        <i data-lucide="plus"></i> Add Product
-                    </a>
-                </div>
+                <a href="../products/add-product.html" class="os-btn os-btn-accent">
+                    <i data-lucide="plus"></i> Add Product
+                </a>
             </header>
 
-            <!-- ── STATS ── -->
+            <!-- ── BUSINESS OVERVIEW STATS ── -->
             <div class="stats-grid">
                 <div class="stat-card">
-                    <div class="stat-icon"><i data-lucide="wallet"></i></div>
+                    <div class="stat-icon stat-icon--brand"><i data-lucide="wallet"></i></div>
                     <div class="stat-info">
                         <div class="stat-value" id="stat-revenue">0</div>
-                        <div class="stat-label">Revenue (GH₵)</div>
+                        <div class="stat-label">My Revenue</div>
                     </div>
                     <div class="stat-trend stat-trend--neutral">
                         <i data-lucide="minus"></i> 0%
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon stat-icon--blue"><i data-lucide="shopping-bag"></i></div>
+                    <div class="stat-icon stat-icon--success"><i data-lucide="shopping-bag"></i></div>
                     <div class="stat-info">
                         <div class="stat-value" id="stat-orders">0</div>
-                        <div class="stat-label">Total Orders</div>
+                        <div class="stat-label">My Orders</div>
                     </div>
                     <div class="stat-trend stat-trend--neutral">
                         <i data-lucide="minus"></i> 0%
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon stat-icon--warning"><i data-lucide="clock"></i></div>
+                    <div class="stat-icon" style="background:rgba(245,158,11,0.10);color:#d97706;border-color:rgba(245,158,11,0.2);"><i data-lucide="clock"></i></div>
                     <div class="stat-info">
                         <div class="stat-value" id="stat-pending">0</div>
                         <div class="stat-label">Pending Orders</div>
@@ -254,7 +129,7 @@
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon stat-icon--success"><i data-lucide="star"></i></div>
+                    <div class="stat-icon stat-icon--blue"><i data-lucide="star"></i></div>
                     <div class="stat-info">
                         <div class="stat-value" id="stat-rating">0.0</div>
                         <div class="stat-label">Store Rating</div>
@@ -272,15 +147,15 @@
                 <div class="main-col">
 
                     <!-- Revenue chart -->
-                    <div class="card chart-card">
-                        <div class="card-header">
+                    <div class="os-card">
+                        <div class="os-card-header">
                             <div>
-                                <h2>Revenue</h2>
-                                <p id="rev-range">Last 7 days</p>
+                                <h2 class="os-card-title">My Sales</h2>
+                                <p class="os-card-desc" id="rev-range">Last 7 days</p>
                             </div>
-                            <span class="revenue-total chart-figure" id="rev-figure">GH₵ 0</span>
+                            <span style="font-size:var(--os-text-xl);font-weight:800;color:var(--os-text);letter-spacing:-0.02em;" id="rev-figure">GH₵ 0</span>
                         </div>
-                        <div class="chart-wrap">
+                        <div class="chart-wrap" style="margin-top:var(--os-space-4);">
                             <div class="area-chart" id="area-chart"></div>
                             <div class="area-labels" id="area-labels"></div>
                         </div>
@@ -288,13 +163,13 @@
 
                     <!-- Split: orders + status -->
                     <div class="dash-split">
-                        <div class="card">
-                            <div class="card-header">
+                        <div class="os-card">
+                            <div class="os-card-header">
                                 <div>
-                                    <h2>Recent Orders</h2>
-                                    <p>Needs your attention</p>
+                                    <h2 class="os-card-title">Recent Orders</h2>
+                                    <p class="os-card-desc">Needs your attention</p>
                                 </div>
-                                <a href="../orders/order-list.html" class="btn btn-ghost btn-sm">View all</a>
+                                <a href="../orders/order-list.html" class="os-btn os-btn-ghost os-btn-sm">View all</a>
                             </div>
                             <div class="orders-table">
                                 <div class="orders-table-head">
@@ -304,31 +179,29 @@
                                     <span>Status</span>
                                     <span></span>
                                 </div>
-                                <!-- Orders will be loaded here -->
+                                <!-- Orders loaded here -->
                             </div>
                         </div>
 
-                        <div class="card">
-                            <div class="card-header">
-                                <div><h2>Order Status</h2></div>
-                                <p>From recent activity</p>
+                        <div class="os-card">
+                            <div class="os-card-header">
+                                <div><h2 class="os-card-title">Order Status</h2></div>
+                                <p class="os-card-desc">From recent activity</p>
                             </div>
                             <div class="order-status" id="order-status"></div>
                         </div>
                     </div>
 
                     <!-- Top products -->
-                    <div class="card">
-                        <div class="card-header">
+                    <div class="os-card">
+                        <div class="os-card-header">
                             <div>
-                                <h2>Top Products</h2>
-                                <p>By sales this month</p>
+                                <h2 class="os-card-title">Top Products</h2>
+                                <p class="os-card-desc">By sales this month</p>
                             </div>
-                            <a href="../products/product-list.html" class="btn btn-ghost btn-sm">View all</a>
+                            <a href="../products/product-list.html" class="os-btn os-btn-ghost os-btn-sm">View all</a>
                         </div>
-                        <div class="top-products">
-                            <!-- Top products will be loaded here -->
-                        </div>
+                        <div class="top-products" id="top-products"></div>
                     </div>
 
                 </div>
@@ -337,55 +210,48 @@
                 <div class="dashboard-side">
 
                     <!-- Store health -->
-                    <div class="card store-health">
-                        <div class="card-header"><div><h2>Store Health</h2></div></div>
+                    <div class="os-card store-health" style="text-align:center;">
+                        <div class="os-card-header" style="justify-content:center;">
+                            <div><h2 class="os-card-title">Store Health</h2></div>
+                        </div>
                         <div class="health-ring" id="health-ring">
-                            <svg viewBox="0 0 64 64" aria-hidden="true">
-                                <circle class="ring-bg" cx="32" cy="32" r="26"></circle>
-                                <circle class="ring-progress" cx="32" cy="32" r="26"></circle>
+                            <svg viewBox="0 0 64 64" aria-hidden="true" style="width:100%;height:100%;transform:rotate(-90deg);">
+                                <circle class="ring-bg" cx="32" cy="32" r="26" fill="none" stroke="var(--os-border)" stroke-width="6"></circle>
+                                <circle class="ring-progress" cx="32" cy="32" r="26" fill="none" stroke="var(--os-accent)" stroke-width="6" stroke-linecap="round" style="transition:stroke-dashoffset 0.8s ease;"></circle>
                             </svg>
-                            <div class="health-pct" id="health-pct">0%</div>
+                            <div class="health-pct" id="health-pct" style="position:absolute;inset:0;display:grid;place-items:center;font-size:var(--os-text-xl);font-weight:800;color:var(--os-text);">0%</div>
                         </div>
-                        <p class="health-label" id="health-label">Set up your store to start selling.</p>
-                        <a href="../profile/customize-store.html" class="btn btn-ghost btn-sm health-cta">Complete setup</a>
-                    </div>
-
-                    <!-- Followers -->
-                    <div class="card">
-                        <div class="card-header">
-                            <div>
-                                <h2>Followers</h2>
-                                <p>Buyers following your store</p>
-                            </div>
-                            <span class="btn btn-ghost btn-sm" id="followers-count-badge">0 followers</span>
-                        </div>
-                        <div class="followers-grid" id="followers-grid"></div>
-                        <div class="empty-state" id="followers-empty">
-                            <div class="empty-state-icon"><i data-lucide="users"></i></div>
-                            <h3>No followers yet</h3>
-                            <p>When buyers follow your store, they'll appear here.</p>
-                        </div>
+                        <p style="font-size:var(--os-text-sm);color:var(--os-text-2);margin:var(--os-space-4) 0;line-height:1.5;" id="health-label">Set up your store to start selling.</p>
+                        <a href="../profile/customize-store.html" class="os-btn os-btn-ghost os-btn-sm" style="width:100%;justify-content:center;">Complete setup</a>
                     </div>
 
                     <!-- Quick actions -->
-                    <div class="card">
-                        <div class="card-header"><div><h2>Quick Actions</h2></div></div>
+                    <div class="os-card">
+                        <div class="os-card-header"><div><h2 class="os-card-title">Quick Actions</h2></div></div>
                         <div class="quick-actions">
-                            <a href="../products/add-product.html" class="qa-item">
-                                <div class="qa-icon"><i data-lucide="plus-circle"></i></div>
-                                <span>Add Product</span>
+                            <a href="../products/add-product.html" class="os-card" style="padding:var(--os-space-4);text-align:center;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:var(--os-space-2);transition:border-color 0.2s,transform 0.2s;" onmouseover="this.style.borderColor='var(--os-border-2)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--os-border)';this.style.transform='translateY(0)'">
+                                <div style="width:36px;height:36px;border-radius:var(--os-radius);background:var(--os-accent-l);border:1px solid var(--os-border-2);display:flex;align-items:center;justify-content:center;color:var(--os-accent);">
+                                    <i data-lucide="plus-circle" style="width:16px;height:16px;stroke:currentColor;"></i>
+                                </div>
+                                <span style="font-size:var(--os-text-xs);font-weight:700;color:var(--os-text-2);">Add Product</span>
                             </a>
-                            <a href="../orders/order-list.html" class="qa-item">
-                                <div class="qa-icon"><i data-lucide="shopping-bag"></i></div>
-                                <span>Orders</span>
+                            <a href="../orders/order-list.html" class="os-card" style="padding:var(--os-space-4);text-align:center;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:var(--os-space-2);transition:border-color 0.2s,transform 0.2s;" onmouseover="this.style.borderColor='var(--os-border-2)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--os-border)';this.style.transform='translateY(0)'">
+                                <div style="width:36px;height:36px;border-radius:var(--os-radius);background:var(--os-info-l);border:1px solid rgba(59,130,246,0.2);display:flex;align-items:center;justify-content:center;color:var(--os-info);">
+                                    <i data-lucide="shopping-bag" style="width:16px;height:16px;stroke:currentColor;"></i>
+                                </div>
+                                <span style="font-size:var(--os-text-xs);font-weight:700;color:var(--os-text-2);">Orders</span>
                             </a>
-                            <a href="../profile/customize-store.html" class="qa-item">
-                                <div class="qa-icon"><i data-lucide="store"></i></div>
-                                <span>My Store</span>
+                            <a href="../profile/customize-store.html" class="os-card" style="padding:var(--os-space-4);text-align:center;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:var(--os-space-2);transition:border-color 0.2s,transform 0.2s;" onmouseover="this.style.borderColor='var(--os-border-2)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--os-border)';this.style.transform='translateY(0)'">
+                                <div style="width:36px;height:36px;border-radius:var(--os-radius);background:var(--os-success-l);border:1px solid rgba(16,185,129,0.2);display:flex;align-items:center;justify-content:center;color:var(--os-success);">
+                                    <i data-lucide="store" style="width:16px;height:16px;stroke:currentColor;"></i>
+                                </div>
+                                <span style="font-size:var(--os-text-xs);font-weight:700;color:var(--os-text-2);">My Store</span>
                             </a>
-                            <a href="../../../public/contact/contact.html" class="qa-item">
-                                <div class="qa-icon"><i data-lucide="headphones"></i></div>
-                                <span>Support</span>
+                            <a href="../../../public/contact/contact.html" class="os-card" style="padding:var(--os-space-4);text-align:center;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:var(--os-space-2);transition:border-color 0.2s,transform 0.2s;" onmouseover="this.style.borderColor='var(--os-border-2)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--os-border)';this.style.transform='translateY(0)'">
+                                <div style="width:36px;height:36px;border-radius:var(--os-radius);background:var(--os-bg-3);border:1px solid var(--os-border);display:flex;align-items:center;justify-content:center;color:var(--os-text-3);">
+                                    <i data-lucide="headphones" style="width:16px;height:16px;stroke:currentColor;"></i>
+                                </div>
+                                <span style="font-size:var(--os-text-xs);font-weight:700;color:var(--os-text-2);">Support</span>
                             </a>
                         </div>
                     </div>
@@ -396,32 +262,22 @@
         </div>
     </div>
 
-        <!-- ── WELCOME MODAL (post-registration) ── -->
-        <div class="welcome-overlay" id="welcome-overlay" hidden>
-            <div class="welcome-modal" role="dialog" aria-modal="true" aria-labelledby="welcome-title">
-                <button class="welcome-close" id="welcome-close" type="button" aria-label="Close">×</button>
-                <div class="welcome-emoji" aria-hidden="true">🎉</div>
-                <h2 id="welcome-title">Welcome to UniMartX!</h2>
-                <p class="welcome-sub">Your storefront is created. Here's exactly what to do next to get your first sale.</p>
-                <ol class="welcome-steps">
-                    <li><span class="ws-num">1</span><div><strong>Verify your email</strong><span>Builds trust with buyers.</span></div></li>
-                    <li><span class="ws-num">2</span><div><strong>Add your first product</strong><span>This is what buyers browse and buy.</span></div></li>
-                    <li><span class="ws-num">3</span><div><strong>Add a logo &amp; banner</strong><span>Make your store recognizable.</span></div></li>
-                    <li><span class="ws-num">4</span><div><strong>Share your store link</strong><span>Send it to coursemates.</span></div></li>
-                </ol>
-                <div class="welcome-actions">
-                    <a href="../products/add-product.html" class="btn btn-primary welcome-cta">Add your first product</a>
-                    <button class="btn btn-ghost" id="welcome-explore" type="button">Explore dashboard</button>
-                </div>
-            </div>
-        </div>
+    <!-- ── WELCOME TOAST ── -->
+    <div class="os-toast" id="welcome-toast" hidden style="position:fixed;bottom:var(--os-space-6);left:50%;transform:translateX(-50%);background:var(--os-text);color:#fff;padding:var(--os-space-4) var(--os-space-6);border-radius:var(--os-radius-lg);font-size:var(--os-text-sm);font-weight:700;box-shadow:var(--os-shadow-lg);z-index:9999;animation:osToastIn 0.3s ease both;align-items:center;gap:var(--os-space-3);max-width:90vw;display:none;">
+        <i data-lucide="check-circle" style="width:18px;height:18px;stroke:currentColor;flex-shrink:0;"></i>
+        <span>Welcome to your Business HQ! Start by adding your first product.</span>
+        <button id="welcome-toast-close" style="background:none;border:none;color:#fff;cursor:pointer;padding:var(--os-space-1);flex-shrink:0;">
+            <i data-lucide="x" style="width:16px;height:16px;stroke:currentColor;"></i>
+        </button>
+    </div>
+    </div><!-- /app-shell -->
+    <script defer src="../shared/shell.js"></script>
 
     <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
     <script>if(window.lucide)lucide.createIcons();else window.addEventListener('DOMContentLoaded',function(){if(window.lucide)lucide.createIcons();});</script>
     <script defer src="../shared/polling.js"></script>
-    <script defer src="../shared/sidebar.js"></script>
-    <script defer src="../shared/topnav.js"></script>
-    <script defer src="../assets/js/dashboard.js"></script>
-
+    
+    
+    <script defer src="../assets/js/dashboard.js" id="page-script"></script>
 </body>
 </html>

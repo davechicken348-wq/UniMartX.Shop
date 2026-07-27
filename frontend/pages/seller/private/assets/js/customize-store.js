@@ -1,18 +1,22 @@
 // SELLER CUSTOMIZE STORE — REWORKED
 // Advanced store customization with validation, auto-save, undo/redo, and more
+(function () {
 
-document.addEventListener('DOMContentLoaded', async () => {
-    // Initialize UI components first
-    initSettingsNavigation();
-    initDescriptionCounter();
-    initImageUploads();
-    initColorScheme();
-    initForms();
-    initPreviewButton();
-    initModals();
-    initUnsavedChanges();
-    initExportImport();
-    initAccessibility();
+async function initPage() {
+    const safe = function (fn, name) {
+        try { fn(); } catch (e) { console.warn('[initPage] ' + name + ' failed:', e); }
+    };
+
+    safe(initSettingsNavigation, 'initSettingsNavigation');
+    safe(initDescriptionCounter, 'initDescriptionCounter');
+    safe(initImageUploads, 'initImageUploads');
+    safe(initColorScheme, 'initColorScheme');
+    safe(initForms, 'initForms');
+    safe(initPreviewButton, 'initPreviewButton');
+    safe(initModals, 'initModals');
+    safe(initUnsavedChanges, 'initUnsavedChanges');
+    safe(initExportImport, 'initExportImport');
+    safe(initAccessibility, 'initAccessibility');
 
     // Bind location/bio/category preview updates
     const countryInput = document.getElementById('store-country');
@@ -30,7 +34,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         updateStoreTaglinePreview();
     }
 
-    // Fulfillment form
     const fulfillmentForm = document.getElementById('store-fulfillment-form');
     if (fulfillmentForm) fulfillmentForm.addEventListener('submit', handleFulfillmentSubmit);
     const deliveryFeeInput = document.getElementById('delivery-fee');
@@ -38,23 +41,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (deliveryFeeInput) deliveryFeeInput.addEventListener('input', updateFulfillmentPreview);
     if (pickupAddressInput) pickupAddressInput.addEventListener('input', updateFulfillmentPreview);
 
-    // Then load store data from backend (which will trigger color preset selection after presets exist)
     await loadStoreData();
 
-    // Real-time store name preview
-    const nameInput = document.getElementById('store-name');
-    if (nameInput) {
-        nameInput.addEventListener('input', updateStoreNamePreview);
-        // Initial update
-        updateStoreNamePreview();
-    }
-
-    // Initial location preview
-    updateStoreLocationPreview();
-
-    // Restore draft if exists
-    restoreDraft();
-});
+    // Header identity + setup progress used to live in an inline script
+    // that does not re-run during shell in-app navigation. Keep it here
+    // so it survives in-app navigation + page script re-injection.
+    safe(initSetupProgress, 'initSetupProgress');
+}
 
 // ── State Management ──
 const state = {
@@ -70,7 +63,7 @@ let currentColor = defaultColor;
 let autoSaveTimer = null;
 let formBaselineReady = false;
 const DEBOUNCE_MS = 1000;
-const API_BASE = (window.APP_CONFIG && window.APP_CONFIG.BACKEND_URL) || 'http://localhost:5000';
+var API_BASE = (window.APP_CONFIG && window.APP_CONFIG.BACKEND_URL) || 'http://localhost:5000';
 
 // ── Color Utilities (global) ──────────────────────────────────────
 function darkenColor(hex, percent) {
@@ -152,26 +145,6 @@ function getAuthToken() {
     const fallback = localStorage.getItem('authToken');
     if (!fallback || fallback === 'undefined' || fallback === 'null') return null;
     return fallback;
-}
-
-// ── Toast Helper (if not already present) ──────────────────
-function showToast(message, type = 'info', duration = 3000) {
-    // Try to use existing Toast from inline script or create one
-    if (window.Toast && typeof window.Toast.show === 'function') {
-        window.Toast.show(message, type, duration);
-        return;
-    }
-    const container = document.getElementById('toast-container') || document.body;
-    const toast = document.createElement('div');
-    toast.className = `toast toast-${type}`;
-    toast.textContent = message;
-    toast.style.cssText = 'position:fixed;top:1.5rem;right:1.5rem;padding:0.85rem 1.25rem;background:var(--color-bg);color:var(--color-text);border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.15);z-index:9999;animation:toast-in 0.3s ease-out forwards;';
-    container.appendChild(toast);
-    setTimeout(() => {
-        toast.style.opacity = '0';
-        toast.style.transform = 'translateY(-10px)';
-        setTimeout(() => toast.remove(), 300);
-    }, duration);
 }
 
 // ── Load Store Data from Backend ───────────────────────────────
@@ -296,247 +269,352 @@ function updateFulfillmentPreview() {
 }
 
 // ── Load Store Data from Backend ───────────────────────────────
-async function loadStoreData() {
-    const token = getAuthToken();
-    if (!token) {
-        window.location.href = '../../../auth/login.html';
-        return;
-    }
+let _loadStorePromise = null;
 
-    try {
-        const res = await fetch(`${API_BASE}/api/seller/profile`, {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        const json = await res.json();
-
-        if (!res.ok || !json.success) {
-            if (res.status === 401 || res.status === 403) {
-                localStorage.removeItem('authData');
-                window.location.href = '../../../auth/login.html';
-            } else {
-                throw new Error(json.error || 'Failed to load store data');
-            }
+async function loadStoreData(retries) {
+    retries = retries || 2;
+    if (_loadStorePromise) return _loadStorePromise;
+    _loadStorePromise = (async function () {
+        const token = getAuthToken();
+        if (!token) {
+            window.location.href = '../../../auth/login.html';
             return;
         }
 
-        const data = json.data;
-        console.log('[loadStoreData] profile data:', data);
+        async function attempt() {
+            const res = await fetch(`${API_BASE}/api/seller/profile`, {
+                headers: { 'Authorization': 'Bearer ' + token }
+            });
+            const json = await res.json();
 
-        // ── General Section ──
-        const nameInput = document.getElementById('store-name');
-        if (nameInput) nameInput.value = data.storeName || '';
-        const categorySelect = document.getElementById('store-category');
-        if (categorySelect && data.category) categorySelect.value = data.category;
-        const descInput = document.getElementById('store-description');
-        if (descInput) descInput.value = data.storeDescription || '';
-        const countryInput = document.getElementById('store-country');
-        if (countryInput) countryInput.value = data.country || '';
-        const cityInput = document.getElementById('store-city');
-        if (cityInput) cityInput.value = data.city || '';
+            if (!res.ok || !json.success) {
+                if (res.status === 401 || res.status === 403) {
+                    localStorage.removeItem('authData');
+                    window.location.href = '../../../auth/login.html';
+                    throw new Error('Unauthorized');
+                }
+                throw new Error(json.error || 'Failed to load store data');
+            }
 
-        // ── Newly editable store fields ──
-        const taglineInput = document.getElementById('store-tagline');
-        if (taglineInput) taglineInput.value = data.storeTagline || '';
-        const universityInput = document.getElementById('store-university');
-        if (universityInput && data.universityAffiliation) universityInput.value = data.universityAffiliation;
-        const campusInput = document.getElementById('store-campus');
-        if (campusInput) campusInput.value = data.campus || '';
-        const hoursInput = document.getElementById('store-hours');
-        if (hoursInput && data.businessHours) hoursInput.value = data.businessHours;
+            return json.data;
+        }
 
-        // Delivery options (stored as JSON string)
+        let data;
         try {
-            const opts = data.deliveryOptions ? JSON.parse(data.deliveryOptions) : [];
-            document.querySelectorAll('#store-delivery-options input[type="checkbox"]').forEach(cb => {
-                cb.checked = Array.isArray(opts) && opts.includes(cb.value);
-            });
-        } catch (e) { /* ignore malformed */ }
-
-        // ── Policies Section ──
-        const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
-        setVal('processing-time', data.processingTime);
-        setVal('return-policy', data.returnPolicy);
-        setVal('shipping-policy', data.shippingPolicy);
-        setVal('refund-policy', data.refundPolicy);
-        setVal('exchange-policy', data.exchangePolicy);
-        setVal('cancellation-policy', data.cancellationPolicy);
-
-        // ── Branding Section ──
-        const brandingForm = document.getElementById('store-branding-form');
-        const bannerImg = document.getElementById('banner-img');
-        const emptyBanner = document.getElementById('banner-empty');
-        const previewDiv = document.getElementById('banner-preview');
-        const avatarInner = document.getElementById('avatar-inner');
-
-        console.log('[loadStoreData] elements:', { bannerImg, emptyBanner, previewDiv, avatarInner });
-
-        // Store initial server values on form for reset
-        if (brandingForm) {
-            brandingForm.dataset.initialBanner = data.storeBanner || '';
-            brandingForm.dataset.initialAvatar = data.storeAvatar || '';
+            data = await attempt();
+            if (retries > 0 && (!data.storeName || !data.category)) {
+                await new Promise(function (r) { setTimeout(r, 400); });
+                data = await attempt();
+            }
+        } catch (err) {
+            if (retries > 0) {
+                await new Promise(function (r) { setTimeout(r, 500); });
+                _loadStorePromise = null;
+                return loadStoreData(retries - 1);
+            }
+            throw err;
         }
 
-        // Banner preview
-        if (data.storeBanner) {
-            const bannerSrc = (data.storeBanner.startsWith('data:') || data.storeBanner.startsWith('http') || data.storeBanner.startsWith('/')) ? data.storeBanner : `data:image/webp;base64,${data.storeBanner}`;
-            console.log('[loadStoreData] banner found:', bannerSrc.substring(0, 50) + '...');
-            if (bannerImg) {
-                const showPreview = () => {
-                    console.log('banner onload fired - naturalWidth:', bannerImg.naturalWidth);
-                    if (emptyBanner) {
-                        emptyBanner.classList.add('hidden');
-                        console.log('emptyBanner hidden class added, now:', emptyBanner.className);
-                    }
-                    if (previewDiv) {
-                        previewDiv.classList.remove('hidden');
-                        previewDiv.classList.add('show');
-                        console.log('previewDiv classes:', previewDiv.className, '; img src:', bannerImg.src.substring(0, 50));
-                    }
-                };
-                const failPreview = () => {
-                    console.error('banner failed to load - src:', data.storeBanner.substring(0, 50));
-                    // Keep empty state visible, optionally show error
-                };
-                // Set handlers BEFORE src
-                bannerImg.onload = showPreview;
-                bannerImg.onerror = failPreview;
-                // If already loaded (cached), show immediately; else wait for onload
-                if (bannerImg.complete && bannerImg.naturalWidth > 0) {
-                    console.log('banner already complete, showing now');
-                    showPreview();
-                }
-                bannerImg.src = bannerSrc;
-            } else {
-                console.warn('bannerImg element not found');
-            }
+        applyStoreData(data);
+    })();
 
-            // Also update mock banner in live preview
-            const mockBannerImg = document.getElementById('mock-banner-img');
-            const mockBannerEmpty = document.getElementById('mock-banner-empty');
-            if (mockBannerImg) {
-                mockBannerImg.src = bannerSrc;
-                mockBannerImg.classList.remove('hidden');
-            }
-            if (mockBannerEmpty) mockBannerEmpty.classList.add('hidden');
-        } else {
-            console.log('no storeBanner in data');
-            if (emptyBanner) emptyBanner.classList.remove('hidden');
-            if (previewDiv) {
-                previewDiv.classList.add('hidden');
-                previewDiv.classList.remove('show');
-            }
-            // Clear mock banner
-            const mockBannerImg = document.getElementById('mock-banner-img');
-            const mockBannerEmpty = document.getElementById('mock-banner-empty');
-            if (mockBannerImg) {
-                mockBannerImg.src = '';
-                mockBannerImg.classList.add('hidden');
-            }
-            if (mockBannerEmpty) mockBannerEmpty.classList.remove('hidden');
-        }
-
-        // Avatar preview
-        if (avatarInner) {
-            console.log('[loadStoreData] avatarInner found, storeAvatar:', data.storeAvatar ? 'present' : 'absent');
-            const avatarPreview = document.getElementById('avatar-preview');
-            const avatarEmpty = document.getElementById('avatar-empty');
-            const mockAvatar = document.getElementById('mock-avatar');
-            const mockAvatarInitials = document.getElementById('mock-avatar-initials');
-            if (data.storeAvatar) {
-                if (avatarPreview) {
-                    avatarPreview.classList.add('show');
-                    console.log('avatarPreview show class added, classes:', avatarPreview.className);
-                }
-                if (avatarEmpty) avatarEmpty.classList.add('hidden');
-                avatarInner.innerHTML = `<img src="${data.storeAvatar}" alt="Store avatar" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
-                // Update mock avatar in live preview using background-image
-                if (mockAvatar) {
-                    mockAvatar.style.backgroundImage = `url(${data.storeAvatar})`;
-                    mockAvatar.classList.add('has-image');
-                }
-                if (mockAvatarInitials) mockAvatarInitials.classList.add('hidden');
-            } else {
-                if (avatarPreview) avatarPreview.classList.remove('show');
-                if (avatarEmpty) avatarEmpty.classList.remove('hidden');
-                const initials = getInitials(data.storeName || 'Store');
-                avatarInner.textContent = initials;
-                avatarInner.style.background = '';
-                // Reset mock avatar to initials
-                if (mockAvatar) {
-                    mockAvatar.style.backgroundImage = '';
-                    mockAvatar.classList.remove('has-image');
-                }
-                if (mockAvatarInitials) {
-                    mockAvatarInitials.textContent = initials;
-                    mockAvatarInitials.classList.remove('hidden');
-                }
-            }
-        } else {
-            console.warn('avatarInner element not found');
-        }
-
-        // ── Colors Section ──
-        const colorInput = document.getElementById('custom-color');
-        if (colorInput && data.storeColor) {
-            colorInput.value = data.storeColor;
-            // Try to find matching preset; if found, click it (which updates UI via updateColorUI)
-            // If not found (custom color), apply directly
-            const matchingPreset = Array.from(document.querySelectorAll('.color-preset'))
-                .find(p => p.dataset.color.toLowerCase() === data.storeColor.toLowerCase());
-            if (matchingPreset) {
-                matchingPreset.click();
-            } else {
-                // Custom color not in presets — apply directly
-                currentColor = data.storeColor;
-                updateColorUI(data.storeColor);
-                document.querySelectorAll('.color-preset').forEach(p => p.classList.remove('active'));
-            }
-        }
-
-        // Fulfillment fields
-        const deliveryFeeEl = document.getElementById('delivery-fee');
-        const pickupAddressEl = document.getElementById('pickup-address');
-        if (deliveryFeeEl) deliveryFeeEl.value = data.deliveryFee != null ? data.deliveryFee : '';
-        if (pickupAddressEl) pickupAddressEl.value = data.pickupAddress || '';
-
-        // Initialize previews
-        updateStoreNamePreview();
-        updateStoreBioPreview();
-        updateStoreTaglinePreview();
-        updateStoreCategoryPreview();
-        updateFulfillmentPreview();
-
-        // Cache sellerId for the View Store button
-        if (data.sellerId) {
-            localStorage.setItem('seller_id', data.sellerId);
-            const viewStoreBtn = document.getElementById('view-store-btn');
-            if (viewStoreBtn) {
-                viewStoreBtn.href = `../../public/store/store.html?sellerId=${data.sellerId}`;
-            }
-        }
-
-        // Capture initial form state
-        const forms = ['store-general-form', 'store-branding-form', 'store-colors-form', 'store-policies-form'];
-        forms.forEach(formId => {
-            const form = document.getElementById(formId);
-            if (form) captureFormState(form);
-        });
-
-        // Reset dirty flags
-        if (window.formStates) {
-            Object.values(window.formStates).forEach(state => {
-                if (state && state.original !== undefined) state.original = true;
-            });
-        }
-
-        // Re-evaluate banner visibility now that baseline is established
-        formBaselineReady = true;
-        updateDirtyFlags();
-
-    } catch (err) {
-        console.error('Store data load error:', err);
-        showToast('Failed to load store data: ' + err.message, 'error');
+    try {
+        await _loadStorePromise;
+    } finally {
+        _loadStorePromise = null;
     }
+}
+
+// ── Editor header identity + setup progress ──────────────────────
+function initSetupProgress() {
+    const STEPS = [
+        { key: 'info', label: 'Info', icon: 'store', done: function () {
+            const n = val('store-name'), c = val('store-category'), d = val('store-description'),
+                  co = val('store-country'), ci = val('store-city');
+            return !!(n && c && d && d.length >= 20 && co && ci);
+        }},
+        { key: 'branding', label: 'Logo', icon: 'image', done: function () {
+            return !!document.querySelector('#avatar-inner img') || !!val('banner-img', 'src');
+        }},
+        { key: 'colors', label: 'Color', icon: 'palette', done: function () { return !!val('store-color'); } },
+        { key: 'delivery', label: 'Delivery', icon: 'truck', done: function () {
+            return !!(val('delivery-fee') || val('pickup-address'));
+        }},
+        { key: 'policies', label: 'Policies', icon: 'file-text', done: function () {
+            return ['processing-time','return-policy','shipping-policy','refund-policy','exchange-policy','cancellation-policy']
+                .some(function (id) { return val(id); });
+        }},
+    ];
+    function val(id, attr) {
+        const el = document.getElementById(id);
+        if (!el) return '';
+        return (attr ? el.getAttribute(attr) : (el.value || '')).trim();
+    }
+    const fill = document.getElementById('setup-fill');
+    const pctEl = document.getElementById('setup-pct');
+    const stepsEl = document.getElementById('setup-steps');
+    const hdrAvatar = document.getElementById('hdr-avatar');
+
+    function render() {
+        let done = 0;
+        const chips = STEPS.map(function (s) {
+            const ok = s.done();
+            if (ok) done++;
+            return '<span class="setup-step' + (ok ? ' done' : '') + '" title="' + s.label + '">' +
+                '<i data-lucide="' + s.icon + '"></i>' + s.label + '</span>';
+        }).join('');
+        if (stepsEl) stepsEl.innerHTML = chips;
+        const pct = Math.round((done / STEPS.length) * 100);
+        if (fill) fill.style.width = pct + '%';
+        if (pctEl) pctEl.textContent = pct + '%';
+        if (window.lucide) window.lucide.createIcons();
+        updateIdentity();
+    }
+
+    function updateIdentity() {
+        const name = val('store-name') || 'Store';
+        if (hdrAvatar) {
+            hdrAvatar.textContent = name.trim().charAt(0).toUpperCase() || 'S';
+            const color = val('store-color');
+            if (color) { hdrAvatar.style.background = color; hdrAvatar.style.color = '#0a0a0f'; }
+        }
+    }
+
+    ['input', 'change'].forEach(function (ev) {
+        document.addEventListener(ev, function (e) {
+            if (e.target && e.target.closest && e.target.closest('.studio-editor')) render();
+        });
+    });
+
+    function start() {
+        render();
+        let ticks = 0;
+        const poll = setInterval(function () {
+            render();
+            if (++ticks >= 14) clearInterval(poll);
+        }, 500);
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', start);
+    } else {
+        start();
+    }
+}
+
+function applyStoreData(data) {
+    console.log('[loadStoreData] profile data:', data);
+
+    // ── General Section ──
+    const nameInput = document.getElementById('store-name');
+    if (nameInput) nameInput.value = data.storeName || '';
+    const categorySelect = document.getElementById('store-category');
+    if (categorySelect && data.category) categorySelect.value = data.category;
+    const descInput = document.getElementById('store-description');
+    if (descInput) descInput.value = data.storeDescription || '';
+    const countryInput = document.getElementById('store-country');
+    if (countryInput) countryInput.value = data.country || '';
+    const cityInput = document.getElementById('store-city');
+    if (cityInput) cityInput.value = data.city || '';
+
+    // ── Newly editable store fields ──
+    const taglineInput = document.getElementById('store-tagline');
+    if (taglineInput) taglineInput.value = data.storeTagline || '';
+    const universityInput = document.getElementById('store-university');
+    if (universityInput && data.universityAffiliation) universityInput.value = data.universityAffiliation;
+    const campusInput = document.getElementById('store-campus');
+    if (campusInput) campusInput.value = data.campus || '';
+    const hoursInput = document.getElementById('store-hours');
+    if (hoursInput && data.businessHours) hoursInput.value = data.businessHours;
+
+    // Delivery options (stored as JSON string)
+    try {
+        const opts = data.deliveryOptions ? JSON.parse(data.deliveryOptions) : [];
+        document.querySelectorAll('#store-delivery-options input[type="checkbox"]').forEach(cb => {
+            cb.checked = Array.isArray(opts) && opts.includes(cb.value);
+        });
+    } catch (e) { /* ignore malformed */ }
+
+    // ── Policies Section ──
+    const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
+    setVal('processing-time', data.processingTime);
+    setVal('return-policy', data.returnPolicy);
+    setVal('shipping-policy', data.shippingPolicy);
+    setVal('refund-policy', data.refundPolicy);
+    setVal('exchange-policy', data.exchangePolicy);
+    setVal('cancellation-policy', data.cancellationPolicy);
+
+    // ── Branding Section ──
+    const brandingForm = document.getElementById('store-branding-form');
+    const bannerImg = document.getElementById('banner-img');
+    const emptyBanner = document.getElementById('banner-empty');
+    const previewDiv = document.getElementById('banner-preview');
+    const avatarInner = document.getElementById('avatar-inner');
+
+    console.log('[loadStoreData] elements:', { bannerImg, emptyBanner, previewDiv, avatarInner });
+
+    // Store initial server values on form for reset
+    if (brandingForm) {
+        brandingForm.dataset.initialBanner = data.storeBanner || '';
+        brandingForm.dataset.initialAvatar = data.storeAvatar || '';
+    }
+
+    // Banner preview
+    if (data.storeBanner) {
+        const bannerSrc = (data.storeBanner.startsWith('data:') || data.storeBanner.startsWith('http') || data.storeBanner.startsWith('/')) ? data.storeBanner : `data:image/webp;base64,${data.storeBanner}`;
+        console.log('[loadStoreData] banner found:', bannerSrc.substring(0, 50) + '...');
+        if (bannerImg) {
+            const showPreview = () => {
+                console.log('banner onload fired - naturalWidth:', bannerImg.naturalWidth);
+                if (emptyBanner) {
+                    emptyBanner.classList.add('hidden');
+                    console.log('emptyBanner hidden class added, now:', emptyBanner.className);
+                }
+                if (previewDiv) {
+                    previewDiv.classList.remove('hidden');
+                    previewDiv.classList.add('show');
+                    console.log('previewDiv classes:', previewDiv.className, '; img src:', bannerImg.src.substring(0, 50));
+                }
+            };
+            const failPreview = () => {
+                console.error('banner failed to load - src:', data.storeBanner.substring(0, 50));
+                // Keep empty state visible, optionally show error
+            };
+            // Set handlers BEFORE src
+            bannerImg.onload = showPreview;
+            bannerImg.onerror = failPreview;
+            // If already loaded (cached), show immediately; else wait for onload
+            if (bannerImg.complete && bannerImg.naturalWidth > 0) {
+                console.log('banner already complete, showing now');
+                showPreview();
+            }
+            bannerImg.src = bannerSrc;
+        } else {
+            console.warn('bannerImg element not found');
+        }
+
+        // Also update mock banner in live preview
+        const mockBannerImg = document.getElementById('mock-banner-img');
+        const mockBannerEmpty = document.getElementById('mock-banner-empty');
+        if (mockBannerImg) {
+            mockBannerImg.src = bannerSrc;
+            mockBannerImg.classList.remove('hidden');
+        }
+        if (mockBannerEmpty) mockBannerEmpty.classList.add('hidden');
+    } else {
+        console.log('no storeBanner in data');
+        if (emptyBanner) emptyBanner.classList.remove('hidden');
+        if (previewDiv) {
+            previewDiv.classList.add('hidden');
+            previewDiv.classList.remove('show');
+        }
+        // Clear mock banner
+        const mockBannerImg = document.getElementById('mock-banner-img');
+        const mockBannerEmpty = document.getElementById('mock-banner-empty');
+        if (mockBannerImg) {
+            mockBannerImg.src = '';
+            mockBannerImg.classList.add('hidden');
+        }
+        if (mockBannerEmpty) mockBannerEmpty.classList.remove('hidden');
+    }
+
+    // Avatar preview
+    if (avatarInner) {
+        console.log('[loadStoreData] avatarInner found, storeAvatar:', data.storeAvatar ? 'present' : 'absent');
+        const avatarPreview = document.getElementById('avatar-preview');
+        const avatarEmpty = document.getElementById('avatar-empty');
+        const mockAvatar = document.getElementById('mock-avatar');
+        const mockAvatarInitials = document.getElementById('mock-avatar-initials');
+        if (data.storeAvatar) {
+            if (avatarPreview) {
+                avatarPreview.classList.add('show');
+                console.log('avatarPreview show class added, classes:', avatarPreview.className);
+            }
+            if (avatarEmpty) avatarEmpty.classList.add('hidden');
+            avatarInner.innerHTML = `<img src="${data.storeAvatar}" alt="Store avatar" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+            // Update mock avatar in live preview using background-image
+            if (mockAvatar) {
+                mockAvatar.style.backgroundImage = `url(${data.storeAvatar})`;
+                mockAvatar.classList.add('has-image');
+            }
+            if (mockAvatarInitials) mockAvatarInitials.classList.add('hidden');
+        } else {
+            if (avatarPreview) avatarPreview.classList.remove('show');
+            if (avatarEmpty) avatarEmpty.classList.remove('hidden');
+            const initials = getInitials(data.storeName || 'Store');
+            avatarInner.textContent = initials;
+            avatarInner.style.background = '';
+            // Reset mock avatar to initials
+            if (mockAvatar) {
+                mockAvatar.style.backgroundImage = '';
+                mockAvatar.classList.remove('has-image');
+            }
+            if (mockAvatarInitials) {
+                mockAvatarInitials.textContent = initials;
+                mockAvatarInitials.classList.remove('hidden');
+            }
+        }
+    } else {
+        console.warn('avatarInner element not found');
+    }
+
+    // ── Colors Section ──
+    const colorInput = document.getElementById('custom-color');
+    if (colorInput && data.storeColor) {
+        colorInput.value = data.storeColor;
+        // Try to find matching preset; if found, click it (which updates UI via updateColorUI)
+        // If not found (custom color), apply directly
+        const matchingPreset = Array.from(document.querySelectorAll('.color-preset'))
+            .find(p => p.dataset.color.toLowerCase() === data.storeColor.toLowerCase());
+        if (matchingPreset) {
+            matchingPreset.click();
+        } else {
+            // Custom color not in presets — apply directly
+            currentColor = data.storeColor;
+            updateColorUI(data.storeColor);
+            document.querySelectorAll('.color-preset').forEach(p => p.classList.remove('active'));
+        }
+    }
+
+    // Fulfillment fields
+    const deliveryFeeEl = document.getElementById('delivery-fee');
+    const pickupAddressEl = document.getElementById('pickup-address');
+    if (deliveryFeeEl) deliveryFeeEl.value = data.deliveryFee != null ? data.deliveryFee : '';
+    if (pickupAddressEl) pickupAddressEl.value = data.pickupAddress || '';
+
+    // Initialize previews
+    updateStoreNamePreview();
+    updateStoreBioPreview();
+    updateStoreTaglinePreview();
+    updateStoreCategoryPreview();
+    updateFulfillmentPreview();
+
+    // Cache sellerId for the View Store button
+    if (data.sellerId) {
+        localStorage.setItem('seller_id', data.sellerId);
+        const viewStoreBtn = document.getElementById('view-store-btn');
+        if (viewStoreBtn) {
+            viewStoreBtn.href = `../../public/store/store.html?sellerId=${data.sellerId}`;
+        }
+    }
+
+    // Capture initial form state
+    const forms = ['store-general-form', 'store-branding-form', 'store-colors-form', 'store-policies-form'];
+    forms.forEach(formId => {
+        const form = document.getElementById(formId);
+        if (form) captureFormState(form);
+    });
+
+    // Reset dirty flags
+    if (window.formStates) {
+        Object.values(window.formStates).forEach(state => {
+            if (state && state.original !== undefined) state.original = true;
+        });
+    }
+
+    // Re-evaluate banner visibility now that baseline is established
+    formBaselineReady = true;
+    updateDirtyFlags();
 }
 
 
@@ -876,6 +954,8 @@ function initColorScheme() {
     const storeIcon = document.querySelector('.preview-store-icon');
     const contrastIndicator = document.getElementById('contrast-indicator');
     const contrastHint = document.getElementById('contrast-hint');
+
+    if (!presetsContainer) return;
 
     currentColor = defaultColor;
 
@@ -1894,3 +1974,99 @@ style.textContent = `
     .spin { animation: spin 1s linear infinite; }
 `;
 document.head.appendChild(style);
+
+// ── Bootstrap ──
+let _umxBootstrapQueued = false;
+function bootstrap() {
+    if (_umxBootstrapQueued) return;
+    _umxBootstrapQueued = true;
+    Promise.resolve().then(function () {
+        _umxBootstrapQueued = false;
+        initPage();
+        // Reset scroll so the editor always returns to a clean, predictable state
+        window.scrollTo(0, 0);
+        const editorBody = document.querySelector('.editor-body');
+        if (editorBody) editorBody.scrollTop = 0;
+    });
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bootstrap);
+} else {
+    bootstrap();
+}
+
+(function watchForReturn() {
+    const CHECK_MS = 80;
+    const MAX_CHECKS = 25;
+    let checks = 0;
+    let timer = null;
+
+    function tryInit() {
+        if (document.getElementById('store-name') || document.getElementById('store-category')) {
+            clearInterval(timer);
+            timer = null;
+            bootstrap();
+            return;
+        }
+        if (++checks >= MAX_CHECKS) {
+            clearInterval(timer);
+            timer = null;
+        }
+    }
+
+    timer = setInterval(tryInit, CHECK_MS);
+    tryInit();
+
+    window.addEventListener('shell:navigated', function () {
+        if (!timer) {
+            setTimeout(tryInit, 100);
+        }
+    });
+
+    // ── Inline-script ports (originally at bottom of customize-store.html)
+    //   Shell SPA nav drops inline scripts during fetch/parse/innerHTML swap.
+    //   Moving these here so they live in the re-injected #page-script.
+    // ───────────────────────────────────────────────────────────────────
+
+    // Toast keyframes — inject once per document
+    if (!window.__toastStylesInjected) {
+        const _s = document.createElement('style');
+        _s.textContent = `
+            @keyframes toastIn  { from{opacity:0;transform:translateY(12px) scale(0.96)} to{opacity:1;transform:translateY(0) scale(1)} }
+            @keyframes toastOut { from{opacity:1} to{opacity:0;transform:translateY(6px)} }
+        `;
+        document.head.appendChild(_s);
+        window.__toastStylesInjected = true;
+    }
+
+    // Shared Toast helper (matches customize-profile.html)
+    window.Toast = window.Toast || {
+        show: function (message, type, duration) {
+            type = type || 'success';
+            duration = duration || 3500;
+            const toast = document.createElement('div');
+            toast.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:9999;background:' + (type === 'error' ? '#ef4444' : 'var(--bg-2)') + ';color:' + (type === 'error' ? '#fff' : 'var(--text)') + ';border:1px solid ' + (type === 'error' ? 'transparent' : 'var(--border)') + ';border-radius:var(--radius);padding:0.8rem 1.1rem;display:flex;align-items:center;gap:0.6rem;font-family:Quicksand,sans-serif;font-weight:600;font-size:0.85rem;box-shadow:0 8px 32px rgba(0,0,0,0.35);max-width:340px;animation:toastIn 0.3s cubic-bezier(0.4,0,0.2,1);';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(function () {
+                toast.style.animation = 'toastOut 0.25s ease forwards';
+                setTimeout(function () { toast.remove(); }, 250);
+            }, duration);
+        }
+    };
+
+    // Store name → preview chrome URL slug sync (ported from inline script)
+    (function syncPreviewSlug() {
+        const nameInput = document.getElementById('store-name');
+        const slugEl    = document.getElementById('preview-store-slug');
+        if (!nameInput || !slugEl) return;
+        function update() {
+            slugEl.textContent = nameInput.value.trim()
+                .toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') || 'your-store';
+        }
+        nameInput.addEventListener('input', update);
+        update();
+    })();
+})();
+})();

@@ -123,6 +123,7 @@
 
                 <!-- CATEGORY TABS -->
                 <div class="store-filter-tabs" id="store-filter-tabs">
+                    <div class="store-filter-indicator" id="store-filter-indicator"></div>
                     <button class="store-tab active" data-filter="all">All <span class="tab-num" id="tab-count-all">0</span></button>
                 </div>
 
@@ -257,6 +258,17 @@
             </div>
         </div>
     </section>
+
+    <!-- STICKY CONTACT BUTTON -->
+    <div class="sticky-contact hidden" id="sticky-contact">
+        <button class="sticky-contact-btn" id="sticky-contact-btn" type="button" aria-label="Contact seller" aria-expanded="false" aria-controls="sticky-contact-menu">
+            <i data-lucide="message-circle"></i>
+        </button>
+        <div class="sticky-contact-menu hidden" id="sticky-contact-menu" role="menu">
+            <div class="sticky-contact-header">Contact Seller</div>
+            <div class="sticky-contact-links" id="sticky-contact-links"></div>
+        </div>
+    </div>
 
     <!-- FOOTER -->
     <footer class="footer">

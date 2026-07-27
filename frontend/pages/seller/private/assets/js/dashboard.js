@@ -1,4 +1,5 @@
-const API_BASE = (window.APP_CONFIG && window.APP_CONFIG.BACKEND_URL) || 'http://localhost:5000';
+var API_BASE = (window.APP_CONFIG && window.APP_CONFIG.BACKEND_URL) || 'http://localhost:5000';
+(function () {
 
 // ── Auth helpers ───────────────────────────────
 function getAuthToken() {
@@ -94,7 +95,7 @@ async function fetchDashboard(skipLoading = false) {
     if (!skipLoading) animateCounters();
     _lastStats = json.data.stats;
     _dashSig = dashboardSignature(json.data);
-    updateGettingStarted(json.data);
+    updateOnboarding(json.data);
     return json.data;
   } catch (err) {
     console.error('Dashboard fetch error:', err);
@@ -116,7 +117,7 @@ function renderDashboard(data, skipLoading = false) {
   if (skipLoading) lucide.createIcons();
 }
 
-// ── Getting-started panel (new sellers) ─────────
+// ── Onboarding panel (new sellers) ─────────
 function dashboardSignature(data) {
   try {
     return JSON.stringify({
@@ -131,41 +132,49 @@ function dashboardSignature(data) {
   }
 }
 
-function updateGettingStarted(data) {
-  const panel = document.getElementById('getting-started');
-  if (!panel) return;
+function updateOnboarding(data) {
+    const card = document.getElementById('onboarding-card');
+    if (!card) return;
 
-  const topProducts = data.topProducts || [];
-  const isNew = topProducts.length === 0;
-  panel.hidden = !isNew;
-  if (!isNew) return;
+    const topProducts = data.topProducts || [];
+    const isNew = topProducts.length === 0;
+    card.hidden = !isNew;
+    if (!isNew) return;
 
-  const profile = data.profile || {};
-  const steps = {
-    verify: !!(data.verified || profile.verified),
-    product: topProducts.length > 0 || (data.stats && data.stats.products > 0),
-    branding: !!(profile.storeAvatar || profile.storeBanner),
-    share: false
-  };
+    const profile = data.profile || {};
+    const steps = {
+        profile: !!(profile.firstName || profile.lastName || profile.bio),
+        product: topProducts.length > 0 || (data.stats && data.stats.products > 0),
+        branding: !!(profile.storeAvatar || profile.storeBanner),
+        share: false
+    };
 
-  panel.querySelectorAll('.gs-step').forEach((li) => {
-    li.classList.toggle('is-done', !!steps[li.dataset.step]);
-  });
+    const stepEls = card.querySelectorAll('[data-step]');
+    stepEls.forEach((el) => {
+        const key = el.dataset.step;
+        const check = el.querySelector('.step-check');
+        const isDone = !!steps[key];
+        if (check) {
+            check.style.background = isDone ? 'var(--os-success)' : 'transparent';
+            check.style.borderColor = isDone ? 'var(--os-success)' : 'var(--os-border)';
+            const svg = check.querySelector('svg');
+            if (svg) svg.style.opacity = isDone ? '1' : '0';
+        }
+    });
 
-  // Progress bar + label
-  const total = panel.querySelectorAll('.gs-step').length;
-  const done = panel.querySelectorAll('.gs-step.is-done').length;
-  const bar = document.getElementById('gs-progress-bar');
-  const label = document.getElementById('gs-progress-label');
-  if (bar) bar.style.width = (total ? (done / total) * 100 : 0) + '%';
-  if (label) {
-    label.textContent = done === total
-      ? "You're all set — your store is ready to sell!"
-      : `${done} of ${total} setup steps complete`;
-  }
+    const total = stepEls.length;
+    const done = Array.from(stepEls).filter((el) => !!steps[el.dataset.step]).length;
+    const bar = document.getElementById('onboarding-progress');
+    const label = document.getElementById('onboarding-label');
+    if (bar) bar.style.width = (total ? (done / total) * 100 : 0) + '%';
+    if (label) {
+        label.textContent = done === total
+            ? "You're all set — your store is ready to sell!"
+            : `${done} of ${total} setup steps complete`;
+    }
 
-  const dismiss = document.getElementById('gs-dismiss');
-  if (dismiss) dismiss.onclick = () => { panel.hidden = true; };
+    const dismiss = document.getElementById('onboarding-dismiss');
+    if (dismiss) dismiss.onclick = () => { card.hidden = true; };
 }
 
 function showGsToast(message) {
@@ -190,7 +199,7 @@ function renderStats(stats) {
   if (revenueTotalEl) revenueTotalEl.textContent = formatCurrency(stats.revenue);
   if (ordersEl) ordersEl.textContent = stats.orders.toLocaleString();
   if (pendingEl) pendingEl.textContent = stats.pending;
-  if (ratingEl) ratingEl.textContent = `${stats.rating} ★`;
+  if (ratingEl) ratingEl.textContent = stats.rating ? `${stats.rating} ★` : '—';
 
   // Low-stock banner
   if (stats.lowStock > 0) {
@@ -281,7 +290,7 @@ function renderTopProducts(products) {
         <div class="empty-state-icon"><i data-lucide="package"></i></div>
         <h3>No products yet</h3>
         <p>Add your first product to start selling</p>
-        <a href="../products/add-product.html" class="btn btn-primary btn-sm">Add Product</a>
+        <a href="../products/add-product.html" class="os-btn os-btn-accent os-btn-sm">Add Product</a>
       </div>
     `;
     lucide.createIcons();
@@ -345,12 +354,12 @@ function renderAreaChart(data, labels) {
     <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" class="area-svg">
       <defs>
         <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="var(--primary)" stop-opacity="0.30"/>
-          <stop offset="100%" stop-color="var(--primary)" stop-opacity="0"/>
+          <stop offset="0%" stop-color="var(--os-accent)" stop-opacity="0.25"/>
+          <stop offset="100%" stop-color="var(--os-accent)" stop-opacity="0"/>
         </linearGradient>
       </defs>
       <path d="${area}" fill="url(#areaGrad)"/>
-      <path d="${line}" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+      <path d="${line}" fill="none" stroke="var(--os-accent)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
     </svg>`;
 
   if (lab && labels) {
@@ -415,6 +424,7 @@ function renderStoreHealth(data) {
   const r = 26, c = 2 * Math.PI * r;
   circle.style.strokeDasharray = c.toFixed(2);
   circle.style.strokeDashoffset = (c * (1 - pct / 100)).toFixed(2);
+  circle.style.stroke = 'var(--os-accent)';
 
   if (pctEl) pctEl.textContent = pct + '%';
   if (labelEl) labelEl.textContent = pct === 100
@@ -628,7 +638,7 @@ async function liveFetch() {
     renderDashboard(data, true);
     animateCounters();
     _lastStats = data.stats;
-    updateGettingStarted(data);
+    updateOnboarding(data);
   } catch {}
 
   _isFetching = false;
@@ -656,55 +666,61 @@ function stopDashboardLiveSync() {
 }
 
 window.addEventListener('beforeunload', stopDashboardLiveSync);
-const origPushState = history.pushState;
+
+// Register the history.pushState/replaceState hooks so that navigating
+// between private pages restarts dashboard polling against the new <main>.
+const _origPushState = history.pushState;
+const _origReplaceState = history.replaceState;
 history.pushState = function () {
-  origPushState.apply(this, arguments);
-  stopDashboardLiveSync();
-  setTimeout(startDashboardLiveSync, 0);
+    _origPushState.apply(this, arguments);
+    stopDashboardLiveSync();
+    setTimeout(startDashboardLiveSync, 0);
 };
-const origReplaceState = history.replaceState;
 history.replaceState = function () {
-  origReplaceState.apply(this, arguments);
-  stopDashboardLiveSync();
-  setTimeout(startDashboardLiveSync, 0);
+    _origReplaceState.apply(this, arguments);
+    stopDashboardLiveSync();
+    setTimeout(startDashboardLiveSync, 0);
 };
 
-
-// ── Post-registration welcome modal ────────────
+// ── Post-registration welcome toast ────────────
 function maybeShowWelcome() {
   if (localStorage.getItem('umx_show_welcome') !== '1') return;
   localStorage.removeItem('umx_show_welcome');
 
-  const overlay = document.getElementById('welcome-overlay');
-  if (!overlay) return;
+  const toast = document.getElementById('welcome-toast');
+  if (!toast) return;
 
-  const close = () => { overlay.hidden = true; };
-  const c = document.getElementById('welcome-close');
-  const e = document.getElementById('welcome-explore');
-  if (c) c.addEventListener('click', close);
-  if (e) e.addEventListener('click', close);
-  overlay.addEventListener('click', (ev) => { if (ev.target === overlay) close(); });
-  overlay.hidden = false;
+  const close = () => { toast.style.display = 'none'; };
+  const closeBtn = document.getElementById('welcome-toast-close');
+  if (closeBtn) closeBtn.addEventListener('click', close);
+  toast.style.display = 'flex';
+
+  setTimeout(close, 8000);
 }
 
 // ── Init ───────────────────────────────────────
+let _visibilityHandler = null;
+let _onlineHandler = null;
+
 function init() {
   lucide.createIcons();
   fetchDashboard();
   startDashboardLiveSync();
   maybeShowWelcome();
 
-  document.addEventListener('visibilitychange', () => {
+  _visibilityHandler = function () {
     if (document.visibilityState === 'visible') {
       stopDashboardLiveSync();
       fetchDashboard().then(() => startDashboardLiveSync());
     }
-  });
+  };
+  document.addEventListener('visibilitychange', _visibilityHandler);
 
-  window.addEventListener('online', () => {
+  _onlineHandler = function () {
     stopDashboardLiveSync();
     fetchDashboard().then(() => startDashboardLiveSync());
-  });
+  };
+  window.addEventListener('online', _onlineHandler);
 }
 
 if (document.readyState === 'loading') {
@@ -718,3 +734,19 @@ window.loadDashboard = window.reloadDashboard = () => {
   stopDashboardLiveSync();
   fetchDashboard().then(() => startDashboardLiveSync());
 };
+
+// Allow the shell to cleanly tear this page down before navigating away.
+window.__umxTeardown = function () {
+  stopDashboardLiveSync();
+  if (_visibilityHandler) {
+    document.removeEventListener('visibilitychange', _visibilityHandler);
+    _visibilityHandler = null;
+  }
+  if (_onlineHandler) {
+    window.removeEventListener('online', _onlineHandler);
+    _onlineHandler = null;
+  }
+  history.pushState = _origPushState;
+  history.replaceState = _origReplaceState;
+};
+})();

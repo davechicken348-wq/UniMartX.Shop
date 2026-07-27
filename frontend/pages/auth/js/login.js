@@ -122,7 +122,7 @@ const alertError = document.getElementById('alert-error');
 const errorText = document.getElementById('error-text');
 const rememberCheckbox = document.getElementById('remember');
 
-const API_BASE = (window.APP_CONFIG && window.APP_CONFIG.BACKEND_URL) || 'http://localhost:5000';
+var API_BASE = (window.APP_CONFIG && window.APP_CONFIG.BACKEND_URL) || 'http://localhost:5000';
 const REMEMBER_ME_EXPIRY = 30 * 24 * 60 * 60 * 1000;
 
 function decodeJwt(token) {

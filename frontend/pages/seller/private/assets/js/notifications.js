@@ -1,6 +1,7 @@
 // SELLER NOTIFICATIONS PAGE — JavaScript
+(function () {
 
-const API_BASE = (window.APP_CONFIG && window.APP_CONFIG.BACKEND_URL) || 'http://localhost:5000';
+var API_BASE = (window.APP_CONFIG && window.APP_CONFIG.BACKEND_URL) || 'http://localhost:5000';
 const PAGE_SIZE = 10;
 
 let offset = 0;
@@ -122,6 +123,12 @@ history.replaceState = function () {
     _origReplaceState.apply(this, arguments);
     stopNotificationsLiveSync();
     setTimeout(startNotificationsLiveSync, 0);
+};
+
+window.__umxTeardown = function () {
+    stopNotificationsLiveSync();
+    history.pushState = _origPushState;
+    history.replaceState = _origReplaceState;
 };
 
 document.addEventListener('visibilitychange', () => {
@@ -333,7 +340,7 @@ function formatTime(iso) {
 }
 
 // ── Init ──
-document.addEventListener('DOMContentLoaded', async () => {
+async function initPage() {
     initFilters();
     initMarkAllRead();
     initLoadMore();
@@ -345,4 +352,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         _lastKnownServerCount = countJson.data.total ?? serverItems.length;
     }
     startNotificationsLiveSync();
-});
+}
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initPage);
+else initPage();
+})();

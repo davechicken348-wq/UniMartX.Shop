@@ -57,13 +57,14 @@ export const registerSeller = async (req: Request, res: Response): Promise<void>
     const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
 
     // Determine business type and university affiliation based on seller type
-    let businessType = '';
+    let businessType = 'individual';
     let universityAffiliation: string | null = null;
 
-    if (typeData.sellerType === 'campus') {
+    const sellerType = typeData.sellerType || 'campus';
+    if (sellerType === 'campus') {
       businessType = 'campus_seller';
       universityAffiliation = typeData.university || null;
-    } else if (typeData.sellerType === 'independent') {
+    } else if (sellerType === 'independent') {
       businessType = typeData.businessType || 'individual';
       universityAffiliation = null;
     }
@@ -97,6 +98,7 @@ export const registerSeller = async (req: Request, res: Response): Promise<void>
           deliveryOptions: storeData.deliveryOptions ? JSON.stringify(storeData.deliveryOptions) : null,
           businessHours: storeData.businessHours || null,
           storeColor: storeData.accentColor || null,
+          storeTags: storeData.storeTags || [],
         },
       });
 

@@ -65,13 +65,13 @@ export const registerSellerSchema = z.object({
 });
 
 export const sellerTypeSchema = z.object({
-  sellerType: z.enum(['campus', 'independent']),
-  university: z.string().optional(),
-  studentId: z.string().optional(),
-  businessType: z.enum(['individual', 'small-business']).optional(),
-  currentPlatform: z.enum(['whatsapp', 'instagram', 'facebook', 'physical', 'other', 'none']).optional(),
-  studentEmail: z.string().email().optional().or(z.literal('')),
-  verificationMethod: z.enum(['student_id', 'student_email', 'both']).optional(),
+  sellerType: z.enum(['campus', 'independent']).default('campus'),
+  university: z.string().optional().or(z.literal('')).default(''),
+  studentId: z.string().optional().or(z.literal('')).default(''),
+  businessType: z.enum(['individual', 'small-business']).optional().or(z.literal('')).default(''),
+  currentPlatform: z.enum(['whatsapp', 'instagram', 'facebook', 'physical', 'other', 'none']).optional().or(z.literal('')).default('none'),
+  studentEmail: z.string().email().optional().or(z.literal('')).default(''),
+  verificationMethod: z.enum(['student_id', 'student_email', 'both']).optional().or(z.literal('')).default(''),
 });
 
 export const storeInfoSchema = z.object({
@@ -92,22 +92,21 @@ export const storeInfoSchema = z.object({
   ]),
   storeDescription: z
     .string()
-    .min(20, 'Description must be at least 20 characters')
-    .max(300, 'Description must be less than 300 characters'),
-  country: z
-    .string()
-    .min(2, 'Please enter a valid country name'),
-  city: z
-    .string()
-    .min(2, 'Please enter a valid city name'),
-  storeTagline: z.string().max(80).optional().or(z.literal('')),
-  accentColor: z.string().regex(/^#[0-9a-fA-F]{6}$/).optional().or(z.literal('')),
+    .max(300, 'Description must be less than 300 characters')
+    .optional()
+    .or(z.literal(''))
+    .default(''),
+  country: z.string().min(2, 'Please enter a valid country name').optional().or(z.literal('')).default('Ghana'),
+  city: z.string().min(2, 'Please enter a valid city name').optional().or(z.literal('')).default(''),
+  storeTagline: z.string().max(80).optional().or(z.literal('')).default(''),
+  accentColor: z.string().regex(/^#[0-9a-fA-F]{6}$/).optional().or(z.literal('')).default(''),
   storeLogo: z.string().startsWith('data:image/').optional(),
   storeBanner: z.string().startsWith('data:image/').optional(),
-  campus: z.string().max(120).optional().or(z.literal('')),
-  pickupLocation: z.string().max(160).optional().or(z.literal('')),
-  deliveryOptions: z.array(z.string()).optional(),
-  businessHours: z.string().max(80).optional().or(z.literal('')),
+  campus: z.string().max(120).optional().or(z.literal('')).default(''),
+  pickupLocation: z.string().max(160).optional().or(z.literal('')).default(''),
+  deliveryOptions: z.array(z.string()).optional().default([]),
+  businessHours: z.string().max(80).optional().or(z.literal('')).default(''),
+  storeTags: z.array(z.string().max(40)).max(12).optional().default([]),
 });
 
 export const forgotPasswordSchema = z.object({

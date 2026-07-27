@@ -4,19 +4,14 @@ const hamburger = document.getElementById('nav-hamburger');
 const mobileNav = document.getElementById('nav-mobile');
 if (hamburger && mobileNav) {
     hamburger.addEventListener('click', () => {
-        const isOpen = mobileNav.classList.toggle('open');
+        mobileNav.classList.toggle('open');
+        const isOpen = mobileNav.classList.contains('open');
         hamburger.setAttribute('aria-expanded', String(isOpen));
-        hamburger.innerHTML = `<i data-lucide="${isOpen ? 'x' : 'menu'}"></i>`;
+        hamburger.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
+        hamburger.innerHTML = `<i data-lucide="${isOpen ? 'x' : 'menu'}" aria-hidden="true"></i>`;
         lucide.createIcons();
     });
 }
-
-window.addEventListener('scroll', () => {
-    const header = document.getElementById('navbar');
-    if (header) {
-        header.style.boxShadow = window.scrollY > 10 ? '0 4px 24px rgba(0,0,0,0.4)' : 'none';
-    }
-});
 
 const revealEls = document.querySelectorAll('.reveal');
 

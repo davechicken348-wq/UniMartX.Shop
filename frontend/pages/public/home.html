@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UniMartX — The Marketplace Built for Student Entrepreneurs</title>
-    <meta name="description" content="Discover student-owned businesses, shop confidently from your peers, and launch your own store on UniMartX — Ghana's growing student marketplace.">
+    <title>UniMartX — Build Your Student Business Online</title>
+    <meta name="description" content="Create, manage, and grow your student business online. No website required. Start selling on campus today.">
     <link rel="canonical" href="https://unimartx.com/">
-    <meta property="og:title" content="UniMartX — The Marketplace Built for Student Entrepreneurs">
-    <meta property="og:description" content="Discover student-owned businesses, shop from your peers, and build a business of your own.">
+    <meta property="og:title" content="UniMartX — Build Your Student Business Online">
+    <meta property="og:description" content="Create, manage, and grow your student business online. No website required.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://unimartx.com/">
     <meta property="og:image" content="https://unimartx.com/assets/og-home.png">
@@ -17,6 +17,7 @@
     <link rel="preconnect" href="https://api.unimartx.com">
     <link rel="stylesheet" href="assets/css/public.css">
     <link rel="stylesheet" href="assets/css/home.css">
+    <link rel="stylesheet" href="assets/css/home-illustrations.css">
 </head>
 <body>
     <a href="#main-content" class="visually-hidden">Skip to main content</a>
@@ -27,38 +28,66 @@
     <nav class="navbar" id="navbar">
         <div class="nav-inner">
             <a href="home.html" class="nav-logo">Unimart<span>X</span></a>
-            <form class="nav-search" action="shop/shop.html" method="get">
-                <i data-lucide="search"></i>
-                <input type="search" name="search" placeholder="Search products, stores, categories…" aria-label="Search">
-                <button type="submit" class="search-btn">Search</button>
-            </form>
+            <div class="nav-links">
+                <div class="nav-dropdown">
+                    <a href="shop/shop.html" class="nav-dropdown-toggle">Shop <i data-lucide="chevron-down" aria-hidden="true"></i></a>
+                    <div class="nav-dropdown-menu">
+                        <a href="shop/shop.html">Browse Products</a>
+                        <a href="shop/cart.html">Your Cart</a>
+                    </div>
+                </div>
+                <div class="nav-dropdown">
+                    <a href="stores/stores.html" class="nav-dropdown-toggle">Stores <i data-lucide="chevron-down" aria-hidden="true"></i></a>
+                    <div class="nav-dropdown-menu">
+                        <a href="stores/stores.html">Browse Shops</a>
+                    </div>
+                </div>
+                <div class="nav-dropdown">
+                    <a href="info/about.html" class="nav-dropdown-toggle">Info <i data-lucide="chevron-down" aria-hidden="true"></i></a>
+                    <div class="nav-dropdown-menu">
+                        <a href="info/about.html">About</a>
+                        <a href="info/faq.html">FAQ</a>
+                        <a href="contact/contact.html">Contact</a>
+                        <a href="info/terms.html">Terms</a>
+                        <a href="info/privacy.html">Privacy</a>
+                        <a href="info/seller-policy.html">Seller Policy</a>
+                    </div>
+                </div>
+            </div>
             <div class="nav-actions">
-                <a href="shop/cart.html" class="nav-icon-btn" aria-label="Cart">
-                    <i data-lucide="shopping-cart"></i>
-                    <span class="badge" id="cart-count">0</span>
-                </a>
                 <a href="../auth/login.html" class="nav-btn nav-btn-ghost">Log In</a>
-                <a href="../auth/seller/register.html" class="nav-btn nav-btn-primary">Start Selling</a>
+                <a href="../auth/seller/register.html" class="nav-btn nav-btn-primary">Create My Store</a>
             </div>
             <button class="nav-hamburger" id="nav-hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="nav-mobile">
                 <i data-lucide="menu" aria-hidden="true"></i>
             </button>
         </div>
         <div class="nav-mobile" id="nav-mobile">
-            <div class="nav-mobile-search">
-                <i data-lucide="search"></i>
-                <input type="search" placeholder="Search…" aria-label="Search">
+            <div class="nav-mobile-group">
+                <span class="nav-mobile-group-label">Shop</span>
+                <a href="shop/shop.html">Browse Products</a>
+                <a href="shop/cart.html">Your Cart</a>
             </div>
-            <a href="shop/shop.html">Browse Products</a>
-            <a href="stores/stores.html">Student Shops</a>
-            <a href="shop/cart.html">Cart</a>
+            <div class="nav-mobile-group">
+                <span class="nav-mobile-group-label">Stores</span>
+                <a href="stores/stores.html">Browse Shops</a>
+            </div>
+            <div class="nav-mobile-group">
+                <span class="nav-mobile-group-label">Info</span>
+                <a href="info/about.html">About</a>
+                <a href="info/faq.html">FAQ</a>
+                <a href="contact/contact.html">Contact</a>
+                <a href="info/terms.html">Terms</a>
+                <a href="info/privacy.html">Privacy</a>
+                <a href="info/seller-policy.html">Seller Policy</a>
+            </div>
             <a href="../auth/login.html">Log In</a>
-            <a href="../auth/seller/register.html" class="nav-btn nav-btn-primary">Start Selling</a>
+            <a href="../auth/seller/register.html" class="nav-btn nav-btn-primary">Create My Store</a>
         </div>
     </nav>
 
     <!-- ═══════════════════════════════════════════
-         HERO — opportunity + living marketplace
+         HERO — Business creation focus
     ═══════════════════════════════════════════ -->
     <section class="hero" id="main-content">
         <div class="hero-bg"></div>
@@ -67,248 +96,286 @@
             <div class="hero-content">
                 <div class="hero-badge reveal">
                     <i data-lucide="sparkles"></i>
-                    Ghana's student business ecosystem
+                    The Business OS for Student Entrepreneurs
                 </div>
                 <h1 class="hero-title reveal">
-                    The Marketplace Built for<br>
-                    <span class="hero-title-accent">Student Entrepreneurs</span>
+                    Build Your Online Store.<br>
+                    <span class="hero-title-accent">Grow Your Business.</span>
                 </h1>
                 <p class="hero-sub reveal">
-                    Discover amazing businesses run by university students, shop confidently from your peers,
-                    and launch a store of your own — no website required.
+                    UnimartX gives you everything you need to create, manage, and grow a real online business — no website, no coding, no hassle. Just your products, your brand, and your customers.
                 </p>
 
-                <form class="hero-search reveal" action="shop/shop.html" method="get" role="search">
-                    <i data-lucide="search"></i>
-                    <input type="search" name="search" id="hero-search-input" placeholder="Search products, stores, or categories..." aria-label="Search products, stores, or categories">
-                    <button type="submit" class="search-btn">Browse</button>
-                </form>
-                <div class="hero-suggestions reveal" aria-label="Popular searches">
-                    <span class="hero-suggest-label">Popular:</span>
-                    <a href="shop/shop.html?search=Electronics" class="hero-suggest">Electronics</a>
-                    <a href="shop/shop.html?search=Fashion" class="hero-suggest">Fashion</a>
-                    <a href="shop/shop.html?search=Food" class="hero-suggest">Food</a>
-                    <a href="shop/shop.html?search=Books" class="hero-suggest">Books</a>
-                    <a href="shop/shop.html?search=Hostels" class="hero-suggest">Hostels</a>
-                    <a href="shop/shop.html?search=Services" class="hero-suggest">Services</a>
-                </div>
-
                 <div class="hero-ctas reveal">
-                    <a href="shop/shop.html" class="btn btn-primary btn-lg">
-                        <i data-lucide="shopping-bag"></i> Browse Products
+                    <a href="../auth/seller/register.html" class="btn btn-primary btn-lg">
+                        <i data-lucide="rocket"></i> Create My Store
                     </a>
-                    <a href="../auth/seller/register.html" class="btn btn-ghost btn-lg">
-                        <i data-lucide="store"></i> Open My Store
+                    <a href="stores/stores.html" class="btn btn-ghost btn-lg">
+                        <i data-lucide="compass"></i> Explore Student Businesses
                     </a>
                 </div>
-            </div>
-
-            <!-- Living marketplace showcase -->
-            <div class="hero-showcase reveal delay-200" aria-hidden="true">
-                <div class="hero-market" id="hero-market"></div>
-                <div class="hero-activity">
-                    <span class="hero-activity-dot"></span>
-                    <span id="hero-activity-text">A student just opened a new store</span>
+                <div class="hero-features reveal">
+                    <div class="hero-feature-item">
+                        <i data-lucide="check-circle"></i> Set up in minutes
+                    </div>
+                    <div class="hero-feature-item">
+                        <i data-lucide="check-circle"></i> No coding needed
+                    </div>
+                    <div class="hero-feature-item">
+                        <i data-lucide="check-circle"></i> Free to start
+                    </div>
                 </div>
             </div>
+
+            <!-- Illustration showcase -->
+            <div class="hero-showcase reveal delay-200 illu-entrance" id="hero-illustration" aria-hidden="true"></div>
         </div>
     </section>
 
     <!-- ═══════════════════════════════════════════
-         SECTION 1 — FEATURED STUDENT BUSINESSES
+         SECTION 1 — EVERYTHING YOUR BUSINESS NEEDS
     ═══════════════════════════════════════════ -->
-    <section class="section featured-section reveal" id="featured-section">
+    <section class="section features-section reveal" id="features-section">
         <div class="container">
-            <div class="section-header">
-                <div>
-                    <span class="eyebrow">Discover businesses</span>
-                    <h2>Featured Student Businesses</h2>
-                    <p class="section-sub">Student-run stores our community is loving right now.</p>
+            <div class="features-layout">
+                <div class="features-header reveal illu-entrance">
+                    <div class="section-header centered">
+                        <div>
+                            <span class="eyebrow">Your Business HQ</span>
+                            <h2>Your Complete Business Platform</h2>
+                            <p class="section-sub">Everything you need to run, manage, and grow your student business — in one place.</p>
+                        </div>
+                    </div>
                 </div>
-                <a href="stores/stores.html" class="see-all">Browse all shops <i data-lucide="arrow-right"></i></a>
+                <div class="features-grid" id="features-grid">
+                <div class="feature-card reveal delay-100">
+                    <div class="feature-icon"><i data-lucide="store"></i></div>
+                    <h3>Branded Store</h3>
+                    <p>Create a professional storefront with your logo, banner, and brand colors.</p>
+                </div>
+                <div class="feature-card reveal delay-200">
+                    <div class="feature-icon"><i data-lucide="package-plus"></i></div>
+                    <h3>Product Management</h3>
+                    <p>Add products in minutes with our guided wizard. Images, pricing, inventory — all covered.</p>
+                </div>
+                <div class="feature-card reveal delay-300">
+                    <div class="feature-icon"><i data-lucide="shopping-bag"></i></div>
+                    <h3>Order Management</h3>
+                    <p>Track orders, update statuses, and keep buyers informed — all from your dashboard.</p>
+                </div>
+                <div class="feature-card reveal delay-100">
+                    <div class="feature-icon"><i data-lucide="bar-chart-3"></i></div>
+                    <h3>Business Analytics</h3>
+                    <p>Understand your sales, traffic, and customer behavior to make smarter decisions.</p>
+                </div>
+                <div class="feature-card reveal delay-200">
+                    <div class="feature-icon"><i data-lucide="users"></i></div>
+                    <h3>Customer Relationships</h3>
+                    <p>Build a following, engage with buyers, and turn one-time shoppers into loyal fans.</p>
+                </div>
+                <div class="feature-card reveal delay-300">
+                    <div class="feature-icon"><i data-lucide="megaphone"></i></div>
+                    <h3>Marketing Tools</h3>
+                    <p>Share your store, run promotions, and grow your reach across campus.</p>
+                </div>
             </div>
-            <div class="featured-business-grid" id="featured-business-grid"></div>
+            </div>
         </div>
     </section>
 
     <!-- ═══════════════════════════════════════════
-         SECTION 2 — BROWSE BUSINESSES BY CATEGORY
+         SECTION 2 — INTERACTIVE TUTORIAL (replaces How It Works)
     ═══════════════════════════════════════════ -->
-    <section class="section category-section reveal" id="category-section">
-        <div class="container">
-            <div class="section-header centered">
-                <div>
-                    <span class="eyebrow">Find your niche</span>
-                    <h2>Browse Businesses by Category</h2>
-                    <p>Jump straight into a community of student sellers in what you love.</p>
-                </div>
-            </div>
-            <div class="category-grid" id="category-grid"></div>
-        </div>
-    </section>
-
-    <!-- ═══════════════════════════════════════════
-         SECTION 3 — TRENDING PRODUCTS
-    ═══════════════════════════════════════════ -->
-    <section class="section products-section reveal" id="products-section">
-        <div class="container">
-            <div class="section-header">
-                <div>
-                    <span class="eyebrow">Now shopping</span>
-                    <h2>Trending Products</h2>
-                    <p class="section-sub">Fresh finds from student shops across campus.</p>
-                </div>
-                <a href="shop/shop.html" class="see-all">Browse all <i data-lucide="arrow-right"></i></a>
-            </div>
-            <div class="product-tabs" id="product-tabs" role="tablist">
-                <button class="product-tab active" data-sort="trending" role="tab">Trending</button>
-                <button class="product-tab" data-sort="newest" role="tab">Recently Added</button>
-                <button class="product-tab" data-sort="popular" role="tab">Best Sellers</button>
-                <button class="product-tab" data-sort="recommended" role="tab">Recommended</button>
-            </div>
-            <div class="products-grid" id="products-grid"></div>
-        </div>
-    </section>
-
-    <!-- ═══════════════════════════════════════════
-         SECTION 4 — STUDENT ENTREPRENEUR SPOTLIGHT
-    ═══════════════════════════════════════════ -->
-    <section class="section spotlight-section reveal" id="spotlight-section">
-        <div class="container">
-            <div class="section-header centered">
-                <div>
-                    <span class="eyebrow">Meet the maker</span>
-                    <h2>Student Entrepreneur Spotlight</h2>
-                    <p>Real students building real businesses on UniMartX.</p>
-                </div>
-            </div>
-            <div class="spotlight-card" id="spotlight-card"></div>
-        </div>
-    </section>
-
-    <!-- ═══════════════════════════════════════════
-         SECTION 5 — RECENTLY OPENED STORES
-    ═══════════════════════════════════════════ -->
-    <section class="section newstores-section reveal" id="newstores-section">
-        <div class="container">
-            <div class="section-header">
-                <div>
-                    <span class="eyebrow">Emerging talent</span>
-                    <h2>Recently Opened Stores</h2>
-                    <p class="section-sub">Be the first to discover these new student businesses.</p>
-                </div>
-                <a href="stores/stores.html?filter=new" class="see-all">See more <i data-lucide="arrow-right"></i></a>
-            </div>
-            <div class="newstores-scroller" id="newstores-grid"></div>
-        </div>
-    </section>
-
-    <!-- ═══════════════════════════════════════════
-         SECTION 6 — MARKETPLACE STATISTICS
-    ═══════════════════════════════════════════ -->
-    <section class="section stats-section reveal" id="stats-section">
+    <section class="section tutorial-section reveal" id="tutorial-section">
         <div class="container">
             <div class="section-header centered">
                 <div>
-                    <span class="eyebrow">The ecosystem</span>
-                    <h2>A Marketplace That's Growing</h2>
-                    <p>Real momentum from a community of student entrepreneurs.</p>
+                    <span class="eyebrow">See it in action</span>
+                    <h2>How UniMartX Works</h2>
+                    <p>From browsing student shops to launching your own storefront — tap through the real UniMartX experience in a 3-minute walkthrough.</p>
                 </div>
             </div>
-            <div class="stats-grid" id="stats-grid"></div>
-        </div>
-    </section>
 
-    <!-- ═══════════════════════════════════════════
-         SECTION 7 — WHY SELL ON UNIMARTX
-    ═══════════════════════════════════════════ -->
-    <section class="section sell-section reveal" id="sell-section">
-        <div class="container">
-            <div class="section-header centered">
-                <div>
-                    <span class="eyebrow">For future founders</span>
-                    <h2>Why Sell on UniMartX?</h2>
-                    <p>Your campus side-hustle, turned into a real storefront — in minutes.</p>
+            <div class="tutorial-shell">
+                <div class="tutorial-flowtabs" id="tutorial-flowtabs">
+                    <button class="tutorial-flowtab" data-jump="0">Intro</button>
+                    <button class="tutorial-flowtab" data-jump="1">Buyer flow</button>
+                    <button class="tutorial-flowtab" data-jump="7">Seller flow</button>
+                    <button class="tutorial-flowtab" data-jump="18">Outro</button>
                 </div>
-            </div>
-            <div class="sell-journey">
-                <div class="sell-step reveal delay-100">
-                    <div class="sell-step-icon"><i data-lucide="store"></i></div>
-                    <h3>Create Your Store</h3>
-                    <p>Set up a branded storefront with your name, logo and story.</p>
+
+                <div class="tutorial-device">
+                    <div class="tutorial-chrome">
+                        <div class="tutorial-dots"><span></span><span></span><span></span></div>
+                        <div class="tutorial-addr"><i data-lucide="lock" aria-hidden="true"></i><span id="tutorial-addr">unimartxshop.vercel.app</span></div>
+                    </div>
+                    <div class="tutorial-screen" id="tutorial-screen">
+                        <div class="tutorial-screen-inner" id="tutorial-inner"></div>
+                    </div>
                 </div>
-                <div class="sell-arrow" aria-hidden="true"><i data-lucide="arrow-down"></i></div>
-                <div class="sell-step reveal delay-200">
-                    <div class="sell-step-icon"><i data-lucide="package-plus"></i></div>
-                    <h3>List Your Products</h3>
-                    <p>Add photos, prices and details — no technical skills needed.</p>
+
+                <div class="tutorial-controls">
+                    <div class="tutorial-nav">
+                        <button class="tutorial-navbtn" id="tutorial-prev">← Back</button>
+                        <button class="tutorial-navbtn tutorial-navbtn--primary" id="tutorial-next">Next →</button>
+                    </div>
+                    <div class="tutorial-stepcount" id="tutorial-stepcount"></div>
+                    <div class="tutorial-right">
+                        <label class="tutorial-toggle"><input type="checkbox" id="tutorial-caption-toggle" checked> captions</label>
+                        <label class="tutorial-toggle"><input type="checkbox" id="tutorial-auto-toggle"> autoplay</label>
+                    </div>
                 </div>
-                <div class="sell-arrow" aria-hidden="true"><i data-lucide="arrow-down"></i></div>
-                <div class="sell-step reveal delay-300">
-                    <div class="sell-step-icon"><i data-lucide="users"></i></div>
-                    <h3>Reach Student Buyers</h3>
-                    <p>Get discovered by thousands of students across campuses.</p>
-                </div>
-                <div class="sell-arrow" aria-hidden="true"><i data-lucide="arrow-down"></i></div>
-                <div class="sell-step reveal delay-400">
-                    <div class="sell-step-icon"><i data-lucide="trending-up"></i></div>
-                    <h3>Grow Your Business</h3>
-                    <p>Track sales, build a following and scale on your terms.</p>
-                </div>
-            </div>
-            <div class="sell-cta">
-                <a href="../auth/seller/register.html" class="btn btn-primary btn-lg">
-                    <i data-lucide="rocket"></i> Start Selling Today
-                </a>
+
+                <div class="tutorial-caption" id="tutorial-caption"><span class="tutorial-quote">“</span><span id="tutorial-caption-text"></span></div>
             </div>
         </div>
     </section>
 
     <!-- ═══════════════════════════════════════════
-         SECTION 8 — TESTIMONIALS
+         SECTION 3 — SUCCESS STORIES
     ═══════════════════════════════════════════ -->
-    <section class="section testimonials-section reveal" id="testimonials-section">
-        <div class="container">
-            <div class="section-header centered">
-                <div>
-                    <span class="eyebrow">Community voices</span>
-                    <h2>Trusted by Students &amp; Clubs</h2>
-                    <p>Buyers, sellers and organizations on what UniMartX means to them.</p>
+    <div class="sections-row">
+        <section class="section stories-section reveal" id="stories-section">
+            <div class="container">
+                <div class="section-header centered">
+                    <div>
+                        <span class="eyebrow">Success stories</span>
+                        <h2>Student Entrepreneurs Growing on UnimartX</h2>
+                        <p>Real students building real businesses — right from campus.</p>
+                    </div>
                 </div>
+                <div class="stories-grid" id="stories-grid"></div>
             </div>
-            <div class="testimonials-grid" id="testimonials-grid"></div>
-        </div>
-    </section>
+        </section>
 
-    <!-- ═══════════════════════════════════════════
-         SECTION 9 — COMMUNITY & TRUST
-    ═══════════════════════════════════════════ -->
-    <section class="section trust-section reveal" id="trust-section">
-        <div class="container">
-            <div class="section-header centered">
-                <div>
-                    <span class="eyebrow">Why UniMartX is different</span>
-                    <h2>Community &amp; Trust</h2>
-                    <p>Built for students, by students — with safety and support at the core.</p>
+        <section class="section growth-section reveal" id="growth-section">
+            <div class="container">
+                <div class="section-header centered">
+                    <div>
+                        <span class="eyebrow">Grow smarter</span>
+                        <h2>Business Growth Features</h2>
+                        <p>Tools and insights to help you scale your student business.</p>
+                    </div>
                 </div>
-            </div>
+                <div class="growth-shell">
+                    <div class="growth-visual reveal illu-entrance">
+                        <div class="growth-card-visual">
+                            <img src="assets/images/home_sample_images/unimartx_grow.webp" alt="Business growth analytics dashboard" loading="lazy">
+                            <div class="growth-metric growth-metric--top">
+                                <div class="growth-metric__icon"><i data-lucide="trending-up"></i></div>
+                                <div class="growth-metric__text">
+                                    <span class="growth-metric__label">Revenue</span>
+                                    <span class="growth-metric__value growth-metric__value--green">+42%</span>
+                                </div>
+                            </div>
+                            <div class="growth-metric growth-metric--bottom">
+                                <div class="growth-metric__icon"><i data-lucide="bar-chart-3"></i></div>
+                                <div class="growth-metric__text">
+                                    <span class="growth-metric__label">Sales</span>
+                                    <span class="growth-metric__value">1,820</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="growth-cards">
+                        <div class="growth-card reveal delay-100">
+                            <div class="growth-icon"><i data-lucide="lightbulb"></i></div>
+                            <div class="growth-body">
+                                <h3>Growth Tips</h3>
+                                <p>Get personalized recommendations like "Products with multiple images receive more engagement" and "Complete your profile to build buyer trust."</p>
+                                <span class="growth-card__accent">Learn more <i data-lucide="arrow-right"></i></span>
+                            </div>
+                        </div>
+                        <div class="growth-card reveal delay-200">
+                            <div class="growth-icon"><i data-lucide="bar-chart-2"></i></div>
+                            <div class="growth-body">
+                                <h3>Business Insights</h3>
+                                <p>Track weekly store visits, conversion rates, returning customers, and your top-performing products.</p>
+                                <span class="growth-card__accent">Learn more <i data-lucide="arrow-right"></i></span>
+                            </div>
+                        </div>
+                        <div class="growth-card reveal delay-300">
+                            <div class="growth-icon"><i data-lucide="trophy"></i></div>
+                            <div class="growth-body">
+                                <h3>Milestones & Achievements</h3>
+                                <p>Celebrate your first product, first order, 10 orders, 100 store views, and 100 followers with encouraging messages.</p>
+                                <span class="growth-card__accent">Learn more <i data-lucide="arrow-right"></i></span>
+                            </div>
+                        </div>
+                    </div>
+</div>
             <div class="trust-grid" id="trust-grid"></div>
         </div>
     </section>
+    </div>
 
     <!-- ═══════════════════════════════════════════
-         FINAL CTA — dual action
+         SECTION 5 — TRUSTED BY STUDENTS
+    ═══════════════════════════════════════════ -->
+    <section class="section trust-section reveal" id="trust-section">
+        <div class="trust-bg" aria-hidden="true">
+            <svg viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="150" cy="120" r="6" fill="rgba(5,150,105,0.15)"/>
+                <circle cx="320" cy="80" r="8" fill="rgba(5,150,105,0.12)"/>
+                <circle cx="500" cy="150" r="5" fill="rgba(5,150,105,0.18)"/>
+                <circle cx="680" cy="100" r="7" fill="rgba(5,150,105,0.14)"/>
+                <circle cx="200" cy="280" r="9" fill="rgba(5,150,105,0.10)"/>
+                <circle cx="400" cy="250" r="6" fill="rgba(5,150,105,0.16)"/>
+                <circle cx="600" cy="300" r="8" fill="rgba(5,150,105,0.12)"/>
+                <circle cx="750" cy="280" r="5" fill="rgba(5,150,105,0.15)"/>
+                <circle cx="100" cy="450" r="7" fill="rgba(5,150,105,0.13)"/>
+                <circle cx="300" cy="480" r="6" fill="rgba(5,150,105,0.11)"/>
+                <circle cx="500" cy="520" r="8" fill="rgba(5,150,105,0.14)"/>
+                <circle cx="700" cy="500" r="6" fill="rgba(5,150,105,0.12)"/>
+                <path d="M150 120L320 80M320 80L500 150M500 150L680 100M200 280L400 250M400 250L600 300M100 450L300 480M300 480L500 520M500 520L700 500M150 120L200 280M320 80L400 250M500 150L600 300M680 100L750 280" stroke="rgba(5,150,105,0.08)" stroke-width="2"/>
+            </svg>
+        </div>
+        <div class="container">
+            <div class="section-header centered">
+                <div>
+                    <span class="eyebrow">Community</span>
+                    <h2>Trusted by Student Entrepreneurs</h2>
+                    <p>Join thousands of students already building their businesses on UnimartX.</p>
+                </div>
+            </div>
+            <div class="trust-stats" id="trust-stats">
+                <div class="trust-stat reveal delay-100">
+                    <div class="trust-stat-icon"><i data-lucide="store" aria-hidden="true"></i></div>
+                    <span class="trust-stat-num" id="stat-stores">0</span>
+                    <span class="trust-stat-label">Student Stores</span>
+                </div>
+                <div class="trust-stat reveal delay-200">
+                    <div class="trust-stat-icon"><i data-lucide="package" aria-hidden="true"></i></div>
+                    <span class="trust-stat-num" id="stat-products">0</span>
+                    <span class="trust-stat-label">Products Listed</span>
+                </div>
+                <div class="trust-stat reveal delay-300">
+                    <div class="trust-stat-icon"><i data-lucide="shopping-bag" aria-hidden="true"></i></div>
+                    <span class="trust-stat-num" id="stat-orders">0</span>
+                    <span class="trust-stat-label">Orders Completed</span>
+                </div>
+                <div class="trust-stat reveal delay-400">
+                    <div class="trust-stat-icon"><i data-lucide="graduation-cap" aria-hidden="true"></i></div>
+                    <span class="trust-stat-num" id="stat-campuses">0</span>
+                    <span class="trust-stat-label">Campuses</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         FINAL CTA
     ═══════════════════════════════════════════ -->
     <section class="final-cta reveal">
         <div class="final-cta-inner">
-            <h2>Join Ghana's Growing Student Marketplace</h2>
-            <p>Discover student-owned businesses or launch one of your own — the campus economy starts here.</p>
+            <h2>Ready to Build Your Business?</h2>
+            <p>Create your free store in minutes. Start selling to students across campus today.</p>
             <div class="cta-actions">
-                <a href="shop/shop.html" class="btn btn-primary btn-lg">
-                    <i data-lucide="shopping-bag"></i> Browse Products
+                <a href="../auth/seller/register.html" class="btn btn-primary btn-lg">
+                    <i data-lucide="rocket"></i> Create My Store
                 </a>
-                <a href="../auth/seller/register.html" class="btn btn-ghost btn-lg">
-                    <i data-lucide="store"></i> Open My Store
+                <a href="stores/stores.html" class="btn btn-ghost btn-lg">
+                    <i data-lucide="compass"></i> Explore Student Businesses
                 </a>
             </div>
         </div>
@@ -321,20 +388,20 @@
         <div class="footer-inner">
             <div class="footer-brand">
                 <a href="home.html" class="nav-logo">Unimart<span>X</span></a>
-                <p>The marketplace where student entrepreneurs build real businesses — and shoppers discover something new every day.</p>
+                <p>The business operating system for student entrepreneurs. Build, manage, and grow your online business — no website required.</p>
             </div>
             <div class="footer-links">
                 <div class="footer-col">
-                    <h4>Shop</h4>
+                    <h4>Start Selling</h4>
+                    <a href="../auth/seller/register.html">Create My Store</a>
+                    <a href="../auth/seller/register.html">Seller Sign Up</a>
+                    <a href="info/seller-policy.html">Seller Policy</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Explore</h4>
                     <a href="shop/shop.html">Browse Products</a>
                     <a href="stores/stores.html">Student Shops</a>
                     <a href="shop/cart.html">Your Cart</a>
-                </div>
-                <div class="footer-col">
-                    <h4>Sell</h4>
-                    <a href="../auth/seller/register.html">Create My Shop</a>
-                    <a href="../auth/seller/register.html">Seller Sign Up</a>
-                    <a href="info/seller-policy.html">Seller Policy</a>
                 </div>
                 <div class="footer-col">
                     <h4>Company</h4>
@@ -357,7 +424,9 @@
     <script src="../../config.js"></script>
     <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
     <script src="../shared/js/cart.js"></script>
+    <script src="assets/js/illustrations.js"></script>
     <script src="assets/js/home.js"></script>
+    <script src="assets/js/tutorial.js"></script>
     <script src="../shared/js/public-nav.js"></script>
 </body>
 </html>

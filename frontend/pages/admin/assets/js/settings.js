@@ -5,7 +5,7 @@
 (function () {
     if (window.lucide) lucide.createIcons();
 
-    const API_BASE = (window.APP_CONFIG && window.APP_CONFIG.BACKEND_URL) || 'http://localhost:5000';
+    var API_BASE = (window.APP_CONFIG && window.APP_CONFIG.BACKEND_URL) || 'http://localhost:5000';
 
     function escapeHtml(str) {
         if (str === null || str === undefined) return '';

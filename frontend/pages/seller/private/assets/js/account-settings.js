@@ -1,4 +1,5 @@
 // ── Settings navigation ─────────────────────
+(function () {
 const settingsNavItems = document.querySelectorAll('.settings-nav-item');
 const settingsSections = document.querySelectorAll('.settings-section');
 
@@ -47,7 +48,7 @@ document.querySelectorAll('.pw-toggle').forEach(btn => {
 });
 
 // ── Auth helpers ──────────────────────────────────
-const API_BASE = (window.APP_CONFIG && window.APP_CONFIG.BACKEND_URL) || 'http://localhost:5000';
+var API_BASE = (window.APP_CONFIG && window.APP_CONFIG.BACKEND_URL) || 'http://localhost:5000';
 
 function getAuthToken() {
     const raw = localStorage.getItem('authData');
@@ -352,3 +353,4 @@ async function updateSidebarNotifBadge() {
 }
 
 updateSidebarNotifBadge();
+})();

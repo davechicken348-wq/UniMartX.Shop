@@ -3,7 +3,7 @@
 // ═══════════════════════════════════════════
 
 (function () {
-    const API_BASE = (window.APP_CONFIG && window.APP_CONFIG.BACKEND_URL) || 'http://localhost:5000';
+    var API_BASE = (window.APP_CONFIG && window.APP_CONFIG.BACKEND_URL) || 'http://localhost:5000';
     const ORDERS_PER_PAGE = 15;
 
     // Inject toast keyframes once
@@ -266,6 +266,7 @@
     }
 
     function startOrderListLiveSync() {
+        if (_pollId) return;
         let initialized = false;
         _pollId = setInterval(async () => {
             const token = getAuthToken();
@@ -280,8 +281,32 @@
     }
     function stopOrderListLiveSync() { if (_pollId) { clearInterval(_pollId); _pollId = null; } }
     window.addEventListener('beforeunload', stopOrderListLiveSync);
-    const _origPush = history.pushState; history.pushState = function () { _origPush.apply(this, arguments); stopOrderListLiveSync(); setTimeout(startOrderListLiveSync, 0); };
-    const _origRep = history.replaceState; history.replaceState = function () { _origRep.apply(this, arguments); stopOrderListLiveSync(); setTimeout(startOrderListLiveSync, 0); };
+
+    // Register history hooks so navigating between private pages restarts
+    // order-list polling against the new <main>.
+    let _origPush = history.pushState;
+    let _origReplace = history.replaceState;
+    history.pushState = function () {
+      _origPush.apply(this, arguments);
+      if (!document.getElementById('orders-list')) return;
+      stopOrderListLiveSync();
+      setTimeout(startOrderListLiveSync, 0);
+    };
+    history.replaceState = function () {
+      _origReplace.apply(this, arguments);
+      if (!document.getElementById('orders-list')) return;
+      stopOrderListLiveSync();
+      setTimeout(startOrderListLiveSync, 0);
+    };
+
+    window.__umxTeardown = function () {
+      stopOrderListLiveSync();
+      closeDrawer();
+      document.body.style.overflow = '';
+      history.pushState = _origPush;
+      history.replaceState = _origReplace;
+    };
+
     _lastOrderSnapshot = null;
 
     // ── Counts + KPIs ─────────────────────────────────────────
@@ -364,23 +389,31 @@
     }
 
     // ── Drawer ────────────────────────────────────────────────
-    const drawer = document.getElementById('order-drawer');
-    const drawerOverlay = document.getElementById('drawer-overlay');
-    const dwBody = document.getElementById('dw-body');
-    const dwFooter = document.getElementById('dw-footer');
-    const dwOrderNumber = document.getElementById('dw-order-number');
+    // Resolved lazily so the elements are always re-queried (e.g. after the
+    // SPA shell swaps DOM, or if the script boots before the markup is ready).
+    function getDrawer() {
+        return {
+            drawer: document.getElementById('order-drawer'),
+            overlay: document.getElementById('drawer-overlay'),
+            body: document.getElementById('dw-body'),
+            footer: document.getElementById('dw-footer'),
+            orderNumber: document.getElementById('dw-order-number'),
+        };
+    }
 
     function openDrawer(id) {
-        drawerOverlay?.classList.add('open');
+        const { drawer, overlay, body, footer } = getDrawer();
+        overlay?.classList.add('open');
         drawer?.classList.add('open');
         drawer?.setAttribute('aria-hidden', 'false');
         document.body.style.overflow = 'hidden';
-        dwBody.innerHTML = `<div class="drawer-skeleton"><div class="sk sk-line w60"></div><div class="sk sk-line w40"></div><div class="sk sk-block"></div><div class="sk sk-line w80"></div><div class="sk sk-line w70"></div></div>`;
-        dwFooter.innerHTML = '';
+        if (body) body.innerHTML = `<div class="drawer-skeleton"><div class="sk sk-line w60"></div><div class="sk sk-line w40"></div><div class="sk sk-block"></div><div class="sk sk-line w80"></div><div class="sk sk-line w70"></div></div>`;
+        if (footer) footer.innerHTML = '';
         fetchOrderDetail(id);
     }
     function closeDrawer() {
-        drawerOverlay?.classList.remove('open');
+        const { drawer, overlay } = getDrawer();
+        overlay?.classList.remove('open');
         drawer?.classList.remove('open');
         drawer?.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
@@ -389,6 +422,7 @@
 
     async function fetchOrderDetail(id) {
         const token = getAuthToken();
+        const { body } = getDrawer();
         try {
             const res = await fetch(`${API_BASE}/api/seller/orders/${id}`, { headers: { 'Authorization': `Bearer ${token}` } });
             const data = await res.json();
@@ -396,18 +430,19 @@
             currentDrawerOrder = data.data;
             renderDrawer(data.data);
         } catch (err) {
-            dwBody.innerHTML = `<div class="empty-state"><div class="empty-state-icon"><i data-lucide="alert-circle"></i></div><h3>Couldn't load order</h3><p>${escapeHtml(err.message || 'Try again')}</p></div>`;
+            if (body) body.innerHTML = `<div class="empty-state"><div class="empty-state-icon"><i data-lucide="alert-circle"></i></div><h3>Couldn't load order</h3><p>${escapeHtml(err.message || 'Try again')}</p></div>`;
             if (window.lucide) lucide.createIcons();
         }
     }
 
     function renderDrawer(order) {
+        const { body: dwBody, footer: dwFooter, orderNumber: dwOrderNumber } = getDrawer();
         const subTotal = (order.items || []).reduce((s, it) => s + (parseFloat(it.price) * (it.quantity || 1)), 0);
         const deliveryFee = parseFloat(order.sellerDeliveryFee || 0);
         const next = nextStatus(order.status);
         const canCancel = cancelAllowed(order.status);
 
-        dwOrderNumber.textContent = `#${order.orderNumber}`;
+        if (dwOrderNumber) dwOrderNumber.textContent = `#${order.orderNumber}`;
 
         const itemsHtml = (order.items || []).map(it => {
             const img = it.product?.image ? imgUrl(it.product.image) : '';
@@ -423,7 +458,7 @@
                 </div>`;
         }).join('');
 
-        dwBody.innerHTML = `
+        if (dwBody) dwBody.innerHTML = `
             <div class="dw-status-row">
                 <span class="badge-status badge-status--${order.status}">${cap(order.status)}</span>
                 <span class="dw-date">${formatDate(order.createdAt)}</span>
@@ -462,22 +497,22 @@
         if (canCancel) footer += `<button class="btn btn-ghost" id="dw-cancel" data-id="${order.id}"><i data-lucide="x-circle"></i> Cancel</button>`;
         footer += `<button class="btn btn-ghost" id="dw-print"><i data-lucide="printer"></i> Print</button>`;
         footer += `<a class="btn btn-ghost" href="order-details.html?id=${order.id}" target="_blank" rel="noopener"><i data-lucide="external-link"></i> Full page</a>`;
-        dwFooter.innerHTML = footer;
+        if (dwFooter) dwFooter.innerHTML = footer;
         if (window.lucide) lucide.createIcons();
 
-        dwFooter.querySelector('#dw-advance')?.addEventListener('click', async (e) => {
+        if (dwFooter) dwFooter.querySelector('#dw-advance')?.addEventListener('click', async (e) => {
             const btn = e.currentTarget; btn.disabled = true;
             const r = await patchStatus(order.id, btn.dataset.next);
             if (r.ok) { toast('Order updated'); refreshAndSyncDrawer(order.id); }
             else { toast(r.error || 'Update failed', 'error'); btn.disabled = false; }
         });
-        dwFooter.querySelector('#dw-cancel')?.addEventListener('click', async (e) => {
+        if (dwFooter) dwFooter.querySelector('#dw-cancel')?.addEventListener('click', async (e) => {
             const btn = e.currentTarget; btn.disabled = true;
             const r = await patchStatus(order.id, 'cancelled');
             if (r.ok) { toast('Order cancelled'); refreshAndSyncDrawer(order.id); }
             else { toast(r.error || 'Cancel failed', 'error'); btn.disabled = false; }
         });
-        dwFooter.querySelector('#dw-print')?.addEventListener('click', () => window.print());
+        if (dwFooter) dwFooter.querySelector('#dw-print')?.addEventListener('click', () => window.print());
     }
 
     async function refreshAndSyncDrawer(id) {
@@ -607,7 +642,7 @@
 
         // Drawer close
         document.getElementById('dw-close')?.addEventListener('click', closeDrawer);
-        drawerOverlay?.addEventListener('click', closeDrawer);
+        getDrawer().overlay?.addEventListener('click', closeDrawer);
         document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDrawer(); });
 
         // Initial load
@@ -616,11 +651,13 @@
 
         document.addEventListener('visibilitychange', () => {
             if (document.visibilityState === 'visible') {
+                if (!document.getElementById('orders-list')) return;
                 _isFetching = false; stopOrderListLiveSync(); _lastOrderSnapshot = null;
                 fetchOrders(currentPage, currentFilter, currentSearch).then(startOrderListLiveSync);
             }
         });
         window.addEventListener('online', () => {
+            if (!document.getElementById('orders-list')) return;
             _isFetching = false; stopOrderListLiveSync(); _lastOrderSnapshot = null;
             fetchOrders(currentPage, currentFilter, currentSearch).then(startOrderListLiveSync);
         });

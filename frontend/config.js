@@ -37,3 +37,37 @@ window.APP_CONFIG = {
   ping();
   setInterval(ping, 13 * 60 * 1000);
 })();
+
+// ── Canonical category map ───────────────────────────────────────────────────
+// Single source of truth for category display names and icons across the app.
+window.APP_CONFIG.CATEGORY_MAP = {
+  electronics: 'Electronics & Gadgets',
+  fashion: 'Fashion & Apparel',
+  home: 'Home & Dorm Essentials',
+  beauty: 'Beauty & Personal Care',
+  sports: 'Sports & Fitness',
+  books: 'Books & Study Supplies',
+  services: 'Tutoring & Services',
+  food: 'Food & Drinks',
+  other: 'Other',
+};
+
+window.APP_CONFIG.CATEGORY_ICON = {
+  electronics: 'cpu',
+  fashion: 'shirt',
+  home: 'sofa',
+  beauty: 'sparkles',
+  sports: 'dumbbell',
+  books: 'book-open',
+  services: 'wrench',
+  food: 'utensils',
+  other: 'store',
+};
+
+function categoryLabel(cat) {
+  return (window.APP_CONFIG.CATEGORY_MAP && window.APP_CONFIG.CATEGORY_MAP[cat]) || cat || 'Store';
+}
+
+function categoryIcon(cat) {
+  return (window.APP_CONFIG.CATEGORY_ICON && window.APP_CONFIG.CATEGORY_ICON[cat]) || 'store';
+}

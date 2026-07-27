@@ -174,7 +174,7 @@ const alertSuccess = document.getElementById('alert-success');
 const alertError = document.getElementById('alert-error');
 const errorText = document.getElementById('error-text');
 
-const API_BASE = (window.APP_CONFIG && window.APP_CONFIG.BACKEND_URL) || 'http://localhost:5000';
+var API_BASE = (window.APP_CONFIG && window.APP_CONFIG.BACKEND_URL) || 'http://localhost:5000';
 
 form.addEventListener('submit', async (e) => {
     e.preventDefault();

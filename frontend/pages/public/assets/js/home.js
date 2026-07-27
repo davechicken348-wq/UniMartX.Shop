@@ -42,17 +42,13 @@ function logoFallback(s) {
     return `<span>${esc((s.storeName || '?').charAt(0).toUpperCase())}</span>`;
 }
 
-const CATEGORY_MAP = {
-    electronics: 'Electronics', fashion: 'Fashion', food: 'Food & Drinks', beauty: 'Beauty',
-    books: 'Books', accessories: 'Accessories', services: 'Services', home: 'Home & Living',
-    clothing: 'Fashion', other: 'Other',
-};
-function categoryLabel(cat) { return CATEGORY_MAP[cat] || cat || 'Store'; }
-const CATEGORY_ICON = {
-    electronics: 'cpu', fashion: 'shirt', clothing: 'shirt', food: 'utensils', beauty: 'sparkles',
-    books: 'book-open', services: 'wrench', accessories: 'watch', home: 'sofa', other: 'store',
-};
-function categoryIcon(cat) { return CATEGORY_ICON[cat] || 'store'; }
+function categoryLabel(cat) {
+  return (window.APP_CONFIG.CATEGORY_MAP && window.APP_CONFIG.CATEGORY_MAP[cat]) || cat || 'Store';
+}
+const CATEGORY_ICON = window.APP_CONFIG.CATEGORY_ICON || {};
+function categoryIcon(cat) {
+  return CATEGORY_ICON[cat] || 'store';
+}
 
 function storeHref(s) {
     return `/pages/seller/public/store/store.html?sellerId=${esc(s.id)}&slug=${esc(s.slug || '')}`;
@@ -61,6 +57,7 @@ function storeHref(s) {
 /* ── Navbar (mobile) ── */
 const hamburger = document.getElementById('nav-hamburger');
 const mobileNav = document.getElementById('nav-mobile');
+
 if (hamburger && mobileNav) {
     hamburger.addEventListener('click', () => {
         mobileNav.classList.toggle('open');
@@ -71,10 +68,6 @@ if (hamburger && mobileNav) {
         lucide.createIcons();
     });
 }
-window.addEventListener('scroll', () => {
-    const nav = document.getElementById('navbar');
-    if (nav) nav.style.boxShadow = window.scrollY > 10 ? '0 4px 24px rgba(0,0,0,0.4)' : 'none';
-});
 
 /* ── Skeleton builders ── */
 function productSkeleton() {
@@ -349,55 +342,17 @@ function renderTrust() {
 }
 
 /* ═══════════════════════════════════════════
-   HERO — living marketplace + activity ticker
-═══════════════════════════════════════════ */
-async function loadHeroMarket() {
-    const market = document.getElementById('hero-market');
-    if (!market) return;
-    try {
-        const res = await apiFetch('/api/public/stores?limit=4&sort=featured');
-        if (!res.ok) throw new Error();
-        const { data } = await res.json();
-        const stores = data.length ? data : [];
-        market.innerHTML = stores.map(s => {
-            const av = s.storeAvatar ? `<img src="${esc(s.storeAvatar)}" alt="">` : logoFallback(s);
-            return `<div class="hero-market-card">
-                <div class="hero-market-banner" style="${bannerStyle(s)}"></div>
-                <span class="hero-market-name">${esc(s.storeName)}</span>
-                <div class="hero-market-logo">${av}</div>
-            </div>`;
-        }).join('') || defaultHeroMarket();
-        lucide.createIcons();
-    } catch { market.innerHTML = defaultHeroMarket(); }
-}
-function defaultHeroMarket() {
-    return Array(4).fill(0).map((_, i) => `
-        <div class="hero-market-card">
-            <div class="hero-market-banner" style="background:${FALLBACK_GRADIENTS[i]}"></div>
-            <span class="hero-market-name">Student Store</span>
-            <div class="hero-market-logo">${'US'[i % 2]}</div>
-        </div>`).join('');
-}
-function startActivityTicker() {
-    const el = document.getElementById('hero-activity-text');
-    if (!el) return;
-    const messages = [
-        'A student just opened a new store',
-        'Someone just discovered a campus business',
-        'A student seller just made a sale',
-        'New products were just listed nearby',
-        'A buyer just supported a student entrepreneur',
-    ];
-    let i = 0;
-    setInterval(() => {
-        i = (i + 1) % messages.length;
-        el.textContent = messages[i];
-    }, 3200);
+     HERO — premium illustration system
+    ═══════════════════════════════════════════ */
+function loadHeroIllustration() {
+    const el = document.getElementById('hero-illustration');
+    if (!el || !window.Illustrations) return;
+    window.Illustrations.hero(el);
 }
 
 /* ═══════════════════════════════════════════
-   SCROLL REVEAL
-═══════════════════════════════════════════ */
+    SCROLL REVEAL
+   ═══════════════════════════════════════════ */
 let revealObserver = null;
 function setupRevealObserver() {
     if (revealObserver) return;
@@ -418,8 +373,87 @@ function observeReveal(container) {
 }
 
 /* ═══════════════════════════════════════════
-   INIT
-═══════════════════════════════════════════ */
+    NEW SECTIONS — Business OS
+   ═══════════════════════════════════════════ */
+
+/* Success stories */
+async function loadSuccessStories() {
+    const grid = document.getElementById('stories-grid');
+    if (!grid) return;
+
+    const stories = [
+        { quote: "UnimartX gave me a real store without needing a website. I made my first sale within a week.", name: "Kwame A.", role: "Electronics Seller, UCC" },
+        { quote: "I started selling snacks from my dorm. Now I have 200+ followers and growing every week.", name: "Ama K.", role: "Food & Snacks, Legon" },
+        { quote: "The dashboard makes it so easy to track orders and grow my business. Best decision I made this semester.", name: "Yaw M.", role: "Fashion Seller, KNUST" },
+    ];
+
+    grid.innerHTML = stories.map(s => `
+        <div class="story-card reveal">
+            <p class="story-quote">"${esc(s.quote)}"</p>
+            <div class="story-author">
+                <div class="story-avatar">${esc(s.name.charAt(0))}</div>
+                <div>
+                    <p class="story-name">${esc(s.name)}</p>
+                    <p class="story-role">${esc(s.role)}</p>
+                </div>
+            </div>
+        </div>
+    `).join('');
+    lucide.createIcons();
+    observeReveal(grid);
+}
+
+/* Trust / ecosystem stats */
+async function loadTrustStats() {
+    const storesEl = document.getElementById('stat-stores');
+    const productsEl = document.getElementById('stat-products');
+    const ordersEl = document.getElementById('stat-orders');
+    const campusesEl = document.getElementById('stat-campuses');
+    if (!storesEl) return;
+
+    try {
+        const res = await apiFetch('/api/public/stats');
+        if (!res.ok) throw new Error();
+        const json = await res.json();
+        const data = json.data || {};
+        const sellers = data.sellers || data.totalSellers || 0;
+        const products = data.products || data.totalProducts || 0;
+        const orders = data.orders || data.totalOrders || 0;
+        animateCount(storesEl, sellers);
+        animateCount(productsEl, products);
+        animateCount(ordersEl, orders);
+        animateCount(campusesEl, 12);
+    } catch {
+        animateCount(storesEl, 0);
+        animateCount(productsEl, 0);
+        animateCount(ordersEl, 0);
+        animateCount(campusesEl, 0);
+    }
+}
+
+function animateCount(el, target) {
+    const duration = 1200;
+    const start = performance.now();
+    const from = 0;
+    function tick(now) {
+        const t = Math.min((now - start) / duration, 1);
+        const ease = 1 - Math.pow(1 - t, 3);
+        el.textContent = Math.round(from + (target - from) * ease).toLocaleString();
+        if (t < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+}
+
+/* Growth features - no API needed, static */
+function renderGrowthFeatures() {
+    const grid = document.getElementById('features-grid');
+    if (!grid) return;
+    observeReveal(grid);
+}
+
+/* ═══════════════════════════════════════════
+    INIT
+   ═══════════════════════════════════════════ */
 (function init() {
     document.querySelectorAll('.hero-anim, .reveal').forEach(el => {
         if (el.closest('.hero')) el.classList.add('in-view');
@@ -435,9 +469,10 @@ function observeReveal(container) {
         loadSpotlight();
         loadNewStores();
         loadStats();
-        loadHeroMarket();
-        startActivityTicker();
+        loadHeroIllustration();
         initProductTabs();
+        loadSuccessStories();
+        loadTrustStats();
         setupRevealObserver();
 
         const productsGridEl = document.getElementById('products-grid');

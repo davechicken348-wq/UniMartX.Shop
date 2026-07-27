@@ -95,6 +95,62 @@ function absUrl(path: string | null | undefined): string | null {
 }
 
 /**
+ * Resolve a category (and optional subcategory) against the DB.
+ * Accepts either an id or a slug for each. Returns denormalized
+ * strings + relation ids so the Product row stays filterable.
+ */
+async function resolveCategory(opts: {
+  categoryId?: string | null;
+  categorySlug?: string | null;
+  subcategoryId?: string | null;
+  subcategoryName?: string | null;
+}): Promise<{
+  categoryId: string;
+  categorySlug: string;
+  subcategoryId: string | null;
+  subcategoryName: string | null;
+} | null> {
+  const category = opts.categoryId
+    ? await prisma.category.findUnique({ where: { id: opts.categoryId } })
+    : opts.categorySlug
+      ? await prisma.category.findFirst({ where: { slug: opts.categorySlug, isActive: true } })
+      : null;
+
+  if (!category) return null;
+
+  let subcategoryId: string | null = null;
+  let subcategoryName: string | null = null;
+
+  if (opts.subcategoryId) {
+    const sub = await prisma.subcategory.findFirst({
+      where: { id: opts.subcategoryId, categoryId: category.id },
+    });
+    if (sub) {
+      subcategoryId = sub.id;
+      subcategoryName = sub.name;
+    }
+  } else if (opts.subcategoryName) {
+    const sub = await prisma.subcategory.findFirst({
+      where: { name: opts.subcategoryName, categoryId: category.id },
+    });
+    if (sub) {
+      subcategoryId = sub.id;
+      subcategoryName = sub.name;
+    } else {
+      // Free-text subcategory (allowed for flexibility) — store as denormalized string
+      subcategoryName = opts.subcategoryName;
+    }
+  }
+
+  return {
+    categoryId: category.id,
+    categorySlug: category.slug,
+    subcategoryId,
+    subcategoryName,
+  };
+}
+
+/**
  * POST /api/seller/products
  * Create a new product listing for the authenticated seller.
  *
@@ -157,6 +213,17 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
     const coverImage     = imageUrls.length > 0 ? imageUrls[0] : null;
     const additionalImgs = imageUrls.length > 0 ? imageUrls.slice(1) : [];
 
+    // ── Resolve category + subcategory against the DB (single source of truth) ──
+    const catResolution = await resolveCategory({
+      categoryId: input.categoryId,
+      categorySlug: input.category,
+      subcategoryId: input.subcategoryId,
+      subcategoryName: input.subcategory,
+    });
+    if (!catResolution) {
+      throw new AppError('That category is not available. Please pick one from the list.', 400);
+    }
+
     // ── Build Prisma create payload ──
     const createData: any = {
       id: (req as any)._productId,
@@ -164,8 +231,10 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
       name: input.name,
       description: input.description,
       price: input.price,
-      category: input.category,
-      subcategory: input.subcategory || null,
+      category: catResolution.categorySlug,
+      categoryId: catResolution.categoryId,
+      subcategory: catResolution.subcategoryName,
+      subcategoryId: catResolution.subcategoryId,
       stock: input.stock,
       isActive: input.isActive ?? false,
     };
@@ -552,12 +621,22 @@ export const updateProduct = async (req: Request, res: Response): Promise<void> 
       );
     }
 
+    // Resolve category against DB if provided in the update
+    let resolvedCat: Awaited<ReturnType<typeof resolveCategory>> = null;
+    if (input.category || input.categoryId) {
+      resolvedCat = await resolveCategory({
+        categoryId: input.categoryId,
+        categorySlug: input.category,
+        subcategoryId: input.subcategoryId,
+        subcategoryName: input.subcategory,
+      });
+      if (!resolvedCat) throw new AppError('That category is not available. Please pick one from the list.', 400);
+    }
+
     const updateData: any = {
       name:        input.name,
       description: input.description,
       price:       input.price,
-      category:    input.category,
-      subcategory: input.subcategory || null,
       stock:       input.stock,
       isActive:    input.isActive ?? false,
       condition:   input.condition || null,
@@ -565,6 +644,13 @@ export const updateProduct = async (req: Request, res: Response): Promise<void> 
       comparePrice: input.comparePrice ?? null,
       costPrice:    input.costPrice ?? null,
     };
+
+    if (resolvedCat) {
+      updateData.category     = resolvedCat.categorySlug;
+      updateData.categoryId   = resolvedCat.categoryId;
+      updateData.subcategory  = resolvedCat.subcategoryName;
+      updateData.subcategoryId = resolvedCat.subcategoryId;
+    }
 
     if (imageUrls.length > 0) {
       updateData.image  = imageUrls[0];

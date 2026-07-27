@@ -1397,3 +1397,100 @@
         height: 12px;
     }
 }
+
+@media (max-width: 400px) {
+    .product-section { padding: 1.25rem 0 1.75rem; }
+    .product-inner { padding: 0 0.75rem; gap: 1.25rem; }
+    .product-title { font-size: 1.2rem; }
+    .product-price { font-size: 1.3rem; }
+    .product-price-old { font-size: 0.85rem; }
+    .product-short-desc { font-size: 0.85rem; }
+    .product-actions { gap: 0.6rem; }
+    .add-to-cart-btn { height: 46px; font-size: 0.9rem; padding: 0 1.25rem; border-radius: 10px; }
+    .add-to-cart-btn svg { width: 18px; height: 18px; }
+    .qty-wrap { border-radius: 8px; }
+    .qty-btn { width: 38px; height: 38px; }
+    .qty-btn svg { width: 16px; height: 16px; }
+    .qty-value { font-size: 0.9rem; min-width: 40px; }
+    .save-btn { width: 42px; height: 42px; border-radius: 8px; }
+    .save-btn svg { width: 18px; height: 18px; }
+    .gallery-save { width: 36px; height: 36px; top: 0.75rem; right: 0.75rem; }
+    .gallery-save svg { width: 16px; height: 16px; }
+    .gallery-badge { font-size: 0.68rem; padding: 0.25rem 0.6rem; top: 0.75rem; left: 0.75rem; }
+    .gallery-thumbs { gap: 0.5rem; }
+    .tabs-section { padding: 1.25rem 0 2rem; }
+    .tabs-inner { padding: 0 0.75rem; }
+    .tab-btn { padding: 0.65rem 0.85rem; font-size: 0.8rem; }
+    .tab-count { font-size: 0.68rem; }
+    .description-content h3 { font-size: 1rem; }
+    .description-content p { font-size: 0.88rem; }
+    .spec-label { font-size: 0.78rem; }
+    .spec-value { font-size: 0.85rem; }
+    .reviews-summary { padding: 1.25rem; gap: 1.5rem; }
+    .reviews-score strong { font-size: 2.5rem; }
+    .reviews-score .stars-filled { font-size: 0.95rem; }
+    .review-card { padding: 1.25rem; }
+    .review-avatar { width: 36px; height: 36px; font-size: 0.8rem; }
+    .review-form-box { padding: 1.25rem; }
+    .review-form-box textarea { font-size: 0.85rem; padding: 0.75rem 0.85rem; }
+    .seller-avatar { width: 60px; height: 60px; font-size: 1rem; }
+    .seller-avatar--lg { width: 80px; height: 80px; font-size: 1.4rem; }
+    .seller-name-row h3 { font-size: 1.15rem; }
+    .seller-stat strong { font-size: 1.1rem; }
+    .related-section { padding: 2rem 0 2.5rem; }
+    .related-inner { padding: 0 0.75rem; }
+    .related-header h2 { font-size: 1.15rem; }
+    .related-grid { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+    .breadcrumb-bar { padding: 0.65rem 0; }
+    .breadcrumb-inner { padding: 0 0.75rem; font-size: 0.78rem; gap: 0.35rem; }
+    .breadcrumb-inner span { max-width: 120px; }
+}
+
+@media (max-width: 380px) {
+    .product-section { padding: 1rem 0 1.5rem; }
+    .product-inner { padding: 0 0.6rem; gap: 1rem; }
+    .product-title { font-size: 1.1rem; }
+    .product-price { font-size: 1.15rem; }
+    .product-price-old { font-size: 0.8rem; }
+    .product-discount { font-size: 0.72rem; padding: 0.2rem 0.5rem; }
+    .product-short-desc { font-size: 0.82rem; }
+    .product-actions { flex-direction: column; align-items: stretch; gap: 0.5rem; }
+    .add-to-cart-btn { height: 44px; font-size: 0.85rem; padding: 0 1rem; max-width: 100%; }
+    .add-to-cart-btn svg { width: 17px; height: 17px; }
+    .qty-wrap { align-self: stretch; justify-content: center; }
+    .qty-btn { width: 36px; height: 36px; }
+    .qty-btn svg { width: 15px; height: 15px; }
+    .qty-value { font-size: 0.85rem; min-width: 36px; }
+    .save-btn { width: 40px; height: 40px; }
+    .save-btn svg { width: 17px; height: 17px; }
+    .gallery-save { width: 32px; height: 32px; top: 0.6rem; right: 0.6rem; }
+    .gallery-save svg { width: 14px; height: 14px; }
+    .gallery-badge { font-size: 0.65rem; padding: 0.2rem 0.5rem; top: 0.6rem; left: 0.6rem; }
+    .gallery-thumbs { gap: 0.4rem; }
+    .tabs-section { padding: 1rem 0 1.75rem; }
+    .tabs-inner { padding: 0 0.6rem; }
+    .tab-btn { padding: 0.6rem 0.75rem; font-size: 0.75rem; }
+    .tab-count { font-size: 0.65rem; }
+    .description-content h3 { font-size: 0.95rem; }
+    .description-content p { font-size: 0.85rem; }
+    .spec-label { font-size: 0.75rem; }
+    .spec-value { font-size: 0.82rem; }
+    .reviews-summary { padding: 1rem; }
+    .reviews-score strong { font-size: 2.2rem; }
+    .review-card { padding: 1rem; }
+    .review-avatar { width: 32px; height: 32px; font-size: 0.75rem; }
+    .review-form-box { padding: 1rem; }
+    .review-form-box textarea { font-size: 0.82rem; padding: 0.7rem 0.75rem; min-height: 80px; }
+    .seller-avatar { width: 52px; height: 52px; font-size: 0.9rem; }
+    .seller-avatar--lg { width: 70px; height: 70px; font-size: 1.2rem; }
+    .seller-name-row h3 { font-size: 1.05rem; }
+    .seller-stat strong { font-size: 1rem; }
+    .related-section { padding: 1.5rem 0 2rem; }
+    .related-inner { padding: 0 0.6rem; }
+    .related-header h2 { font-size: 1.05rem; }
+    .related-grid { grid-template-columns: repeat(2, 1fr); gap: 0.6rem; }
+    .breadcrumb-bar { padding: 0.55rem 0; }
+    .breadcrumb-inner { padding: 0 0.6rem; font-size: 0.75rem; gap: 0.3rem; }
+    .breadcrumb-inner span { max-width: 100px; }
+    .breadcrumb-inner svg { width: 11px; height: 11px; }
+}

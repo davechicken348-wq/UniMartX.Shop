@@ -189,7 +189,7 @@ form.addEventListener('submit', async (e) => {
     submitBtn.disabled = true;
     submitBtn.classList.add('loading');
 
-    const API_BASE = (window.APP_CONFIG && window.APP_CONFIG.BACKEND_URL) || 'http://localhost:5000';
+    var API_BASE = (window.APP_CONFIG && window.APP_CONFIG.BACKEND_URL) || 'http://localhost:5000';
 
     const payload = { name, email, subject, message };
     if (phone) payload.phone = phone;

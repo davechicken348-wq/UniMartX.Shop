@@ -20,8 +20,11 @@ const resendStatus = document.getElementById('resend-status');
 const urlInput = document.getElementById('url-input');
 const submitUrlBtn = document.getElementById('submit-url-btn');
 const countdownEl = document.getElementById('countdown');
+const smsCodeInput = document.getElementById('sms-code-input');
+const verifySmsBtn = document.getElementById('verify-sms-btn');
+const smsStatus = document.getElementById('sms-status');
 
-const API_BASE = (window.APP_CONFIG && window.APP_CONFIG.BACKEND_URL) || 'http://localhost:5000';
+var API_BASE = (window.APP_CONFIG && window.APP_CONFIG.BACKEND_URL) || 'http://localhost:5000';
 
 function extractTokenAndEmail() {
     let token = null;
@@ -276,3 +279,55 @@ urlInput.addEventListener('keydown', (e) => {
         submitUrlBtn.click();
     }
 });
+
+// SMS verification functionality
+verifySmsBtn.addEventListener('click', async () => {
+    const code = smsCodeInput.value.trim();
+    if (!code || code.length !== 6) {
+        setSmsStatus('Please enter a valid 6-digit code.', 'error');
+        return;
+    }
+
+    verifySmsBtn.disabled = true;
+    verifySmsBtn.textContent = 'Verifying...';
+    setSmsStatus('Verifying...', 'info');
+
+    try {
+        const response = await fetch(`${API_BASE}/api/auth/sms/verify`, {
+            credentials: 'include',
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ code }),
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+            setSmsStatus(result.message || 'Phone verified successfully!', 'success');
+            showSuccess();
+        } else {
+            setSmsStatus(result.error || result.message || 'Invalid verification code.', 'error');
+            verifySmsBtn.disabled = false;
+            verifySmsBtn.textContent = 'Verify SMS';
+        }
+    } catch (err) {
+        setSmsStatus('Network error. Please try again.', 'error');
+        verifySmsBtn.disabled = false;
+        verifySmsBtn.textContent = 'Verify SMS';
+    }
+});
+
+// Allow Enter key in SMS code input
+smsCodeInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        verifySmsBtn.click();
+    }
+});
+
+/**
+ * Set SMS status message
+ */
+function setSmsStatus(message, type = 'info') {
+    smsStatus.textContent = message;
+    smsStatus.className = 'sms-status visible ' + type;
+}

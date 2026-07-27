@@ -6,113 +6,523 @@
     <title>Welcome — UniMartX</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="preconnect" href="https://api.unimartx.com">
-    <link rel="stylesheet" href="assets/css/index.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg:        #fafaf9;
+            --bg-2:      #ffffff;
+            --bg-3:      #f5f5f4;
+            --bg-4:      #f0f0ef;
+            --border:    #e7e5e4;
+            --primary:   #059669;
+            --primary-d: #047857;
+            --primary-l: #34d399;
+            --primary-xl: #6ee7b7;
+            --accent:    #fbbf24;
+            --accent-l:  #fcd34d;
+            --text:      #1c1917;
+            --text-2:    #57534e;
+            --text-3:    #78716c;
+            --text-4:    #a8a29e;
+            --radius:    16px;
+            --radius-lg: 24px;
+            --radius-xl: 32px;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+            --shadow:    0 4px 12px rgba(0,0,0,0.06);
+            --shadow-lg: 0 12px 32px rgba(0,0,0,0.08);
+            --shadow-xl: 0 20px 48px rgba(0,0,0,0.12);
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            min-height: 100dvh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a { text-decoration: none; color: inherit; }
+
+        /* ═══════════════════════════════════════════
+           ANIMATIONS
+           ═══════════════════════════════════════════ */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50%      { opacity: 0.4; transform: scale(0.93); }
+        }
+
+        @keyframes shimmer {
+            0%   { background-position: 0% 50%; }
+            50%  { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50%       { transform: translateY(-8px); }
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50%      { opacity: 0.85; transform: scale(1.05); }
+        }
+
+        @keyframes revealLine {
+            from { width: 0; opacity: 0; }
+            to   { width: 80px; opacity: 1; }
+        }
+
+        @keyframes livePulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50%       { opacity: 0.4; transform: scale(0.8); }
+        }
+
+        /* ═══════════════════════════════════════════
+           LOADING SCREEN
+           ═══════════════════════════════════════════ */
+        .loading-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: var(--bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 28px;
+            transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .loading-logo {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            letter-spacing: -0.02em;
+            animation: fadeIn 0.6s both;
+        }
+
+        .loading-logo-x { color: var(--primary); }
+
+        .loading-spinner {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
+            border-right-color: var(--primary-l);
+            animation: spin 0.9s linear infinite;
+        }
+
+        .loading-bar-track {
+            width: 220px;
+            height: 3px;
+            background: var(--bg-3);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .loading-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-l));
+            border-radius: 2px;
+            animation: load 2.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        @keyframes load {
+            0%   { width: 0%; }
+            60%  { width: 82%; }
+            100% { width: 100%; }
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ═══════════════════════════════════════════
+           BACKGROUND EFFECTS
+           ═══════════════════════════════════════════ */
+        .welcome {
+            position: relative;
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            padding: 2rem;
+        }
+
+        .welcome__bg {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .welcome__grid {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(5,150,105,0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(5,150,105,0.05) 1px, transparent 1px);
+            background-size: 48px 48px;
+            animation: gridPulse 8s ease-in-out infinite;
+            mask-image: radial-gradient(circle at 18% 30%, #000 0%, transparent 65%);
+            -webkit-mask-image: radial-gradient(circle at 18% 30%, #000 0%, transparent 65%);
+        }
+
+        @keyframes gridPulse {
+            0%, 100% { opacity: 0.6; }
+            50%      { opacity: 1; }
+        }
+
+        .welcome__gradient {
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(1100px 600px at 12% 0%, #ecfdf5 0%, rgba(236,253,245,0) 60%),
+                linear-gradient(180deg, #f0fdf4 0%, #fafaf9 70%, #ffffff 100%);
+        }
+
+        .welcome__glow {
+            position: absolute;
+            top: -10%;
+            right: -5%;
+            width: 520px;
+            height: 520px;
+            background: radial-gradient(circle, rgba(5,150,105,0.14) 0%, rgba(5,150,105,0) 70%);
+            border-radius: 50%;
+            animation: glowPulse 6s ease-in-out infinite;
+        }
+
+        .welcome__badge-container {
+            position: relative;
+            z-index: 2;
+            max-width: 720px;
+            width: 100%;
+            text-align: center;
+            padding: 0 1rem;
+        }
+
+        /* ═══════════════════════════════════════════
+           CONTENT
+           ═══════════════════════════════════════════ */
+        .welcome__content {
+            position: relative;
+            z-index: 2;
+            max-width: 720px;
+            text-align: center;
+            padding: 0 1rem;
+            animation: fadeUp 0.8s 0.2s both;
+        }
+
+        .welcome__badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(5, 150, 105, 0.06);
+            border: 1px solid rgba(5, 150, 105, 0.15);
+            color: var(--primary);
+            font-size: 0.875rem;
+            font-weight: 700;
+            padding: 8px 16px;
+            border-radius: 50px;
+            margin-bottom: 24px;
+            letter-spacing: 0.01em;
+        }
+
+        .welcome__badge svg { width: 14px; height: 14px; stroke: currentColor; }
+
+        .welcome__badge-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--primary);
+            box-shadow: 0 0 12px var(--primary);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .welcome__title {
+            font-family: 'Poppins', sans-serif;
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 700;
+            line-height: 1.05;
+            letter-spacing: -0.02em;
+            margin-bottom: 1.5rem;
+        }
+
+        .welcome__title-line {
+            display: block;
+        }
+
+        .welcome__title-accent {
+            background: linear-gradient(135deg, var(--primary-d) 0%, var(--primary) 55%, var(--primary-l) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% 200%;
+            animation: shimmer 4s ease infinite;
+        }
+
+        .welcome__divider {
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-l));
+            margin: 0 auto 2rem;
+            border-radius: 2px;
+            animation: revealLine 0.6s 0.5s both;
+        }
+
+        .welcome__subtitle {
+            font-size: clamp(1.05rem, 2.5vw, 1.35rem);
+            font-weight: 500;
+            color: var(--text-2);
+            line-height: 1.7;
+            max-width: 640px;
+            margin: 0 auto 3rem;
+        }
+
+        /* ═══════════════════════════════════════════
+           CTA BUTTONS
+           ═══════════════════════════════════════════ */
+        .welcome__actions {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .btn {
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            padding: 1.15rem 2.75rem;
+            border-radius: var(--radius);
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+            min-height: 60px;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+
+        .btn svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+            box-shadow: var(--shadow-lg), 0 0 0 6px rgba(5, 150, 105, 0.08);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-d);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-xl), 0 0 0 12px rgba(5, 150, 105, 0.08);
+        }
+
+        .btn-primary:hover svg {
+            transform: translateX(4px);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--text);
+            border: 1.5px solid var(--border);
+        }
+
+        .btn-ghost:hover {
+            border-color: var(--text-2);
+            color: var(--text);
+            background: var(--bg-3);
+        }
+
+        /* ═══════════════════════════════════════════
+           FOOTER HINT
+           ═══════════════════════════════════════════ */
+        .welcome__footer {
+            position: absolute;
+            bottom: 2.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-4);
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            animation: fadeIn 1.2s 1.2s both;
+        }
+
+        .welcome__footer-dot {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--text-4);
+            opacity: 0.5;
+        }
+
+        /* ═══════════════════════════════════════════
+           RESPONSIVE
+           ═══════════════════════════════════════════ */
+        @media (max-width: 768px) {
+            .welcome { padding: 1.5rem; }
+            .welcome__content { padding: 0; }
+            .welcome__badge { margin-bottom: 1.5rem; }
+            .welcome__subtitle { margin-bottom: 2.5rem; }
+            .welcome__actions { flex-direction: column; width: 100%; }
+            .btn { width: 100%; justify-content: center; }
+            .welcome__glow { width: 300px; height: 300px; top: -5%; right: -10%; }
+        }
+
+        @media (max-width: 480px) {
+            .welcome { padding: 1.25rem; }
+            .welcome__title { font-size: clamp(2rem, 8vw, 2.75rem); }
+            .welcome__subtitle { font-size: 1rem; margin-bottom: 2rem; }
+            .welcome__badge { font-size: 0.7rem; padding: 6px 14px; margin-bottom: 1.25rem; }
+            .btn { font-size: 1rem; padding: 0.9rem 1.75rem; min-height: 52px; border-radius: 14px; }
+            .welcome__glow { width: 260px; height: 260px; }
+            .loading-logo { font-size: 2.5rem; }
+            .loading-spinner { width: 38px; height: 38px; }
+            .loading-bar-track { width: 180px; }
+        }
+
+        @media (max-width: 400px) {
+            .welcome { padding: 1rem; }
+            .welcome__title { font-size: clamp(1.75rem, 7vw, 2.25rem); margin-bottom: 1rem; }
+            .welcome__subtitle { font-size: 0.9375rem; margin-bottom: 1.75rem; line-height: 1.6; }
+            .welcome__badge { font-size: 0.6875rem; padding: 5px 12px; margin-bottom: 1rem; gap: 6px; }
+            .welcome__badge svg { width: 12px; height: 12px; }
+            .welcome__badge-dot { width: 5px; height: 5px; }
+            .welcome__divider { width: 60px; height: 2px; margin-bottom: 1.5rem; }
+            .btn { font-size: 0.9375rem; padding: 0.85rem 1.5rem; min-height: 48px; border-radius: 12px; gap: 6px; }
+            .btn svg { width: 18px; height: 18px; }
+            .welcome__glow { width: 220px; height: 220px; top: -3%; right: -8%; }
+            .welcome__footer { font-size: 0.7rem; gap: 6px; bottom: 1.5rem; }
+            .loading-logo { font-size: 2.25rem; }
+            .loading-spinner { width: 34px; height: 34px; border-width: 2.5px; }
+            .loading-bar-track { width: 160px; height: 2px; }
+        }
+
+        @media (max-width: 380px) {
+            .welcome { padding: 0.875rem; }
+            .welcome__title { font-size: clamp(1.5rem, 6vw, 2rem); margin-bottom: 0.875rem; }
+            .welcome__subtitle { font-size: 0.875rem; margin-bottom: 1.5rem; line-height: 1.55; }
+            .welcome__badge { font-size: 0.625rem; padding: 4px 10px; margin-bottom: 0.875rem; border-radius: 40px; }
+            .welcome__badge svg { width: 11px; height: 11px; }
+            .welcome__badge-dot { width: 4px; height: 4px; }
+            .welcome__divider { width: 50px; height: 2px; margin-bottom: 1.25rem; }
+            .btn { font-size: 0.875rem; padding: 0.75rem 1.25rem; min-height: 44px; border-radius: 10px; }
+            .btn svg { width: 16px; height: 16px; }
+            .welcome__glow { width: 180px; height: 180px; top: -2%; right: -6%; }
+            .welcome__footer { font-size: 0.65rem; gap: 5px; bottom: 1rem; letter-spacing: 0.04em; }
+            .loading-logo { font-size: 2rem; }
+            .loading-spinner { width: 30px; height: 30px; border-width: 2px; }
+            .loading-bar-track { width: 140px; }
+        }
+    </style>
 </head>
 <body>
-    <nav>
-        <a href="pages/public/home.html" class="logo">Unimart<span>X</span></a>
-        <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="navLinks">
-            <span></span><span></span><span></span>
-        </button>
-        <div class="nav-links" id="navLinks">
-            <a href="pages/public/stores/stores.html">Explore Shops</a>
-            <a href="pages/public/home.html">Learn More</a>
-            <a href="pages/auth/seller/register.html" class="btn-nav">Create My Shop</a>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-logo">
+            Unimart<span class="loading-logo-x">X</span>
         </div>
-    </nav>
+        <div class="loading-spinner"></div>
+        <div class="loading-bar-track">
+            <div class="loading-bar" id="loadingBar"></div>
+        </div>
+    </div>
 
-    <section class="hero">
-        <div class="hero-bg" aria-hidden="true">
-            <div class="hero-grid"></div>
-            <div class="orb orb-shop"></div>
-            <div class="orb orb-brand"></div>
-            <div class="orb orb-orders"></div>
+    <section class="welcome" id="welcomeSection">
+
+        <!-- Background -->
+        <div class="welcome__bg">
+            <div class="welcome__grid"></div>
+            <div class="welcome__gradient"></div>
+            <div class="welcome__glow"></div>
         </div>
-        <div class="hero-content">
-            <h1>The digital campus of <span class="highlight-green">student entrepreneurs.</span></h1>
-            <p class="hero-sub">
-                Build your professional storefront. Share one link. Reach students across campus. No website required.
+
+        <div class="welcome__badge-container">
+            <div class="welcome__badge">
+                <span class="welcome__badge-dot"></span>
+                Welcome to UniMartX
+            </div>
+        </div>
+
+        <!-- Main content -->
+        <div class="welcome__content">
+
+            <h1 class="welcome__title">
+                <span class="welcome__title-line">Build Your</span>
+                <span class="welcome__title-line welcome__title-accent">Legacy</span>
+            </h1>
+
+            <div class="welcome__divider"></div>
+
+            <p class="welcome__subtitle">
+                Every empire begins with a single decision. Claim your space, connect with your audience, and transform your vision into reality.
             </p>
-            <div class="cta-group">
-                <a href="pages/public/stores/stores.html" class="btn btn-primary">Explore Student Shops</a>
-                <a href="pages/auth/seller/register.html" class="btn btn-ghost">Start Selling</a>
+
+            <div class="welcome__actions">
+                <a href="pages/public/home.html" class="btn btn-primary">
+                    <span>Begin Your Journey</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+                </a>
             </div>
         </div>
+
     </section>
 
-    <section class="quick-links">
-        <a href="pages/public/stores/stores.html" class="quick-link">
-            <span class="quick-icon"><i data-lucide="store"></i></span>
-            <span class="quick-text">Discover shops</span>
-            <span class="quick-arrow"><i data-lucide="arrow-right"></i></span>
-        </a>
-        <a href="pages/public/shop/shop.html" class="quick-link">
-            <span class="quick-icon"><i data-lucide="shopping-bag"></i></span>
-            <span class="quick-text">Browse products</span>
-            <span class="quick-arrow"><i data-lucide="arrow-right"></i></span>
-        </a>
-        <a href="pages/public/home.html" class="quick-link">
-            <span class="quick-icon"><i data-lucide="info"></i></span>
-            <span class="quick-text">How it works</span>
-            <span class="quick-arrow"><i data-lucide="arrow-right"></i></span>
-        </a>
-    </section>
-
-    <footer class="site-footer">
-        <div class="footer-inner">
-            <div class="footer-brand">
-                <a href="pages/public/home.html" class="nav-logo">Unimart<span>X</span></a>
-                <p class="footer-tagline">The digital campus of student entrepreneurs.</p>
-            </div>
-            <div class="footer-cols">
-                <div class="footer-col">
-                    <h4>Shop</h4>
-                    <a href="pages/public/stores/stores.html">Explore Shops</a>
-                    <a href="pages/public/shop/shop.html">Browse Products</a>
-                </div>
-                <div class="footer-col">
-                    <h4>Sell</h4>
-                    <a href="pages/auth/seller/register.html">Create My Shop</a>
-                    <a href="pages/public/home.html">How It Works</a>
-                </div>
-                <div class="footer-col">
-                    <h4>Company</h4>
-                    <a href="pages/public/info/about.html">About</a>
-                    <a href="pages/public/contact/contact.html">Contact</a>
-                </div>
-                <div class="footer-col">
-                    <h4>Legal</h4>
-                    <a href="pages/public/info/terms.html">Terms</a>
-                    <a href="pages/public/info/privacy.html">Privacy</a>
-                </div>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <span>&copy; 2026 UniMartX. All rights reserved.</span>
-        </div>
-    </footer>
-
-    <script src="config.js"></script>
-    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
     <script>
-        lucide.createIcons();
+        const loadingScreen = document.getElementById('loadingScreen');
+        const welcomeSection = document.getElementById('welcomeSection');
 
-        const menuToggle = document.getElementById('menuToggle');
-        const navLinks = document.getElementById('navLinks');
+        welcomeSection.style.opacity = '0';
+        welcomeSection.style.transition = 'opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1)';
 
-        menuToggle.addEventListener('click', () => {
-            const isOpen = navLinks.classList.toggle('open');
-            menuToggle.setAttribute('aria-expanded', String(isOpen));
-        });
-
-        document.addEventListener('click', (e) => {
-            if (!menuToggle.contains(e.target) && !navLinks.contains(e.target)) {
-                navLinks.classList.remove('open');
-                menuToggle.setAttribute('aria-expanded', 'false');
-            }
-        });
+        setTimeout(() => {
+            loadingScreen.style.opacity = '0';
+            welcomeSection.style.opacity = '1';
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+            }, 800);
+        }, 2200);
     </script>
 </body>
 </html>

@@ -1,8 +1,12 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { randomUUID } from 'crypto';
+import { mkdirSync, writeFileSync, existsSync } from 'fs';
+import { join } from 'path';
 
 let supabase: SupabaseClient | null = null;
 let bucket: string = 'unimartx';
+
+const UPLOADS_DIR = join(process.cwd(), 'uploads');
 
 export function initializeR2(): void {
   const url       = process.env.SUPABASE_URL;
@@ -10,7 +14,10 @@ export function initializeR2(): void {
   const b         = process.env.SUPABASE_BUCKET || 'unimartx';
 
   if (!url || !secretKey) {
-    console.warn('⚠️  SUPABASE_URL or SUPABASE_SECRET_KEY not set. File uploads will be disabled.');
+    console.warn('⚠️  SUPABASE_URL or SUPABASE_SECRET_KEY not set. File uploads will use local storage.');
+    if (!existsSync(UPLOADS_DIR)) {
+      mkdirSync(UPLOADS_DIR, { recursive: true });
+    }
     return;
   }
 
@@ -24,7 +31,16 @@ export function isR2Ready(): boolean {
 }
 
 export async function uploadToR2(key: string, buffer: Buffer, mime: string): Promise<string> {
-  if (!supabase) throw new Error('Supabase storage not initialized');
+  if (!supabase) {
+    const filePath = join(UPLOADS_DIR, key);
+    const dir = join(filePath, '..');
+    if (!existsSync(dir)) {
+      mkdirSync(dir, { recursive: true });
+    }
+    writeFileSync(filePath, buffer);
+    const ext = key.split('.').pop() || 'jpg';
+    return `http://localhost:${process.env.PORT || 5000}/uploads/${key}`;
+  }
 
   const { error } = await supabase.storage
     .from(bucket)

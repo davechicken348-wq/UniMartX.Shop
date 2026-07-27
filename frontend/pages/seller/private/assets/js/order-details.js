@@ -3,7 +3,7 @@
 // ═══════════════════════════════════════════
 
 (function() {
-    const API_BASE = (window.APP_CONFIG && window.APP_CONFIG.BACKEND_URL) || 'http://localhost:5000';
+    var API_BASE = (window.APP_CONFIG && window.APP_CONFIG.BACKEND_URL) || 'http://localhost:5000';
 
     function esc(str) {
         if (str === null || str === undefined) return '';
@@ -191,12 +191,16 @@
     function renderOrder(order) {
         _currentOrder = order;
         // Order header
-        document.getElementById('order-ref').textContent = '#' + order.orderNumber;
+        const orderRefEl = document.getElementById('order-ref');
+        if (orderRefEl) orderRefEl.textContent = '#' + order.orderNumber;
         const refFallback = document.getElementById('order-ref-fallback');
         if (refFallback) refFallback.textContent = order.orderNumber;
-        document.getElementById('order-date').textContent = formatDateTime(order.createdAt);
-        document.getElementById('order-payment').textContent = `${formatCurrency(order.totalAmount)} ✓`;
-        document.getElementById('order-date-fallback').textContent = formatDateTime(order.createdAt);
+        const orderDateEl = document.getElementById('order-date');
+        if (orderDateEl) orderDateEl.textContent = formatDateTime(order.createdAt);
+        const orderPaymentEl = document.getElementById('order-payment');
+        if (orderPaymentEl) orderPaymentEl.textContent = `${formatCurrency(order.totalAmount)} ✓`;
+        const dateFallback = document.getElementById('order-date-fallback');
+        if (dateFallback) dateFallback.textContent = formatDateTime(order.createdAt);
 
         // Status
         populateStatusSelect(order.status);
@@ -723,17 +727,23 @@
 
     window.addEventListener('beforeunload', stopLiveSync);
 
-    const origPushState = history.pushState;
+    const _origPushState = history.pushState;
     history.pushState = function() {
-        origPushState.apply(this, arguments);
+        _origPushState.apply(this, arguments);
         stopLiveSync();
         setTimeout(() => startLiveSync(), 0);
     };
-    const origReplaceState = history.replaceState;
+    const _origReplaceState = history.replaceState;
     history.replaceState = function() {
-        origReplaceState.apply(this, arguments);
+        _origReplaceState.apply(this, arguments);
         stopLiveSync();
         setTimeout(() => startLiveSync(), 0);
+    };
+
+    window.__umxTeardown = function () {
+        stopLiveSync();
+        history.pushState = _origPushState;
+        history.replaceState = _origReplaceState;
     };
 
     // ── Init ───────────────────────────────────────────────────

@@ -39,30 +39,30 @@
 .notif-hero-prefs { flex-shrink: 0; }
 
 /* ── Summary stats ── */
-.notif-stats {
+.stats-grid {
     display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;
     margin-bottom: 1.5rem;
 }
-.notif-stat {
+.stat-card {
     display: flex; align-items: center; gap: 0.9rem;
     background: var(--bg-2); border: 1px solid var(--border);
     border-radius: var(--radius-lg); padding: 1.1rem 1.2rem;
     box-shadow: var(--shadow-sm);
     transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
 }
-.notif-stat:hover { border-color: var(--border-2); transform: translateY(-2px); box-shadow: var(--shadow); }
-.notif-stat-icon {
+.stat-card:hover { border-color: var(--border-2); transform: translateY(-2px); box-shadow: var(--shadow); }
+.stat-icon {
     width: 44px; height: 44px; border-radius: 13px; flex-shrink: 0;
     display: flex; align-items: center; justify-content: center;
 }
-.notif-stat-icon svg { width: 21px; height: 21px; stroke: currentColor; }
-.notif-stat--unread   .notif-stat-icon { background: var(--primary-l); border: 1px solid var(--border-2); color: var(--primary-ink); }
-.notif-stat--orders   .notif-stat-icon { background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.25); color: #b45309; }
-.notif-stat--products .notif-stat-icon { background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.22); color: #15803d; }
-.notif-stat--system   .notif-stat-icon { background: rgba(56,189,248,0.12); border: 1px solid rgba(56,189,248,0.2); color: #0369a1; }
-.notif-stat-info { display: flex; flex-direction: column; }
-.notif-stat-value { font-size: 1.4rem; font-weight: 700; color: var(--text); line-height: 1.1; }
-.notif-stat-label { font-size: 0.74rem; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.04em; }
+.stat-icon svg { width: 21px; height: 21px; stroke: currentColor; }
+.stat-card--unread .stat-icon { background: var(--primary-l); border: 1px solid var(--border-2); color: var(--primary-ink); }
+.stat-card--orders .stat-icon { background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.25); color: #b45309; }
+.stat-card--products .stat-icon { background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.22); color: #15803d; }
+.stat-card--system .stat-icon { background: rgba(56,189,248,0.12); border: 1px solid rgba(56,189,248,0.2); color: #0369a1; }
+.stat-info { display: flex; flex-direction: column; }
+.stat-value { font-size: 1.4rem; font-weight: 700; color: var(--text); line-height: 1.1; }
+.stat-label { font-size: 0.74rem; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.04em; }
 
 /* ── Toolbar / filters ── */
 .notif-toolbar {
@@ -217,7 +217,7 @@
 
 /* ── Responsive ── */
 @media (max-width: 1024px) {
-    .notif-stats { grid-template-columns: repeat(2, 1fr); }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 768px) {
     .notif-hero { flex-direction: column; align-items: flex-start; }
@@ -234,28 +234,42 @@
     .notif-icon { width: 40px; height: 40px; }
     .notif-icon svg { width: 18px; height: 18px; }
 
-    /* The "My Shop" button is redundant with the sidebar on mobile and would
-       overflow the topnav alongside "Add Product", the bell and the user menu. */
+    .stats-grid { grid-template-columns: repeat(2, 1fr); gap: var(--os-space-3); }
+    .stat-card { padding: var(--os-space-4); gap: var(--os-space-3); }
+    .stat-icon { width: 40px; height: 40px; }
+    .stat-icon svg { width: 18px; height: 18px; }
+    .stat-value { font-size: var(--os-text-xl); }
+    .stat-label { font-size: 10px; }
+
     #view-my-shop-btn { display: none; }
 }
 @media (max-width: 480px) {
-    .notif-stats { grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+    .stats-grid { grid-template-columns: 1fr 1fr; gap: var(--os-space-2); }
     .page-content { padding: 1rem 0.75rem; }
 
-    /* Keep the horizontally-scrolling filters flush with the narrower padding */
     .notif-filters { margin-left: -0.75rem; margin-right: -0.75rem; padding-left: 0.75rem; padding-right: 0.75rem; }
 
-    /* Let notification row actions drop below the content instead of crowding it */
     .notif-item { flex-wrap: wrap; }
     .notif-actions { width: 100%; justify-content: flex-end; align-self: auto; margin-top: 0.25rem; }
 
     .notif-hero { padding: 1.25rem 1rem; gap: 1rem; }
     .notif-hero-text h1 { font-size: 1.3rem; }
+
+    .stat-card { padding: var(--os-space-3); }
+    .stat-icon { width: 36px; height: 36px; border-radius: 8px; }
+    .stat-icon svg { width: 17px; height: 17px; }
+    .stat-value { font-size: var(--os-text-lg); }
+    .stat-label { font-size: 10px; }
 }
 @media (max-width: 380px) {
-    .notif-stats { grid-template-columns: 1fr; }
+    .stats-grid { grid-template-columns: 1fr; }
     .topnav-actions .topnav-add-btn { display: none; }
     .notif-item { padding: 0.9rem; }
     .notif-actions { justify-content: stretch; }
     .notif-actions .notif-btn { flex: 1; justify-content: center; }
+
+    .stat-card { padding: var(--os-space-3); }
+    .stat-icon { width: 32px; height: 32px; }
+    .stat-icon svg { width: 16px; height: 16px; }
+    .stat-value { font-size: var(--os-text-lg); }
 }

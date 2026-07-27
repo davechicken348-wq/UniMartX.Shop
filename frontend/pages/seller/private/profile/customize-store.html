@@ -5,132 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Store Studio - UnimartX Seller</title>
     <script src="../../../../config.js"></script>
-    <script>
-      if (localStorage.getItem("seller_sidebar_collapsed") === "true") {
-        document.documentElement.classList.add("no-transition");
-      }
-    </script>
+    <script src="../shared/head-shell.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../shared/seller-base.css">
     <link rel="stylesheet" href="../shared/sidebar.css">
     <link rel="stylesheet" href="../shared/topnav.css">
+    <link rel="stylesheet" href="../assets/css/seller-os.css">
     <link rel="stylesheet" href="../assets/css/customize-store.css">
 </head>
 <body>
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-logo">
-            <div class="sidebar-logo-icon"><i data-lucide="store"></i></div>
-            <span class="sidebar-logo-text">Unimart<span>X</span></span>
-        </div>
-        <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
-            <i data-lucide="chevron-left"></i>
-        </button>
-        <nav class="sidebar-nav">
-            <span class="nav-section-label">Main</span>
-            <a href="../dashboard/overview.html" class="nav-item" data-tooltip="Dashboard">
-                <div class="nav-item-icon"><i data-lucide="layout-dashboard"></i></div>
-                <span class="nav-item-label">Dashboard</span>
-            </a>
-            <a href="../orders/order-list.html" class="nav-item" data-tooltip="Orders">
-                <div class="nav-item-icon"><i data-lucide="shopping-bag"></i></div>
-                <span class="nav-item-label">Orders</span>
-                <span class="nav-item-badge" id="sidebar-orders-count"></span>
-            </a>
-            <a href="../products/product-list.html" class="nav-item" data-tooltip="Products">
-                <div class="nav-item-icon"><i data-lucide="package"></i></div>
-                <span class="nav-item-label">Products</span>
-            </a>
-            <span class="nav-section-label">Store</span>
-            <a href="../products/add-product.html" class="nav-item" data-tooltip="Add Product">
-                <div class="nav-item-icon"><i data-lucide="plus-circle"></i></div>
-                <span class="nav-item-label">Add Product</span>
-            </a>
-            <a href="customize-store.html" class="nav-item active" data-tooltip="My Store">
-                <div class="nav-item-icon"><i data-lucide="store"></i></div>
-                <span class="nav-item-label">My Store</span>
-            </a>
-            <a href="customize-profile.html" class="nav-item" data-tooltip="Profile">
-                <div class="nav-item-icon"><i data-lucide="user"></i></div>
-                <span class="nav-item-label">Profile</span>
-            </a>
-            <a href="account-settings.html" class="nav-item" data-tooltip="Settings">
-                <div class="nav-item-icon"><i data-lucide="settings"></i></div>
-                <span class="nav-item-label">Settings</span>
-            </a>
-            <span class="nav-section-label">More</span>
-            <a href="../notifications.html" class="nav-item" data-tooltip="Notifications">
-                <div class="nav-item-icon"><i data-lucide="bell"></i></div>
-                <span class="nav-item-label">Notifications</span>
-                <span class="nav-item-badge" id="sidebar-notif-count"></span>
-            </a>
-            <a href="../../../public/home.html" class="nav-item" data-tooltip="Home">
-                <div class="nav-item-icon"><i data-lucide="home"></i></div>
-                <span class="nav-item-label">Home</span>
-            </a>
-            <a href="../../../public/info/faq.html" class="nav-item" data-tooltip="Help">
-                <div class="nav-item-icon"><i data-lucide="help-circle"></i></div>
-                <span class="nav-item-label">Help & FAQ</span>
-            </a>
-        </nav>
-        <div class="sidebar-footer">
-            <div class="sidebar-user">
-                <div class="sidebar-avatar" id="sidebar-avatar"></div>
-                <div class="sidebar-user-info">
-                    <p class="sidebar-user-name" id="sidebar-name"></p>
-                    <p class="sidebar-user-role" id="sidebar-store"></p>
-                </div>
-                <a href="../../../auth/logout.html" class="sidebar-logout" aria-label="Log out">
-                    <i data-lucide="log-out"></i>
-                </a>
-            </div>
-        </div>
-    </aside>
-    <div class="sidebar-overlay" id="sidebar-overlay"></div>
-
-    <!-- TOPNAV -->
-    <header class="topnav" id="topnav">
-        <button class="topnav-hamburger" id="topnav-hamburger" aria-label="Open menu">
-            <i data-lucide="menu"></i>
-        </button>
-        <div class="topnav-title">
-            <h1>Store Studio</h1>
-            <p>Customize your storefront</p>
-        </div>
-        <div class="topnav-actions">
-            <div style="position:relative;">
-                <button class="topnav-btn" id="notif-btn" aria-label="Notifications">
-                    <i data-lucide="bell"></i>
-                    <span class="topnav-badge" id="notif-badge"></span>
-                </button>
-                <div class="notif-panel" id="notif-panel">
-                    <div class="notif-header">
-                        <h3>Notifications</h3>
-                        <button class="notif-mark-read" id="mark-read">Mark all read</button>
-                    </div>
-                    <div class="notif-list"></div>
-                    <div class="notif-footer"><a href="../../notifications.html">View all</a></div>
-                </div>
-            </div>
-            <div style="position:relative;">
-                <div class="topnav-user" id="topnav-user" tabindex="0" role="button" aria-haspopup="true" aria-expanded="false">
-                    <div class="topnav-avatar" id="topnav-avatar"></div>
-                    <span class="topnav-username" id="topnav-username"></span>
-                    <i data-lucide="chevron-down" class="topnav-chevron"></i>
-                </div>
-                <div class="topnav-dropdown" id="topnav-dropdown" role="menu">
-                    <a href="customize-profile.html" class="dropdown-item" role="menuitem"><i data-lucide="user"></i> My Profile</a>
-                    <a href="customize-store.html" class="dropdown-item" role="menuitem"><i data-lucide="store"></i> My Store</a>
-                    <a href="account-settings.html" class="dropdown-item" role="menuitem"><i data-lucide="settings"></i> Settings</a>
-                    <div class="dropdown-divider"></div>
-                    <a href="../../../auth/logout.html" class="dropdown-item dropdown-item--danger" role="menuitem"><i data-lucide="log-out"></i> Log Out</a>
-                </div>
-            </div>
-        </div>
-    </header>
+    <div id="app-shell">
 
     <!-- STUDIO SHELL -->
     <div class="seller-main studio-main" id="seller-main">
@@ -216,12 +103,12 @@
                                     <option value="">Select a category</option>
                                     <option value="electronics">Electronics & Gadgets</option>
                                     <option value="fashion">Fashion & Apparel</option>
-                                    <option value="home">Home & Living</option>
-                                    <option value="beauty">Beauty & Health</option>
-                                    <option value="sports">Sports & Outdoors</option>
-                                    <option value="books">Books & Stationery</option>
-                                    <option value="food">Food & Snacks</option>
-                                    <option value="services">Other Services</option>
+                                    <option value="home">Home & Dorm Essentials</option>
+                                    <option value="beauty">Beauty & Personal Care</option>
+                                    <option value="sports">Sports & Fitness</option>
+                                    <option value="books">Books & Study Supplies</option>
+                                    <option value="food">Food & Drinks</option>
+                                    <option value="services">Tutoring & Services</option>
                                     <option value="other">Other</option>
                                 </select>
                             </div>
@@ -555,127 +442,14 @@
 
         </div><!-- end studio-body -->
     </div><!-- end studio-main -->
+    </div><!-- /app-shell -->
+    <script defer src="../shared/shell.js"></script>
 
     <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
     <script>if(window.lucide)lucide.createIcons();else window.addEventListener('DOMContentLoaded',function(){if(window.lucide)lucide.createIcons();});</script>
     <script defer src="../shared/polling.js"></script>
-    <script defer src="../shared/sidebar.js"></script>
-    <script defer src="../shared/topnav.js"></script>
-    <script defer src="../assets/js/customize-store.js"></script>
-    <script>
-        window.Toast = {
-            show(message, type = 'success', duration = 3500) {
-                const toast = document.createElement('div');
-                toast.style.cssText = `
-                    position:fixed;bottom:24px;right:24px;z-index:9999;
-                    background:${type === 'error' ? '#ef4444' : 'var(--bg-2)'};
-                    color:${type === 'error' ? '#fff' : 'var(--text)'};
-                    border:1px solid ${type === 'error' ? 'transparent' : 'var(--border)'};
-                    border-radius:var(--radius);padding:0.8rem 1.1rem;
-                    display:flex;align-items:center;gap:0.6rem;
-                    font-family:'Quicksand',sans-serif;font-weight:600;font-size:0.85rem;
-                    box-shadow:0 8px 32px rgba(0,0,0,0.35);max-width:340px;
-                    animation:toastIn 0.3s cubic-bezier(0.4,0,0.2,1);
-                `;
-                toast.textContent = message;
-                document.body.appendChild(toast);
-                setTimeout(() => {
-                    toast.style.animation = 'toastOut 0.25s ease forwards';
-                    setTimeout(() => toast.remove(), 250);
-                }, duration);
-            }
-        };
-        const s = document.createElement('style');
-        s.textContent = `
-            @keyframes toastIn  { from{opacity:0;transform:translateY(12px) scale(0.96)} to{opacity:1;transform:translateY(0) scale(1)} }
-            @keyframes toastOut { from{opacity:1} to{opacity:0;transform:translateY(6px)} }
-        `;
-        document.head.appendChild(s);
-
-        // Sync store name to URL slug in preview chrome
-        document.addEventListener('DOMContentLoaded', () => {
-            const nameInput = document.getElementById('store-name');
-            const slugEl = document.getElementById('preview-store-slug');
-            if (nameInput && slugEl) {
-                const update = () => {
-                    slugEl.textContent = nameInput.value.trim()
-                        .toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') || 'your-store';
-                };
-                nameInput.addEventListener('input', update);
-                update();
-            }
-        });
-    </script>
-    <script>
-        // ── Store setup completeness + editor header identity (isolated, non-breaking) ──
-        (function () {
-            const STEPS = [
-                { key: 'info',       label: 'Info',       icon: 'store',       done: () => {
-                    const n = v('store-name'), c = v('store-category'), d = v('store-description'),
-                          co = v('store-country'), ci = v('store-city');
-                    return !!(n && c && d && d.length >= 20 && co && ci);
-                }},
-                { key: 'branding',   label: 'Logo',       icon: 'image',      done: () => {
-                    return !!document.querySelector('#avatar-inner img') || !!v('banner-img', 'src');
-                }},
-                { key: 'colors',     label: 'Color',      icon: 'palette',    done: () => !!v('store-color') },
-                { key: 'delivery',   label: 'Delivery',   icon: 'truck',      done: () => !!(v('delivery-fee') || v('pickup-address')) },
-                { key: 'policies',   label: 'Policies',   icon: 'file-text',  done: () => {
-                    return ['processing-time','return-policy','shipping-policy','refund-policy','exchange-policy','cancellation-policy']
-                        .some(id => v(id));
-                }},
-            ];
-            function v(id, attr) {
-                const el = document.getElementById(id);
-                if (!el) return '';
-                return (attr ? el.getAttribute(attr) : el.value || '').trim();
-            }
-            const fill = document.getElementById('setup-fill');
-            const pctEl = document.getElementById('setup-pct');
-            const stepsEl = document.getElementById('setup-steps');
-            const hdrAvatar = document.getElementById('hdr-avatar');
-
-            function render() {
-                let done = 0;
-                const chips = STEPS.map(s => {
-                    const ok = s.done();
-                    if (ok) done++;
-                    return `<span class="setup-step${ok ? ' done' : ''}" title="${s.label}">
-                        <i data-lucide="${s.icon}"></i>${s.label}</span>`;
-                }).join('');
-                if (stepsEl) stepsEl.innerHTML = chips;
-                const pct = Math.round((done / STEPS.length) * 100);
-                if (fill) fill.style.width = pct + '%';
-                if (pctEl) pctEl.textContent = pct + '%';
-                if (window.lucide) lucide.createIcons();
-                updateIdentity();
-            }
-
-            function updateIdentity() {
-                const name = v('store-name') || 'Store';
-                if (hdrAvatar) {
-                    hdrAvatar.textContent = name.trim().charAt(0).toUpperCase() || 'S';
-                    const color = v('store-color');
-                    if (color) { hdrAvatar.style.background = color; hdrAvatar.style.color = '#0a0a0f'; }
-                }
-            }
-
-            ['input', 'change'].forEach(ev => {
-                document.addEventListener(ev, e => {
-                    if (e.target && e.target.closest && e.target.closest('.studio-editor')) render();
-                });
-            });
-            if (window.lucide) lucide.createIcons();
-
-            // Run after deferred customize-store.js + its async data load; poll briefly to catch populated values.
-            function start() {
-                render();
-                let ticks = 0;
-                const poll = setInterval(() => { render(); if (++ticks >= 14) clearInterval(poll); }, 500);
-            }
-            if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
-            else start();
-        })();
-    </script>
+    
+    
+    <script defer src="../assets/js/customize-store.js" id="page-script"></script>
 </body>
 </html>

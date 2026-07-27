@@ -17,19 +17,10 @@ export const createProductSchema = z.object({
   name: z.string().min(1, 'Product name is required').max(100),
   description: z.string().min(1, 'Description is required').max(1000),
   price: z.coerce.number().positive('Price must be greater than 0'),
-  category: z.enum([
-    'electronics',
-    'clothing',
-    'books',
-    'fashion',
-    'food',
-    'beauty',
-    'sports',
-    'home',
-    'art',
-    'other',
-  ]),
+  category: z.string().min(1, 'Category is required'),
+  categoryId: z.string().optional().nullable(),
   subcategory: z.string().optional().nullable(),
+  subcategoryId: z.string().optional().nullable(),
   stock: z.coerce.number().int().min(0, 'Stock must be a valid number'),
   condition: z.enum(['new', 'like-new', 'good', 'fair']).optional().nullable(),
   serviceType: z.string().optional().nullable(),
@@ -44,7 +35,7 @@ export const createProductSchema = z.object({
   deliveryFee: z.coerce.number().nonnegative().optional().nullable(),
   fulfillment: z.enum(['pickup', 'delivery', 'both']).optional().nullable(),
   location: z.string().optional().nullable(),
-  isActive: z.coerce.boolean().optional(),
+  isActive: z.string().transform(v => v === 'true').optional(),
   details: z.string()
     .transform(raw => {
       try { const parsed = JSON.parse(raw); return typeof parsed === 'object' && parsed !== null ? parsed : {}; } catch { return {}; }

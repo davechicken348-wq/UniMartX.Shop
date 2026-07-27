@@ -3,7 +3,7 @@
    ═══════════════════════════════════════════════════════════════ */
 
 (function () {
-    const API_BASE = (window.APP_CONFIG && window.APP_CONFIG.BACKEND_URL) || 'http://localhost:5000';
+    var API_BASE = (window.APP_CONFIG && window.APP_CONFIG.BACKEND_URL) || 'http://localhost:5000';
 
     // ── Auth ──────────────────────────────────────────────────────
     function getAuthToken() {

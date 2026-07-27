@@ -143,15 +143,15 @@ function storeCardHTML(s) {
 }
 
 const DISCOVERY_CATS = [
-  ['Electronics', 'electronics'],
-  ['Fashion', 'fashion'],
-  ['Clothing', 'clothing'],
-  ['Books', 'books'],
-  ['Food', 'food'],
-  ['Beauty', 'beauty'],
-  ['Sports', 'sports'],
-  ['Home', 'home'],
-  ['Art', 'art'],
+  ['Electronics & Gadgets', 'electronics'],
+  ['Fashion & Apparel', 'fashion'],
+  ['Books & Study Supplies', 'books'],
+  ['Food & Drinks', 'food'],
+  ['Beauty & Personal Care', 'beauty'],
+  ['Sports & Fitness', 'sports'],
+  ['Home & Dorm Essentials', 'home'],
+  ['Tutoring & Services', 'services'],
+  ['Other', 'other'],
 ];
 
 function discoveryHTML(title) {

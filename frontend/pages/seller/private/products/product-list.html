@@ -3,159 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Products - UnimartX Seller</title>
+    <title>My Products - UnimartX Seller</title>
     <script src="../../../../config.js"></script>
-    <script>
-      if (localStorage.getItem("seller_sidebar_collapsed") === "true") {
-        document.documentElement.classList.add("no-transition");
-      }
-    </script>
+    <script src="../shared/head-shell.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../shared/seller-base.css">
     <link rel="stylesheet" href="../shared/sidebar.css">
     <link rel="stylesheet" href="../shared/topnav.css">
+    <link rel="stylesheet" href="../assets/css/seller-os.css">
     <link rel="stylesheet" href="../assets/css/product-list.css">
 </head>
 <body>
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-logo">
-            <div class="sidebar-logo-icon"><i data-lucide="store"></i></div>
-            <span class="sidebar-logo-text">Unimart<span>X</span></span>
-        </div>
-        <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
-            <i data-lucide="chevron-left"></i>
-        </button>
-        <nav class="sidebar-nav">
-            <span class="nav-section-label">Main</span>
-            <a href="../dashboard/overview.html" class="nav-item" data-tooltip="Dashboard">
-                <div class="nav-item-icon"><i data-lucide="layout-dashboard"></i></div>
-                <span class="nav-item-label">Dashboard</span>
-            </a>
-              <a href="../orders/order-list.html" class="nav-item" data-tooltip="Orders">
-                <div class="nav-item-icon"><i data-lucide="shopping-bag"></i></div>
-                <span class="nav-item-label">Orders</span>
-                <span class="nav-item-badge" id="sidebar-orders-count"></span>
-            </a>
-            <a href="product-list.html" class="nav-item active" data-tooltip="Products">
-                <div class="nav-item-icon"><i data-lucide="package"></i></div>
-                <span class="nav-item-label">Products</span>
-            </a>
-            <span class="nav-section-label">Store</span>
-            <a href="add-product.html" class="nav-item" data-tooltip="Add Product">
-                <div class="nav-item-icon"><i data-lucide="plus-circle"></i></div>
-                <span class="nav-item-label">Add Product</span>
-            </a>
-            <a href="../profile/customize-store.html" class="nav-item" data-tooltip="My Store">
-                <div class="nav-item-icon"><i data-lucide="store"></i></div>
-                <span class="nav-item-label">My Store</span>
-            </a>
-            <a href="../profile/customize-profile.html" class="nav-item" data-tooltip="Profile">
-                <div class="nav-item-icon"><i data-lucide="user"></i></div>
-                <span class="nav-item-label">Profile</span>
-            </a>
-            <a href="../profile/account-settings.html" class="nav-item" data-tooltip="Settings">
-                <div class="nav-item-icon"><i data-lucide="settings"></i></div>
-                <span class="nav-item-label">Settings</span>
-            </a>
-            <span class="nav-section-label">More</span>
-            <a href="../notifications.html" class="nav-item" data-tooltip="Notifications">
-                <div class="nav-item-icon"><i data-lucide="bell"></i></div>
-                <span class="nav-item-label">Notifications</span>
-                <span class="nav-item-badge" id="sidebar-notif-count"></span>
-            </a>
-            <a href="../../../public/home.html" class="nav-item" data-tooltip="Home">
-                <div class="nav-item-icon"><i data-lucide="home"></i></div>
-                <span class="nav-item-label">Home</span>
-            </a>
-            <a href="../../../public/info/faq.html" class="nav-item" data-tooltip="Help">
-                <div class="nav-item-icon"><i data-lucide="help-circle"></i></div>
-                <span class="nav-item-label">Help & FAQ</span>
-            </a>
-        </nav>
-        <div class="sidebar-footer">
-            <div class="sidebar-user">
-                <div class="sidebar-avatar" id="sidebar-avatar"></div>
-                <div class="sidebar-user-info">
-                    <p class="sidebar-user-name" id="sidebar-name"></p>
-                    <p class="sidebar-user-role" id="sidebar-store"></p>
-                </div>
-                <a href="../../../auth/logout.html" class="sidebar-logout" aria-label="Log out">
-                    <i data-lucide="log-out"></i>
-                </a>
-            </div>
-        </div>
-    </aside>
-    <div class="sidebar-overlay" id="sidebar-overlay"></div>
-
-
-    <!-- TOPNAV -->
-    <header class="topnav" id="topnav">
-        <button class="topnav-hamburger" id="topnav-hamburger" aria-label="Open menu">
-            <i data-lucide="menu"></i>
-        </button>
-        <div class="topnav-title">
-            <h1>Products</h1>
-            <p>Manage your listings</p>
-        </div>
-        <div class="topnav-actions">
-            <a href="add-product.html" class="topnav-add-btn">
-                <i data-lucide="plus"></i>
-                <span>Add Product</span>
-            </a>
-            <div style="position:relative;">
-                <button class="topnav-btn" id="notif-btn" aria-label="Notifications">
-                    <i data-lucide="bell"></i>
-                    <span class="topnav-badge" id="notif-badge"></span>
-                </button>
-                <div class="notif-panel" id="notif-panel">
-                    <div class="notif-header">
-                        <h3>Notifications</h3>
-                        <button class="notif-mark-read" id="mark-read">Mark all read</button>
-                    </div>
-                    <div class="notif-list">
-                    </div>
-                    <div class="notif-footer"><a href="../notifications.html">View all</a></div>
-                </div>
-            </div>
-            <div style="position:relative;">
-                <div class="topnav-user" id="topnav-user">
-                    <div class="topnav-avatar" id="topnav-avatar"></div>
-                    <span class="topnav-username" id="topnav-username"></span>
-                    <i data-lucide="chevron-down" class="topnav-chevron"></i>
-                </div>
-                <div class="topnav-dropdown" id="topnav-dropdown">
-                    <a href="../profile/customize-profile.html" class="dropdown-item"><i data-lucide="user"></i> My Profile</a>
-                    <a href="../profile/customize-store.html" class="dropdown-item"><i data-lucide="store"></i> My Store</a>
-                    <a href="../profile/account-settings.html" class="dropdown-item"><i data-lucide="settings"></i> Settings</a>
-                    <div class="dropdown-divider"></div>
-                    <a href="../../../auth/logout.html" class="dropdown-item dropdown-item--danger"><i data-lucide="log-out"></i> Log Out</a>
-                </div>
-            </div>
-        </div>
-    </header>
-
+    <div id="app-shell">
 
     <!-- MAIN -->
-    <div class="seller-main" id="seller-main">
-        <div class="page-content">
+    <div class="os-main" id="seller-main">
+        <div class="os-page">
 
             <!-- ── KPI / summary row ── -->
-            <div class="prod-stats" id="prod-stats">
+            <div class="stats-grid" id="prod-stats">
                 <div class="stat-card" data-stat="total">
                     <div class="stat-icon stat-icon--brand"><i data-lucide="package"></i></div>
-                    <div class="stat-body">
+                    <div class="stat-info">
                         <p class="stat-label">Total Products</p>
                         <p class="stat-value" id="stat-total">0</p>
-                        <p class="stat-sub" id="stat-total-sub">in your catalog</p>
+                        <p class="stat-sub" id="stat-total-sub">in my catalog</p>
                     </div>
                 </div>
                 <div class="stat-card" data-stat="active">
                     <div class="stat-icon stat-icon--success"><i data-lucide="check-circle-2"></i></div>
-                    <div class="stat-body">
+                    <div class="stat-info">
                         <p class="stat-label">Published</p>
                         <p class="stat-value" id="stat-active">0</p>
                         <p class="stat-sub" id="stat-active-sub">visible to buyers</p>
@@ -163,7 +43,7 @@
                 </div>
                 <div class="stat-card" data-stat="low">
                     <div class="stat-icon stat-icon--warning"><i data-lucide="alert-triangle"></i></div>
-                    <div class="stat-body">
+                    <div class="stat-info">
                         <p class="stat-label">Low Stock</p>
                         <p class="stat-value" id="stat-low">0</p>
                         <p class="stat-sub">needs restocking</p>
@@ -171,7 +51,7 @@
                 </div>
                 <div class="stat-card" data-stat="out">
                     <div class="stat-icon stat-icon--danger"><i data-lucide="package-x"></i></div>
-                    <div class="stat-body">
+                    <div class="stat-info">
                         <p class="stat-label">Out of Stock</p>
                         <p class="stat-value" id="stat-out">0</p>
                         <p class="stat-sub">unavailable</p>
@@ -180,38 +60,35 @@
             </div>
 
             <!-- ── Toolbar ── -->
-            <div class="products-toolbar">
-                <div class="filter-tabs" id="filter-tabs">
-                    <button class="filter-tab active" data-filter="all">All</button>
-                    <button class="filter-tab" data-filter="active">Active</button>
-                    <button class="filter-tab" data-filter="draft">Draft</button>
-                    <button class="filter-tab filter-tab--warning" data-filter="low-stock">⚠ Low Stock</button>
+            <div class="os-card" style="padding:var(--os-space-4) var(--os-space-5);margin-bottom:var(--os-space-5);display:flex;align-items:center;justify-content:space-between;gap:var(--os-space-4);flex-wrap:wrap;">
+                <div style="display:flex;align-items:center;gap:var(--os-space-3);" class="filter-tabs" id="filter-tabs">
+                    <button class="os-btn os-btn-ghost os-btn-sm filter-tab active" data-filter="all" style="border-radius:var(--os-radius);">All</button>
+                    <button class="os-btn os-btn-ghost os-btn-sm filter-tab" data-filter="active" style="border-radius:var(--os-radius);">Active</button>
+                    <button class="os-btn os-btn-ghost os-btn-sm filter-tab" data-filter="draft" style="border-radius:var(--os-radius);">Draft</button>
+                    <button class="os-btn os-btn-ghost os-btn-sm filter-tab" data-filter="low-stock" style="border-radius:var(--os-radius);color:var(--os-warning);">Low Stock</button>
                 </div>
-                <div class="toolbar-right">
-                    <div class="prod-search">
-                        <i data-lucide="search"></i>
-                        <input type="search" id="product-search" placeholder="Search products, categories…">
+                <div style="display:flex;align-items:center;gap:var(--os-space-3);" class="toolbar-right">
+                    <div class="prod-search" style="display:flex;align-items:center;gap:var(--os-space-2);background:var(--os-bg-3);border:1px solid var(--os-border);border-radius:var(--os-radius);padding:0 var(--os-space-3);width:220px;">
+                        <i data-lucide="search" style="width:15px;height:15px;stroke:var(--os-text-3);flex-shrink:0;"></i>
+                        <input type="search" id="product-search" placeholder="Search my products…" style="background:none;border:none;outline:none;color:var(--os-text);font-family:var(--os-font);font-size:var(--os-text-sm);padding:var(--os-space-3) 0;width:100%;">
                     </div>
-                    <div class="prod-sort">
-                        <i data-lucide="arrow-down-wide-narrow"></i>
-                        <select id="product-sort" aria-label="Sort products">
-                            <option value="name-asc">Name (A–Z)</option>
-                            <option value="name-desc">Name (Z–A)</option>
-                            <option value="price-asc">Price (Low → High)</option>
-                            <option value="price-desc">Price (High → Low)</option>
-                            <option value="stock-asc">Stock (Low → High)</option>
-                            <option value="stock-desc">Stock (High → Low)</option>
-                        </select>
-                    </div>
-                    <button class="select-toggle" id="btn-select" aria-pressed="false">
-                        <i data-lucide="list-checks"></i><span>Select</span>
+                    <select id="product-sort" aria-label="Sort products" style="background:var(--os-bg-3);border:1px solid var(--os-border);border-radius:var(--os-radius);padding:var(--os-space-2) var(--os-space-3);font-family:var(--os-font);font-size:var(--os-text-sm);color:var(--os-text-2);cursor:pointer;">
+                        <option value="name-asc">Name (A–Z)</option>
+                        <option value="name-desc">Name (Z–A)</option>
+                        <option value="price-asc">Price (Low → High)</option>
+                        <option value="price-desc">Price (High → Low)</option>
+                        <option value="stock-asc">Stock (Low → High)</option>
+                        <option value="stock-desc">Stock (High → Low)</option>
+                    </select>
+                    <button class="view-toggle" id="btn-select" aria-pressed="false" style="display:inline-flex;align-items:center;gap:6px;padding:var(--os-space-2) var(--os-space-3);border-radius:var(--os-radius);background:var(--os-bg-3);border:1px solid var(--os-border);color:var(--os-text-2);font-size:var(--os-text-xs);font-weight:700;cursor:pointer;transition:all 0.15s;font-family:var(--os-font);">
+                        <i data-lucide="list-checks" style="width:14px;height:14px;stroke:currentColor;"></i><span>Select</span>
                     </button>
-                    <div class="view-toggle">
-                        <button class="view-btn active" id="btn-grid" aria-label="Grid view" title="Grid view">
-                            <i data-lucide="grid-2x2"></i>
+                    <div class="view-toggle" style="display:flex;gap:var(--os-space-1);">
+                        <button class="view-btn active" id="btn-grid" aria-label="Grid view" title="Grid view" style="width:36px;height:36px;border-radius:var(--os-radius);background:var(--os-bg-3);border:1px solid var(--os-border);display:flex;align-items:center;justify-content:center;color:var(--os-text-2);cursor:pointer;transition:all 0.15s;">
+                            <i data-lucide="grid-2x2" style="width:15px;height:15px;stroke:currentColor;"></i>
                         </button>
-                        <button class="view-btn" id="btn-list" aria-label="Table view" title="Table view">
-                            <i data-lucide="table-2"></i>
+                        <button class="view-btn" id="btn-list" aria-label="Table view" title="Table view" style="width:36px;height:36px;border-radius:var(--os-radius);background:var(--os-bg-3);border:1px solid var(--os-border);display:flex;align-items:center;justify-content:center;color:var(--os-text-2);cursor:pointer;transition:all 0.15s;">
+                            <i data-lucide="table-2" style="width:15px;height:15px;stroke:currentColor;"></i>
                         </button>
                     </div>
                 </div>
@@ -243,15 +120,16 @@
             <div class="products-wrap grid-view" id="products-wrap"></div>
 
         </div>
-
     </div>
+    </div><!-- /app-shell -->
+    <script defer src="../shared/shell.js"></script>
 
     <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
     <script>if(window.lucide)lucide.createIcons();else window.addEventListener('DOMContentLoaded',function(){if(window.lucide)lucide.createIcons();});</script>
     <script defer src="../shared/polling.js"></script>
-    <script defer src="../shared/sidebar.js"></script>
-    <script defer src="../shared/topnav.js"></script>
-    <script defer src="../assets/js/product-list.js"></script>
+    
+    
+    <script defer src="../assets/js/product-list.js" id="page-script"></script>
 
 </body>
 </html>

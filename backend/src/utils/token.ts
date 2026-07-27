@@ -23,11 +23,12 @@ export function tokensEqual(tokenA: string, tokenB: string): boolean {
 }
 
 /**
- * Calculate token expiration date (24 hours from now)
+ * Calculate token expiration date
+ * @param hours Number of hours from now (default: 24)
  * @returns DateTime for token expiry
  */
-export function getTokenExpiry(): Date {
+export function getTokenExpiry(hours: number = 24): Date {
   const expiry = new Date();
-  expiry.setDate(expiry.getDate() + 1); // 24 hours
+  expiry.setHours(expiry.getHours() + hours);
   return expiry;
 }

@@ -14,7 +14,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://api.unimartx.com">
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/stores.css">
 </head>
 <body>
@@ -24,11 +24,32 @@
     <nav class="navbar" id="navbar">
         <div class="nav-inner">
             <a href="../home.html" class="nav-logo">Unimart<span>X</span></a>
-            <form class="nav-search" action="../shop/shop.html" method="get">
-                <i data-lucide="search"></i>
-                <input type="search" name="search" placeholder="Search products, stores, categories…" aria-label="Search">
-                <button type="submit" class="search-btn">Search</button>
-            </form>
+            <div class="nav-links">
+                <div class="nav-dropdown">
+                    <a href="../shop/shop.html" class="nav-dropdown-toggle">Shop <i data-lucide="chevron-down" aria-hidden="true"></i></a>
+                    <div class="nav-dropdown-menu">
+                        <a href="../shop/shop.html">Browse Products</a>
+                        <a href="../shop/cart.html">Your Cart</a>
+                    </div>
+                </div>
+                <div class="nav-dropdown">
+                    <a href="stores.html" class="nav-dropdown-toggle">Stores <i data-lucide="chevron-down" aria-hidden="true"></i></a>
+                    <div class="nav-dropdown-menu">
+                        <a href="stores.html">Browse Shops</a>
+                    </div>
+                </div>
+                <div class="nav-dropdown">
+                    <a href="../info/about.html" class="nav-dropdown-toggle">Info <i data-lucide="chevron-down" aria-hidden="true"></i></a>
+                    <div class="nav-dropdown-menu">
+                        <a href="../info/about.html">About</a>
+                        <a href="../info/faq.html">FAQ</a>
+                        <a href="../contact/contact.html">Contact</a>
+                        <a href="../info/terms.html">Terms</a>
+                        <a href="../info/privacy.html">Privacy</a>
+                        <a href="../info/seller-policy.html">Seller Policy</a>
+                    </div>
+                </div>
+            </div>
             <div class="nav-actions">
                 <a href="../../auth/login.html" class="nav-btn nav-btn-ghost">Log In</a>
                 <a href="../../auth/seller/register.html" class="nav-btn nav-btn-primary">Start Selling</a>
@@ -38,220 +59,234 @@
             </button>
         </div>
         <div class="nav-mobile" id="nav-mobile">
-            <div class="nav-mobile-search">
-                <i data-lucide="search"></i>
-                <input type="search" placeholder="Search…" aria-label="Search">
+            <div class="nav-mobile-group">
+                <span class="nav-mobile-group-label">Shop</span>
+                <a href="../shop/shop.html">Browse Products</a>
+                <a href="../shop/cart.html">Your Cart</a>
+            </div>
+            <div class="nav-mobile-group">
+                <span class="nav-mobile-group-label">Stores</span>
+                <a href="stores.html">Browse Shops</a>
+            </div>
+            <div class="nav-mobile-group">
+                <span class="nav-mobile-group-label">Info</span>
+                <a href="../info/about.html">About</a>
+                <a href="../info/faq.html">FAQ</a>
+                <a href="../contact/contact.html">Contact</a>
+                <a href="../info/terms.html">Terms</a>
+                <a href="../info/privacy.html">Privacy</a>
+                <a href="../info/seller-policy.html">Seller Policy</a>
             </div>
             <a href="../home.html">Home</a>
-            <a href="../shop/shop.html">Browse Products</a>
             <a href="../../auth/login.html">Log In</a>
             <a href="../../auth/seller/register.html" class="nav-btn nav-btn-primary">Start Selling</a>
         </div>
     </nav>
 
-    <!-- ═══════════════════════════════════════════
-         SECTION 1 — COMPACT HERO
-    ═══════════════════════════════════════════ -->
-    <section class="stores-hero">
-        <div class="hero-inner">
-            <div class="hero-content">
-                <h1 class="hero-title">Discover Student Businesses</h1>
-                <p class="hero-sub">Explore stores created by talented university students and find everything you need in one trusted marketplace.</p>
-                <div class="hero-actions">
-                    <a href="#store-search" class="btn btn-primary">Search Stores</a>
-                    <a href="#category-nav" class="btn btn-ghost">Explore Categories</a>
+    <div class="stores-page">
+
+        <!-- HERO — discovery feel -->
+        <section class="stores-hero" aria-labelledby="hero-title">
+            <div class="hero-inner">
+                <div class="hero-content">
+                    <span class="hero-eyebrow">Campus Marketplace</span>
+                    <h1 class="hero-title" id="hero-title">Discover Student Businesses</h1>
+                    <p class="hero-sub">Explore stores created by talented university students and find everything you need in one trusted marketplace.</p>
+                    <div class="hero-actions">
+                        <a href="#store-search" class="btn btn-primary">Search Stores</a>
+                        <a href="#category-nav" class="btn btn-ghost">Explore Categories</a>
+                    </div>
                 </div>
             </div>
+            <div class="hero-ambience" aria-hidden="true">
+                <span class="ambience-dot dot-1"></span>
+                <span class="ambience-dot dot-2"></span>
+                <span class="ambience-dot dot-3"></span>
+            </div>
+        </section>
+
+        <div class="stores-layout">
+
+            <aside class="stores-sidebar" id="stores-sidebar" aria-label="Store filters">
+                <button class="sidebar-close" id="sidebar-close" aria-label="Close filters"><i data-lucide="x" aria-hidden="true"></i></button>
+                <div class="sidebar-inner">
+                    <div class="sidebar-search">
+                        <div class="search-bar" id="store-search">
+                            <i data-lucide="search" aria-hidden="true"></i>
+                            <input type="search" id="store-search-input" placeholder="Search stores by name or category..." autocomplete="off" aria-label="Search stores">
+                            <button id="store-search-clear" class="search-clear hidden" aria-label="Clear search"><i data-lucide="x" aria-hidden="true"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-section">
+                        <h3>Filter</h3>
+                        <div class="filter-chips" id="filter-chips" role="group" aria-label="Filter stores">
+                            <button class="filter-chip active" data-filter="all" aria-pressed="true">All</button>
+                            <button class="filter-chip" data-filter="verified" aria-pressed="false"><i data-lucide="badge-check" aria-hidden="true"></i> Verified</button>
+                            <button class="filter-chip" data-filter="open" aria-pressed="false"><i data-lucide="clock" aria-hidden="true"></i> Open Now</button>
+                            <button class="filter-chip" data-filter="new" aria-pressed="false"><i data-lucide="sparkles" aria-hidden="true"></i> New Stores</button>
+                            <button class="filter-chip" data-filter="top" aria-pressed="false"><i data-lucide="star" aria-hidden="true"></i> Top Rated</button>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-section">
+                        <h3>Sort by</h3>
+                        <div class="sort-wrap">
+                            <i data-lucide="arrow-up-down" aria-hidden="true"></i>
+                            <label class="visually-hidden" for="sort-select">Sort stores</label>
+                            <select id="sort-select" aria-label="Sort stores">
+                                <option value="trending">Trending</option>
+                                <option value="newest">Newest</option>
+                                <option value="popular">Most Popular</option>
+                                <option value="active">Recently Active</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-section sidebar-cats" id="category-nav">
+                        <h3>Categories</h3>
+                        <div class="category-rail" id="category-rail">
+                            <button class="cat-pill active" data-cat="all" aria-pressed="true"><i data-lucide="grid-2x2" aria-hidden="true"></i> All</button>
+                            <button class="cat-pill" data-cat="electronics" aria-pressed="false"><i data-lucide="cpu" aria-hidden="true"></i> Electronics</button>
+                            <button class="cat-pill" data-cat="fashion" aria-pressed="false"><i data-lucide="shirt" aria-hidden="true"></i> Fashion</button>
+                            <button class="cat-pill" data-cat="food" aria-pressed="false"><i data-lucide="utensils" aria-hidden="true"></i> Food & Drinks</button>
+                            <button class="cat-pill" data-cat="beauty" aria-pressed="false"><i data-lucide="sparkles" aria-hidden="true"></i> Beauty</button>
+                            <button class="cat-pill" data-cat="books" aria-pressed="false"><i data-lucide="book-open" aria-hidden="true"></i> Books</button>
+                            <button class="cat-pill" data-cat="services" aria-pressed="false"><i data-lucide="wrench" aria-hidden="true"></i> Services</button>
+                            <button class="cat-pill" data-cat="accessories" aria-pressed="false"><i data-lucide="watch" aria-hidden="true"></i> Accessories</button>
+                            <button class="cat-pill" data-cat="home" aria-pressed="false"><i data-lucide="sofa" aria-hidden="true"></i> Home & Dorm</button>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+            <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Open filters" aria-expanded="false" aria-controls="stores-sidebar">
+                <i data-lucide="sliders-horizontal" aria-hidden="true"></i>
+                <span>Filters</span>
+            </button>
+
+            <main class="stores-main" id="main-content">
+
+                <div class="mobile-search-bar" id="mobile-search-bar">
+                    <div class="search-bar" id="mobile-search">
+                        <i data-lucide="search" aria-hidden="true"></i>
+                        <input type="search" id="mobile-search-input" placeholder="Search stores..." autocomplete="off" aria-label="Search stores">
+                        <button id="mobile-search-clear" class="search-clear hidden" aria-label="Clear search"><i data-lucide="x" aria-hidden="true"></i></button>
+                    </div>
+                </div>
+
+                <div class="stores-container">
+
+                    <section class="section featured-section" id="featured-section" aria-label="Editors' Picks">
+                        <div class="section-header">
+                            <div>
+                                <h2><i data-lucide="flame" aria-hidden="true" class="section-icon"></i> Editors' Picks</h2>
+                                <p class="section-sub">One store we're spotlighting this week.</p>
+                            </div>
+                        </div>
+                        <div class="featured-single" id="featured-grid"></div>
+                    </section>
+
+                    <section class="section stores-list-section" id="stores-list-section" aria-label="All stores">
+                        <div class="stores-toolbar">
+                            <p class="results-label">Browse all <strong id="results-count">0</strong> stores</p>
+                            <div class="view-toggle">
+                                <button class="view-btn active" id="btn-grid" aria-label="Grid view" aria-pressed="true"><i data-lucide="layout-grid" aria-hidden="true"></i></button>
+                                <button class="view-btn" id="btn-list" aria-label="List view" aria-pressed="false"><i data-lucide="list" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+
+                        <div class="stores-grid" id="stores-grid"></div>
+
+                        <div class="empty-state hidden" id="empty-state">
+                            <div class="empty-icon"><i data-lucide="store" aria-hidden="true"></i></div>
+                            <h3>No stores found.</h3>
+                            <p>Try another category or search term.</p>
+                            <div class="empty-suggestions" id="empty-suggestions"></div>
+                            <button class="empty-reset" id="empty-reset">Clear all filters</button>
+                        </div>
+
+                        <div class="load-more-wrap hidden" id="load-more-wrap">
+                            <button class="load-more-btn" id="load-more-btn">
+                                Load More Stores <i data-lucide="chevron-down" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </section>
+
+                    <section class="section shelf-section" id="shelf-new" aria-label="Just opened">
+                        <div class="shelf-header">
+                            <div>
+                                <h2><i data-lucide="sparkles" aria-hidden="true" class="section-icon section-icon--spark"></i> Just Opened</h2>
+                                <p class="section-sub">Fresh faces on campus.</p>
+                            </div>
+                        </div>
+                        <div class="shelf-scroller" id="shelf-new-grid"></div>
+                    </section>
+
+                    <section class="section shelf-section" id="shelf-popular" aria-label="Locals love">
+                        <div class="shelf-header">
+                            <div>
+                                <h2><i data-lucide="heart" aria-hidden="true" class="section-icon section-icon--heart"></i> Locals Love</h2>
+                                <p class="section-sub">The spots with the best reputation.</p>
+                            </div>
+                        </div>
+                        <div class="shelf-scroller" id="shelf-popular-grid"></div>
+                    </section>
+
+                </div>
+            </main>
         </div>
-    </section>
 
-    <!-- ═══════════════════════════════════════════
-         DISCOVERY BAR — search + filters + categories
-         Sticks as ONE unit so the two bars never collide.
-    ═══════════════════════════════════════════ -->
-    <div class="discovery-bar" id="discovery-bar">
-        <div class="search-sticky" id="store-search">
-            <div class="search-controls">
-                <div class="search-bar">
-                    <i data-lucide="search"></i>
-                    <input type="search" id="store-search-input" placeholder="Search stores by name or category..." autocomplete="off" aria-label="Search stores by name or category">
-                    <button id="store-search-clear" class="search-clear hidden" aria-label="Clear search"><i data-lucide="x"></i></button>
-                </div>
-
-                <div class="filter-chips" id="filter-chips" role="group" aria-label="Filter stores">
-                    <button class="filter-chip active" data-filter="all">All</button>
-                    <button class="filter-chip" data-filter="verified"><i data-lucide="badge-check"></i> Verified</button>
-                    <button class="filter-chip" data-filter="open"><i data-lucide="clock"></i> Open Now</button>
-                    <button class="filter-chip" data-filter="new"><i data-lucide="sparkles"></i> New Stores</button>
-                    <button class="filter-chip" data-filter="top"><i data-lucide="star"></i> Top Rated</button>
-                </div>
-
-                <div class="sort-wrap">
-                    <i data-lucide="arrow-up-down"></i>
-                    <label class="visually-hidden" for="sort-select">Sort stores</label>
-                    <select id="sort-select" aria-label="Sort stores">
-                        <option value="trending">Trending</option>
-                        <option value="newest">Newest</option>
-                        <option value="popular">Most Popular</option>
-                        <option value="active">Recently Active</option>
-                    </select>
+        <section class="cta-section seller-cta">
+            <div class="container">
+                <div class="cta-inner">
+                    <h2>Ready to launch <span>your store?</span></h2>
+                    <p>Join student entrepreneurs already selling on UniMartX. Set up your storefront in minutes.</p>
+                    <div class="cta-actions">
+                        <a href="../../auth/seller/register.html" class="btn btn-primary btn-lg">Create My Store</a>
+                        <a href="../shop/shop.html" class="btn btn-ghost btn-lg">Browse Products</a>
+                    </div>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <div class="category-rail-wrap" id="category-nav">
-            <div class="category-rail" id="category-rail">
-                <button class="cat-pill active" data-cat="all"><i data-lucide="grid-2x2"></i> All</button>
-                <button class="cat-pill" data-cat="electronics"><i data-lucide="cpu"></i> Electronics</button>
-                <button class="cat-pill" data-cat="fashion"><i data-lucide="shirt"></i> Fashion</button>
-                <button class="cat-pill" data-cat="food"><i data-lucide="utensils"></i> Food</button>
-                <button class="cat-pill" data-cat="beauty"><i data-lucide="sparkles"></i> Beauty</button>
-                <button class="cat-pill" data-cat="books"><i data-lucide="book-open"></i> Books</button>
-                <button class="cat-pill" data-cat="services"><i data-lucide="wrench"></i> Services</button>
-                <button class="cat-pill" data-cat="accessories"><i data-lucide="watch"></i> Accessories</button>
-                <button class="cat-pill" data-cat="home"><i data-lucide="sofa"></i> Home &amp; Living</button>
+        <footer class="footer">
+            <div class="footer-inner">
+                <div class="footer-brand">
+                    <a href="../home.html" class="nav-logo">Unimart<span>X</span></a>
+                    <p>The platform that helps student entrepreneurs build professional online businesses — without building their own websites.</p>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-col">
+                        <h4>Shop</h4>
+                        <a href="../shop/shop.html">Browse Products</a>
+                        <a href="stores.html">Browse Stores</a>
+                        <a href="../shop/cart.html">Your Cart</a>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Sell</h4>
+                        <a href="../info/seller-policy.html">Seller Policy</a>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Company</h4>
+                        <a href="../info/about.html">About</a>
+                        <a href="../contact/contact.html">Contact</a>
+                        <a href="../info/faq.html">FAQ</a>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Legal</h4>
+                        <a href="../info/terms.html">Terms</a>
+                        <a href="../info/privacy.html">Privacy</a>
+                    </div>
+                </div>
             </div>
-        </div>
+            <div class="footer-bottom">
+                <span>&copy; 2026 UniMartX. All rights reserved.</span>
+            </div>
+        </footer>
     </div>
-
-    <!-- ═══════════════════════════════════════════
-         MAIN
-    ═══════════════════════════════════════════ -->
-    <main class="stores-main" id="main-content">
-        <div class="stores-container">
-
-            <!-- SECTION 4 — FEATURED STORES -->
-            <section class="section featured-section" id="featured-section">
-                <div class="section-header">
-                    <div>
-                        <h2>Featured Stores</h2>
-                        <p class="section-sub">Hand-picked student businesses worth exploring.</p>
-                    </div>
-                </div>
-                <div class="featured-grid" id="featured-grid"></div>
-            </section>
-
-            <!-- SECTION 5 — STORE GRID -->
-            <section class="section stores-list-section">
-                <div class="stores-toolbar">
-                    <p class="results-label">Showing <strong id="results-count">0</strong> stores</p>
-                </div>
-
-                <div class="stores-grid" id="stores-grid"></div>
-
-                <!-- Empty state -->
-                <div class="empty-state hidden" id="empty-state">
-                    <div class="empty-icon"><i data-lucide="store"></i></div>
-                    <h3>No stores found.</h3>
-                    <p>Try another category or search term.</p>
-                    <div class="empty-suggestions" id="empty-suggestions"></div>
-                    <button class="empty-reset" id="empty-reset">Clear all filters</button>
-                </div>
-
-                <!-- Load more -->
-                <div class="load-more-wrap hidden" id="load-more-wrap">
-                    <button class="load-more-btn" id="load-more-btn">
-                        Load More Stores <i data-lucide="chevron-down"></i>
-                    </button>
-                </div>
-            </section>
-
-            <!-- ADDITIONAL DISCOVERY SECTIONS -->
-            <section class="section discovery-section" id="trending-section">
-                <div class="section-header">
-                    <div>
-                        <h2><i data-lucide="flame"></i> Trending Stores</h2>
-                        <p class="section-sub">What students are loving right now.</p>
-                    </div>
-                    <a href="#main-content" class="see-all">See all <i data-lucide="arrow-right"></i></a>
-                </div>
-                <div class="discovery-scroller" id="trending-grid"></div>
-            </section>
-
-            <section class="section discovery-section" id="active-section">
-                <div class="section-header">
-                    <div>
-                        <h2><i data-lucide="zap"></i> Recently Active</h2>
-                        <p class="section-sub">Stores that just added new products.</p>
-                    </div>
-                </div>
-                <div class="discovery-scroller" id="active-grid"></div>
-            </section>
-
-            <section class="section discovery-section" id="new-section">
-                <div class="section-header">
-                    <div>
-                        <h2><i data-lucide="sparkles"></i> New This Week</h2>
-                        <p class="section-sub">Fresh student businesses that just opened.</p>
-                    </div>
-                </div>
-                <div class="discovery-scroller" id="new-grid"></div>
-            </section>
-
-            <section class="section discovery-section" id="favorites-section">
-                <div class="section-header">
-                    <div>
-                        <h2><i data-lucide="heart"></i> Student Favorites</h2>
-                        <p class="section-sub">Highest-rated stores in the marketplace.</p>
-                    </div>
-                </div>
-                <div class="discovery-scroller" id="favorites-grid"></div>
-            </section>
-
-        </div>
-    </main>
-
-    <!-- ═══════════════════════════════════════════
-         SELLER CTA
-    ═══════════════════════════════════════════ -->
-    <section class="cta-section seller-cta">
-        <div class="container">
-            <div class="cta-inner">
-                <h2>Ready to launch <span>your store?</span></h2>
-                <p>Join student entrepreneurs already selling on UniMartX. Set up your storefront in minutes.</p>
-                <div class="cta-actions">
-                    <a href="../../auth/seller/register.html" class="btn btn-primary btn-lg">Create My Store</a>
-                    <a href="../shop/shop.html" class="btn btn-ghost btn-lg">Browse Products</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- FOOTER -->
-    <footer class="footer">
-        <div class="footer-inner">
-            <div class="footer-brand">
-                <a href="../home.html" class="nav-logo">Unimart<span>X</span></a>
-                <p>The platform that helps student entrepreneurs build professional online businesses — without building their own websites.</p>
-            </div>
-            <div class="footer-links">
-                <div class="footer-col">
-                    <h4>Shop</h4>
-                    <a href="../shop/shop.html">Browse Products</a>
-                    <a href="stores.html">Browse Stores</a>
-                    <a href="../shop/cart.html">Your Cart</a>
-                </div>
-                <div class="footer-col">
-                    <h4>Sell</h4>
-                    <a href="../info/seller-policy.html">Seller Policy</a>
-                </div>
-                <div class="footer-col">
-                    <h4>Company</h4>
-                    <a href="../info/about.html">About</a>
-                    <a href="../contact/contact.html">Contact</a>
-                    <a href="../info/faq.html">FAQ</a>
-                </div>
-                <div class="footer-col">
-                    <h4>Legal</h4>
-                    <a href="../info/terms.html">Terms</a>
-                    <a href="../info/privacy.html">Privacy</a>
-                </div>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <span>&copy; 2026 UniMartX. All rights reserved.</span>
-        </div>
-    </footer>
 
     <script src="../../../config.js"></script>
     <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>

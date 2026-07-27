@@ -2,7 +2,7 @@
 // Matches the actual HTML structure with tabs and avatar card
 
 (function () {
-    const API_BASE = (window.APP_CONFIG && window.APP_CONFIG.BACKEND_URL) || 'http://localhost:5000';
+    var API_BASE = (window.APP_CONFIG && window.APP_CONFIG.BACKEND_URL) || 'http://localhost:5000';
 
 // ── Auth Token Helper ──────────────────────────────────────
 function getAuthToken() {
@@ -22,8 +22,7 @@ function getAuthToken() {
 }
 
 // ── Toast Notification Helper ─────────────────────────────
-// Uses the same Toast implementation as the Store Studio page
-// (see window.Toast defined in customize-profile.html).
+// Falls back to window.Toast when available (mirrors customize-store.html).
 function showToast(message, type = 'info', duration = 3500) {
   if (window.Toast && typeof window.Toast.show === 'function') {
     window.Toast.show(message, type, duration);
@@ -194,7 +193,7 @@ async function loadProfile() {
   }
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
+async function initPage() {
     try {
         await loadProfile();
     } catch (err) {
@@ -220,7 +219,53 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Restore draft if exists
     restoreDraft();
-});
+}
+// ── Bootstrap ──
+let _umxBootstrapQueued = false;
+function bootstrap() {
+    if (_umxBootstrapQueued) return;
+    _umxBootstrapQueued = true;
+    Promise.resolve().then(function () {
+        _umxBootstrapQueued = false;
+        initPage();
+        window.scrollTo(0, 0);
+    });
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bootstrap);
+} else {
+    bootstrap();
+}
+
+(function watchForReturn() {
+    const CHECK_MS = 80;
+    const MAX_CHECKS = 25;
+    let checks = 0;
+    let timer = null;
+
+    function tryInit() {
+        if (document.getElementById('profile-name') || document.getElementById('profile-bio')) {
+            clearInterval(timer);
+            timer = null;
+            bootstrap();
+            return;
+        }
+        if (++checks >= MAX_CHECKS) {
+            clearInterval(timer);
+            timer = null;
+        }
+    }
+
+    timer = setInterval(tryInit, CHECK_MS);
+    tryInit();
+
+    window.addEventListener('shell:navigated', function () {
+        if (!timer) {
+            setTimeout(tryInit, 100);
+        }
+    });
+})();
 
 // ── State Management ──
 let autoSaveTimer = null;
@@ -1133,4 +1178,89 @@ function initAccessibility() {
         .spin { animation: spin 1s linear infinite; }
     `;
     document.head.appendChild(style);
+
+    // ── Inline-script ports (originally at bottom of customize-profile.html)
+    //   These were dropped during shell SPA navigation because shell only
+    //   re-injects the external #page-script. Keeping them here ensures
+    //   they run on both full reload and in-app navigation.
+    // ──────────────────────────────────────────────────────────────
+
+    // Toast keyframes — inject once per document
+    if (!window.__toastStylesInjected) {
+        const _toastStyle = document.createElement('style');
+        _toastStyle.textContent = `
+            @keyframes toastIn  { from{opacity:0;transform:translateY(12px) scale(0.96)} to{opacity:1;transform:translateY(0) scale(1)} }
+            @keyframes toastOut { from{opacity:1} to{opacity:0;transform:translateY(6px)} }
+        `;
+        document.head.appendChild(_toastStyle);
+        window.__toastStylesInjected = true;
+    }
+
+    // Shared Toast helper (matches customize-store.html)
+    window.Toast = window.Toast || {
+        show: function (message, type, duration) {
+            type = type || 'success';
+            duration = duration || 3500;
+            const toast = document.createElement('div');
+            toast.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:9999;background:' + (type === 'error' ? '#ef4444' : 'var(--bg-2)') + ';color:' + (type === 'error' ? '#fff' : 'var(--text)') + ';border:1px solid ' + (type === 'error' ? 'transparent' : 'var(--border)') + ';border-radius:var(--radius);padding:0.8rem 1.1rem;display:flex;align-items:center;gap:0.6rem;font-family:Quicksand,sans-serif;font-weight:600;font-size:0.85rem;box-shadow:0 8px 32px rgba(0,0,0,0.35);max-width:340px;animation:toastIn 0.3s cubic-bezier(0.4,0,0.2,1);';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(function () {
+                toast.style.animation = 'toastOut 0.25s ease forwards';
+                setTimeout(function () { toast.remove(); }, 250);
+            }, duration);
+        }
+    };
+
+    // Profile completeness meter (ported from inline script below customize-profile.html)
+    (function initProfileCompleteness() {
+        const STEPS = [
+            { key: 'name',     label: 'Name',     icon: 'user',      done: function () { return !!v('profile-name'); } },
+            { key: 'bio',      label: 'Bio',      icon: 'file-text', done: function () { return v('profile-bio').length >= 20; } },
+            { key: 'photo',    label: 'Photo',    icon: 'camera',    done: function () { return !!document.querySelector('#avatar-img.show'); } },
+            { key: 'location', label: 'Location', icon: 'map-pin',   done: function () { return !!v('profile-location'); } },
+            { key: 'contact',  label: 'Contact',  icon: 'phone',     done: function () { return !!(v('profile-phone') || v('profile-whatsapp') || v('profile-address')); } },
+            { key: 'social',   label: 'Social',   icon: 'share-2',   done: function () { return !!(v('social-instagram') || v('social-twitter') || v('social-tiktok') || v('social-website')); } },
+        ];
+        function v(id) {
+            const el = document.getElementById(id);
+            return el ? (el.value || '').trim() : '';
+        }
+        const fill = document.getElementById('pc-fill');
+        const pctEl = document.getElementById('pc-pct');
+        const stepsEl = document.getElementById('pc-steps');
+
+        function render() {
+            let done = 0;
+            var chips = STEPS.map(function (s) {
+                var ok = !!s.done();
+                if (ok) done++;
+                return '<span class="pc-step' + (ok ? ' done' : '') + '" title="' + s.label + '">' +
+                    '<i data-lucide="' + s.icon + '"></i>' + s.label + '</span>';
+            }).join('');
+            if (stepsEl) stepsEl.innerHTML = chips;
+            var pct = Math.round((done / STEPS.length) * 100);
+            if (fill) fill.style.width = pct + '%';
+            if (pctEl) pctEl.textContent = pct + '%';
+            if (window.lucide) window.lucide.createIcons();
+        }
+
+        ['input', 'change'].forEach(function (ev) {
+            document.addEventListener(ev, function (e) {
+                if (e.target && e.target.closest && e.target.closest('#seller-main')) render();
+            });
+        });
+        if (window.lucide) window.lucide.createIcons();
+
+        function start() {
+            render();
+            var t = 0;
+            var poll = setInterval(function () { render(); if (++t >= 14) clearInterval(poll); }, 500);
+        }
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', start);
+        } else {
+            start();
+        }
+    })();
 })();
