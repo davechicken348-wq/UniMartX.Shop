@@ -149,6 +149,14 @@ function categoryIcon(cat) {
   return emojiMap[cat] || '📦';
 }
 
+const TAB_LABEL_MAX = 16;
+
+function truncateCategoryLabel(label) {
+  const text = label || '';
+  return text.length > TAB_LABEL_MAX ? text.slice(0, TAB_LABEL_MAX).trim() + '…' : text;
+}
+
+
 function formatPrice(price) {
   return 'GH₵' + Number(price).toFixed(2);
 }
@@ -582,9 +590,9 @@ function renderCategoryTabs(products, categoryCounts) {
      return ia - ib;
    });
 
-   cats.forEach(([cat, count]) => {
-     html += `<button class="store-tab" data-filter="${escapeHtml(cat)}"><span class="tab-emoji">${categoryIcon(cat)}</span>${escapeHtml(categoryLabel(cat))} <span class="tab-num">${count}</span></button>`;
-   });
+    cats.forEach(([cat, count]) => {
+       html += `<button class="store-tab" data-filter="${escapeHtml(cat)}"><span class="tab-emoji">${categoryIcon(cat)}</span>${escapeHtml(truncateCategoryLabel(categoryLabel(cat)))} <span class="tab-num">${count}</span></button>`;
+    });
 
    tabsEl.innerHTML = html;
    requestAnimationFrame(updateFilterIndicator);
