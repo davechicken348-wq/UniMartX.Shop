@@ -375,6 +375,7 @@ const progressFill = document.getElementById('ap-progress-fill');
 const progressLabel= document.getElementById('ap-progress-label');
 const stepEncourage= document.getElementById('step-encourage');
 const readinessEl  = document.getElementById('ap-readiness');
+ const spinnerOverlay = document.getElementById('ap-spinner');
 
 /* ── Auth ────────────────────────────────── */
 function authHeaders() {
@@ -1054,6 +1055,7 @@ async function submitProduct(publish = true) {
 
   btnNext.disabled = true;
   btnSubmit.disabled = true;
+  if (spinnerOverlay) spinnerOverlay.classList.add('active');
   try {
     const res  = await fetch(url, { method, headers: authHeaders(), body: formData });
     const json = await res.json();
@@ -1063,6 +1065,7 @@ async function submitProduct(publish = true) {
   } catch (err) {
     showToast(err.message, 'error');
   } finally {
+    if (spinnerOverlay) spinnerOverlay.classList.remove('active');
     btnNext.disabled = false;
     btnSubmit.disabled = false;
   }

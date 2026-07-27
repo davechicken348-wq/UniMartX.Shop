@@ -34,7 +34,15 @@
             <!-- Encouragement banner -->
             <div class="ap-encourage" id="step-encourage"></div>
 
-            <form id="add-product-form" novalidate>
+            <!-- Spinner overlay — shown while publishing or saving a draft -->
+            <div class="ap-spinner-overlay" id="ap-spinner" aria-hidden="true">
+                <div class="ap-spinner">
+                    <div class="ap-spinner-ring"></div>
+                    <span class="ap-spinner-text">Saving…</span>
+                </div>
+            </div>
+
+             <form id="add-product-form" novalidate>
 
                 <!-- ════════════════════════════════════════
                      SCREEN 1 — THE BASICS
