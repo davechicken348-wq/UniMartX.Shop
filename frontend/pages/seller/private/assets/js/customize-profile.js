@@ -1,8 +1,9 @@
 // SELLER CUSTOMIZE PROFILE — COMPLETE REWORK
 // Matches the actual HTML structure with tabs and avatar card
 
-(function () {
-    var API_BASE = (window.APP_CONFIG && window.APP_CONFIG.BACKEND_URL) || 'http://localhost:5000';
+ (function () {
+     var API_BASE = (window.APP_CONFIG && window.APP_CONFIG.BACKEND_URL) || 'http://localhost:5000';
+     var spinnerOverlay = document.getElementById('ap-spinner');
 
 // ── Auth Token Helper ──────────────────────────────────────
 function getAuthToken() {
@@ -634,17 +635,18 @@ async function handleFormSubmit(e) {
         return;
     }
 
-    const submitBtn = form.querySelector('button[type="submit"]');
-    const resetBtn = form.querySelector('button[type="button"]');
+     const submitBtn = form.querySelector('button[type="submit"]');
+     const resetBtn = form.querySelector('button[type="button"]');
 
-    try {
-        if (submitBtn) {
-            submitBtn.classList.add('saving');
-            submitBtn.disabled = true;
-        }
-        if (resetBtn) resetBtn.disabled = true;
+     if (submitBtn) {
+         submitBtn.classList.add('saving');
+         submitBtn.disabled = true;
+     }
+     if (resetBtn) resetBtn.disabled = true;
+     if (spinnerOverlay) spinnerOverlay.classList.add('active');
 
-        // Build payload from form fields
+     try {
+         // Build payload from form fields
         const payload = buildPayloadFromForm(form);
         const token = getAuthToken();
 
@@ -690,16 +692,23 @@ async function handleFormSubmit(e) {
         }
         if (resetBtn) resetBtn.disabled = false;
 
-    } catch (error) {
-        console.error('Error saving changes:', error);
-        showToast('Failed to save. Please try again.', 'error');
-        if (submitBtn) {
-            submitBtn.classList.remove('saving');
-            submitBtn.disabled = false;
-        }
-        if (resetBtn) resetBtn.disabled = false;
-    }
-}
+     } catch (error) {
+         console.error('Error saving changes:', error);
+         showToast('Failed to save. Please try again.', 'error');
+         if (submitBtn) {
+             submitBtn.classList.remove('saving');
+             submitBtn.disabled = false;
+         }
+         if (resetBtn) resetBtn.disabled = false;
+     } finally {
+         if (submitBtn) {
+             submitBtn.classList.remove('saving');
+             submitBtn.disabled = false;
+         }
+         if (resetBtn) resetBtn.disabled = false;
+         if (spinnerOverlay) spinnerOverlay.classList.remove('active');
+     }
+ }
 
 // ── Payload Builder ─────────────────────────────────────────
 function buildPayloadFromForm(form) {

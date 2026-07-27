@@ -63,7 +63,8 @@ let currentColor = defaultColor;
 let autoSaveTimer = null;
 let formBaselineReady = false;
 const DEBOUNCE_MS = 1000;
-var API_BASE = (window.APP_CONFIG && window.APP_CONFIG.BACKEND_URL) || 'http://localhost:5000';
+ var API_BASE = (window.APP_CONFIG && window.APP_CONFIG.BACKEND_URL) || 'http://localhost:5000';
+ var spinnerOverlay = document.getElementById('ap-spinner');
 
 // ── Color Utilities (global) ──────────────────────────────────────
 function darkenColor(hex, percent) {
@@ -1391,17 +1392,15 @@ async function handleFormSubmit(e) {
         return;
     }
 
-    const submitBtn = form.querySelector('button[type="submit"]');
-    const resetBtn = form.querySelector('button[type="button"]');
+     const submitBtn = form.querySelector('button[type="submit"]');
+     const resetBtn = form.querySelector('button[type="button"]');
 
-    try {
-        if (submitBtn) {
-            submitBtn.classList.add('saving');
-            submitBtn.disabled = true;
-        }
-        if (resetBtn) resetBtn.disabled = true;
+     if (submitBtn) { submitBtn.classList.add('saving'); submitBtn.disabled = true; }
+     if (resetBtn) resetBtn.disabled = true;
+     if (spinnerOverlay) spinnerOverlay.classList.add('active');
 
-        const token = getAuthToken();
+     try {
+         const token = getAuthToken();
         if (!token) throw new Error('Authentication required');
 
         let payload = {};
@@ -1549,38 +1548,41 @@ async function handleFormSubmit(e) {
     } catch (error) {
         console.error('Error saving changes:', error);
         showToast('Failed to save: ' + error.message, 'error');
-    } finally {
-        if (submitBtn) {
-            submitBtn.classList.remove('saving');
-            submitBtn.disabled = false;
-        }
-        if (resetBtn) resetBtn.disabled = false;
-    }
-}
+     } finally {
+         if (submitBtn) {
+             submitBtn.classList.remove('saving');
+             submitBtn.disabled = false;
+         }
+         if (resetBtn) resetBtn.disabled = false;
+         if (spinnerOverlay) spinnerOverlay.classList.remove('active');
+     }
+ }
 
-// ── Fulfillment Form Submit ──
-async function handleFulfillmentSubmit(e) {
-    e.preventDefault();
-    const form = e.target;
-    const submitBtn = form.querySelector('button[type="submit"]');
-    const token = getAuthToken();
-    if (!token) { window.location.href = '../../../auth/login.html'; return; }
+ // ── Fulfillment Form Submit ──
+ async function handleFulfillmentSubmit(e) {
+     e.preventDefault();
+     const form = e.target;
+     const submitBtn = form.querySelector('button[type="submit"]');
+     const token = getAuthToken();
+     if (!token) { window.location.href = '../../../auth/login.html'; return; }
 
-    const deliveryFee = document.getElementById('delivery-fee')?.value.trim();
-    const pickupAddress = document.getElementById('pickup-address')?.value.trim();
+     const deliveryFee = document.getElementById('delivery-fee')?.value.trim();
+     const pickupAddress = document.getElementById('pickup-address')?.value.trim();
 
-    const payload = {};
-    if (deliveryFee !== '') payload.deliveryFee = parseFloat(deliveryFee) || 0;
-    if (pickupAddress !== undefined) payload.pickupAddress = pickupAddress;
+     const payload = {};
+     if (deliveryFee !== '') payload.deliveryFee = parseFloat(deliveryFee) || 0;
+     if (pickupAddress !== undefined) payload.pickupAddress = pickupAddress;
 
-    const deliveryOptions = Array.from(
-        document.querySelectorAll('#store-delivery-options input[type="checkbox"]:checked')
-    ).map(cb => cb.value);
-    payload.deliveryOptions = JSON.stringify(deliveryOptions);
+     const deliveryOptions = Array.from(
+         document.querySelectorAll('#store-delivery-options input[type="checkbox"]:checked')
+     ).map(cb => cb.value);
+     payload.deliveryOptions = JSON.stringify(deliveryOptions);
 
-    try {
-        if (submitBtn) { submitBtn.classList.add('saving'); submitBtn.disabled = true; }
-        const res = await fetch(`${API_BASE}/api/seller/profile`, {
+     if (submitBtn) { submitBtn.classList.add('saving'); submitBtn.disabled = true; }
+     if (spinnerOverlay) spinnerOverlay.classList.add('active');
+
+     try {
+         const res = await fetch(`${API_BASE}/api/seller/profile`, {
             method: 'PATCH',
             headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
             body: JSON.stringify(payload),
@@ -1590,12 +1592,13 @@ async function handleFulfillmentSubmit(e) {
         showToast('Delivery settings saved', 'success');
     } catch (err) {
         showToast('Failed to save: ' + err.message, 'error');
-    } finally {
-        if (submitBtn) { submitBtn.classList.remove('saving'); submitBtn.disabled = false; }
-    }
-}
+     } finally {
+         if (submitBtn) { submitBtn.classList.remove('saving'); submitBtn.disabled = false; }
+         if (spinnerOverlay) spinnerOverlay.classList.remove('active');
+     }
+ }
 
-// ── File to Base64 Helper ─────────────────────────────────
+ // ── File to Base64 Helper ─────────────────────────────────
 function fileToBase64(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
