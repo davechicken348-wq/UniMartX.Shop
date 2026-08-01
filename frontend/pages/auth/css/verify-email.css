@@ -1,7 +1,7 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-    font-family: 'Quicksand', sans-serif;
+    font-family: 'Hanken Grotesk', sans-serif;
     min-height: 100vh;
     background: #0d0d0d;
     display: flex;
@@ -137,7 +137,7 @@ body {
 
 /* Button */
 .auth-btn {
-    font-family: 'Quicksand', sans-serif;
+    font-family: 'Hanken Grotesk', sans-serif;
     font-weight: 600;
     font-size: 1rem;
     padding: 0.85rem 2.25rem;
@@ -222,7 +222,7 @@ body {
     border: 1px solid rgba(255,255,255,0.1);
     background: rgba(255,255,255,0.06);
     color: #fff;
-    font-family: 'Quicksand', sans-serif;
+    font-family: 'Hanken Grotesk', sans-serif;
     font-size: 0.875rem;
     outline: none;
     transition: border-color 0.2s;
@@ -263,7 +263,7 @@ body {
     border: 1px solid rgba(255,255,255,0.1);
     background: rgba(255,255,255,0.06);
     color: #fff;
-    font-family: 'Quicksand', sans-serif;
+    font-family: 'Hanken Grotesk', sans-serif;
     font-size: 0.875rem;
     outline: none;
     transition: border-color 0.2s;

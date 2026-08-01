@@ -4,24 +4,6 @@
 
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    // ── Mobile nav toggle ────────────────────────────────────────────────
-    function initNav() {
-        const btn = document.getElementById('nav-hamburger');
-        const menu = document.getElementById('nav-mobile');
-        if (!btn || !menu) return;
-        btn.addEventListener('click', () => {
-            const open = menu.classList.toggle('open');
-            btn.setAttribute('aria-expanded', String(open));
-            btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
-        });
-        menu.querySelectorAll('a').forEach((link) =>
-            link.addEventListener('click', () => {
-                menu.classList.remove('open');
-                btn.setAttribute('aria-expanded', 'false');
-            })
-        );
-    }
-
     // ── Reveal on scroll ────────────────────────────────────────────────
     function initReveal() {
         const els = document.querySelectorAll('.reveal');
@@ -79,7 +61,6 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        initNav();
         initReveal();
         initTimeline();
         if (window.lucide) window.lucide.createIcons();

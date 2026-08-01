@@ -334,7 +334,7 @@
 
 /* Size chips */
 .size-chip {
-    font-family: 'Quicksand', sans-serif;
+    font-family: 'Hanken Grotesk', sans-serif;
     font-size: 0.82rem;
     font-weight: 700;
     padding: 0.55rem 1.25rem;
@@ -399,7 +399,7 @@
     gap: 0.6rem;
     padding: 0 1.75rem;
     height: 48px;
-    font-family: 'Quicksand', sans-serif;
+    font-family: 'Hanken Grotesk', sans-serif;
     font-size: 1rem;
     font-weight: 700;
     color: #0a0a0f;
@@ -530,7 +530,7 @@
     align-items: center;
     gap: 0.4rem;
     padding: 0.85rem 1.25rem;
-    font-family: 'Quicksand', sans-serif;
+    font-family: 'Hanken Grotesk', sans-serif;
     font-size: 0.9rem;
     font-weight: 700;
     color: var(--text-3);
@@ -832,7 +832,7 @@
     border: 1px solid var(--border);
     border-radius: 10px;
     color: var(--text);
-    font-family: 'Quicksand', sans-serif;
+    font-family: 'Hanken Grotesk', sans-serif;
     font-size: 0.92rem;
     padding: 0.85rem 1rem;
     resize: vertical;
@@ -848,7 +848,7 @@
     align-items: center;
     gap: 0.5rem;
     padding: 0.7rem 1.75rem;
-    font-family: 'Quicksand', sans-serif;
+    font-family: 'Hanken Grotesk', sans-serif;
     font-size: 0.92rem;
     font-weight: 700;
     color: #0a0a0f;
@@ -892,7 +892,7 @@
     gap: 0.5rem;
     width: 100%;
     padding: 1rem;
-    font-family: 'Quicksand', sans-serif;
+    font-family: 'Hanken Grotesk', sans-serif;
     font-size: 0.9rem;
     font-weight: 700;
     color: var(--primary);
@@ -1009,7 +1009,7 @@
     align-items: center;
     gap: 0.5rem;
     padding: 0.6rem 1.25rem;
-    font-family: 'Quicksand', sans-serif;
+    font-family: 'Hanken Grotesk', sans-serif;
     font-size: 0.88rem;
     font-weight: 700;
     color: var(--primary);

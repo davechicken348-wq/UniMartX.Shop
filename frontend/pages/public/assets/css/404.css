@@ -18,7 +18,7 @@
 }
 
 body {
-    font-family: 'Quicksand', sans-serif;
+    font-family: 'Hanken Grotesk', sans-serif;
     background: var(--bg);
     color: var(--text);
     line-height: 1.6;
@@ -47,7 +47,7 @@ a { text-decoration: none; color: inherit; }
     justify-content: space-between; gap: 1rem;
 }
 .nav-logo {
-    font-family: 'Quicksand', sans-serif;
+    font-family: 'Hanken Grotesk', sans-serif;
     font-size: 1.5rem;
     font-weight: 700;
     color: var(--text);
@@ -81,7 +81,7 @@ a { text-decoration: none; color: inherit; }
 }
 .nav-btn {
     padding: 0.5rem 1.1rem; border-radius: 9px;
-    font-family: 'Quicksand', sans-serif; font-weight: 700;
+    font-family: 'Hanken Grotesk', sans-serif; font-weight: 700;
     font-size: 0.9rem; cursor: pointer; transition: all 0.2s; border: none;
 }
 .nav-btn-ghost { background: transparent; color: var(--text-2); border: 1px solid var(--border); }
@@ -270,7 +270,7 @@ a { text-decoration: none; color: inherit; }
 .not-found-search svg { width: 17px; height: 17px; stroke: var(--primary); flex-shrink: 0; }
 .not-found-search input {
     flex: 1; background: none; border: none; outline: none;
-    color: var(--text); font-family: 'Quicksand', sans-serif;
+    color: var(--text); font-family: 'Hanken Grotesk', sans-serif;
     font-size: 0.95rem; font-weight: 500;
 }
 .not-found-search input::placeholder { color: var(--text-3); }
@@ -278,7 +278,7 @@ a { text-decoration: none; color: inherit; }
     background: var(--primary); color: #0a0a0f;
     border: none; border-radius: 9px;
     padding: 0.45rem 1rem;
-    font-family: 'Quicksand', sans-serif;
+    font-family: 'Hanken Grotesk', sans-serif;
     font-weight: 700; font-size: 0.85rem;
     cursor: pointer; white-space: nowrap;
     transition: background 0.2s, transform 0.2s;
@@ -335,7 +335,7 @@ a { text-decoration: none; color: inherit; }
 .btn-primary-link {
     display: inline-flex; align-items: center; gap: 0.5rem;
     background: linear-gradient(135deg, var(--primary-d), var(--primary));
-    color: #fff; font-family: 'Quicksand', sans-serif;
+    color: #fff; font-family: 'Hanken Grotesk', sans-serif;
     font-weight: 700; font-size: 0.95rem;
     padding: 0.85rem 2rem; border-radius: var(--radius);
     transition: transform 0.2s, box-shadow 0.2s;
@@ -347,7 +347,7 @@ a { text-decoration: none; color: inherit; }
     display: inline-flex; align-items: center; gap: 0.5rem;
     background: transparent; color: var(--text);
     border: 1px solid var(--border);
-    font-family: 'Quicksand', sans-serif;
+    font-family: 'Hanken Grotesk', sans-serif;
     font-weight: 700; font-size: 0.95rem;
     padding: 0.85rem 2rem; border-radius: var(--radius);
     transition: background 0.2s, border-color 0.2s;

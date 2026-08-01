@@ -1,17 +1,8 @@
 lucide.createIcons();
 
-// Navbar
-const hamburger = document.getElementById('nav-hamburger');
-const mobileNav  = document.getElementById('nav-mobile');
-hamburger.addEventListener('click', () => {
-    mobileNav.classList.toggle('open');
-    const isOpen = mobileNav.classList.contains('open');
-    hamburger.innerHTML = `<i data-lucide="${isOpen ? 'x' : 'menu'}"></i>`;
-    lucide.createIcons();
-});
 window.addEventListener('scroll', () => {
     document.getElementById('navbar').style.boxShadow =
-        window.scrollY > 10 ? '0 4px 24px rgba(0,0,0,0.4)' : 'none';
+        window.scrollY > 10 ? '0 4px 0 #1a1612' : 'none';
 });
 
 // ── Active TOC link on scroll ─────────────────

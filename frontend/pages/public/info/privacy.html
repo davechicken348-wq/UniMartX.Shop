@@ -6,7 +6,8 @@
     <title>Privacy Policy - UniMartX</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/public.css">
     <link rel="stylesheet" href="../assets/css/legal.css">
 </head>
 <body>
@@ -19,16 +20,36 @@
                 <a href="../../auth/login.html" class="nav-btn nav-btn-ghost">Log In</a>
                 <a href="../../auth/seller/register.html" class="nav-btn nav-btn-primary">Start Selling</a>
             </div>
-            <button class="nav-hamburger" id="nav-hamburger" aria-label="Open menu">
-                <i data-lucide="menu"></i>
+            <button class="nav-hamburger" id="nav-hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="nav-mobile">
+                <span class="nav-hamburger__bar"></span>
+                <span class="nav-hamburger__bar"></span>
+                <span class="nav-hamburger__bar"></span>
             </button>
         </div>
-        <div class="nav-mobile" id="nav-mobile">
-            <a href="../home.html">Home</a>
-            <a href="../stores/stores.html">Explore Student Shops</a>
-            <a href="../../auth/login.html">Log In</a>
-            <a href="../../auth/seller/register.html" class="nav-btn nav-btn-primary">Start Selling</a>
+        <div class="nav-mobile" id="nav-mobile" aria-hidden="true">
+            <div class="nav-mobile__inner">
+                <div class="nav-mobile-group">
+                    <span class="nav-mobile-group-label">Shop</span>
+                    <a href="../shop/shop.html"><i data-lucide="shopping-bag"></i> Browse Products</a>
+                    <a href="../shop/cart.html"><i data-lucide="shopping-cart"></i> Your Cart</a>
+                </div>
+                <div class="nav-mobile-group">
+                    <span class="nav-mobile-group-label">Stores</span>
+                    <a href="../stores/stores.html"><i data-lucide="store"></i> Browse Shops</a>
+                </div>
+                <div class="nav-mobile-group">
+                    <span class="nav-mobile-group-label">Info</span>
+                    <a href="about.html"><i data-lucide="info"></i> About</a>
+                    <a href="faq.html"><i data-lucide="help-circle"></i> FAQ</a>
+                    <a href="../contact/contact.html"><i data-lucide="mail"></i> Contact</a>
+                </div>
+                <div class="nav-mobile__ctas">
+                    <a href="../../auth/login.html" class="nav-mobile__cta-ghost">Log In</a>
+                    <a href="../../auth/seller/register.html" class="nav-mobile__cta-primary">Start Selling</a>
+                </div>
+            </div>
         </div>
+        <div class="nav-overlay" id="nav-overlay" aria-hidden="true"></div>
     </nav>
 
 

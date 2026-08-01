@@ -1,2 +1,198 @@
 /* public.css — shared base for all public pages */
 /* Page-specific styles live in their own CSS files */
+
+/* ── Shared mobile nav structure (home.css pattern) ── */
+
+.nav-mobile {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0; right: 0;
+    z-index: 200;
+    overflow: hidden;
+}
+
+.nav-mobile.open {
+    display: block;
+}
+
+.nav-mobile__inner {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 16px 20px 24px;
+    background: #fff;
+    border-top: 1px solid rgba(255,255,255,0.12);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.3);
+    animation: mobileNavIn 0.3s cubic-bezier(0.22,1,0.36,1);
+}
+
+@keyframes mobileNavIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.nav-mobile-group {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding-bottom: 8px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+
+.nav-mobile-group:last-of-type { border-bottom: none; }
+
+.nav-mobile-group-label {
+    display: block;
+    padding: 8px 12px 4px;
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #a0948c;
+}
+
+.nav-mobile a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 14px;
+    border-radius: 10px;
+    color: #1a1612;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
+    text-decoration: none;
+}
+
+.nav-mobile a svg { width: 16px; height: 16px; stroke: currentColor; flex-shrink: 0; opacity: 0.7; }
+
+.nav-mobile a:hover {
+    background: rgba(5,150,105,0.08);
+    color: #047857;
+    transform: translateX(3px);
+}
+
+.nav-mobile a:hover svg { opacity: 1; }
+
+.nav-mobile__ctas {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 12px;
+    margin-top: 4px;
+}
+
+.nav-mobile__cta-ghost {
+    text-align: center;
+    padding: 12px;
+    border-radius: 12px;
+    border: 2px solid #1a1612;
+    color: #1a1612;
+    font-weight: 700;
+    font-size: 0.9375rem;
+    text-decoration: none;
+    display: block;
+    box-shadow: 3px 3px 0 #1a1612;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.nav-mobile__cta-ghost:hover {
+    background: #f3ede3;
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0 #1a1612;
+}
+
+.nav-mobile__cta-primary {
+    text-align: center;
+    padding: 13px;
+    border-radius: 12px;
+    background: #059669;
+    color: #fff;
+    font-weight: 800;
+    font-size: 0.9375rem;
+    text-decoration: none;
+    display: block;
+    border: 2px solid #1a1612;
+    box-shadow: 3px 3px 0 #1a1612;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.nav-mobile__cta-primary:hover {
+    background: #047857;
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0 #1a1612;
+}
+
+/* ── Hamburger 3-bar ── */
+.nav-hamburger__bar {
+    display: block;
+    width: 22px;
+    height: 2.5px;
+    background: #1a1612;
+    border-radius: 99px;
+    transform-origin: center;
+    transition: transform 0.3s cubic-bezier(0.22,1,0.36,1),
+                opacity   0.3s ease,
+                width     0.3s ease;
+}
+
+.nav-hamburger.active .nav-hamburger__bar:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-hamburger.active .nav-hamburger__bar:nth-child(2) { opacity: 0; width: 0; }
+.nav-hamburger.active .nav-hamburger__bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* ── Overlay ── */
+.nav-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 199;
+    background: rgba(0,0,0,0);
+    transition: background 0.35s ease;
+    cursor: pointer;
+}
+
+.nav-overlay.active {
+    display: block;
+    background: rgba(0,0,0,0.4);
+}
+
+/* ── Logged-in user mobile section ── */
+.pnav-mobile-user__info {
+    display: flex;
+    flex-direction: column;
+}
+
+.pnav-mobile-user__name {
+    font-weight: 700;
+    font-size: 0.9375rem;
+    color: #1a1612;
+}
+
+.pnav-mobile-user__role {
+    font-size: 0.75rem;
+    color: #6b5f57;
+    text-transform: capitalize;
+}
+
+.pnav-mobile-logout {
+    color: #ef4444 !important;
+}
+
+.pnav-mobile-logout:hover {
+    background: rgba(239,68,68,0.08) !important;
+    color: #ef4444 !important;
+}
+
+/* Small screen tweaks */
+@media (max-width: 480px) {
+    .nav-mobile__inner { padding: 14px 16px 20px; }
+}
+
+@media (max-width: 380px) {
+    .nav-mobile__inner { padding: 12px 12px 18px; }
+    .nav-mobile a { padding: 10px 12px; font-size: 0.875rem; border-radius: 8px; }
+    .nav-mobile-group-label { font-size: 0.6rem; padding: 6px 12px 3px; }
+    .nav-mobile__cta-ghost, .nav-mobile__cta-primary { padding: 11px; font-size: 0.875rem; }
+}

@@ -65,19 +65,21 @@ syncIndicator();
 const toggleBtn = document.getElementById('toggle-password');
 const passwordInput = document.getElementById('password');
 
-toggleBtn.addEventListener('click', () => {
-    const revealed = passwordInput.type === 'text';
-    passwordInput.type = revealed ? 'password' : 'text';
-    toggleBtn.setAttribute('aria-pressed', String(!revealed));
-    toggleBtn.setAttribute('aria-label', revealed ? 'Show password' : 'Hide password');
-    passwordInput.focus();
-});
+if (toggleBtn) {
+    toggleBtn.addEventListener('click', () => {
+        const revealed = passwordInput.type === 'text';
+        passwordInput.type = revealed ? 'password' : 'text';
+        toggleBtn.setAttribute('aria-pressed', String(!revealed));
+        toggleBtn.setAttribute('aria-label', revealed ? 'Show password' : 'Hide password');
+        passwordInput.focus();
+    });
+}
 
 // ── FORM VALIDATION ─────────────────────────────────────────
 function setError(id, message) {
     const input = document.getElementById(id);
-    input.classList.add('error');
-    input.classList.remove('success');
+    input.classList.add('is-error');
+    input.classList.remove('is-success');
     const err = document.getElementById(`${id}-error`);
     err.textContent = message;
     err.classList.add('visible');
@@ -85,8 +87,8 @@ function setError(id, message) {
 
 function setSuccess(id) {
     const input = document.getElementById(id);
-    input.classList.remove('error');
-    input.classList.add('success');
+    input.classList.remove('is-error');
+    input.classList.add('is-success');
     const err = document.getElementById(`${id}-error`);
     if (err) err.classList.remove('visible');
 }

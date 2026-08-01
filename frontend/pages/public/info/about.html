@@ -12,16 +12,15 @@
     <link rel="canonical" href="https://unimartx.com/pages/public/info/about.html">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="preconnect" href="https://api.unimartx.com">
+    <link rel="stylesheet" href="../assets/css/public.css">
     <link rel="stylesheet" href="../assets/css/about.css">
 </head>
 <body>
     <a href="#main-content" class="visually-hidden">Skip to main content</a>
 
-    <!-- ═══════════════════════════════════════════
-         NAVBAR
-    ═══════════════════════════════════════════ -->
+    <!-- NAVBAR -->
     <nav class="navbar" id="navbar">
         <div class="nav-inner">
             <a href="../home.html" class="nav-logo">Unimart<span>X</span></a>
@@ -56,38 +55,40 @@
                 <a href="../../auth/seller/register.html" class="nav-btn nav-btn-primary">Become a Seller</a>
             </div>
             <button class="nav-hamburger" id="nav-hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="nav-mobile">
-                <i data-lucide="menu" aria-hidden="true"></i>
+                <span class="nav-hamburger__bar"></span>
+                <span class="nav-hamburger__bar"></span>
+                <span class="nav-hamburger__bar"></span>
             </button>
         </div>
-        <div class="nav-mobile" id="nav-mobile">
-            <div class="nav-mobile-group">
-                <span class="nav-mobile-group-label">Shop</span>
-                <a href="../shop/shop.html">Browse Products</a>
-                <a href="../shop/cart.html">Your Cart</a>
+        <div class="nav-mobile" id="nav-mobile" aria-hidden="true">
+            <div class="nav-mobile__inner">
+                <div class="nav-mobile-group">
+                    <span class="nav-mobile-group-label">Shop</span>
+                    <a href="../shop/shop.html"><i data-lucide="shopping-bag"></i> Browse Products</a>
+                    <a href="../shop/cart.html"><i data-lucide="shopping-cart"></i> Your Cart</a>
+                </div>
+                <div class="nav-mobile-group">
+                    <span class="nav-mobile-group-label">Stores</span>
+                    <a href="../stores/stores.html"><i data-lucide="store"></i> Browse Shops</a>
+                </div>
+                <div class="nav-mobile-group">
+                    <span class="nav-mobile-group-label">Info</span>
+                    <a href="about.html"><i data-lucide="info"></i> About</a>
+                    <a href="faq.html"><i data-lucide="help-circle"></i> FAQ</a>
+                    <a href="../contact/contact.html"><i data-lucide="mail"></i> Contact</a>
+                </div>
+                <div class="nav-mobile__ctas">
+                    <a href="../../auth/login.html" class="nav-mobile__cta-ghost">Log In</a>
+                    <a href="../../auth/seller/register.html" class="nav-mobile__cta-primary">Become a Seller</a>
+                </div>
             </div>
-            <div class="nav-mobile-group">
-                <span class="nav-mobile-group-label">Stores</span>
-                <a href="../stores/stores.html">Browse Shops</a>
-            </div>
-            <div class="nav-mobile-group">
-                <span class="nav-mobile-group-label">Info</span>
-                <a href="about.html">About</a>
-                <a href="faq.html">FAQ</a>
-                <a href="../contact/contact.html">Contact</a>
-                <a href="terms.html">Terms</a>
-                <a href="privacy.html">Privacy</a>
-                <a href="seller-policy.html">Seller Policy</a>
-            </div>
-            <a href="../../auth/login.html">Log In</a>
-            <a href="../../auth/seller/register.html" class="nav-btn nav-btn-primary">Become a Seller</a>
         </div>
+        <div class="nav-overlay" id="nav-overlay" aria-hidden="true"></div>
     </nav>
 
     <main id="main-content">
 
-        <!-- ═══════════════════════════════════════════
-             HERO
-        ═══════════════════════════════════════════ -->
+        <!-- HERO -->
         <section class="about-hero" aria-labelledby="about-hero-heading">
             <div class="about-hero-inner">
                 <div class="about-hero-text reveal">
@@ -96,7 +97,7 @@
                         The student commerce movement
                     </div>
                     <h1 id="about-hero-heading">
-                        Where student entrepreneurs <span>grow.</span>
+                        Where student<br>entrepreneurs<br><span class="hero-accent">grow.</span>
                     </h1>
                     <p class="about-hero-sub">
                         UniMartX is a campus-built marketplace that gives every university student
@@ -118,136 +119,79 @@
                     </p>
                 </div>
 
-                <div class="about-hero-art reveal delay-200" aria-hidden="true">
-                    <svg viewBox="0 0 420 420" class="hero-svg" role="img">
-                        <defs>
-                            <linearGradient id="gGreen" x1="0" y1="0" x2="1" y2="1">
-                                <stop offset="0" stop-color="#059669"/>
-                                <stop offset="1" stop-color="#10b981"/>
-                            </linearGradient>
-                            <linearGradient id="gMint" x1="0" y1="0" x2="1" y2="1">
-                                <stop offset="0" stop-color="#34d399"/>
-                                <stop offset="1" stop-color="#a3e635"/>
-                            </linearGradient>
-                            <linearGradient id="gCard" x1="0" y1="0" x2="1" y2="1">
-                                <stop offset="0" stop-color="#ffffff"/>
-                                <stop offset="1" stop-color="#f0fdf4"/>
-                            </linearGradient>
-                        </defs>
-
-                        <!-- soft background blobs -->
-                        <circle cx="330" cy="90" r="70" fill="#d1fae5" opacity="0.6"/>
-                        <circle cx="80" cy="330" r="55" fill="#dcfce7" opacity="0.6"/>
-
-                        <!-- main storefront card -->
-                        <rect x="120" y="120" width="200" height="230" rx="22" fill="url(#gCard)" stroke="#bbf7d0" stroke-width="2"/>
-                        <rect x="120" y="120" width="200" height="46" rx="22" fill="url(#gGreen)"/>
-                        <rect x="120" y="140" width="200" height="26" fill="url(#gGreen)"/>
-                        <circle cx="142" cy="143" r="6" fill="#fff" opacity="0.9"/>
-                        <circle cx="162" cy="143" r="6" fill="#fff" opacity="0.7"/>
-                        <circle cx="182" cy="143" r="6" fill="#fff" opacity="0.5"/>
-
-                        <!-- product rows -->
-                        <rect x="140" y="186" width="74" height="60" rx="12" fill="#ecfdf5" stroke="#a7f3d0" stroke-width="1.5"/>
-                        <rect x="228" y="186" width="74" height="60" rx="12" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1.5"/>
-                        <rect x="140" y="260" width="74" height="60" rx="12" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1.5"/>
-                        <rect x="228" y="260" width="74" height="60" rx="12" fill="#ecfdf5" stroke="#a7f3d0" stroke-width="1.5"/>
-                        <circle cx="177" cy="214" r="14" fill="url(#gMint)"/>
-                        <path d="M170 214l5 5 9-10" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-                        <circle cx="265" cy="214" r="14" fill="#059669"/>
-                        <path d="M258 214l5 5 9-10" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-
-                        <!-- floating avatar (student) -->
-                        <circle cx="80" cy="150" r="34" fill="#fff" stroke="url(#gGreen)" stroke-width="3"/>
-                        <circle cx="80" cy="140" r="12" fill="#6ee7b7"/>
-                        <path d="M60 172c0-13 9-20 20-20s20 7 20 20z" fill="#6ee7b7"/>
-
-                        <!-- rocket -->
-                        <g transform="translate(300 250)">
-                            <path d="M0 -34c14 6 22 22 22 40l-22 14-22-14c0-18 8-34 22-40z" fill="url(#gMint)"/>
-                            <circle cx="0" cy="-12" r="8" fill="#fff"/>
-                            <path d="M-22 6l-10 18 14-6z" fill="#059669"/>
-                            <path d="M22 6l10 18-14-6z" fill="#059669"/>
-                            <path d="M-6 34l6 18 6-18z" fill="#fbbf24"/>
-                        </g>
-
-                        <!-- coins -->
-                        <g transform="translate(330 130)">
-                            <circle r="16" fill="#fbbf24" stroke="#f59e0b" stroke-width="2"/>
-                            <text x="0" y="5" text-anchor="middle" font-size="14" font-weight="800" fill="#92400e">₵</text>
-                        </g>
-                        <g transform="translate(352 168)">
-                            <circle r="12" fill="#fcd34d" stroke="#f59e0b" stroke-width="2"/>
-                        </g>
-
-                        <!-- sparkles -->
-                        <path d="M62 250l3 9 9 3-9 3-3 9-3-9-9-3 9-3z" fill="#34d399"/>
-                        <path d="M250 96l2.5 7 7 2.5-7 2.5-2.5 7-2.5-7-7-2.5 7-2.5z" fill="#a3e635"/>
-                    </svg>
+                <div class="about-hero-collage reveal delay-200" aria-hidden="true">
+                    <div class="collage-card collage-card--main">
+                        <img src="../assets/images/home_images/home5.webp" alt="" loading="eager">
+                        <div class="collage-tag collage-tag--green">
+                            <i data-lucide="trending-up" aria-hidden="true"></i>
+                            500+ Sellers
+                        </div>
+                    </div>
+                    <div class="collage-card collage-card--top">
+                        <img src="../assets/images/home_images/home9.webp" alt="" loading="eager">
+                    </div>
+                    <div class="collage-card collage-card--bottom">
+                        <img src="../assets/images/home_images/home8.webp" alt="" loading="lazy">
+                        <div class="collage-tag collage-tag--gold">
+                            <i data-lucide="star" aria-hidden="true"></i>
+                            Verified Stores
+                        </div>
+                    </div>
+                    <div class="collage-stat">
+                        <span class="collage-stat-num">100%</span>
+                        <span class="collage-stat-label">Free to start</span>
+                    </div>
                 </div>
             </div>
-            <div class="about-hero-fade" aria-hidden="true"></div>
         </section>
 
-        <!-- ═══════════════════════════════════════════
-             OUR STORY
-        ═══════════════════════════════════════════ -->
+        <!-- STORY -->
         <section class="about-section story-section" aria-labelledby="story-heading">
-            <img class="about-deco" src="../assets/images/home_images/home6.webp" alt="" aria-hidden="true" loading="lazy" style="top:2rem; right:-1.5rem; --rot:8deg;">
             <div class="about-container">
                 <div class="about-section-header centered reveal">
                     <span class="section-eyebrow"><i data-lucide="book-open" aria-hidden="true"></i> Our Story</span>
                     <h2 id="story-heading">It started with a <span>frustrating</span> problem.</h2>
-                    <p class="section-subtitle">
-                        This isn't a corporate origin story. It's the beginning of a movement —
-                        told the way it actually happened.
-                    </p>
+                    <p class="section-subtitle">This isn't a corporate origin story. It's the beginning of a movement — told the way it actually happened.</p>
                 </div>
 
                 <ol class="story-flow" role="list">
                     <li class="story-step reveal" role="listitem">
+                        <div class="story-step-num">01</div>
                         <div class="story-step-icon"><i data-lucide="alert-circle" aria-hidden="true"></i></div>
                         <span class="story-step-tag">The Problem</span>
                         <h3>Talented, but invisible.</h3>
-                        <p>Students were running real businesses — fashion, tech, food, crafts —
-                            but only through WhatsApp Status that vanishes in 24 hours and DMs nobody scrolls back to find.</p>
+                        <p>Students were running real businesses — fashion, tech, food, crafts — but only through WhatsApp Status that vanishes in 24 hours.</p>
                     </li>
-                    <li class="story-arrow" aria-hidden="true"><i data-lucide="arrow-right" class="arrow-desktop"></i><i data-lucide="arrow-down" class="arrow-mobile"></i></li>
                     <li class="story-step reveal delay-100" role="listitem">
-                        <div class="story-step-icon"><i data-lucide="lightbulb" aria-hidden="true"></i></div>
+                        <div class="story-step-num">02</div>
+                        <div class="story-step-icon story-step-icon--gold"><i data-lucide="lightbulb" aria-hidden="true"></i></div>
                         <span class="story-step-tag">The Idea</span>
                         <h3>One link. One store.</h3>
-                        <p>What if every student seller had a permanent, professional shop —
-                            their own branded space, one shareable link, and zero code required to set it up?</p>
+                        <p>What if every student seller had a permanent, professional shop — their own branded space, one shareable link, zero code required?</p>
                     </li>
-                    <li class="story-arrow" aria-hidden="true"><i data-lucide="arrow-right" class="arrow-desktop"></i><i data-lucide="arrow-down" class="arrow-mobile"></i></li>
                     <li class="story-step reveal delay-200" role="listitem">
-                        <div class="story-step-icon"><i data-lucide="rocket" aria-hidden="true"></i></div>
+                        <div class="story-step-num">03</div>
+                        <div class="story-step-icon story-step-icon--green"><i data-lucide="rocket" aria-hidden="true"></i></div>
                         <span class="story-step-tag">The Solution</span>
                         <h3>UniMartX was built.</h3>
-                        <p>We built the platform we wished we had — storefronts, catalogs, orders,
-                            and reviews, designed around campus life and made free for every student.</p>
+                        <p>We built the platform we wished we had — storefronts, catalogs, orders, and reviews, designed around campus life and free for every student.</p>
                     </li>
-                    <li class="story-arrow" aria-hidden="true"><i data-lucide="arrow-right" class="arrow-desktop"></i><i data-lucide="arrow-down" class="arrow-mobile"></i></li>
                     <li class="story-step reveal delay-300" role="listitem">
-                        <div class="story-step-icon"><i data-lucide="trending-up" aria-hidden="true"></i></div>
+                        <div class="story-step-num">04</div>
+                        <div class="story-step-icon story-step-icon--lime"><i data-lucide="trending-up" aria-hidden="true"></i></div>
                         <span class="story-step-tag">The Future</span>
                         <h3>And it's just beginning.</h3>
-                        <p>New sellers join every week. Campuses are connecting. The dream is simple:
-                            a thriving marketplace owned by students, for students.</p>
+                        <p>New sellers join every week. Campuses are connecting. A thriving marketplace owned by students, for students.</p>
                     </li>
                 </ol>
             </div>
         </section>
 
-        <!-- ═══════════════════════════════════════════
-             WHY UNIMARTX EXISTS
-        ═══════════════════════════════════════════ -->
+        <!-- WHY -->
         <section class="about-section why-section" aria-labelledby="why-heading">
-            <img class="about-deco about-deco--2" src="../assets/images/home_images/home7.webp" alt="" aria-hidden="true" loading="lazy" style="bottom:1.5rem; left:-1.5rem; --rot:-8deg;">
             <div class="about-container">
                 <div class="about-section-header centered reveal">
-                    <span class="section-eyebrow section-eyebrow--amber"><i data-lucide="puzzle" aria-hidden="true"></i> Why We Exist</span>
+                    <span class="section-eyebrow section-eyebrow--gold"><i data-lucide="puzzle" aria-hidden="true"></i> Why We Exist</span>
                     <h2 id="why-heading">Student entrepreneurs face <span>real</span> walls.</h2>
                     <p class="section-subtitle">Before UniMartX, selling as a student meant fighting the same four problems — every single day.</p>
                 </div>
@@ -261,7 +205,7 @@
                     <div class="why-card reveal delay-100">
                         <div class="why-card-icon"><i data-lucide="message-circle" aria-hidden="true"></i></div>
                         <h3>Stuck on WhatsApp</h3>
-                        <p>Orders live in chat threads. There's no catalog, no tracking, no way to look professional or stay organized.</p>
+                        <p>Orders live in chat threads. No catalog, no tracking, no way to look professional or stay organized.</p>
                     </div>
                     <div class="why-card reveal delay-200">
                         <div class="why-card-icon"><i data-lucide="shield-alert" aria-hidden="true"></i></div>
@@ -271,7 +215,7 @@
                     <div class="why-card reveal delay-300">
                         <div class="why-card-icon"><i data-lucide="search-x" aria-hidden="true"></i></div>
                         <h3>Limited discoverability</h3>
-                        <p>Great stores stay hidden. There was no central place where students could browse what their peers sell.</p>
+                        <p>Great stores stay hidden. No central place where students could browse what their peers sell.</p>
                     </div>
                 </div>
 
@@ -279,17 +223,17 @@
                     <div class="why-solution-icon"><i data-lucide="sparkles" aria-hidden="true"></i></div>
                     <div class="why-solution-text">
                         <h3>So we built the solution.</h3>
-                        <p>UniMartX tears down those walls — giving every student seller a real storefront,
-                            verified trust, and a community of campus buyers ready to discover them.</p>
+                        <p>UniMartX tears down those walls — giving every student seller a real storefront, verified trust, and a community of campus buyers ready to discover them.</p>
                     </div>
+                    <a href="../../auth/seller/register.html" class="why-solution-btn">
+                        <i data-lucide="arrow-right" aria-hidden="true"></i>
+                        Start for free
+                    </a>
                 </div>
             </div>
         </section>
 
-
-        <!-- ═══════════════════════════════════════════
-             HOW UNIMARTX WORKS
-        ═══════════════════════════════════════════ -->
+        <!-- HOW IT WORKS -->
         <section class="about-section how-section" aria-labelledby="how-heading">
             <div class="about-container">
                 <div class="about-section-header centered reveal">
@@ -300,45 +244,32 @@
 
                 <ol class="how-flow" role="list">
                     <li class="how-step reveal" role="listitem">
-                        <div class="how-step-art">
-                            <svg viewBox="0 0 120 120" aria-hidden="true">
-                                <rect x="30" y="34" width="60" height="56" rx="10" fill="#ecfdf5" stroke="#a7f3d0" stroke-width="2"/>
-                                <path d="M30 44h60" stroke="#059669" stroke-width="3"/>
-                                <path d="M44 22c0 8-6 10-6 18h44c0-8-6-10-6-18z" fill="#10b981"/>
-                                <circle cx="60" cy="66" r="9" fill="url(#gMint)"/>
-                                <path d="M57 66l2 2 4-4" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
+                        <div class="how-step-num">1</div>
+                        <div class="how-step-icon how-step-icon--green">
+                            <i data-lucide="store" aria-hidden="true"></i>
                         </div>
-                        <span class="how-step-num">1</span>
                         <h3>Create Your Store</h3>
                         <p>Sign up free, pick a name, and get your own branded storefront with a unique link — instantly.</p>
                     </li>
-                    <li class="how-arrow" aria-hidden="true"><i data-lucide="arrow-right" class="arrow-desktop"></i><i data-lucide="arrow-down" class="arrow-mobile"></i></li>
+                    <div class="how-arrow" aria-hidden="true">
+                        <i data-lucide="arrow-right"></i>
+                    </div>
                     <li class="how-step reveal delay-100" role="listitem">
-                        <div class="how-step-art">
-                            <svg viewBox="0 0 120 120" aria-hidden="true">
-                                <path d="M40 40l-8 18v18a6 6 0 006 6h44a6 6 0 006-6V58l-8-18z" fill="#ecfdf5" stroke="#a7f3d0" stroke-width="2"/>
-                                <path d="M32 58h56" stroke="#059669" stroke-width="3"/>
-                                <path d="M48 58v-6a12 12 0 0124 0v6" fill="none" stroke="#10b981" stroke-width="3"/>
-                                <circle cx="60" cy="74" r="5" fill="url(#gMint)"/>
-                            </svg>
+                        <div class="how-step-num">2</div>
+                        <div class="how-step-icon how-step-icon--gold">
+                            <i data-lucide="package" aria-hidden="true"></i>
                         </div>
-                        <span class="how-step-num">2</span>
                         <h3>List Your Products</h3>
                         <p>Add photos, prices, and descriptions. Your catalog is live and shareable across every platform you use.</p>
                     </li>
-                    <li class="how-arrow" aria-hidden="true"><i data-lucide="arrow-right" class="arrow-desktop"></i><i data-lucide="arrow-down" class="arrow-mobile"></i></li>
+                    <div class="how-arrow" aria-hidden="true">
+                        <i data-lucide="arrow-right"></i>
+                    </div>
                     <li class="how-step reveal delay-200" role="listitem">
-                        <div class="how-step-art">
-                            <svg viewBox="0 0 120 120" aria-hidden="true">
-                                <circle cx="44" cy="46" r="10" fill="#10b981"/>
-                                <circle cx="76" cy="46" r="10" fill="#34d399"/>
-                                <path d="M28 84c0-12 7-20 16-20s16 8 16 20z" fill="#10b981"/>
-                                <path d="M60 84c0-12 7-20 16-20s16 8 16 20z" fill="#34d399"/>
-                                <circle cx="60" cy="34" r="6" fill="#a3e635"/>
-                            </svg>
+                        <div class="how-step-num">3</div>
+                        <div class="how-step-icon how-step-icon--lime">
+                            <i data-lucide="users" aria-hidden="true"></i>
                         </div>
-                        <span class="how-step-num">3</span>
                         <h3>Reach Student Buyers</h3>
                         <p>Get discovered by students across campuses who are actively looking for what you sell.</p>
                     </li>
@@ -346,10 +277,7 @@
             </div>
         </section>
 
-
-        <!-- ═══════════════════════════════════════════
-             THE TEAM
-        ═══════════════════════════════════════════ -->
+        <!-- TEAM -->
         <section class="about-section team-section" aria-labelledby="team-heading">
             <div class="about-container">
                 <div class="about-section-header centered reveal">
@@ -358,54 +286,54 @@
                     <p class="section-subtitle">UniMartX is the work of a small, driven team who believe campus entrepreneurs deserve better.</p>
                 </div>
 
-                <div class="team-list">
-                    <article class="team-row reveal">
-                        <div class="team-photo">
-                            <span class="team-index">01</span>
+                <div class="team-grid">
+                    <article class="team-card reveal">
+                        <div class="team-card-photo">
                             <img src="../assets/images/about_images/ceo.webp" alt="David Kofi Blamo" loading="lazy">
+                            <div class="team-card-num">01</div>
                         </div>
-                        <div class="team-content">
-                            <span class="team-role">Developer &amp; Co-Founder</span>
+                        <div class="team-card-body">
+                            <span class="team-card-role">Developer &amp; Co-Founder</span>
                             <h3>David Kofi Blamo</h3>
-                            <p class="team-story">I watched my classmates lose sales to WhatsApp statuses that vanished in 24 hours, and it bugged me that talented students had no real shop. So I started building — late nights, broken code, countless retries — until UniMartX became a store any student could open in minutes, no coding required.</p>
-                            <blockquote class="team-quote">"If I could build it, any student could finally own their hustle."</blockquote>
-                            <div class="team-socials">
+                            <p>I watched my classmates lose sales to WhatsApp statuses that vanished in 24 hours. So I started building — late nights, broken code, countless retries — until UniMartX became a store any student could open in minutes.</p>
+                            <blockquote>"If I could build it, any student could finally own their hustle."</blockquote>
+                            <div class="team-card-socials">
                                 <a href="#" aria-label="David's LinkedIn"><i data-lucide="linkedin" aria-hidden="true"></i></a>
                                 <a href="#" aria-label="David's X profile"><i data-lucide="twitter" aria-hidden="true"></i></a>
                             </div>
                         </div>
                     </article>
 
-                    <article class="team-row reveal delay-100">
-                        <div class="team-photo">
-                            <span class="team-index">02</span>
+                    <article class="team-card reveal delay-100">
+                        <div class="team-card-photo">
                             <img src="../assets/images/about_images/ceo2.webp" alt="Prince Hammond" loading="lazy">
+                            <div class="team-card-num">02</div>
                         </div>
-                        <div class="team-content">
-                            <span class="team-role">Digital Marketer &amp; Co-Founder</span>
+                        <div class="team-card-body">
+                            <span class="team-card-role">Digital Marketer &amp; Co-Founder</span>
                             <h3>Prince Hammond</h3>
-                            <p class="team-story">I'd seen brilliant student products never get seen because nobody knew where to look. My job is the opposite of that — getting sellers discovered, building trust, and turning one campus into many. I want every student to feel they're part of something bigger than a single sale.</p>
-                            <blockquote class="team-quote">"A great product means nothing if no one can find it. That's the gap I close."</blockquote>
-                            <div class="team-socials">
+                            <p>I'd seen brilliant student products never get seen because nobody knew where to look. My job is the opposite — getting sellers discovered, building trust, and turning one campus into many.</p>
+                            <blockquote>"A great product means nothing if no one can find it. That's the gap I close."</blockquote>
+                            <div class="team-card-socials">
                                 <a href="#" aria-label="Prince's LinkedIn"><i data-lucide="linkedin" aria-hidden="true"></i></a>
                                 <a href="#" aria-label="Prince's X profile"><i data-lucide="twitter" aria-hidden="true"></i></a>
                             </div>
                         </div>
                     </article>
 
-                    <article class="team-row reveal delay-200">
-                        <div class="team-photo">
-                            <span class="team-index">03</span>
-                            <img src="../assets/images/about_images/ceo3.webp" alt="The UniMartX crew" loading="lazy">
+                    <article class="team-card reveal delay-200">
+                        <div class="team-card-photo">
+                            <img src="../assets/images/about_images/ceo3.webp" alt="Prince Lartey" loading="lazy">
+                            <div class="team-card-num">03</div>
                         </div>
-                        <div class="team-content">
-                            <span class="team-role">Design &amp; Support</span>
+                        <div class="team-card-body">
+                            <span class="team-card-role">Design &amp; Support</span>
                             <h3>Prince Lartey</h3>
-                            <p class="team-story">Behind every smooth checkout is a team that cares — designers, support, and early believers who answer the late-night messages and fix the small things that matter. We're students too, so we build like it's for family, not for a faceless company.</p>
-                            <blockquote class="team-quote">"We're not a brand you call. We're the people in your group chat."</blockquote>
-                            <div class="team-socials">
-                                <a href="#" aria-label="UniMartX on LinkedIn"><i data-lucide="linkedin" aria-hidden="true"></i></a>
-                                <a href="#" aria-label="UniMartX on X"><i data-lucide="twitter" aria-hidden="true"></i></a>
+                            <p>Behind every smooth checkout is a team that cares — designers, support, and early believers who answer the late-night messages and fix the small things that matter.</p>
+                            <blockquote>"We're not a brand you call. We're the people in your group chat."</blockquote>
+                            <div class="team-card-socials">
+                                <a href="#" aria-label="Prince's LinkedIn"><i data-lucide="linkedin" aria-hidden="true"></i></a>
+                                <a href="#" aria-label="Prince's X profile"><i data-lucide="twitter" aria-hidden="true"></i></a>
                             </div>
                         </div>
                     </article>
@@ -413,9 +341,7 @@
             </div>
         </section>
 
-        <!-- ═══════════════════════════════════════════
-             TIMELINE / ROADMAP
-        ═══════════════════════════════════════════ -->
+        <!-- TIMELINE -->
         <section class="about-section timeline-section" aria-labelledby="timeline-heading">
             <div class="about-container">
                 <div class="about-section-header centered reveal">
@@ -426,7 +352,9 @@
 
                 <ol class="timeline" role="list">
                     <li class="timeline-item reveal" role="listitem">
-                        <div class="timeline-marker"><i data-lucide="lightbulb" aria-hidden="true"></i></div>
+                        <div class="timeline-marker">
+                            <i data-lucide="lightbulb" aria-hidden="true"></i>
+                        </div>
                         <div class="timeline-content">
                             <span class="timeline-year">2026</span>
                             <h3>UniMartX Idea Created</h3>
@@ -434,7 +362,9 @@
                         </div>
                     </li>
                     <li class="timeline-item reveal delay-100" role="listitem">
-                        <div class="timeline-marker"><i data-lucide="hammer" aria-hidden="true"></i></div>
+                        <div class="timeline-marker timeline-marker--gold">
+                            <i data-lucide="hammer" aria-hidden="true"></i>
+                        </div>
                         <div class="timeline-content">
                             <span class="timeline-year">2026</span>
                             <h3>Platform Development</h3>
@@ -442,7 +372,9 @@
                         </div>
                     </li>
                     <li class="timeline-item reveal delay-200" role="listitem">
-                        <div class="timeline-marker"><i data-lucide="store" aria-hidden="true"></i></div>
+                        <div class="timeline-marker timeline-marker--green">
+                            <i data-lucide="store" aria-hidden="true"></i>
+                        </div>
                         <div class="timeline-content">
                             <span class="timeline-year">2026</span>
                             <h3>First Student Store</h3>
@@ -450,7 +382,9 @@
                         </div>
                     </li>
                     <li class="timeline-item reveal delay-100" role="listitem">
-                        <div class="timeline-marker"><i data-lucide="rocket" aria-hidden="true"></i></div>
+                        <div class="timeline-marker timeline-marker--green">
+                            <i data-lucide="rocket" aria-hidden="true"></i>
+                        </div>
                         <div class="timeline-content">
                             <span class="timeline-year">2026</span>
                             <h3>Marketplace Launch</h3>
@@ -458,8 +392,10 @@
                         </div>
                     </li>
                     <li class="timeline-item reveal delay-200" role="listitem">
-                        <div class="timeline-marker timeline-marker--future"><i data-lucide="globe" aria-hidden="true"></i></div>
-                        <div class="timeline-content">
+                        <div class="timeline-marker timeline-marker--future">
+                            <i data-lucide="globe" aria-hidden="true"></i>
+                        </div>
+                        <div class="timeline-content timeline-content--future">
                             <span class="timeline-year">Next</span>
                             <h3>Expansion Across Universities</h3>
                             <p>More campuses, more sellers, and a mobile app — so the movement travels wherever students go.</p>
@@ -469,11 +405,8 @@
             </div>
         </section>
 
-        <!-- ═══════════════════════════════════════════
-             CORE VALUES
-        ═══════════════════════════════════════════ -->
+        <!-- VALUES -->
         <section class="about-section values-section" aria-labelledby="values-heading">
-            <img class="about-deco about-deco--3" src="../assets/images/home_images/home8.webp" alt="" aria-hidden="true" loading="lazy" style="top:2.5rem; right:-1.5rem; --rot:6deg;">
             <div class="about-container">
                 <div class="about-section-header centered reveal">
                     <span class="section-eyebrow"><i data-lucide="gem" aria-hidden="true"></i> What We Stand For</span>
@@ -483,32 +416,32 @@
 
                 <div class="values-grid">
                     <div class="value-card reveal">
-                        <div class="value-icon"><i data-lucide="shield-check" aria-hidden="true"></i></div>
+                        <div class="value-icon value-icon--green"><i data-lucide="shield-check" aria-hidden="true"></i></div>
                         <h3>Trust</h3>
                         <p>Verified sellers, secure checkout, and honest reviews — so every transaction feels safe.</p>
                     </div>
                     <div class="value-card reveal delay-100">
-                        <div class="value-icon"><i data-lucide="lightbulb" aria-hidden="true"></i></div>
+                        <div class="value-icon value-icon--gold"><i data-lucide="lightbulb" aria-hidden="true"></i></div>
                         <h3>Innovation</h3>
                         <p>We keep shipping tools that make student selling simpler, faster, and more professional.</p>
                     </div>
                     <div class="value-card reveal delay-200">
-                        <div class="value-icon"><i data-lucide="users" aria-hidden="true"></i></div>
+                        <div class="value-icon value-icon--lime"><i data-lucide="users" aria-hidden="true"></i></div>
                         <h3>Community</h3>
                         <p>We lift each other up. Every shop opened and every sale made strengthens the whole network.</p>
                     </div>
                     <div class="value-card reveal delay-100">
-                        <div class="value-icon"><i data-lucide="trending-up" aria-hidden="true"></i></div>
+                        <div class="value-icon value-icon--green"><i data-lucide="trending-up" aria-hidden="true"></i></div>
                         <h3>Growth</h3>
                         <p>UniMartX exists to help students turn small ideas into businesses that scale beyond campus.</p>
                     </div>
                     <div class="value-card reveal delay-200">
-                        <div class="value-icon"><i data-lucide="accessibility" aria-hidden="true"></i></div>
+                        <div class="value-icon value-icon--gold"><i data-lucide="accessibility" aria-hidden="true"></i></div>
                         <h3>Accessibility</h3>
                         <p>Built mobile-first and free to start, so any student can join regardless of budget or device.</p>
                     </div>
                     <div class="value-card reveal delay-300">
-                        <div class="value-icon"><i data-lucide="graduation-cap" aria-hidden="true"></i></div>
+                        <div class="value-icon value-icon--lime"><i data-lucide="graduation-cap" aria-hidden="true"></i></div>
                         <h3>Student Empowerment</h3>
                         <p>We hand students the tools and ownership — because the platform belongs to its community.</p>
                     </div>
@@ -516,38 +449,35 @@
             </div>
         </section>
 
-        <!-- ═══════════════════════════════════════════
-             JOIN THE MOVEMENT (CTA)
-        ═══════════════════════════════════════════ -->
+        <!-- CTA -->
         <section class="about-cta" aria-labelledby="cta-heading">
-            <img class="about-deco about-deco--4" src="../assets/images/home_images/home9.webp" alt="" aria-hidden="true" loading="lazy" style="bottom:1.5rem; right:-1.5rem; --rot:-6deg;">
             <div class="about-cta-inner reveal">
-                <div class="about-cta-badge"><i data-lucide="rocket" aria-hidden="true"></i> Join the movement</div>
+                <div class="about-cta-badge">
+                    <i data-lucide="rocket" aria-hidden="true"></i>
+                    Join the movement
+                </div>
                 <h2 id="cta-heading">Ready to build your <span>business?</span></h2>
                 <p>Thousands of students are already turning ideas into income. Your store is one link away — and it's completely free to start.</p>
                 <div class="about-cta-actions">
-                    <a href="../../auth/seller/register.html" class="btn-about-primary">
+                    <a href="../../auth/seller/register.html" class="btn-cta-primary">
                         <i data-lucide="store" aria-hidden="true"></i>
                         Become a Seller
                     </a>
-                    <a href="../shop/shop.html" class="btn-about-ghost">
+                    <a href="../shop/shop.html" class="btn-cta-ghost">
                         <i data-lucide="shopping-bag" aria-hidden="true"></i>
                         Start Shopping
                     </a>
-                    <a href="../contact/contact.html" class="btn-about-ghost">
+                    <a href="../contact/contact.html" class="btn-cta-ghost">
                         <i data-lucide="mail" aria-hidden="true"></i>
                         Contact Us
                     </a>
                 </div>
             </div>
-            <div class="about-cta-fade" aria-hidden="true"></div>
         </section>
 
     </main>
 
-    <!-- ═══════════════════════════════════════════
-         FOOTER
-    ═══════════════════════════════════════════ -->
+    <!-- FOOTER -->
     <footer class="about-footer" role="contentinfo">
         <div class="footer-inner">
             <div class="footer-brand">

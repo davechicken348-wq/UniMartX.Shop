@@ -1,18 +1,5 @@
 lucide.createIcons();
 
-const hamburger = document.getElementById('nav-hamburger');
-const mobileNav = document.getElementById('nav-mobile');
-if (hamburger && mobileNav) {
-    hamburger.addEventListener('click', () => {
-        mobileNav.classList.toggle('open');
-        const isOpen = mobileNav.classList.contains('open');
-        hamburger.setAttribute('aria-expanded', String(isOpen));
-        hamburger.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
-        hamburger.innerHTML = `<i data-lucide="${isOpen ? 'x' : 'menu'}" aria-hidden="true"></i>`;
-        lucide.createIcons();
-    });
-}
-
 const revealEls = document.querySelectorAll('.reveal');
 
 if ('IntersectionObserver' in window) {

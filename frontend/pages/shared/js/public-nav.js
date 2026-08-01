@@ -135,20 +135,36 @@
 
         // Mobile nav — remove guest links, insert user links
         const navMobile = document.getElementById('nav-mobile');
-        if (navMobile) {
-            navMobile.querySelectorAll('a[href*="login"], a[href*="register"], .pnav-mobile-user, .pnav-mobile-links').forEach(el => el.remove());
-            navMobile.insertAdjacentHTML('beforeend', `
+        const navInner  = navMobile?.querySelector('.nav-mobile__inner');
+        if (navInner) {
+            // Remove guest CTAs and any previous user injection
+            navInner.querySelectorAll('.nav-mobile__ctas, .pnav-mobile-user, .pnav-mobile-links').forEach(el => el.remove());
+
+            const buyerLinks = role === 'buyer'
+                ? `<a href="${getOrdersUrl(depth)}"><i data-lucide="shopping-bag"></i> My Orders</a>
+                   <a href="${getWishlistUrl(depth)}"><i data-lucide="heart"></i> Wishlist</a>`
+                : '';
+
+            navInner.insertAdjacentHTML('beforeend', `
                 <div class="pnav-mobile-user">
                     <div class="pnav-avatar">${avatarHtml}</div>
-                    <span>${displayName}</span>
+                    <div class="pnav-mobile-user__info">
+                        <span class="pnav-mobile-user__name">${displayName}</span>
+                        <span class="pnav-mobile-user__role">${role}</span>
+                    </div>
                 </div>
                 <div class="pnav-mobile-links">
-                    <a href="${dashUrl}">Dashboard</a>
-                    ${role === 'buyer' ? `<a href="${getOrdersUrl(depth)}">My Orders</a><a href="${getWishlistUrl(depth)}">Wishlist</a>` : ''}
-                    <a href="${profileUrl}">Profile</a>
-                    <a href="${logoutUrl}" style="color:#ef4444;">Log Out</a>
+                    <a href="${dashUrl}"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+                    ${buyerLinks}
+                    <a href="${profileUrl}"><i data-lucide="user"></i> Profile</a>
+                    <a href="${logoutUrl}" class="pnav-mobile-logout"><i data-lucide="log-out"></i> Log Out</a>
                 </div>
             `);
+
+            // Re-attach close-on-click to newly injected links
+            if (window._closeMenu) {
+                navInner.querySelectorAll('a').forEach(a => a.addEventListener('click', window._closeMenu));
+            }
         }
 
         // Dropdown toggle
@@ -236,6 +252,47 @@
         document.head.appendChild(style);
     }
 
+    // ── Mobile nav toggle ───────────────────────────────────────────────
+    function setupMobileNav() {
+        var hamburger = document.getElementById('nav-hamburger');
+        var mobileNav = document.getElementById('nav-mobile');
+        var navOverlay = document.getElementById('nav-overlay');
+        if (!hamburger || !mobileNav) return;
+
+        function openMenu() {
+            mobileNav.classList.add('open');
+            if (navOverlay) navOverlay.classList.add('active');
+            hamburger.classList.add('active');
+            hamburger.setAttribute('aria-expanded', 'true');
+            hamburger.setAttribute('aria-label', 'Close menu');
+            mobileNav.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMenu() {
+            mobileNav.classList.remove('open');
+            if (navOverlay) navOverlay.classList.remove('active');
+            hamburger.classList.remove('active');
+            hamburger.setAttribute('aria-expanded', 'false');
+            hamburger.setAttribute('aria-label', 'Open menu');
+            mobileNav.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+        }
+
+        window._closeMenu = closeMenu;
+
+        hamburger.addEventListener('click', function() {
+            mobileNav.classList.contains('open') ? closeMenu() : openMenu();
+        });
+        if (navOverlay) navOverlay.addEventListener('click', closeMenu);
+        mobileNav.querySelectorAll('a').forEach(function(a) {
+            a.addEventListener('click', closeMenu);
+        });
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeMenu();
+        });
+    }
+
     // ── Init ───────────────────────────────────────────────────────────────
     async function init() {
         injectStyles();
@@ -288,7 +345,9 @@
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
+        document.addEventListener('DOMContentLoaded', setupMobileNav);
     } else {
+        setupMobileNav();
         init();
     }
 

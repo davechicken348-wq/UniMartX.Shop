@@ -379,28 +379,6 @@ if (mobileInput) {
 }
 if (mobileClear) mobileClear.addEventListener('click', () => { mobileInput.value = ''; mobileInput.focus(); applySearch(mobileInput); });
 
-// Sidebar toggle (mobile drawer)
-const sidebar = document.getElementById('stores-sidebar');
-const sidebarOverlay = document.getElementById('sidebar-overlay');
-const sidebarToggle = document.getElementById('sidebar-toggle');
-const sidebarClose = document.getElementById('sidebar-close');
-
-function openSidebar() {
-    sidebar.classList.add('open');
-    sidebarOverlay.classList.add('active');
-    sidebarToggle.setAttribute('aria-expanded', 'true');
-    document.body.style.overflow = 'hidden';
-}
-function closeSidebar() {
-    sidebar.classList.remove('open');
-    sidebarOverlay.classList.remove('active');
-    sidebarToggle.setAttribute('aria-expanded', 'false');
-    document.body.style.overflow = '';
-}
-if (sidebarToggle) sidebarToggle.addEventListener('click', openSidebar);
-if (sidebarClose) sidebarClose.addEventListener('click', closeSidebar);
-if (sidebarOverlay) sidebarOverlay.addEventListener('click', closeSidebar);
-
 // Category pills
 document.getElementById('category-rail').addEventListener('click', e => {
     const pill = e.target.closest('.cat-pill');
@@ -452,6 +430,33 @@ document.getElementById('empty-reset').addEventListener('click', () => {
     fetchFeatured();
 });
 
+// Sidebar toggle (mobile)
+const sidebarToggle = document.getElementById('sidebar-toggle');
+const sidebarEl = document.getElementById('stores-sidebar');
+const sidebarOverlay = document.getElementById('sidebar-overlay');
+const sidebarClose = document.getElementById('sidebar-close');
+
+function openSidebar() {
+    sidebarEl.classList.add('open');
+    sidebarOverlay.classList.add('active');
+    sidebarToggle.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeSidebar() {
+    sidebarEl.classList.remove('open');
+    sidebarOverlay.classList.remove('active');
+    sidebarToggle.setAttribute('aria-expanded', 'false');
+    // Only restore scroll if the mobile nav isn't also open
+    if (!document.getElementById('nav-mobile')?.classList.contains('open')) {
+        document.body.style.overflow = '';
+    }
+}
+
+if (sidebarToggle) sidebarToggle.addEventListener('click', openSidebar);
+if (sidebarClose) sidebarClose.addEventListener('click', closeSidebar);
+if (sidebarOverlay) sidebarOverlay.addEventListener('click', closeSidebar);
+
 // View toggle
 const btnGrid = document.getElementById('btn-grid');
 const btnList = document.getElementById('btn-list');
@@ -465,20 +470,6 @@ function setView(mode) {
 }
 if (btnGrid) btnGrid.addEventListener('click', () => setView('grid'));
 if (btnList) btnList.addEventListener('click', () => setView('list'));
-
-// Mobile nav
-const hamburger = document.getElementById('nav-hamburger');
-const mobileNav = document.getElementById('nav-mobile');
-if (hamburger && mobileNav) {
-    hamburger.addEventListener('click', () => {
-        mobileNav.classList.toggle('open');
-        const isOpen = mobileNav.classList.contains('open');
-        hamburger.setAttribute('aria-expanded', String(isOpen));
-        hamburger.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
-        hamburger.innerHTML = `<i data-lucide="${isOpen ? 'x' : 'menu'}" aria-hidden="true"></i>`;
-        lucide.createIcons();
-    });
-}
 
 // ═══════════════════════════════════════════
 // PRODUCT PREVIEW ENRICHMENT (only images)

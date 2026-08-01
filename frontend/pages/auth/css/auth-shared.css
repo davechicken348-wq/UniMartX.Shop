@@ -1,7 +1,7 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-    font-family: 'Quicksand', sans-serif;
+    font-family: 'Hanken Grotesk', sans-serif;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -128,7 +128,7 @@ nav {
     width: 100%;
     padding: 0.85rem 2.75rem 0.85rem 2.75rem;
     border-radius: 10px;
-    font-family: 'Quicksand', sans-serif;
+    font-family: 'Hanken Grotesk', sans-serif;
     font-size: 1rem;
     transition: border-color 0.2s, box-shadow 0.2s;
 }
@@ -230,7 +230,7 @@ nav {
 
 /* BUTTONS */
 .auth-btn {
-    font-family: 'Quicksand', sans-serif;
+    font-family: 'Hanken Grotesk', sans-serif;
     font-weight: 600;
     font-size: 1rem;
     padding: 0.85rem 1.5rem;

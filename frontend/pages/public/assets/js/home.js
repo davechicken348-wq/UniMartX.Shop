@@ -54,20 +54,8 @@ function storeHref(s) {
     return `/pages/seller/public/store/store.html?sellerId=${esc(s.id)}&slug=${esc(s.slug || '')}`;
 }
 
-/* ── Navbar (mobile) ── */
-const hamburger = document.getElementById('nav-hamburger');
-const mobileNav = document.getElementById('nav-mobile');
-
-if (hamburger && mobileNav) {
-    hamburger.addEventListener('click', () => {
-        mobileNav.classList.toggle('open');
-        const isOpen = mobileNav.classList.contains('open');
-        hamburger.setAttribute('aria-expanded', String(isOpen));
-        hamburger.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
-        hamburger.innerHTML = `<i data-lucide="${isOpen ? 'x' : 'menu'}" aria-hidden="true"></i>`;
-        lucide.createIcons();
-    });
-}
+/* ── Navbar (mobile) — handled by public-nav.js ── */
+window._closeMenu = window._closeMenu || function() {};
 
 /* ── Skeleton builders ── */
 function productSkeleton() {
@@ -348,6 +336,8 @@ function loadHeroIllustration() {
     const el = document.getElementById('hero-illustration');
     if (!el || !window.Illustrations) return;
     window.Illustrations.hero(el);
+    // showcase starts opacity:0 via illu-entrance — force visible immediately
+    el.classList.add('in-view');
 }
 
 /* ═══════════════════════════════════════════

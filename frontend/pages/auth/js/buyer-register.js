@@ -77,30 +77,30 @@ function refreshMatch() {
     const match = confirmInput.value && confirmInput.value === passwordInput.value;
     indicator.classList.toggle('visible', match);
     if (match) {
-        confirmInput.classList.add('success');
-        confirmInput.classList.remove('error');
+        confirmInput.classList.add('is-success');
+        confirmInput.classList.remove('is-error');
     } else {
-        confirmInput.classList.remove('success');
+        confirmInput.classList.remove('is-success');
     }
 }
 
 passwordInput.addEventListener('input', () => {
     refreshStrength();
     if (confirmInput.value) refreshMatch();
-    if (passwordInput.classList.contains('error')) validateField('password');
+    if (passwordInput.classList.contains('is-error')) validateField('password');
 });
 
 confirmInput.addEventListener('input', () => {
     refreshMatch();
-    if (confirmInput.classList.contains('error')) validateField('confirm-password');
+    if (confirmInput.classList.contains('is-error')) validateField('confirm-password');
 });
 
 // ── FORM VALIDATION ───────────────────────────────────────────
 function setError(id, message) {
     const input = document.getElementById(id);
     if (input) {
-        input.classList.add('error');
-        input.classList.remove('success');
+        input.classList.add('is-error');
+        input.classList.remove('is-success');
     }
     const err = document.getElementById(`${id}-error`);
     if (err) { err.textContent = message; err.classList.add('visible'); }
@@ -109,8 +109,8 @@ function setError(id, message) {
 function setSuccess(id) {
     const input = document.getElementById(id);
     if (input) {
-        input.classList.remove('error');
-        input.classList.add('success');
+        input.classList.remove('is-error');
+        input.classList.add('is-success');
     }
     const err = document.getElementById(`${id}-error`);
     if (err) err.classList.remove('visible');
@@ -208,7 +208,7 @@ form.addEventListener('submit', async (e) => {
             alertSuccess.hidden = false;
             form.reset();
             refreshStrength();
-            confirmInput.classList.remove('success');
+            confirmInput.classList.remove('is-success');
             document.getElementById('match-indicator').classList.remove('visible');
             setTimeout(() => { window.location.href = '../login.html'; }, 2000);
         } else {

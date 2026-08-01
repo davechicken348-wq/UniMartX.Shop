@@ -4,25 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="description" content="Create a buyer account on UniMartX — Ghana's marketplace for student entrepreneurs.">
-    <meta name="theme-color" content="#f7f9f8">
-    <meta name="color-scheme" content="light">
-    <title>Create Account - UniMartX</title>
+    <title>Create Account — UniMartX</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../css/auth-system.css">
-    <link rel="stylesheet" href="../css/buyer-register.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/auth-neo.css">
 </head>
 <body>
-    <div class="bg" aria-hidden="true">
-        <div class="bg-glow bg-glow-1"></div>
-        <div class="bg-glow bg-glow-2"></div>
-    </div>
 
     <main class="page">
+
+        <!-- floating deco blobs -->
+        <span class="deco deco-1" aria-hidden="true">🎁</span>
+        <span class="deco deco-2" aria-hidden="true">✨</span>
+        <span class="deco deco-3" aria-hidden="true">🛍️</span>
+        <span class="deco deco-4" aria-hidden="true">🎉</span>
+
+        <!-- LOGO -->
         <a href="../../public/home.html" class="logo" aria-label="UniMartX home">
             <span class="logo-mark" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path>
                     <path d="M3 6h18"></path>
                     <path d="M16 10a4 4 0 0 1-8 0"></path>
@@ -30,152 +31,160 @@
             </span>
             <span class="logo-text">Unimart<span class="logo-x">X</span></span>
         </a>
-        <p class="logo-tagline">Ghana's Marketplace for Student Entrepreneurs</p>
+        <p class="logo-tagline">Ghana's Campus Marketplace</p>
 
+        <!-- CARD -->
         <section class="card" aria-labelledby="card-title">
-            <header class="card-head">
-                <h1 id="card-title">Create Your Account</h1>
-                <p class="support">Join the campus marketplace and start shopping in minutes.</p>
-            </header>
 
-            <div id="alert-success" class="alert alert-success" role="status" hidden>
-                <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                    <path d="m22 4-10 10.01-3-3"></path>
-                </svg>
-                <span id="success-text">Account created! Check your email to verify your account.</span>
-            </div>
+            <div class="card-stripe" aria-hidden="true"></div>
 
-            <div id="alert-error" class="alert alert-error" role="alert" hidden>
-                <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="12" y1="8" x2="12" y2="12"></line>
-                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                </svg>
-                <span id="error-text"></span>
-            </div>
+            <div class="card-inner">
 
-            <form id="register-form" novalidate>
-                <div class="form-group">
-                    <label for="name">Full Name</label>
-                    <div class="input-wrapper">
-                        <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="12" cy="7" r="4"></circle>
-                        </svg>
-                        <input type="text" id="name" name="name" placeholder="e.g. Kwame Mensah" required minlength="2" autocomplete="name" aria-describedby="name-error">
-                    </div>
-                    <div id="name-error" class="error-message" role="alert"></div>
+                <!-- welcome badge -->
+                <div class="welcome-badge" aria-hidden="true">
+                    <span>🛒</span>
                 </div>
 
-                <div class="form-group">
-                    <label for="email">Email Address</label>
-                    <div class="input-wrapper">
-                        <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <rect x="2" y="4" width="20" height="16" rx="2"></rect>
-                            <path d="m22 7-10 6L2 7"></path>
-                        </svg>
-                        <input type="email" id="email" name="email" placeholder="you@gmail.com" required autocomplete="email" aria-describedby="email-error" inputmode="email">
-                    </div>
-                    <div id="email-error" class="error-message" role="alert"></div>
+                <header class="card-head">
+                    <h1 id="card-title">Join UniMartX</h1>
+                    <p class="support">Create your free buyer account and start shopping from verified student sellers.</p>
+                </header>
+
+                <!-- buyer perks -->
+                <div class="buyer-perks" aria-label="Buyer benefits">
+                    <div class="perk-chip"><span>✅</span> Verified sellers</div>
+                    <div class="perk-chip"><span>🚀</span> Fast campus delivery</div>
+                    <div class="perk-chip"><span>💸</span> Student prices</div>
                 </div>
 
-                <div class="form-group">
-                    <label for="phone">Phone Number</label>
-                    <div class="input-wrapper">
-                        <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92Z"></path>
-                        </svg>
-                        <input type="tel" id="phone" name="phone" placeholder="e.g. 0551234567" required autocomplete="tel" aria-describedby="phone-error">
-                    </div>
-                    <div id="phone-error" class="error-message" role="alert"></div>
+                <!-- alerts -->
+                <div id="alert-success" class="alert alert-success" role="status" hidden>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="16" height="16">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                        <path d="m22 4-10 10.01-3-3"></path>
+                    </svg>
+                    <span id="success-text">Account created! Check your email to verify your account.</span>
                 </div>
 
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <div class="input-wrapper">
-                        <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <rect x="3" y="11" width="18" height="11" rx="2"></rect>
-                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                        </svg>
-                        <input type="password" id="password" name="password" class="has-toggle" placeholder="Min. 8 characters" required minlength="8" autocomplete="new-password" aria-describedby="password-error pw-help">
-                        <button type="button" class="password-toggle" id="toggle-password" aria-label="Show password" aria-pressed="false">
-                            <svg class="eye-icon eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"></path>
-                                <circle cx="12" cy="12" r="3"></circle>
-                            </svg>
-                            <svg class="eye-icon eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <path d="M9.88 9.88a3 3 0 0 0 4.24 4.24"></path>
-                                <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c6.5 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path>
-                                <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3.5 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path>
-                                <line x1="2" y1="2" x2="22" y2="22"></line>
-                            </svg>
-                        </button>
-                    </div>
-                    <div id="password-error" class="error-message" role="alert"></div>
-
-                    <div class="pw-strength" aria-hidden="true">
-                        <div id="strength-bar" class="pw-strength-bar"></div>
-                    </div>
-                    <div id="strength-label" class="pw-strength-label" aria-live="polite"></div>
-
-                    <ul class="req-list" id="req-list" aria-label="Password requirements">
-                        <li data-req="length"><span class="req-check" aria-hidden="true"></span> At least 8 characters</li>
-                        <li data-req="upper"><span class="req-check" aria-hidden="true"></span> Uppercase letter</li>
-                        <li data-req="lower"><span class="req-check" aria-hidden="true"></span> Lowercase letter</li>
-                        <li data-req="number"><span class="req-check" aria-hidden="true"></span> Number</li>
-                        <li data-req="special"><span class="req-check" aria-hidden="true"></span> Special character</li>
-                    </ul>
+                <div id="alert-error" class="alert alert-error" role="alert" hidden>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="16" height="16">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                    <span id="error-text"></span>
                 </div>
 
-                <div class="form-group">
-                    <label for="confirm-password">Confirm Password</label>
-                    <div class="input-wrapper">
-                        <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <rect x="3" y="11" width="18" height="11" rx="2"></rect>
-                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                        </svg>
-                        <input type="password" id="confirm-password" name="confirm-password" class="has-toggle" placeholder="Re-enter your password" required autocomplete="new-password" aria-describedby="confirm-password-error">
-                        <span class="match-indicator" id="match-indicator" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M20 6 9 17l-5-5"></path>
+                <form id="register-form" novalidate>
+
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <div class="input-wrapper">
+                            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
                             </svg>
-                        </span>
-                        <button type="button" class="password-toggle" id="toggle-confirm" aria-label="Show password" aria-pressed="false">
-                            <svg class="eye-icon eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"></path>
-                                <circle cx="12" cy="12" r="3"></circle>
-                            </svg>
-                            <svg class="eye-icon eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <path d="M9.88 9.88a3 3 0 0 0 4.24 4.24"></path>
-                                <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c6.5 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path>
-                                <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3.5 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path>
-                                <line x1="2" y1="2" x2="22" y2="22"></line>
-                            </svg>
-                        </button>
+                            <input type="text" id="name" name="name" placeholder="e.g. Kwame Mensah" required minlength="2" autocomplete="name" aria-describedby="name-error">
+                        </div>
+                        <div id="name-error" class="error-msg" role="alert"></div>
                     </div>
-                    <div id="confirm-password-error" class="error-message" role="alert"></div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <div class="input-wrapper">
+                            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                                <path d="m22 7-10 6L2 7"></path>
+                            </svg>
+                            <input type="email" id="email" name="email" placeholder="you@gmail.com" required autocomplete="email" aria-describedby="email-error" inputmode="email">
+                        </div>
+                        <div id="email-error" class="error-msg" role="alert"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <div class="input-wrapper">
+                            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92Z"></path>
+                            </svg>
+                            <input type="tel" id="phone" name="phone" placeholder="e.g. 0551234567" required autocomplete="tel" aria-describedby="phone-error">
+                        </div>
+                        <div id="phone-error" class="error-msg" role="alert"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <div class="input-wrapper">
+                            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <rect x="3" y="11" width="18" height="11" rx="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
+                            <input type="password" id="password" name="password" class="has-toggle" placeholder="Min. 8 characters" required minlength="8" autocomplete="new-password" aria-describedby="password-error">
+                            <button type="button" class="pw-toggle" id="toggle-password" aria-label="Show password" aria-pressed="false">
+                                <svg class="eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                <svg class="eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.88 9.88a3 3 0 0 0 4.24 4.24"></path><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c6.5 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3.5 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path><line x1="2" y1="2" x2="22" y2="22"></line></svg>
+                            </button>
+                        </div>
+                        <div id="password-error" class="error-msg" role="alert"></div>
+
+                        <!-- strength meter -->
+                        <div class="pw-strength" aria-hidden="true">
+                            <div id="strength-bar" class="pw-strength-bar"></div>
+                        </div>
+                        <div id="strength-label" class="pw-strength-label" aria-live="polite"></div>
+
+                        <ul class="req-list" id="req-list" aria-label="Password requirements">
+                            <li data-req="length"><span class="req-check" aria-hidden="true"></span>At least 8 characters</li>
+                            <li data-req="upper"><span class="req-check" aria-hidden="true"></span>Uppercase letter</li>
+                            <li data-req="lower"><span class="req-check" aria-hidden="true"></span>Lowercase letter</li>
+                            <li data-req="number"><span class="req-check" aria-hidden="true"></span>Number</li>
+                            <li data-req="special"><span class="req-check" aria-hidden="true"></span>Special character</li>
+                        </ul>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirm-password">Confirm Password</label>
+                        <div class="input-wrapper">
+                            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <rect x="3" y="11" width="18" height="11" rx="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
+                            <input type="password" id="confirm-password" name="confirm-password" class="has-toggle" placeholder="Re-enter your password" required autocomplete="new-password" aria-describedby="confirm-password-error">
+                            <span class="match-indicator" id="match-indicator" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+                            </span>
+                            <button type="button" class="pw-toggle" id="toggle-confirm" aria-label="Show password" aria-pressed="false">
+                                <svg class="eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                <svg class="eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.88 9.88a3 3 0 0 0 4.24 4.24"></path><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c6.5 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3.5 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path><line x1="2" y1="2" x2="22" y2="22"></line></svg>
+                            </button>
+                        </div>
+                        <div id="confirm-password-error" class="error-msg" role="alert"></div>
+                    </div>
+
+                    <!-- terms -->
+                    <label class="checkbox terms-check">
+                        <input type="checkbox" id="terms" name="terms" required>
+                        <span class="checkbox-box" aria-hidden="true"></span>
+                        <span>I agree to the <a href="../../public/info/terms.html" target="_blank" rel="noopener">Terms of Service</a> and <a href="../../public/info/privacy.html" target="_blank" rel="noopener">Privacy Policy</a></span>
+                    </label>
+                    <div id="terms-error" class="error-msg" role="alert"></div>
+
+                    <button type="submit" class="auth-btn" id="submit-btn">
+                        <span class="btn-text">Create My Account 🎉</span>
+                        <span class="btn-spinner" aria-hidden="true"></span>
+                    </button>
+
+                </form>
+
+                <div class="auth-footer">
+                    Already have an account? <a href="../login.html">Log in</a>
                 </div>
 
-                <label class="checkbox terms">
-                    <input type="checkbox" id="terms" name="terms" required>
-                    <span class="checkbox-box" aria-hidden="true"></span>
-                    <span class="checkbox-label">I agree to the <a href="../../public/info/terms.html" target="_blank" rel="noopener">Terms of Service</a> and <a href="../../public/info/privacy.html" target="_blank" rel="noopener">Privacy Policy</a></span>
-                </label>
-                <div id="terms-error" class="error-message" role="alert"></div>
-
-                <button type="submit" class="auth-btn" id="submit-btn">
-                    <span class="btn-text">Create Account</span>
-                    <span class="spinner" aria-hidden="true"></span>
-                </button>
-            </form>
-
-            <div class="auth-footer">
-                Already have an account? <a href="../login.html">Log in</a>
             </div>
         </section>
 
-        <footer class="copyright">© 2026 UniMartX. Made with care for the University of Ghana community</footer>
+        <footer class="copyright">© 2026 UniMartX · Made with care for the University of Ghana community</footer>
+
     </main>
 
     <script src="../../../config.js"></script>

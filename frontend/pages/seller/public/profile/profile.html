@@ -17,7 +17,7 @@
     <link rel="canonical" href="">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/profile.css">
 </head>
 <body>
@@ -175,7 +175,12 @@
                 </div>
             </div>
 
-            <div class="store-products grid-view" id="store-products"></div>
+            <div class="store-products grid-view" id="store-products">
+                <div class="skeleton-card"><div class="skel-img"></div><div class="skel-body"><div class="skel skel-md"></div><div class="skel skel-sm"></div></div></div>
+                <div class="skeleton-card"><div class="skel-img"></div><div class="skel-body"><div class="skel skel-md"></div><div class="skel skel-sm"></div></div></div>
+                <div class="skeleton-card"><div class="skel-img"></div><div class="skel-body"><div class="skel skel-md"></div><div class="skel skel-sm"></div></div></div>
+                <div class="skeleton-card"><div class="skel-img"></div><div class="skel-body"><div class="skel skel-md"></div><div class="skel skel-sm"></div></div></div>
+            </div>
 
             <div class="empty-state hidden" id="no-results">
                 <div class="empty-icon"><i data-lucide="search-x"></i></div>
@@ -214,7 +219,9 @@
                 <div class="reviews-bars" id="seller-reviews-bars"></div>
             </div>
 
-            <div class="reviews-list" id="seller-reviews-list"></div>
+            <div class="reviews-list" id="seller-reviews-list">
+                <div class="section-loading"><div class="spinner"></div> Loading reviews…</div>
+            </div>
 
             <button class="load-more-btn" id="load-more-seller-reviews">
                 Load More Reviews <i data-lucide="chevron-down"></i>

@@ -7,26 +7,6 @@ if (navbar) {
     });
 }
 
-const hamburger = document.getElementById('nav-hamburger');
-const mobileNav = document.getElementById('nav-mobile');
-if (hamburger && mobileNav) {
-    hamburger.addEventListener('click', () => {
-        mobileNav.classList.toggle('open');
-        const isOpen = mobileNav.classList.contains('open');
-        hamburger.innerHTML = `<i data-lucide="${isOpen ? 'x' : 'menu'}"></i>`;
-        hamburger.setAttribute('aria-expanded', isOpen.toString());
-        lucide.createIcons();
-    });
-    mobileNav.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => {
-            mobileNav.classList.remove('open');
-            hamburger.setAttribute('aria-expanded', 'false');
-            hamburger.innerHTML = `<i data-lucide="menu"></i>`;
-            lucide.createIcons();
-        });
-    });
-}
-
 // ── Phone number anti-scraper reveal ─────────────────────
 function revealPhoneNumber(el) {
     if (el.dataset.revealed) return;

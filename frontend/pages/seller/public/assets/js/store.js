@@ -895,13 +895,13 @@ function initShareModal() {
 // ═══════════════════════════════════════════
 // SELLER SNAPSHOT (left grided rail)
 // ═══════════════════════════════════════════
-function snapshotInfoTile(icon, label, value) {
+function snapshotInfoTile(icon, label, value, fullWidth = false) {
   return `
-    <div class="snapshot-tile">
+    <div class="snapshot-tile${fullWidth ? ' snapshot-tile--full' : ''}">
       <span class="snapshot-tile-icon"><i data-lucide="${icon}"></i></span>
       <span class="snapshot-tile-text">
         <span class="snapshot-tile-label">${escapeHtml(label)}</span>
-        <span class="snapshot-tile-value">${escapeHtml(value)}</span>
+        <span class="snapshot-tile-value" title="${escapeHtml(value)}">${escapeHtml(value)}</span>
       </span>
     </div>`;
 }
@@ -921,7 +921,7 @@ function renderSellerSnapshot(profile, stats) {
   }
   if (profile.universityAffiliation || profile.campus) {
     const affiliation = [profile.universityAffiliation, profile.campus].filter(Boolean).join(' · ');
-    tiles.push(snapshotInfoTile('graduation-cap', 'Affiliation', affiliation));
+    tiles.push(snapshotInfoTile('graduation-cap', 'Affiliation', affiliation, true));
   }
   if (profile.verified) {
     tiles.push(snapshotInfoTile('badge-check', 'Verified', 'Seller'));
@@ -931,10 +931,10 @@ function renderSellerSnapshot(profile, stats) {
   }
   const deliveryOpts = parseDeliveryOptions(profile.deliveryOptions);
   if (deliveryOpts.length) {
-    tiles.push(snapshotInfoTile('package', 'Options', deliveryOpts.join(', ')));
+    tiles.push(snapshotInfoTile('package', 'Options', deliveryOpts.join(', '), deliveryOpts.length > 1));
   }
   if (profile.pickupAddress) {
-    tiles.push(snapshotInfoTile('store', 'Pickup', profile.pickupAddress));
+    tiles.push(snapshotInfoTile('store', 'Pickup', profile.pickupAddress, true));
   }
 
   const followTile = typeof stats.followerCount === 'number'
