@@ -233,13 +233,11 @@ img { display: block; max-width: 100%; }
 
 .nav-hamburger {
     display: none;
-    background: var(--white);
-    border: 2px solid var(--border);
-    color: var(--ink);
-    cursor: pointer;
-    padding: 8px;
-    border-radius: 10px;
-    box-shadow: 3px 3px 0 var(--border);
+    flex-direction: column; justify-content: center; align-items: center;
+    gap: 5px; width: 40px; height: 40px;
+    background: var(--white); border: 2px solid var(--border);
+    color: var(--ink); cursor: pointer; padding: 8px;
+    border-radius: 10px; box-shadow: 3px 3px 0 var(--border);
     transition: transform 0.15s, box-shadow 0.15s;
 }
 .nav-hamburger:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--border); }
@@ -475,14 +473,31 @@ img { display: block; max-width: 100%; }
     .about-hero-sub { margin: 0 auto 2rem; }
     .about-hero-actions { justify-content: center; }
     .about-hero-trust { justify-content: center; }
-    .about-hero-collage { height: 320px; max-width: 420px; margin: 0 auto; }
+
+    /* switch collage to a simple grid on mobile */
+    .about-hero-collage {
+        height: auto;
+        max-width: 480px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto;
+        gap: 10px;
+    }
+    .collage-card { position: static; width: 100%; height: 160px; transform: none !important; }
+    .collage-card--main { grid-column: 1 / -1; height: 200px; }
+    .collage-card--top { grid-column: 1; }
+    .collage-card--bottom { grid-column: 2; }
+    .collage-stat { position: static; transform: none; margin-top: 4px; grid-column: 1 / -1; flex-direction: row; gap: 0.5rem; justify-content: center; padding: 0.5rem 1rem; }
+    .collage-stat-num { font-size: 1.1rem; }
 }
 @media (max-width: 520px) {
     .about-hero-inner { padding: 3.5rem 1rem 3rem; }
     .about-hero-text h1 { font-size: clamp(2rem, 9vw, 2.8rem); }
     .about-hero-actions { flex-direction: column; align-items: stretch; }
     .btn-hero-primary, .btn-hero-ghost { justify-content: center; }
-    .about-hero-collage { height: 260px; }
+    .collage-card { height: 130px; }
+    .collage-card--main { height: 170px; }
 }
 
 /* ══════════════════════════════════════════
@@ -777,118 +792,149 @@ img { display: block; max-width: 100%; }
     border-bottom: 3px solid var(--border);
 }
 .team-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
 }
+
+/* split card: photo half + text half */
 .team-card {
-    background: var(--white);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     border: 2px solid var(--border);
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-xl);
     overflow: hidden;
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--shadow-xl);
+    background: var(--white);
+    min-height: 420px;
     transition: transform 0.15s, box-shadow 0.15s;
 }
 .team-card:hover {
     transform: translate(-4px, -4px);
-    box-shadow: var(--shadow-xl);
+    box-shadow: 8px 8px 0 var(--border);
 }
+
+/* alternate: odd = photo left, even = photo right */
+.team-card:nth-child(even) {
+    direction: rtl;
+}
+.team-card:nth-child(even) .team-card-body {
+    direction: ltr;
+}
+
+/* photo side */
 .team-card-photo {
     position: relative;
-    aspect-ratio: 4 / 3;
     overflow: hidden;
-    border-bottom: 2px solid var(--border);
-    background: var(--cream);
+    min-height: 420px;
 }
 .team-card-photo img {
-    width: 100%;
-    height: 100%;
+    width: 100%; height: 100%;
     object-fit: cover;
     object-position: top;
-    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    display: block;
+    transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .team-card:hover .team-card-photo img { transform: scale(1.05); }
+
+/* poster gradient overlay */
+.team-card-photo::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(
+        to bottom,
+        transparent 40%,
+        rgba(26,22,18,0.55) 72%,
+        rgba(26,22,18,0.88) 100%
+    );
+    pointer-events: none;
+}
+
+/* number badge */
 .team-card-num {
     position: absolute;
-    top: 12px;
-    left: 12px;
+    top: 16px; left: 16px;
     font-family: 'Bricolage Grotesque', sans-serif;
-    font-size: 0.8rem;
-    font-weight: 800;
-    background: var(--gold);
-    color: var(--ink);
-    padding: 3px 10px;
-    border-radius: 50px;
+    font-size: 0.8rem; font-weight: 800;
+    background: var(--gold); color: var(--ink);
+    padding: 3px 10px; border-radius: 50px;
     border: 2px solid var(--border);
     box-shadow: 2px 2px 0 var(--border);
+    z-index: 2;
 }
-.team-card-body { padding: 1.5rem; }
+
+/* name + role overlaid at bottom of photo */
+.team-card-overlay {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 1.25rem 1.5rem;
+    z-index: 2;
+}
+.team-card-overlay h3 {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-size: 1.5rem; font-weight: 800;
+    color: #fff; line-height: 1.2;
+    margin-bottom: 0.4rem;
+}
 .team-card-role {
     display: inline-block;
-    font-size: 0.68rem;
-    font-weight: 800;
-    letter-spacing: 0.07em;
-    text-transform: uppercase;
-    color: var(--ink);
-    background: var(--lime);
+    font-size: 0.68rem; font-weight: 800;
+    letter-spacing: 0.07em; text-transform: uppercase;
+    color: var(--ink); background: var(--lime);
     border: 2px solid var(--border);
     box-shadow: 2px 2px 0 var(--border);
-    padding: 2px 8px;
-    border-radius: 50px;
-    margin-bottom: 0.6rem;
+    padding: 2px 8px; border-radius: 50px;
 }
-.team-card-body h3 {
-    font-family: 'Bricolage Grotesque', sans-serif;
-    font-size: 1.25rem;
-    font-weight: 800;
-    color: var(--ink);
-    margin-bottom: 0.65rem;
-    letter-spacing: -0.01em;
+
+/* text side */
+.team-card-body {
+    padding: 2rem;
+    display: flex; flex-direction: column;
+    justify-content: center; gap: 1rem;
+    background: var(--white);
 }
 .team-card-body p {
-    font-size: 0.88rem;
-    color: var(--ink-2);
-    line-height: 1.7;
-    margin-bottom: 1rem;
+    font-size: 0.95rem; color: var(--ink-2); line-height: 1.75;
 }
 .team-card-body blockquote {
-    font-style: italic;
-    font-size: 0.88rem;
-    color: var(--ink);
-    background: var(--cream);
-    border-left: 3px solid var(--green);
-    padding: 0.65rem 0.9rem;
-    border-radius: 0 8px 8px 0;
-    margin-bottom: 1rem;
-    line-height: 1.55;
+    font-style: italic; font-size: 0.95rem;
+    color: var(--ink); background: var(--cream);
+    border: 2px solid var(--border);
+    border-left: 4px solid var(--green);
+    box-shadow: 3px 3px 0 var(--border);
+    padding: 0.85rem 1.1rem;
+    border-radius: 0 10px 10px 0;
+    line-height: 1.6;
 }
 .team-card-socials { display: flex; gap: 0.5rem; }
 .team-card-socials a {
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-    background: var(--cream);
-    border: 2px solid var(--border);
+    width: 38px; height: 38px; border-radius: 8px;
+    background: var(--cream); border: 2px solid var(--border);
     box-shadow: 2px 2px 0 var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     color: var(--ink-2);
     transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
 }
 .team-card-socials a:hover {
-    background: var(--ink);
-    color: var(--white);
+    background: var(--ink); color: var(--white);
     transform: translate(-2px, -2px);
     box-shadow: 4px 4px 0 var(--border);
 }
 .team-card-socials svg { width: 16px; height: 16px; stroke: currentColor; }
 
 @media (max-width: 900px) {
-    .team-grid { grid-template-columns: repeat(2, 1fr); }
+    .team-card {
+        grid-template-columns: 1fr;
+        direction: ltr !important;
+        min-height: auto;
+    }
+    .team-card-photo { min-height: 300px; }
 }
-@media (max-width: 560px) {
-    .team-grid { grid-template-columns: 1fr; max-width: 420px; margin: 0 auto; }
+@media (max-width: 520px) {
+    .team-card-photo { min-height: 240px; }
+    .team-card-overlay h3 { font-size: 1.2rem; }
+    .team-card-body { padding: 1.25rem; }
+    .team-card-body p, .team-card-body blockquote { font-size: 0.88rem; }
 }
 
 /* ══════════════════════════════════════════

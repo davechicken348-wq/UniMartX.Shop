@@ -1294,19 +1294,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  // Hamburger menu
-  const hamburger = document.getElementById('nav-hamburger');
-  const mobileNav = document.getElementById('nav-mobile');
-  if (hamburger && mobileNav) {
-    hamburger.addEventListener('click', () => {
-      mobileNav.classList.toggle('open');
-      const isOpen = mobileNav.classList.contains('open');
-      hamburger.setAttribute('aria-expanded', String(isOpen));
-      hamburger.innerHTML = `<i data-lucide="${isOpen ? 'x' : 'menu'}" aria-hidden="true"></i>`;
-      if (window.lucide) lucide.createIcons();
-    });
-  }
-
   // Scroll shadow on navbar
   window.addEventListener('scroll', () => {
     const navbar = document.getElementById('navbar');

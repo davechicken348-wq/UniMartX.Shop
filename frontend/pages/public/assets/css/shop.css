@@ -250,10 +250,12 @@ img { display: block; max-width: 100%; }
 .nav-btn-primary:active { transform: translate(1px, 1px); box-shadow: none; }
 
 .nav-hamburger {
-    display: none; background: var(--bg-2);
-    border: 2px solid var(--border); box-shadow: var(--shadow-sm);
-    color: var(--text); cursor: pointer; padding: 8px;
-    border-radius: var(--radius);
+    display: none;
+    flex-direction: column; justify-content: center; align-items: center;
+    gap: 5px; width: 40px; height: 40px;
+    background: var(--bg-2); border: 2px solid var(--border);
+    box-shadow: var(--shadow-sm); color: var(--text);
+    cursor: pointer; padding: 8px; border-radius: var(--radius);
     transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 .nav-hamburger:hover { transform: translate(-2px, -2px); box-shadow: var(--shadow); }
