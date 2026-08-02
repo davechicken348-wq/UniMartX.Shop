@@ -785,6 +785,10 @@ svg { stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; 
     align-self: flex-start;
     animation: fadeUp 0.55s var(--ease) 0.2s both;
 }
+.store-policies-sidebar.mobile-section-open {
+    display: block !important;
+    position: static; width: 100%;
+}
 
 .store-policies-inner {
     background: var(--bg-2); border: 1px solid var(--border);

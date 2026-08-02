@@ -1360,7 +1360,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // ── Mobile section nav ──────────────────────────────────
   const mobileNav = document.getElementById('store-mobile-nav');
   if (mobileNav) {
-    const mobileNavSections = ['reviews', 'more-shops-section'];
+    const mobileNavSections = ['reviews', 'store-policies', 'more-shops-section'];
 
     mobileNav.querySelectorAll('.store-mobile-nav-btn').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -1371,7 +1371,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         mobileNav.querySelectorAll('.store-mobile-nav-btn').forEach(b => b.classList.remove('active'));
         mobileNavSections.forEach(id => {
           const el = document.getElementById(id);
-          if (el) el.classList.add('hidden');
+          if (el) {
+            el.classList.add('hidden');
+            if (id === 'store-policies') el.classList.remove('mobile-section-open');
+          }
         });
 
         // If it wasn't active, activate it and show its section
@@ -1380,6 +1383,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           const target = document.getElementById(targetId);
           if (target) {
             target.classList.remove('hidden');
+            if (targetId === 'store-policies') target.classList.add('mobile-section-open');
             // Load more shops lazily on first open
             if (targetId === 'more-shops-section' && !target.dataset.loaded) {
               target.dataset.loaded = 'true';
