@@ -225,6 +225,7 @@ function buildProductCard(product) {
   const stockLabel = product.stock > 0 ? (product.stock <= 5 ? `Only ${product.stock} left` : 'In stock') : 'Out of stock';
   const stockClass = product.stock > 0 ? (product.stock <= 5 ? 'low' : '') : 'out';
   const isNew = product.createdAt ? (Date.now() - new Date(product.createdAt).getTime() < 7 * 86400000) : false;
+  const outOfStock = product.stock <= 0;
 
   const badges = [];
   if (discount) badges.push(`<span class="product-badge product-badge--sale">-${discount}%</span>`);
@@ -252,7 +253,16 @@ function buildProductCard(product) {
         ${product.comparePrice ? `<span class="product-card-price-old">${formatPrice(product.comparePrice)}</span>` : ''}
         ${discount ? `<span class="product-card-discount">-${discount}%</span>` : ''}
       </div>
-      <span class="product-card-stock ${stockClass}">${stockLabel}</span>
+      <div class="product-card-footer">
+        <span class="product-card-stock ${stockClass}">${stockLabel}</span>
+        <button
+          class="product-card-atc${outOfStock ? ' disabled' : ''}"
+          data-product-id="${escapeHtml(product.id)}"
+          data-product-name="${escapeHtml(product.name)}"
+          ${outOfStock ? 'disabled' : ''}
+          aria-label="Add ${escapeHtml(product.name)} to cart"
+        ><i data-lucide="shopping-cart"></i></button>
+      </div>
     </div>
   </a>`;
 }
@@ -764,7 +774,8 @@ async function loadStoreData() {
 
     const moreShops = document.getElementById('more-shops-section');
     if (stats && stats.productCount > 0) {
-      loadBrowseMoreShops();
+      // On desktop load immediately; on mobile it's lazy-loaded when tab is tapped
+      if (window.innerWidth > 768) loadBrowseMoreShops();
     } else if (moreShops) {
       moreShops.hidden = true;
     }
@@ -1061,7 +1072,7 @@ async function liveFetchStore() {
 
     const moreShops = document.getElementById('more-shops-section');
     if (stats && stats.productCount > 0) {
-      loadBrowseMoreShops().catch(() => {});
+      if (window.innerWidth > 768) loadBrowseMoreShops().catch(() => {});
     } else if (moreShops) {
       moreShops.hidden = true;
     }
@@ -1294,6 +1305,47 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
+  // Add to cart — delegated on document to catch dynamically rendered cards
+  document.addEventListener('click', async e => {
+    const btn = e.target.closest('.product-card-atc');
+    if (!btn) return;
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (btn.disabled) return;
+
+    const productId = btn.dataset.productId;
+    const productName = btn.dataset.productName || 'Product';
+
+    if (!window.__addToCartAPI) {
+      showToast('Cart not available.');
+      return;
+    }
+
+    const icon = btn.querySelector('i, svg');
+    btn.disabled = true;
+    if (icon) icon.setAttribute('data-lucide', 'loader');
+    if (window.lucide) lucide.createIcons();
+
+    try {
+      await window.__addToCartAPI(productId, 1);
+      showToast(`✓ ${productName} added to cart`);
+      if (icon) icon.setAttribute('data-lucide', 'check');
+      if (window.lucide) lucide.createIcons();
+      setTimeout(() => {
+        btn.disabled = false;
+        if (icon) icon.setAttribute('data-lucide', 'shopping-cart');
+        if (window.lucide) lucide.createIcons();
+      }, 1500);
+    } catch (err) {
+      const msg = err.message === 'Not authenticated' ? 'Please log in to add to cart.' : 'Failed to add to cart.';
+      showToast(msg);
+      btn.disabled = false;
+      if (icon) icon.setAttribute('data-lucide', 'shopping-cart');
+      if (window.lucide) lucide.createIcons();
+    }
+  });
+
   // Scroll shadow on navbar
   window.addEventListener('scroll', () => {
     const navbar = document.getElementById('navbar');
@@ -1304,6 +1356,52 @@ document.addEventListener('DOMContentLoaded', async () => {
   window.addEventListener('resize', () => {
     requestAnimationFrame(updateFilterIndicator);
   });
+
+  // ── Mobile section nav ──────────────────────────────────
+  const mobileNav = document.getElementById('store-mobile-nav');
+  if (mobileNav) {
+    const mobileNavSections = ['reviews', 'more-shops-section'];
+
+    mobileNav.querySelectorAll('.store-mobile-nav-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const targetId = btn.dataset.target;
+        const isActive = btn.classList.contains('active');
+
+        // Deactivate all buttons and hide all sections
+        mobileNav.querySelectorAll('.store-mobile-nav-btn').forEach(b => b.classList.remove('active'));
+        mobileNavSections.forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.classList.add('hidden');
+        });
+
+        // If it wasn't active, activate it and show its section
+        if (!isActive) {
+          btn.classList.add('active');
+          const target = document.getElementById(targetId);
+          if (target) {
+            target.classList.remove('hidden');
+            // Load more shops lazily on first open
+            if (targetId === 'more-shops-section' && !target.dataset.loaded) {
+              target.dataset.loaded = 'true';
+              loadBrowseMoreShops();
+            }
+            setTimeout(() => target.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+          }
+        }
+      });
+    });
+  }
+
+  // ── Sidebar collapse toggle (mobile) ────────────────────
+  const sidebarToggle = document.getElementById('store-sidebar-toggle');
+  const sidebarBody = document.getElementById('seller-snapshot-body');
+  if (sidebarToggle && sidebarBody) {
+    sidebarToggle.addEventListener('click', () => {
+      const isOpen = sidebarToggle.getAttribute('aria-expanded') === 'true';
+      sidebarToggle.setAttribute('aria-expanded', String(!isOpen));
+      sidebarBody.classList.toggle('open', !isOpen);
+    });
+  }
 
   // Extra observer passes for late-rendered cards
   setTimeout(observeRevealElements, 200);

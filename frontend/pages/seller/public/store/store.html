@@ -88,11 +88,25 @@
 
                 <!-- SELLER SIDEBAR (left grided rail) -->
                 <aside class="store-sidebar" id="seller-snapshot" aria-label="Seller quick info">
-                    <div class="seller-snapshot-label">At a glance</div>
-                    <div class="seller-snapshot-grid" id="seller-snapshot-grid"></div>
+                    <button class="store-sidebar-toggle" id="store-sidebar-toggle" aria-expanded="false" aria-controls="seller-snapshot-body" type="button">
+                        <span>Store Info</span>
+                        <i data-lucide="chevron-down"></i>
+                    </button>
+                    <div class="store-sidebar-body" id="seller-snapshot-body">
+                        <div class="seller-snapshot-label">At a glance</div>
+                        <div class="seller-snapshot-grid" id="seller-snapshot-grid"></div>
+                    </div>
                 </aside>
 
                 <div class="store-content">
+
+                <!-- SEARCH BAR -->
+                <div class="store-search-bar">
+                    <div class="store-search-wrap" id="store-search-wrap">
+                        <i data-lucide="search"></i>
+                        <input type="search" id="store-search" placeholder="Search this store…" aria-label="Search store">
+                    </div>
+                </div>
 
                 <!-- TOOLBAR -->
                 <div class="store-toolbar">
@@ -100,10 +114,6 @@
                         <p class="results-label">Showing <strong id="results-count">0</strong> products</p>
                     </div>
                     <div class="store-toolbar-right">
-                        <div class="store-search-wrap">
-                            <i data-lucide="search"></i>
-                            <input type="search" id="store-search" placeholder="Search this store…" aria-label="Search store">
-                        </div>
                         <div class="sort-wrap">
                             <i data-lucide="arrow-up-down"></i>
                             <select id="sort-select" aria-label="Sort products">
@@ -164,6 +174,14 @@
         </div>
     </main>
 
+    <!-- MOBILE SECTION NAV -->
+    <nav class="store-mobile-nav" id="store-mobile-nav" aria-label="Store sections">
+        <div class="store-mobile-nav-inner">
+            <button class="store-mobile-nav-btn" data-target="reviews">Reviews</button>
+            <button class="store-mobile-nav-btn" data-target="more-shops-section">More Shops</button>
+        </div>
+    </nav>
+
     <!-- STORE ABOUT SECTION -->
     <section class="store-about-section hidden" id="store-about">
         <div class="store-about-inner">
@@ -177,7 +195,7 @@
     </section>
 
     <!-- REVIEWS SECTION -->
-    <section class="reviews-section" id="reviews">
+    <section class="reviews-section hidden" id="reviews">
         <div class="reviews-inner">
             <div class="reviews-header">
                 <div>
@@ -209,7 +227,7 @@
     <!-- ═══════════════════════════════════════════
          BROWSE MORE SHOPS
     ═══════════════════════════════════════════ -->
-    <section class="more-shops-section" id="more-shops-section">
+    <section class="more-shops-section hidden" id="more-shops-section">
         <div class="more-shops-inner">
             <div class="more-shops-header">
                 <div>
