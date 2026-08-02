@@ -863,7 +863,7 @@ function initShareModal() {
   if (socialsWrap) {
     socialsWrap.innerHTML = socials.map(s => {
       const inner = s.icon === 'WHATSAPP' ? WHATSAPP_SVG : `<i data-lucide="${s.icon}"></i>`;
-      return `<a class="share-social" href="${escapeHtml(s.href)}" target="_blank" rel="noopener noreferrer" aria-label="Share on ${escapeHtml(s.label)}">${inner}</a>`;
+      return `<a class="share-social" href="${escapeHtml(s.href)}" target="_blank" rel="noopener noreferrer" aria-label="Share on ${escapeHtml(s.label)}">${inner}<span>${escapeHtml(s.label)}</span></a>`;
     }).join('');
   }
 

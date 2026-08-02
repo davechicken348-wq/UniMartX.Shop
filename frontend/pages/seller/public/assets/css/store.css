@@ -2044,8 +2044,10 @@ svg { stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; 
     .store-toolbar { padding: 0.5rem 0.7rem; }
     .store-mobile-nav-btn { padding: 0.65rem 0.85rem; font-size: 0.78rem; }
 
-    .modal { padding: 1.25rem; }
-    .share-socials { gap: 0.5rem; }
+    .modal { padding: 1.5rem; max-width: 92vw; }
+    .share-socials { grid-template-columns: repeat(4, 1fr); gap: 0.5rem; }
+    .share-social { padding: 0.65rem 0.4rem; font-size: 0.68rem; }
+    .share-social svg, .share-social i { width: 18px; height: 18px; }
     .footer-links { flex-wrap: wrap; gap: 1rem; }
 
     .sticky-contact { bottom: 1rem; right: 1rem; }
@@ -2087,7 +2089,8 @@ svg { stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; 
     .review-item .review-date { margin-left: 0; }
 
     .footer-links { flex-direction: column; gap: 0.85rem; }
-    .share-socials { flex-direction: column; }
+    .share-socials { grid-template-columns: repeat(2, 1fr); }
+    .share-social { flex-direction: row; justify-content: flex-start; padding: 0.7rem 0.85rem; font-size: 0.8rem; gap: 0.6rem; }
 }
 
 /* ── 360px ────────────────────────────────────────────────── */
@@ -2136,11 +2139,6 @@ svg { stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; 
     width: 100%; padding: 0.65rem 1rem;
 }
 .store-search-bar .store-search-wrap input { width: 100%; }
-
-.store-search-wrap--desktop { display: flex; }
-
-    display: flex; align-items: center; gap: 0.5rem;
-}
 
 /* ── Buttons ──────────────────────────────────────────────── */
 .btn-primary-link {
@@ -2225,42 +2223,90 @@ svg { stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; 
     border: 1px solid var(--border);
     border-radius: var(--radius-xl);
     padding: 2rem;
-    width: 100%; max-width: 440px;
+    width: 100%; max-width: 460px;
     box-shadow: var(--shadow-xl);
     animation: modalIn 0.3s var(--ease) both;
+    position: relative;
 }
+
+.modal-header {
+    display: flex; align-items: center;
+    justify-content: space-between; gap: 1rem;
+    margin-bottom: 0.4rem;
+}
+
+.modal-header h3 {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-size: 1.25rem; font-weight: 800;
+    color: var(--text); letter-spacing: -0.02em;
+}
+
 .modal-sub {
-    font-size: 0.88rem; color: var(--text-3);
-    font-weight: 500; margin: -0.75rem 0 1.25rem;
+    font-size: 0.875rem; color: var(--text-3);
+    font-weight: 500; margin: 0 0 1.5rem;
     line-height: 1.6;
 }
 
+/* URL copy row */
 .share-link-row {
-    display: flex; gap: 0.5rem;
+    display: flex; align-items: center; gap: 0.5rem;
     background: var(--bg-3); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 0.6rem 0.85rem;
-    margin-bottom: 1.25rem;
+    border-radius: var(--radius); padding: 0.5rem 0.5rem 0.5rem 1rem;
+    margin-bottom: 1.5rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.share-link-row:focus-within {
+    border-color: rgba(5,150,105,0.35);
+    box-shadow: 0 0 0 3px rgba(5,150,105,0.06);
 }
 .share-link-row input {
     flex: 1; background: none; border: none; outline: none;
-    font-family: inherit; font-size: 0.85rem;
+    font-family: inherit; font-size: 0.82rem;
     color: var(--text-2); font-weight: 500;
+    min-width: 0; white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis;
 }
 
+/* Divider label */
+.share-divider {
+    display: flex; align-items: center; gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+.share-divider::before,
+.share-divider::after {
+    content: ''; flex: 1;
+    height: 1px; background: var(--border);
+}
+.share-divider span {
+    font-size: 0.7rem; font-weight: 700;
+    color: var(--text-4); text-transform: uppercase;
+    letter-spacing: 0.08em; white-space: nowrap;
+}
+
+/* Social buttons */
 .share-socials {
-    display: flex; gap: 0.65rem; flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.65rem;
 }
 .share-social {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 40px; height: 40px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 0.4rem;
     background: var(--bg); border: 1px solid var(--border);
-    border-radius: var(--radius); color: var(--text-2);
-    text-decoration: none; box-shadow: var(--shadow-xs);
-    transition: background 0.2s, box-shadow 0.2s, transform 0.2s, color 0.2s;
+    border-radius: var(--radius); padding: 0.75rem 0.5rem;
+    color: var(--text-2); text-decoration: none;
+    box-shadow: var(--shadow-xs);
+    font-size: 0.7rem; font-weight: 700;
+    transition: background 0.2s, box-shadow 0.2s, transform 0.2s, color 0.2s, border-color 0.2s;
 }
-.share-social:hover { background: var(--primary); color: #fff; box-shadow: var(--shadow-sm); transform: translateY(-2px); }
-.share-social svg, .share-social i { width: 17px; height: 17px; }
-.share-social .wa-icon { width: 17px; height: 17px; fill: currentColor; stroke: none; }
+.share-social:hover {
+    background: var(--primary-l); color: var(--primary);
+    border-color: rgba(5,150,105,0.25);
+    box-shadow: var(--shadow-sm); transform: translateY(-2px);
+}
+.share-social svg, .share-social i { width: 20px; height: 20px; }
+.share-social .wa-icon { width: 20px; height: 20px; fill: currentColor; stroke: none; }
 
 /* ── Reviews section ──────────────────────────────────────── */
 .reviews-section {
@@ -2430,10 +2476,11 @@ svg { stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; 
     .more-shops-header { flex-direction: column; align-items: flex-start; }
     .mini-store-banner { height: 80px; }
     .modal { padding: 1.25rem; }
-    .share-socials { gap: 0.5rem; }
+    .share-socials { grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+    .share-social { flex-direction: row; justify-content: flex-start; padding: 0.65rem 0.75rem; font-size: 0.78rem; gap: 0.55rem; }
 }
 
 @media (max-width: 480px) {
     .footer-links { flex-direction: column; gap: 1.25rem; }
-    .share-socials { flex-wrap: wrap; }
+    .share-socials { grid-template-columns: repeat(2, 1fr); }
 }
