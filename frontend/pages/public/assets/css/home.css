@@ -1510,6 +1510,20 @@ img { display: block; max-width: 100%; }
     letter-spacing: 0.06em;
 }
 
+@keyframes statSpin {
+    to { transform: rotate(360deg); }
+}
+
+.stat-spinner {
+    display: inline-block;
+    width: 32px; height: 32px;
+    border: 3px solid var(--border);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: statSpin 0.75s linear infinite;
+    vertical-align: middle;
+}
+
 /* Growth & Trust responsive */
 @media (max-width: 1024px) {
     .growth-grid { grid-template-columns: repeat(3, 1fr); gap: 16px; }

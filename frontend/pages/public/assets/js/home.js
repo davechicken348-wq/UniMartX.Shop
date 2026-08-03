@@ -401,6 +401,9 @@ async function loadTrustStats() {
     const campusesEl = document.getElementById('stat-campuses');
     if (!storesEl) return;
 
+    const spinner = '<span class="stat-spinner"></span>';
+    [storesEl, productsEl, ordersEl, campusesEl].forEach(el => { el.innerHTML = spinner; });
+
     try {
         const res = await apiFetch('/api/public/stats');
         if (!res.ok) throw new Error();
