@@ -555,7 +555,7 @@ function renderPagination(total) {
         const btn = document.createElement('button');
         btn.className = 'page-btn' + (i === currentPage ? ' active' : '');
         btn.textContent = i;
-        btn.addEventListener('click', () => { currentPage = i; fetchProducts(); });
+        btn.addEventListener('click', () => { currentPage = i; fetchProducts(); scrollToTop(); });
         pageNumbers.appendChild(btn);
         prev = i;
     });
@@ -564,8 +564,15 @@ function renderPagination(total) {
     if (nextPage) nextPage.disabled = currentPage >= totalPages;
 }
 
-if (prevPage) prevPage.addEventListener('click', () => { if (currentPage > 1)            { currentPage--; fetchProducts(); } });
-if (nextPage) nextPage.addEventListener('click', () => { if (currentPage < totalPages)   { currentPage++; fetchProducts(); } });
+if (prevPage) prevPage.addEventListener('click', () => { if (currentPage > 1)          { currentPage--; fetchProducts(); scrollToTop(); } });
+if (nextPage) nextPage.addEventListener('click', () => { if (currentPage < totalPages) { currentPage++; fetchProducts(); scrollToTop(); } });
+
+function scrollToTop() {
+    const shopMain = document.getElementById('shop-main');
+    if (shopMain) {
+        shopMain.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
 
 function showSkeletons() {
     if (!productsWrap) return;
