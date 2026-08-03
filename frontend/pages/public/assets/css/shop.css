@@ -821,6 +821,10 @@ img { display: block; max-width: 100%; }
 }
 .page-btn:disabled { opacity: 0.35; cursor: not-allowed; }
 
+.page-numbers {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+
 .page-ellipsis {
     display: flex; align-items: center; justify-content: center;
     min-width: 44px; height: 44px;
