@@ -251,7 +251,8 @@ function renderSpecs(product) {
     rows.push({ label: 'Category', value: (product.category || '').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) });
     if (product.subcategory) rows.push({ label: 'Subcategory', value: product.subcategory });
     if (product.condition) rows.push({ label: 'Condition', value: product.condition.replace('-', ' ') });
-    rows.push({ label: 'Stock', value: (product.stock || 0) > 0 ? `${product.stock} available` : 'Out of stock' });
+    if (!product.serviceType && product.category !== 'services' && product.category !== 'notes-tutoring')
+        rows.push({ label: 'Stock', value: (product.stock || 0) > 0 ? `${product.stock} available` : 'Out of stock' });
 
     const DETAIL_LABEL_OVERRIDES = {
         rating: 'Rating', brand: 'Brand', material: 'Material',

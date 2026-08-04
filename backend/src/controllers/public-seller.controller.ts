@@ -461,7 +461,7 @@ export const getPublicStores = async (req: Request, res: Response): Promise<void
     sort === 'newest'   ? { createdAt: 'desc' } :
     sort === 'az'       ? { storeName: 'asc'  } :
     sort === 'products' ? { products: { _count: 'desc' } } :
-    { createdAt: 'asc' }; // trending / popular / active / featured — post-sorted below
+    { products: { _count: 'desc' } }; // trending / popular / active / featured — post-sorted below
 
   const [sellers, total] = await Promise.all([
     prisma.seller.findMany({

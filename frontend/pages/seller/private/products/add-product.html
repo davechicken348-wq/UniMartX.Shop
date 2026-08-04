@@ -202,7 +202,7 @@
                             <span class="ap-hint">Is it new or used?</span>
                         </div>
 
-                        <div class="ap-field ap-field--qty">
+                        <div class="ap-field ap-field--qty" id="qty-field">
                             <label for="quantity">Quantity available <span class="req">*</span></label>
                             <div class="qty-wrap">
                                 <button type="button" class="qty-btn" id="qty-minus" aria-label="Decrease"><i data-lucide="minus"></i></button>
@@ -210,6 +210,20 @@
                                 <button type="button" class="qty-btn" id="qty-plus" aria-label="Increase"><i data-lucide="plus"></i></button>
                             </div>
                             <span class="ap-hint">How many do you currently have available?</span>
+                        </div>
+
+                        <div class="ap-field ap-field--preorder" id="preorder-field">
+                            <label class="ap-toggle-label">
+                                <input type="checkbox" id="is-preorder" name="isPreorder">
+                                <span class="ap-toggle-track"><span class="ap-toggle-thumb"></span></span>
+                                <span>Pre-order</span>
+                            </label>
+                            <span class="ap-hint">Buyers can order now and receive it later.</span>
+                            <div class="ap-field ap-field--preorder-date" id="preorder-date-field" style="display:none; margin-top:0.75rem;">
+                                <label for="preorder-date">Available from <span class="req">*</span></label>
+                                <input type="date" id="preorder-date" name="preorderDate">
+                                <span class="ap-hint">The date buyers can expect to receive their order.</span>
+                            </div>
                         </div>
 
                         <!-- Advanced Settings — collapsed -->

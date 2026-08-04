@@ -7,6 +7,22 @@
 var API_BASE = (window.APP_CONFIG && window.APP_CONFIG.BACKEND_URL) || 'http://localhost:5000';
 var TOKEN_KEY = 'authToken';
 
+/* ── Service category slugs ──────────────── */
+const SERVICE_CATEGORY_SLUGS = new Set([
+  'services', 'service', 'tutoring', 'notes-tutoring',
+]);
+
+/* Returns true if the currently selected category is a service type */
+function isServiceCategory(catSlug) {
+  if (!catSlug) return false;
+  const s = catSlug.toLowerCase();
+  if (SERVICE_CATEGORY_SLUGS.has(s)) return true;
+  // Also check signals from the loaded category model
+  const meta = CATEGORY_MODEL[catSlug];
+  if (meta && Array.isArray(meta.signals) && meta.signals.includes('isService')) return true;
+  return false;
+}
+
 /* ── Constants ───────────────────────────── */
 
 const SUBCATEGORIES = {
@@ -292,6 +308,72 @@ const DETAILS_FIELDS = {
     { name: 'brand', label: 'Brand', type: 'text', recommended: true },
     { name: 'type',  label: 'Type',  type: 'text', recommended: true },
   ],
+
+  /* ── Services ── */
+  'services-delivery': [
+    { name: 'coverage_area',  label: 'Coverage area',    type: 'text', required: true, placeholder: 'e.g. Main campus, Accra' },
+    { name: 'turnaround',     label: 'Turnaround time',  type: 'text', required: true, placeholder: 'e.g. Same day, 2–4 hrs' },
+    { name: 'availability',   label: 'Availability',     type: 'text', recommended: true, placeholder: 'e.g. Mon–Fri, 8am–6pm' },
+    { name: 'max_weight',     label: 'Max item weight',  type: 'text', recommended: true, placeholder: 'e.g. Up to 10kg' },
+  ],
+  'services-repairs': [
+    { name: 'repair_type',    label: 'What do you repair?', type: 'text', required: true, placeholder: 'e.g. Phones, Laptops, Shoes' },
+    { name: 'turnaround',     label: 'Turnaround time',     type: 'text', required: true, placeholder: 'e.g. 24–48 hrs' },
+    { name: 'warranty',       label: 'Warranty on repairs', type: 'text', recommended: true, placeholder: 'e.g. 30-day warranty' },
+    { name: 'availability',   label: 'Availability',        type: 'text', recommended: true },
+  ],
+  'services-printing': [
+    { name: 'print_types',    label: 'Print types offered', type: 'text', required: true, placeholder: 'e.g. A4, A3, Binding, Lamination' },
+    { name: 'turnaround',     label: 'Turnaround time',     type: 'text', required: true, placeholder: 'e.g. Ready in 30 mins' },
+    { name: 'availability',   label: 'Availability',        type: 'text', recommended: true },
+    { name: 'location',       label: 'Location',            type: 'text', recommended: true, placeholder: 'e.g. Block C, Room 12' },
+  ],
+  'services-laundry': [
+    { name: 'service_type',   label: 'Service type',        type: 'select', required: true, options: ['Wash & Fold', 'Dry Cleaning', 'Ironing Only', 'Wash & Iron'] },
+    { name: 'turnaround',     label: 'Turnaround time',     type: 'text', required: true, placeholder: 'e.g. 24 hrs' },
+    { name: 'pickup_delivery', label: 'Pickup & delivery?', type: 'select', options: ['Yes', 'No', 'Pickup only'], recommended: true },
+    { name: 'availability',   label: 'Availability',        type: 'text', recommended: true },
+  ],
+  'services-photography': [
+    { name: 'shoot_type',     label: 'Shoot types',         type: 'text', required: true, placeholder: 'e.g. Portraits, Events, Products' },
+    { name: 'turnaround',     label: 'Delivery time',       type: 'text', required: true, placeholder: 'e.g. Edited photos in 3 days' },
+    { name: 'equipment',      label: 'Equipment',           type: 'text', recommended: true, placeholder: 'e.g. DSLR, Drone' },
+    { name: 'availability',   label: 'Availability',        type: 'text', recommended: true },
+  ],
+  'services-other': [
+    { name: 'service_type',   label: 'What service do you offer?', type: 'text', required: true },
+    { name: 'turnaround',     label: 'Turnaround / duration',      type: 'text', required: true, placeholder: 'e.g. 1 hour, Same day' },
+    { name: 'availability',   label: 'Availability',               type: 'text', recommended: true },
+  ],
+  /* ── Notes & Tutoring ── */
+  'notes-tutoring-tutoring': [
+    { name: 'subject',        label: 'Subject(s)',          type: 'text', required: true, placeholder: 'e.g. Calculus, Economics' },
+    { name: 'level',          label: 'Level',               type: 'select', required: true, options: ['JHS', 'SHS', 'University', 'Professional'] },
+    { name: 'session_format', label: 'Session format',      type: 'select', options: ['In-person', 'Online', 'Both'], recommended: true },
+    { name: 'availability',   label: 'Availability',        type: 'text', recommended: true, placeholder: 'e.g. Weekends, Evenings' },
+    { name: 'turnaround',     label: 'Session duration',    type: 'text', recommended: true, placeholder: 'e.g. 1 hr per session' },
+  ],
+  'notes-tutoring-typed-notes': [
+    { name: 'subject',        label: 'Subject / course',    type: 'text', required: true },
+    { name: 'level',          label: 'Level',               type: 'select', required: true, options: ['JHS', 'SHS', 'University', 'Professional'] },
+    { name: 'pages',          label: 'Number of pages',     type: 'text', recommended: true },
+    { name: 'format',         label: 'File format',         type: 'select', options: ['PDF', 'Word', 'Printed copy'], recommended: true },
+  ],
+  'notes-tutoring-handwritten-notes': [
+    { name: 'subject',        label: 'Subject / course',    type: 'text', required: true },
+    { name: 'level',          label: 'Level',               type: 'select', required: true, options: ['JHS', 'SHS', 'University', 'Professional'] },
+    { name: 'pages',          label: 'Number of pages',     type: 'text', recommended: true },
+  ],
+  'notes-tutoring-summaries': [
+    { name: 'subject',        label: 'Subject / course',    type: 'text', required: true },
+    { name: 'level',          label: 'Level',               type: 'select', required: true, options: ['JHS', 'SHS', 'University', 'Professional'] },
+    { name: 'format',         label: 'Format',              type: 'select', options: ['PDF', 'Printed', 'Both'], recommended: true },
+  ],
+  'notes-tutoring-other': [
+    { name: 'service_type',   label: 'What do you offer?',  type: 'text', required: true },
+    { name: 'subject',        label: 'Subject / topic',     type: 'text', recommended: true },
+    { name: 'availability',   label: 'Availability',        type: 'text', recommended: true },
+  ],
 };
 
 /* Normalise a label the same way the backend slugifies it, so template
@@ -337,12 +419,30 @@ const SUBNAME_ALIASES = {
   'photography':           'art-photography',
   'digital-art':           'art-digital-art',
   'other':                 'other-other',
+  // services
+  'delivery':              'services-delivery',
+  'repairs':               'services-repairs',
+  'printing':              'services-printing',
+  'laundry':               'services-laundry',
+  'photography-service':   'services-photography',
+  // notes-tutoring
+  'tutoring':              'notes-tutoring-tutoring',
+  'typed-notes':           'notes-tutoring-typed-notes',
+  'handwritten-notes':     'notes-tutoring-handwritten-notes',
+  'summaries':             'notes-tutoring-summaries',
 };
 /* Fallback template when a subcategory is left blank (optional subcategory). */
 const GENERIC_TEMPLATE = [
   { name: 'type', label: 'What kind of item is it?', type: 'text', recommended: true, placeholder: 'e.g. Cable, Notebook, Lamp' },
   { name: 'brand', label: 'Brand', type: 'text', recommended: true },
 ];
+/* Service generic fallback — no condition, just service fields */
+const SERVICE_GENERIC_TEMPLATE = [
+  { name: 'service_type', label: 'What service do you offer?', type: 'text', required: true },
+  { name: 'turnaround',   label: 'Turnaround / duration',      type: 'text', required: true, placeholder: 'e.g. 1 hour, Same day' },
+  { name: 'availability', label: 'Availability',               type: 'text', recommended: true },
+];
+
 function lookupTemplate(catSlug, subName) {
   if (subName) {
     const byName = SUBNAME_ALIASES[normKey(subName)];
@@ -350,7 +450,7 @@ function lookupTemplate(catSlug, subName) {
     const legacy = DETAILS_FIELDS[`${catSlug}-${normKey(subName)}`];
     if (legacy) return legacy;
   }
-  // No subcategory chosen — keep it light with a generic prompt.
+  if (isServiceCategory(catSlug)) return SERVICE_GENERIC_TEMPLATE;
   return GENERIC_TEMPLATE;
 }
 
@@ -494,6 +594,30 @@ function categoryKeyFromValue(val) {
 }
 
 /* ── Category → Subcategory ─────────────── */
+function applyServiceMode(isService) {
+  const condStandalone = document.getElementById('condition-field-standalone');
+  const qtyWrap        = document.getElementById('qty-field');
+  const dimSection     = document.getElementById('dim-section');
+  const submitLabel    = document.getElementById('submit-label');
+  const screen2Sub     = document.getElementById('screen2-subtitle');
+  const photoHint      = document.getElementById('photo-hint');
+
+  const preorderField = document.getElementById('preorder-field');
+  if (condStandalone) condStandalone.style.display = isService ? 'none' : 'block';
+  if (qtyWrap)        qtyWrap.style.display        = isService ? 'none' : 'block';
+  if (dimSection)     dimSection.style.display     = isService ? 'none' : 'block';
+  if (preorderField)  preorderField.style.display  = isService ? 'none' : 'block';
+  if (submitLabel && !EDIT_ID) submitLabel.textContent = isService ? 'Publish Service' : 'Publish Product';
+  if (screen2Sub)  screen2Sub.textContent = isService
+    ? 'Describe your service and add the key details buyers need.'
+    : 'A short description and a few details help buyers feel confident.';
+  if (photoHint) photoHint.textContent = isService
+    ? 'Add a photo that represents your service — yourself, your work, or your setup.'
+    : 'Clear photos from multiple angles sell faster.';
+
+  document.body.classList.toggle('service-mode', isService);
+}
+
 function onCategoryChanged(cat) {
   const subEl = document.getElementById('subcategory');
   subEl.innerHTML = '<option value="">Skip for now</option>';
@@ -501,7 +625,9 @@ function onCategoryChanged(cat) {
   detailsSectionWrap.style.display = 'none';
   detailsSectionWrap.classList.remove('revealed');
   const standaloneCond = document.getElementById('condition-field-standalone');
-  if (standaloneCond) standaloneCond.style.display = 'block';
+  const isSvc = isServiceCategory(cat);
+  applyServiceMode(isSvc);
+  if (!isSvc && standaloneCond) standaloneCond.style.display = 'block';
   const meta = CATEGORY_MODEL[cat] || {};
   const subs = meta.subs || [];
   const subField = document.getElementById('subcategory-field');
@@ -520,6 +646,10 @@ function onCategoryChanged(cat) {
   } else {
     if (subField) subField.style.display = 'none';
   }
+  // For service categories, immediately show the generic service template
+  if (isSvc && !subs.length) {
+    onSubcategoryChanged('');
+  }
 }
 
 /* ── Subcategory → Detail fields ─────────── */
@@ -534,21 +664,22 @@ function onSubcategoryChanged(sub) {
   detailsGrid.innerHTML = '';
   detailsSectionWrap.style.display = 'none';
   detailsSectionWrap.classList.remove('revealed');
+  const isSvc = isServiceCategory(catSlug);
   const fields = lookupTemplate(catSlug, sub);
   const standaloneCond = document.getElementById('condition-field-standalone');
   if (fields && fields.length) {
     const friendlySub = sub ? sub.replace(/\b\w/g, c => c.toUpperCase()) : '';
     const headEl = document.getElementById('details-section-title');
-    if (headEl) headEl.textContent = friendlySub ? `A few specifics for this ${friendlySub}` : 'A few specifics for your product';
-    renderDetailsFields(fields);
-    // The dynamic specs include a Condition question — hide the standalone one.
+    if (headEl) headEl.textContent = friendlySub
+      ? (isSvc ? `Details for ${friendlySub}` : `A few specifics for this ${friendlySub}`)
+      : (isSvc ? 'Tell buyers about your service' : 'A few specifics for your product');
+    renderDetailsFields(fields, isSvc);
+    // Services don't use condition — hide standalone
     if (standaloneCond) standaloneCond.style.display = 'none';
-    // Smoothly reveal so it feels intelligent, not sudden
     detailsSectionWrap.style.display = 'block';
     requestAnimationFrame(() => requestAnimationFrame(() => detailsSectionWrap.classList.add('revealed')));
   } else {
-    // No template: keep the simple standalone Condition question.
-    if (standaloneCond) standaloneCond.style.display = 'block';
+    if (standaloneCond) standaloneCond.style.display = isSvc ? 'none' : 'block';
     detailsSectionWrap.style.display = 'none';
   }
 }
@@ -719,12 +850,11 @@ const COLOR_PALETTE = [
   '#0f172a','#1e293b','#334155','#64748b','#94a3b8',
 ];
 
-function renderDetailsFields(fields) {
+function renderDetailsFields(fields, isService = false) {
   detailsGrid.innerHTML = '';
-  // Build the field list, then append a friendly Condition question so every
-  // product carries a condition without it being repeated per template.
   const list = fields.slice();
-  list.push({ name: '_condition_q', label: 'Condition', type: 'condition', required: true });
+  // Only append condition for physical products
+  if (!isService) list.push({ name: '_condition_q', label: 'Condition', type: 'condition', required: true });
 
   list.forEach((f, idx) => {
     const wrap = document.createElement('div');
@@ -975,6 +1105,13 @@ document.getElementById('qty-plus')?.addEventListener('click', () => {
   if (el && +el.value < 999) el.value = +el.value + 1;
 });
 
+/* ── Pre-order toggle ────────────────────── */
+document.getElementById('is-preorder')?.addEventListener('change', function () {
+  const dateField = document.getElementById('preorder-date-field');
+  if (dateField) dateField.style.display = this.checked ? 'block' : 'none';
+  if (!this.checked) { const d = document.getElementById('preorder-date'); if (d) d.value = ''; }
+});
+
 /* ── Char counters ───────────────────────── */
 document.getElementById('product-name')?.addEventListener('input', function () {
   document.getElementById('name-count').textContent = this.value.length;
@@ -992,9 +1129,13 @@ function validateScreen1() {
   return true;
 }
 function validateScreen2() {
-  if (!document.querySelector('input[name="condition"]:checked')) { showToast('Let buyers know the condition.'); return false; }
+  const catSlug = document.getElementById('category')?.value || '';
+  const isSvc = isServiceCategory(catSlug);
+  if (!isSvc && !document.querySelector('input[name="condition"]:checked')) { showToast('Let buyers know the condition.'); return false; }
   if (!document.getElementById('description')?.value.trim())  { showToast('Add a short description.'); return false; }
-  if (!document.getElementById('quantity')?.value)           { showToast('Add how many you have available.'); return false; }
+  if (!isSvc && !document.getElementById('quantity')?.value)  { showToast('Add how many you have available.'); return false; }
+  const isPreorder = document.getElementById('is-preorder')?.checked;
+  if (!isSvc && isPreorder && !document.getElementById('preorder-date')?.value) { showToast('Set the date buyers can expect their pre-order.'); return false; }
   return true;
 }
 
@@ -1018,11 +1159,17 @@ async function submitProduct(publish = true) {
   formData.append('categoryId',  document.getElementById('category-id')?.value || '');
   formData.append('subcategory', document.getElementById('subcategory')?.value || '');
   formData.append('subcategoryId', document.getElementById('subcategory-id')?.value || '');
-  formData.append('condition',   document.querySelector('input[name="condition"]:checked')?.value || '');
+  const catSlug = document.getElementById('category')?.value || '';
+  const isSvc = isServiceCategory(catSlug);
+  if (!isSvc) formData.append('condition', document.querySelector('input[name="condition"]:checked')?.value || '');
+  if (isSvc)  formData.append('serviceType', catSlug);
   formData.append('price',       document.getElementById('price').value);
   formData.append('comparePrice',document.getElementById('compare-price')?.value || '');
   formData.append('costPrice',   document.getElementById('cost-price')?.value || '');
-  formData.append('stock',       document.getElementById('quantity')?.value || '1');
+  formData.append('stock',       isSvc ? '99' : (document.getElementById('quantity')?.value || '1'));
+  const isPreorder = !isSvc && document.getElementById('is-preorder')?.checked;
+  formData.append('isPreorder', String(isPreorder));
+  if (isPreorder) formData.append('preorderDate', document.getElementById('preorder-date')?.value || '');
   formData.append('isActive',    publish ? 'true' : 'false');
   if (tags.length) formData.append('tags', JSON.stringify(tags));
 
@@ -1182,6 +1329,7 @@ async function loadEditData() {
 
     if (p.category) {
       selectCategory(p.category, true);
+      applyServiceMode(isServiceCategory(p.category));
     }
 
     const subCatEl = document.getElementById('subcategory');
@@ -1240,6 +1388,12 @@ async function loadEditData() {
     if (costEl) costEl.value = p.costPrice || '';
     const qtyEl = document.getElementById('quantity');
     if (qtyEl) qtyEl.value = p.stock ?? p.quantity ?? 1;
+    if (p.isPreorder) {
+      const toggle = document.getElementById('is-preorder');
+      if (toggle) { toggle.checked = true; toggle.dispatchEvent(new Event('change')); }
+      const dateEl = document.getElementById('preorder-date');
+      if (dateEl && p.preorderDate) dateEl.value = p.preorderDate.slice(0, 10);
+    }
 
     if (p.brand) { const b = document.getElementById('details-brand'); if (b) { b.value = p.brand; b.dispatchEvent(new Event('input', { bubbles: true })); } }
     if (details) {

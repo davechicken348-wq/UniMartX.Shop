@@ -220,11 +220,78 @@ function debounce(fn, delay) {
 // ═══════════════════════════════════════════
 // PRODUCT CARD BUILDER (shared)
 // ═══════════════════════════════════════════
+// ── Service card visual maps ──────────────────────────────────
+const SERVICE_ICON_MAP = {
+  services:            'briefcase',
+  'notes-tutoring':    'book-open',
+  delivery:            'truck',
+  repairs:             'wrench',
+  printing:            'printer',
+  laundry:             'wind',
+  photography:         'camera',
+  tutoring:            'graduation-cap',
+  'typed-notes':       'file-text',
+  'handwritten-notes': 'pen-line',
+  summaries:           'list',
+  _default:            'briefcase',
+};
+const SERVICE_GRADIENT_MAP = {
+  services:            'linear-gradient(135deg,#6366f1 0%,#818cf8 100%)',
+  'notes-tutoring':    'linear-gradient(135deg,#0ea5e9 0%,#38bdf8 100%)',
+  delivery:            'linear-gradient(135deg,#f59e0b 0%,#fbbf24 100%)',
+  repairs:             'linear-gradient(135deg,#ef4444 0%,#f87171 100%)',
+  printing:            'linear-gradient(135deg,#8b5cf6 0%,#a78bfa 100%)',
+  laundry:             'linear-gradient(135deg,#06b6d4 0%,#67e8f9 100%)',
+  photography:         'linear-gradient(135deg,#ec4899 0%,#f9a8d4 100%)',
+  tutoring:            'linear-gradient(135deg,#0ea5e9 0%,#38bdf8 100%)',
+  'typed-notes':       'linear-gradient(135deg,#10b981 0%,#34d399 100%)',
+  'handwritten-notes': 'linear-gradient(135deg,#10b981 0%,#34d399 100%)',
+  summaries:           'linear-gradient(135deg,#10b981 0%,#34d399 100%)',
+  _default:            'linear-gradient(135deg,#6366f1 0%,#818cf8 100%)',
+};
+
 function buildProductCard(product) {
+  const isService = !!(product.serviceType || (product.category && (product.category === 'services' || product.category === 'notes-tutoring')));
   const discount = calcDiscount(product.price, product.comparePrice);
+  const isNew = product.createdAt ? (Date.now() - new Date(product.createdAt).getTime() < 7 * 86400000) : false;
+
+  if (isService) {
+    const details = (() => { try { return typeof product.details === 'string' ? JSON.parse(product.details) : (product.details || {}); } catch { return {}; } })();
+    const turnaround = details.turnaround || details.availability || '';
+    const svcIcon = SERVICE_ICON_MAP[product.category] || SERVICE_ICON_MAP[product.serviceType] || SERVICE_ICON_MAP._default;
+    const svcGradient = SERVICE_GRADIENT_MAP[product.category] || SERVICE_GRADIENT_MAP[product.serviceType] || SERVICE_GRADIENT_MAP._default;
+    const badges = [];
+    if (discount) badges.push(`<span class="product-badge product-badge--sale">-${discount}%</span>`);
+    return `
+  <a class="product-card product-card--service reveal" href="../../../public/shop/product-details.html?id=${escapeHtml(product.id)}" aria-label="${escapeHtml(product.name)}">
+    <div class="product-card-img svc-img-wrap" style="background:${svcGradient}">
+      ${product.image
+        ? `<img class="svc-img-photo" src="${escapeHtml(product.image)}" alt="${escapeHtml(product.name)}" loading="lazy" onerror="this.style.display='none'">`
+        : `<div class="svc-img-icon"><i data-lucide="${svcIcon}"></i></div>`
+      }
+      <div class="svc-img-overlay"></div>
+      <div class="svc-type-pill"><i data-lucide="${svcIcon}"></i> Service</div>
+      ${badges.length ? `<div class="product-card-badges">${badges.join('')}</div>` : ''}
+      <button class="product-card-save product-save" data-product-id="${escapeHtml(product.id)}" aria-label="Save product"><i data-lucide="heart"></i></button>
+    </div>
+    <div class="product-card-body">
+      <span class="product-card-category">${escapeHtml(categoryLabel(product.category))}</span>
+      <h3 class="product-card-title">${escapeHtml(product.name)}</h3>
+      ${turnaround ? `<p class="product-card-turnaround"><i data-lucide="clock"></i> ${escapeHtml(turnaround)}</p>` : ''}
+      <div class="product-card-price-row">
+        <span class="product-card-price">${formatPrice(product.price)}</span>
+        ${product.comparePrice ? `<span class="product-card-price-old">${formatPrice(product.comparePrice)}</span>` : ''}
+      </div>
+      <div class="product-card-footer">
+        <span class="product-card-service-label"><i data-lucide="${svcIcon}"></i> Service</span>
+        <button class="product-card-enquire" type="button" data-id="${escapeHtml(product.id)}" aria-label="Enquire about ${escapeHtml(product.name)}"><i data-lucide="message-circle"></i></button>
+      </div>
+    </div>
+  </a>`;
+  }
+
   const stockLabel = product.stock > 0 ? (product.stock <= 5 ? `Only ${product.stock} left` : 'In stock') : 'Out of stock';
   const stockClass = product.stock > 0 ? (product.stock <= 5 ? 'low' : '') : 'out';
-  const isNew = product.createdAt ? (Date.now() - new Date(product.createdAt).getTime() < 7 * 86400000) : false;
   const outOfStock = product.stock <= 0;
 
   const badges = [];
@@ -1307,6 +1374,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Add to cart — delegated on document to catch dynamically rendered cards
   document.addEventListener('click', async e => {
+    // Enquire button on service cards
+    const enquireBtn = e.target.closest('.product-card-enquire');
+    if (enquireBtn) {
+      e.preventDefault();
+      e.stopPropagation();
+      const id = enquireBtn.dataset.id;
+      if (id) window.location.href = `../../../public/shop/product-details.html?id=${id}`;
+      return;
+    }
+
     const btn = e.target.closest('.product-card-atc');
     if (!btn) return;
     e.preventDefault();

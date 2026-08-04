@@ -23,7 +23,7 @@ const state = {
     query:    '',
     category: 'all',
     filter:   'all',
-    sort:     'trending',
+    sort:     'products',
     page:     1,
     total:    0,
     data:     [],
@@ -416,7 +416,7 @@ document.getElementById('load-more-btn').addEventListener('click', () => {
 
 // Empty reset
 document.getElementById('empty-reset').addEventListener('click', () => {
-    state.query = ''; state.category = 'all'; state.filter = 'all'; state.page = 1; state.sort = 'trending';
+    state.query = ''; state.category = 'all'; state.filter = 'all'; state.page = 1; state.sort = 'products';
     if (searchInput) searchInput.value = '';
     if (searchClear) searchClear.classList.add('hidden');
     if (mobileInput) mobileInput.value = '';
@@ -425,7 +425,7 @@ document.getElementById('empty-reset').addEventListener('click', () => {
     document.querySelector('.cat-pill[data-cat="all"]').classList.add('active');
     document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
     document.querySelector('.filter-chip[data-filter="all"]').classList.add('active');
-    document.getElementById('sort-select').value = 'trending';
+    document.getElementById('sort-select').value = 'products';
     fetchStores();
     fetchFeatured();
 });

@@ -24,6 +24,9 @@ export const createProductSchema = z.object({
   stock: z.coerce.number().int().min(0, 'Stock must be a valid number'),
   condition: z.enum(['new', 'like-new', 'good', 'fair']).optional().nullable(),
   serviceType: z.string().optional().nullable(),
+  listingType: z.enum(['product', 'service']).optional().nullable(),
+  isPreorder: z.string().transform(v => v === 'true').optional(),
+  preorderDate: z.string().optional().nullable(),
   tags: z.string()
     .transform(raw => {
       try { return JSON.parse(raw); } catch { return []; }

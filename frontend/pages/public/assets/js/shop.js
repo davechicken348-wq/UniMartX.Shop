@@ -433,26 +433,86 @@ function escapeHtml(str) {
     return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
+// ── Service card visual maps ──────────────────────────────────
+const SERVICE_ICON_MAP = {
+  services:          'briefcase',
+  'notes-tutoring':  'book-open',
+  delivery:          'truck',
+  repairs:           'wrench',
+  printing:          'printer',
+  laundry:           'wind',
+  photography:       'camera',
+  tutoring:          'graduation-cap',
+  'typed-notes':     'file-text',
+  'handwritten-notes': 'pen-line',
+  summaries:         'list',
+  _default:          'briefcase',
+};
+const SERVICE_GRADIENT_MAP = {
+  services:          'linear-gradient(135deg,#6366f1 0%,#818cf8 100%)',
+  'notes-tutoring':  'linear-gradient(135deg,#0ea5e9 0%,#38bdf8 100%)',
+  delivery:          'linear-gradient(135deg,#f59e0b 0%,#fbbf24 100%)',
+  repairs:           'linear-gradient(135deg,#ef4444 0%,#f87171 100%)',
+  printing:          'linear-gradient(135deg,#8b5cf6 0%,#a78bfa 100%)',
+  laundry:           'linear-gradient(135deg,#06b6d4 0%,#67e8f9 100%)',
+  photography:       'linear-gradient(135deg,#ec4899 0%,#f9a8d4 100%)',
+  tutoring:          'linear-gradient(135deg,#0ea5e9 0%,#38bdf8 100%)',
+  'typed-notes':     'linear-gradient(135deg,#10b981 0%,#34d399 100%)',
+  'handwritten-notes': 'linear-gradient(135deg,#10b981 0%,#34d399 100%)',
+  summaries:         'linear-gradient(135deg,#10b981 0%,#34d399 100%)',
+  _default:          'linear-gradient(135deg,#6366f1 0%,#818cf8 100%)',
+};
+
 function buildProductCard(p) {
+    const isService = !!(p.serviceType || (p.category && (p.category === 'services' || p.category === 'notes-tutoring')));
     const isPlaceholder = !p.image || p.image.startsWith('data:');
     const imgHtml = isPlaceholder
-        ? `<div class="img-placeholder"><i data-lucide="package" aria-hidden="true"></i></div>`
+        ? `<div class="img-placeholder"><i data-lucide="${isService ? 'briefcase' : 'package'}" aria-hidden="true"></i></div>`
         : `<img src="${escapeHtml(p.image)}" alt="${escapeHtml(p.name)}" loading="lazy">`;
 
     const badge = p.comparePrice
         ? `<div class="product-badge product-badge--sale">Sale</div>` : '';
 
+    if (isService) {
+        const details = (() => { try { return typeof p.details === 'string' ? JSON.parse(p.details) : (p.details || {}); } catch { return {}; } })();
+        const turnaround = details.turnaround || details.availability || '';
+        const svcIcon = SERVICE_ICON_MAP[p.category] || SERVICE_ICON_MAP[p.serviceType] || 'briefcase';
+        const svcGradient = SERVICE_GRADIENT_MAP[p.category] || SERVICE_GRADIENT_MAP[p.serviceType] || SERVICE_GRADIENT_MAP._default;
+        return `
+    <a class="product-card product-card--service" href="product-details.html?id=${escapeHtml(p.id)}">
+        <div class="product-img-wrap svc-img-wrap" style="background:${svcGradient}">
+            ${p.image && !p.image.startsWith('data:')
+                ? `<img src="${escapeHtml(p.image)}" alt="${escapeHtml(p.name)}" loading="lazy" class="svc-img-photo">`
+                : `<div class="svc-img-icon"><i data-lucide="${svcIcon}"></i></div>`
+            }
+            <div class="svc-img-overlay"></div>
+            <div class="svc-type-pill"><i data-lucide="${svcIcon}"></i> Service</div>
+            ${badge}
+            <button class="product-save" data-product-id="${escapeHtml(p.id)}" aria-label="Save" type="button"><i data-lucide="heart" aria-hidden="true"></i></button>
+        </div>
+        <div class="product-info">
+            <p class="product-store">${escapeHtml(p.storeName || '')}</p>
+            <h3 class="product-name">${escapeHtml(p.name)}</h3>
+            ${turnaround ? `<p class="product-turnaround"><i data-lucide="clock"></i> ${escapeHtml(turnaround)}</p>` : ''}
+            <div class="product-bottom">
+                <span class="product-price">GH&#8373; ${Number(p.price).toFixed(2)}</span>
+                <button class="product-enquire-btn" type="button" data-id="${escapeHtml(p.id)}"><i data-lucide="message-circle"></i> Enquire</button>
+            </div>
+        </div>
+    </a>`;
+    }
+
     const fee = parseFloat(p.deliveryFee);
     const deliveryBadge = (!isNaN(fee) && fee > 0)
-        ? `<div class="product-badge product-badge--delivery">Delivery GH₵ ${fee.toFixed(2)}</div>` : '';
+        ? `<div class="product-badge product-badge--delivery">Delivery GH&#8373; ${fee.toFixed(2)}</div>` : '';
 
-    const stars = '★'.repeat(Math.round(p.rating || 0)) + '☆'.repeat(5 - Math.round(p.rating || 0));
+    const stars = '&#9733;'.repeat(Math.round(p.rating || 0)) + '&#9734;'.repeat(5 - Math.round(p.rating || 0));
     const stockStatus = p.stock != null ? (p.stock > 0 ? `${p.stock} in stock` : 'Out of stock') : null;
     const stockHtml = stockStatus ? `<div class="product-stock${p.stock === 0 ? ' out-of-stock' : ''}">${stockStatus}</div>` : '';
 
     const priceHtml = p.comparePrice
-        ? `<div><span class="product-price">GH₵ ${Number(p.price).toFixed(2)}</span><span class="product-price-old">GH₵ ${Number(p.comparePrice).toFixed(2)}</span></div>`
-        : `<span class="product-price">GH₵ ${Number(p.price).toFixed(2)}</span>`;
+        ? `<div><span class="product-price">GH&#8373; ${Number(p.price).toFixed(2)}</span><span class="product-price-old">GH&#8373; ${Number(p.comparePrice).toFixed(2)}</span></div>`
+        : `<span class="product-price">GH&#8373; ${Number(p.price).toFixed(2)}</span>`;
 
     return `
     <a class="product-card" href="product-details.html?id=${escapeHtml(p.id)}">
@@ -520,6 +580,14 @@ function bindCardButtons() {
                 const auth = getToken();
                 if (!auth) window.location.href = '../../auth/login.html';
             }
+        });
+    });
+    productsWrap.querySelectorAll('.product-enquire-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const id = btn.dataset.id;
+            if (id) window.location.href = `product-details.html?id=${id}`;
         });
     });
 }
