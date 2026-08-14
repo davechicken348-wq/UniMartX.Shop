@@ -228,7 +228,7 @@ async function renderNotifications(reset = false, skipRerender = false) {
         if (reset && filtered.length === 0 && offset === 0) {
             container.innerHTML = `
             <div class="notif-empty">
-                <div class="notif-empty-icon"><i data-lucide="bell-off"></i></div>
+                <img class="notif-empty-illustration" src="assets/images/Illustrations/No-Notifications--Streamline-Lagos.png" alt="">
                 <h3>No notifications yet</h3>
                 <p>You're all caught up! New updates will appear here.</p>
             </div>`;

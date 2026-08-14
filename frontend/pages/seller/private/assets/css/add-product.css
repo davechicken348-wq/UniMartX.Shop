@@ -63,6 +63,20 @@
 }
 
 .ap-screen-head { margin-bottom: var(--os-space-6); }
+
+/* ── Screen 1 hero illustration ── */
+.ap-screen-head--hero {
+    display: flex; align-items: center; gap: var(--os-space-6);
+}
+.ap-hero-illustration {
+    width: 132px; height: auto; flex-shrink: 0;
+    filter: drop-shadow(0 12px 28px rgba(245,158,11,0.12));
+}
+.ap-screen-head-text { min-width: 0; }
+@media (max-width: 560px) {
+    .ap-screen-head--hero { flex-direction: column; align-items: flex-start; gap: var(--os-space-4); }
+    .ap-hero-illustration { width: 108px; }
+}
 .ap-eyebrow {
     display: inline-block; font-size: var(--os-text-xs); font-weight: 800;
     text-transform: uppercase; letter-spacing: 0.08em;
@@ -359,6 +373,11 @@
 }
 .img-slot-placeholder svg { width: 26px; height: 26px; stroke: currentColor; }
 .main-slot .img-slot-placeholder svg { width: 34px; height: 34px; }
+.img-slot-illustration {
+    width: 84px; max-width: 50%; height: auto; margin-bottom: var(--os-space-2);
+    opacity: 0.92; filter: drop-shadow(0 8px 18px rgba(245,158,11,0.10));
+}
+.main-slot .img-slot-illustration { width: 110px; }
 .img-slot-placeholder span { font-size: var(--os-text-sm); font-weight: 700; color: var(--os-text-2); }
 .main-slot .img-slot-placeholder span { font-size: var(--os-text-base); }
 .img-slot-placeholder p { font-size: var(--os-text-xs); color: var(--os-text-4); font-weight: 600; margin-top: 2px; }
@@ -465,6 +484,10 @@
     margin: 0 auto var(--os-space-5);
 }
 .ap-done-icon svg { width: 34px; height: 34px; stroke: var(--os-success); }
+.ap-done-illustration {
+    width: 150px; height: auto; margin: 0 auto var(--os-space-5);
+    display: block; filter: drop-shadow(0 14px 32px rgba(245,158,11,0.14));
+}
 .ap-done-title { font-size: var(--os-text-2xl); font-weight: 700; color: var(--os-text); letter-spacing: -0.02em; margin-bottom: var(--os-space-2); }
 .ap-done-sub { font-size: var(--os-text-base); color: var(--os-text-3); max-width: 42ch; margin: 0 auto var(--os-space-7); line-height: 1.55; }
 .ap-done-actions { display: flex; gap: var(--os-space-3); justify-content: center; flex-wrap: wrap; }

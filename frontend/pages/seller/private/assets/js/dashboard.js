@@ -107,9 +107,10 @@ async function fetchDashboard(skipLoading = false) {
 }
 
 function renderDashboard(data, skipLoading = false) {
+  renderStoreState(data);
+  renderGreeting(data);
   renderStats(data.stats);
   renderRecentOrders(data.recentOrders);
-  renderAreaChart(data.chartData, data.chartLabels);
   renderOrderStatus(data.recentOrders);
   renderStoreHealth(data);
   renderTopProducts(data.topProducts);
@@ -134,12 +135,14 @@ function dashboardSignature(data) {
 
 function updateOnboarding(data) {
     const card = document.getElementById('onboarding-card');
+    const weekwin = document.getElementById('weekwin-card');
     if (!card) return;
 
     const topProducts = data.topProducts || [];
     const isNew = topProducts.length === 0;
     card.hidden = !isNew;
-    if (!isNew) return;
+    if (weekwin) weekwin.hidden = isNew;
+    if (!isNew) { renderWeekWin(data); return; }
 
     const profile = data.profile || {};
     const steps = {
@@ -195,8 +198,6 @@ function renderStats(stats) {
   const ratingEl = document.getElementById('stat-rating');
 
   if (revenueEl) revenueEl.textContent = formatCurrency(stats.revenue);
-  const revenueTotalEl = document.querySelector('.revenue-total');
-  if (revenueTotalEl) revenueTotalEl.textContent = formatCurrency(stats.revenue);
   if (ordersEl) ordersEl.textContent = stats.orders.toLocaleString();
   if (pendingEl) pendingEl.textContent = stats.pending;
   if (ratingEl) ratingEl.textContent = stats.rating ? `${stats.rating} ★` : '—';
@@ -330,44 +331,6 @@ function renderChart(data, labels) {
   }).join('');
 }
 
-// ── Revenue area chart (main card) ─────────────
-function renderAreaChart(data, labels) {
-  const el = document.getElementById('area-chart');
-  const lab = document.getElementById('area-labels');
-  if (!el) return;
-
-  if (!data || !data.length) {
-    el.innerHTML = '<div class="chart-empty">No revenue yet — your first sale will appear here.</div>';
-    if (lab) lab.innerHTML = '';
-    return;
-  }
-
-  const max = Math.max(...data, 1);
-  const n = data.length;
-  const W = 100, H = 42;
-  const stepX = n > 1 ? W / (n - 1) : 0;
-  const pts = data.map((v, i) => [i * stepX, H - (v / max) * (H - 6) - 3]);
-  const line = pts.map((p, i) => (i === 0 ? 'M' : 'L') + p[0].toFixed(2) + ' ' + p[1].toFixed(2)).join(' ');
-  const area = `${line} L ${W} ${H} L 0 ${H} Z`;
-
-  el.innerHTML = `
-    <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" class="area-svg">
-      <defs>
-        <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="var(--os-accent)" stop-opacity="0.25"/>
-          <stop offset="100%" stop-color="var(--os-accent)" stop-opacity="0"/>
-        </linearGradient>
-      </defs>
-      <path d="${area}" fill="url(#areaGrad)"/>
-      <path d="${line}" fill="none" stroke="var(--os-accent)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
-    </svg>`;
-
-  if (lab && labels) {
-    lab.innerHTML = labels.map((l, i) =>
-      `<span class="${i === n - 1 ? 'is-today' : ''}">${l}</span>`).join('');
-  }
-}
-
 // ── Order status breakdown ─────────────────────
 function renderOrderStatus(orders) {
   const el = document.getElementById('order-status');
@@ -472,6 +435,102 @@ function renderFollowers(followers) {
       </div>
     `;
   }).join('');
+}
+
+// ── Store state: empty (both products & orders) vs rich dashboard ──
+function renderStoreState(data) {
+  const rich = document.getElementById('dash-rich');
+  const empty = document.getElementById('empty-store');
+  if (!rich || !empty) return;
+
+  const stats = data.stats || {};
+  const products = stats.products || 0;
+  const orders = stats.orders || 0;
+  const isEmpty = products === 0 && orders === 0;
+
+  empty.hidden = !isEmpty;
+  rich.hidden = isEmpty;
+}
+
+// ── Arrival: greeting + live mood line ────────
+function renderGreeting(data) {
+  const user = getCurrentUser();
+  const firstName = user && user.firstName ? user.firstName : '';
+  const hour = new Date().getHours();
+  const part = hour < 12 ? 'morning' : hour < 17 ? 'afternoon' : 'evening';
+
+  const titleEl = document.getElementById('dash-title');
+  const moodEl = document.getElementById('dash-mood');
+  if (titleEl) titleEl.textContent = `Good ${part}${firstName ? `, ${firstName}` : ''} 👋`;
+  if (!moodEl) return;
+
+  const stats = data.stats || {};
+  const orders = data.recentOrders || [];
+  const pending = stats.pending || 0;
+  const lowStock = stats.lowStock || 0;
+  const totalOrders = stats.orders || 0;
+  const revenue = stats.revenue || 0;
+  const products = stats.products || 0;
+
+  let mood, moodColor = 'var(--os-text-3)';
+
+  if (products === 0) {
+    mood = "Your store is a blank canvas — add your first product to open for business.";
+  } else if (pending > 0) {
+    mood = `You've got ${pending} order${pending === 1 ? '' : 's'} waiting on you. Let's keep buyers happy.`;
+    moodColor = '#f59e0b';
+  } else if (lowStock > 0) {
+    mood = `${lowStock} product${lowStock === 1 ? ' is' : 's are'} low on stock — restock soon to avoid missed sales.`;
+    moodColor = '#f59e0b';
+  } else if (totalOrders === 0) {
+    mood = "Store's looking good. A calm moment — a great time to add more products.";
+  } else if (revenue > 0) {
+    const fmt = `GH₵ ${revenue.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+    mood = `You've earned ${fmt} so far — nice momentum. Here's how things stand.`;
+    moodColor = 'var(--os-success)';
+  } else {
+    mood = "Welcome back. Here's how your business is performing.";
+  }
+
+  moodEl.textContent = mood;
+  moodEl.style.color = moodColor;
+}
+
+// ── Progress: weekly-win summary (established sellers) ──
+function renderWeekWin(data) {
+  const titleEl = document.getElementById('weekwin-title');
+  const textEl = document.getElementById('weekwin-text');
+  if (!textEl) return;
+
+  const stats = data.stats || {};
+  const orders = data.recentOrders || [];
+  const totalOrders = stats.orders || 0;
+  const revenue = stats.revenue || 0;
+  const followers = Array.isArray(data.followers) ? data.followers.length : 0;
+  const topProducts = data.topProducts || [];
+
+  let title = 'This week';
+  let text;
+
+  if (totalOrders === 0 && revenue === 0) {
+    title = 'Your store is live';
+    text = "Now the exciting part — share it and watch the first orders roll in.";
+  } else if (revenue > 0) {
+    const fmt = `GH₵ ${revenue.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+    text = `You've earned ${fmt} across ${totalOrders} order${totalOrders === 1 ? '' : 's'} so far. Keep the momentum going.`;
+  } else {
+    text = `${totalOrders} order${totalOrders === 1 ? '' : 's'} in — your store is finding its rhythm.`;
+  }
+
+  if (topProducts.length) {
+    text += ` ${topProducts[0].name} is your top seller.`;
+  }
+  if (followers > 0) {
+    text += ` ${followers} follower${followers === 1 ? '' : 's'} are watching your store.`;
+  }
+
+  if (titleEl) titleEl.textContent = title;
+  textEl.textContent = text;
 }
 
 // ── Loading and error states ──────────────────
@@ -682,18 +741,24 @@ history.replaceState = function () {
     setTimeout(startDashboardLiveSync, 0);
 };
 
-// ── Post-registration welcome toast ────────────
+// ── Post-registration welcome banner (top, auto-dismiss) ──
 function maybeShowWelcome() {
   if (localStorage.getItem('umx_show_welcome') !== '1') return;
   localStorage.removeItem('umx_show_welcome');
 
-  const toast = document.getElementById('welcome-toast');
-  if (!toast) return;
+  const banner = document.getElementById('welcome-banner');
+  if (!banner) return;
 
-  const close = () => { toast.style.display = 'none'; };
-  const closeBtn = document.getElementById('welcome-toast-close');
+  const close = () => {
+    banner.classList.remove('is-visible');
+    setTimeout(() => { banner.hidden = true; }, 350);
+  };
+  const closeBtn = document.getElementById('welcome-banner-close');
   if (closeBtn) closeBtn.addEventListener('click', close);
-  toast.style.display = 'flex';
+
+  banner.hidden = false;
+  requestAnimationFrame(() => banner.classList.add('is-visible'));
+  if (window.lucide) lucide.createIcons();
 
   setTimeout(close, 8000);
 }

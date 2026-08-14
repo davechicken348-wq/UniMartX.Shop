@@ -234,6 +234,10 @@ button { font-family: var(--os-font); }
 .empty-state-icon svg { width: 24px; height: 24px; stroke: currentColor; }
 .empty-state h3 { font-size: var(--os-text-md); font-weight: 700; color: var(--os-text-2); }
 .empty-state p  { font-size: var(--os-text-sm); color: var(--os-text-3); max-width: 320px; line-height: 1.6; }
+.empty-state-illustration {
+    width: 160px; max-width: 60%; height: auto; margin-bottom: var(--os-space-2);
+    filter: drop-shadow(0 8px 20px rgba(0,0,0,0.06));
+}
 
 /* ── Shimmer ── */
 .shimmer {

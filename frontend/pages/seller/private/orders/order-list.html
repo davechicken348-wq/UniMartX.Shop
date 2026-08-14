@@ -120,15 +120,16 @@
             </div>
 
             <!-- Empty states -->
-            <div class="empty-state hidden" id="no-results">
-                <div class="empty-state-icon"><i data-lucide="search-x"></i></div>
-                <h3>No orders found</h3>
-                <p>Try a different filter or search term.</p>
+            <div class="empty-state empty-state--compact hidden" id="no-results">
+                <h3>No orders match your filters</h3>
+                <p>Try a different filter or search term — or clear them to see everything.</p>
+                <button class="os-btn os-btn-ghost os-btn-sm" id="no-results-clear" type="button">Clear filters</button>
             </div>
-            <div class="empty-state hidden" id="no-orders">
-                <div class="empty-state-icon"><i data-lucide="shopping-bag"></i></div>
-                <h3>No orders yet</h3>
-                <p>Orders will appear here when customers place them.</p>
+            <div class="empty-state empty-state--welcome" id="no-orders">
+                <img class="empty-state-illustration" src="../assets/images/Illustrations/Empty-Order-1--Streamline-Lagos.png" alt="">
+                <h3>Your store is open for business</h3>
+                <p>Orders will land right here the moment a customer checks out. You're all set — here's what's next.</p>
+                <a href="../products/add-product.html" class="os-btn os-btn-accent os-btn-sm">Get your first sale</a>
             </div>
 
             <!-- Orders table -->

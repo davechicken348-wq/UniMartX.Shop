@@ -539,3 +539,18 @@
         display: none;
     }
 }
+
+/* ── Product empty states (emotional rework) ── */
+/* Search/filter empty — calm, text-only, no illustration */
+.empty-state--compact h3 { color: var(--os-text-2); }
+.empty-state--compact .os-btn { margin-top: var(--os-space-2); }
+
+/* Truly-empty catalogue — energised launchpad with illustration + CTA */
+.empty-state--welcome .empty-state-illustration {
+    width: 180px; max-width: 60%; height: auto;
+    margin-bottom: var(--os-space-2);
+    filter: drop-shadow(0 10px 24px rgba(0,0,0,0.07));
+}
+.empty-state--welcome h3 { font-size: var(--os-text-lg); color: var(--os-text); }
+.empty-state--welcome p { color: var(--os-text-2); max-width: 360px; line-height: 1.6; }
+.empty-state--welcome .os-btn { margin-top: var(--os-space-2); }

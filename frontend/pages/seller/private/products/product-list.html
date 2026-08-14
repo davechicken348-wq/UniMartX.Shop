@@ -109,11 +109,11 @@
                 <button class="bulk-clear" id="bulk-clear">Clear</button>
             </div>
 
-            <!-- ── Empty state ── -->
-            <div class="empty-state hidden" id="no-results">
-                <div class="empty-state-icon"><i data-lucide="search-x"></i></div>
-                <h3>No products found</h3>
-                <p>Try a different search or filter.</p>
+            <!-- ── Empty state (search/filter empty — text only) ── -->
+            <div class="empty-state empty-state--compact hidden" id="no-results">
+                <h3>No products match your filters</h3>
+                <p>Try a different search or filter — or clear them to see everything.</p>
+                <button class="os-btn os-btn-ghost os-btn-sm" id="no-results-clear" type="button">Clear filters</button>
             </div>
 
             <!-- ── Products grid / table ── -->

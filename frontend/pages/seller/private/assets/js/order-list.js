@@ -585,6 +585,17 @@
         searchDesktop?.addEventListener('input', (e) => { handleSearch(e.target.value); if (searchMobile) searchMobile.value = e.target.value; });
         searchMobile?.addEventListener('input', (e) => { handleSearch(e.target.value); if (searchDesktop) searchDesktop.value = e.target.value; });
 
+        // Clear filters (from the search-empty empty state)
+        document.getElementById('no-results-clear')?.addEventListener('click', () => {
+            currentFilter = 'all'; currentSearch = '';
+            currentPage = 1; clearSelection(); _lastOrderSnapshot = null;
+            document.querySelectorAll('.filter-tab').forEach(t => t.classList.toggle('active', t.dataset.filter === 'all'));
+            if (searchDesktop) searchDesktop.value = '';
+            if (searchMobile) searchMobile.value = '';
+            fetchOrders(currentPage, currentFilter, currentSearch);
+        });
+
+
         // List interactions (row click → drawer; actions; selection)
         listEl?.addEventListener('click', (e) => {
             const row = e.target.closest('.order-row');

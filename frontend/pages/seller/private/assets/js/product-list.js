@@ -171,11 +171,24 @@ function renderAll() {
   const list = getVisibleList();
   productsWrap.className = `products-wrap ${currentView === 'grid' ? 'grid-view' : 'list-view'}${selectMode ? ' select-mode' : ''}`;
   if (list.length === 0) {
-    productsWrap.innerHTML = `
-      <div class="empty-state" style="grid-column:1/-1;text-align:center;padding:3rem 1rem;">
-        <i data-lucide="package" style="width:48px;height:48px;margin:0 auto 1rem;display:block;opacity:.3;"></i>
-        <p style="color:var(--text-3);font-family:Quicksand,sans-serif;">No products match your filter.</p>
-      </div>`;
+    if (allProducts.length === 0) {
+      // Truly empty catalogue — energised launchpad
+      productsWrap.innerHTML = `
+        <div class="empty-state empty-state--welcome" style="grid-column:1/-1;text-align:center;padding:3rem 1rem;">
+          <img class="empty-state-illustration" src="../assets/images/Illustrations/No-Product-1--Streamline-Lagos.png" alt="">
+          <h3>Your catalogue is empty</h3>
+          <p>Add your first product to open your store and start selling. You can draft more or import later.</p>
+          <a href="../products/add-product.html" class="os-btn os-btn-accent os-btn-sm">Add your first product</a>
+        </div>`;
+    } else {
+      // Filter/search returned nothing — calm, text-only
+      productsWrap.innerHTML = `
+        <div class="empty-state empty-state--compact" style="grid-column:1/-1;text-align:center;padding:3rem 1rem;">
+          <h3>No products match your filters</h3>
+          <p>Try a different search or filter — or clear them to see everything.</p>
+          <button class="os-btn os-btn-ghost os-btn-sm" id="no-results-clear" type="button">Clear filters</button>
+        </div>`;
+    }
     if (window.lucide) lucide.createIcons();
   } else if (currentView === 'grid') {
     renderGrid(list);
@@ -470,6 +483,18 @@ function viewDetail(id) {
 
 // ── Event wiring (delegated) ──────────────────────────────────────────────────
 filterTabs.forEach(tab => tab.addEventListener('click', () => applyFilter(tab.dataset.filter)));
+
+// Clear filters (from search-empty empty state)
+function clearProductFilters() {
+  activeFilter = 'all';
+  searchQuery = '';
+  if (searchInput) searchInput.value = '';
+  filterTabs.forEach(t => t.classList.toggle('active', t.dataset.filter === 'all'));
+  renderAll();
+}
+productsWrap?.addEventListener('click', e => {
+  if (e.target.closest('#no-results-clear')) { e.preventDefault(); clearProductFilters(); }
+});
 
 if (searchInput) searchInput.addEventListener('input', () => {
   searchQuery = searchInput.value;
