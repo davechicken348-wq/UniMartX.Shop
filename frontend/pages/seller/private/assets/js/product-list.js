@@ -7,6 +7,14 @@ var API_BASE = (window.APP_CONFIG && window.APP_CONFIG.BACKEND_URL) || 'http://l
 var TOKEN_KEY = 'authToken';
 const LOW_STOCK_THRESHOLD = 5;
 
+// Resolve a relative asset path (e.g. ../assets/...) against the real page URL.
+// The shell rewrites the address bar via pushState, so a bare relative path
+// would otherwise resolve against the virtual SPA path and 404.
+function resolveAssetUrl(rel) {
+  try { return new URL(rel, window.__umxPageBase || window.location.href).href; }
+  catch (e) { return rel; }
+}
+
 // ── State ──────────────────────────────────────────────────────────────────────
 let allProducts = [];
 let activeFilter = 'all';
@@ -173,9 +181,10 @@ function renderAll() {
   if (list.length === 0) {
     if (allProducts.length === 0) {
       // Truly empty catalogue — energised launchpad
+      const noProductImg = resolveAssetUrl('../assets/images/Illustrations/No-Product-1--Streamline-Lagos.png');
       productsWrap.innerHTML = `
         <div class="empty-state empty-state--welcome" style="grid-column:1/-1;text-align:center;padding:3rem 1rem;">
-          <img class="empty-state-illustration" src="../assets/images/Illustrations/No-Product-1--Streamline-Lagos.png" alt="">
+          <img class="empty-state-illustration" src="${noProductImg}" alt="">
           <h3>Your catalogue is empty</h3>
           <p>Add your first product to open your store and start selling. You can draft more or import later.</p>
           <a href="../products/add-product.html" class="os-btn os-btn-accent os-btn-sm">Add your first product</a>

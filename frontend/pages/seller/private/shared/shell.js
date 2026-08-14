@@ -358,6 +358,20 @@
     });
   }
 
+  /* Resolve relative asset URLs inside swapped <main> against the fetched page
+     URL. The SPA rewrites the address bar via pushState, so a plain `../assets`
+     would otherwise resolve against the virtual path and 404 (e.g. illustrations
+     going missing after in-app navigation). */
+  function rewriteMainAssetUrls(root, baseUrl) {
+    root.querySelectorAll('img[src], source[srcset], [data-bg]').forEach(function (el) {
+      const attr = el.hasAttribute('srcset') ? 'srcset' : 'src';
+      const raw = el.getAttribute(attr);
+      if (!raw) return;
+      if (/^(https?:)?\/\//i.test(raw) || raw.startsWith('data:') || raw.startsWith('blob:')) return;
+      try { el.setAttribute(attr, new URL(raw, baseUrl).href); } catch (e) {}
+    });
+  }
+
   /* ── In-app navigation: swap only <main>, keep shell mounted ── */
   async function navigateTo(href) {
     const url = new URL(href, window.location.href);
@@ -384,11 +398,18 @@
       }
 
       main.innerHTML = newMain.innerHTML;
+      // Resolve relative asset URLs (images, etc.) inside the swapped <main>
+      // against the *fetched* page URL, not the pushState'd SPA path — otherwise
+      // `../assets/...` breaks once the address bar loses the real file directory.
+      rewriteMainAssetUrls(main, url.href);
       if (doc.title) document.title = doc.title;
       restoreVisualState();
       if (window.lucide && window.lucide.createIcons) window.lucide.createIcons();
 
       window.history.pushState({ path: url.pathname }, '', url.pathname + url.search);
+      // Real page URL (with file directory) so page scripts can resolve
+      // `../assets/...` correctly regardless of the pushState'd address bar.
+      window.__umxPageBase = url.href;
       window.scrollTo(0, 0);
 
       window.dispatchEvent(new CustomEvent('shell:navigated', { detail: { path: url.pathname } }));
@@ -624,6 +645,8 @@
   }
 
   /* ── Boot ───────────────────────────────────────────────────── */
+  // Real page URL on first load (file is at its true path before any pushState).
+  window.__umxPageBase = window.location.href;
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', mountShell);
   } else {
