@@ -1,0 +1,44 @@
+.marketplace-sidebar{position:sticky;top:78px;height:calc(100vh - 78px);min-width:0;display:flex;flex-direction:column;gap:9px;overflow:auto;padding:34px 19px 22px 27px;border-right:1px solid #e5e8df;background:#fbfbf8;color:#606b60}
+.market-workspace,.buyer-account-layout,.buyer-collection-layout{grid-template-columns:248px minmax(0,1fr)}
+.marketplace-sidebar-heading{display:grid;gap:6px;margin:0 0 13px 10px}
+.marketplace-sidebar-heading>b{color:#59675a;font-size:10px;font-weight:850;letter-spacing:.14em}
+.marketplace-sidebar-heading>small{color:#7b847a;font-size:12px;line-height:1.4}
+.marketplace-sidebar-section{display:grid;gap:5px;flex:none}
+.marketplace-sidebar-section+.marketplace-sidebar-section{margin-top:14px}
+.marketplace-sidebar-label{margin:0 0 7px 10px;color:#9ba197;font-size:10px;font-weight:800;letter-spacing:.13em}
+.marketplace-sidebar-section nav{display:grid;gap:6px}
+.marketplace-sidebar-link{width:100%;min-height:48px;display:flex;align-items:center;gap:13px;padding:0 12px;border:0;border-radius:7px;background:transparent;color:#586458;text-align:left;text-decoration:none;font:inherit;font-size:14px;font-weight:650;cursor:pointer;transition:background .18s,color .18s,transform .18s}
+.marketplace-sidebar-link:hover{transform:translateX(2px);background:#f1f3ec;color:#26392e}
+.marketplace-sidebar-link.is-active{background:#eaf0e3;color:#31573f}
+.marketplace-sidebar-icon{width:24px;height:24px;display:grid;flex:none;place-items:center;color:#667d60}
+.marketplace-sidebar-icon>svg{width:19px;height:19px}
+.marketplace-sidebar-avatar{width:24px;height:24px;display:block;border:1px solid #fff;border-radius:50%;object-fit:cover}
+.marketplace-sidebar-link:hover .marketplace-sidebar-icon,.marketplace-sidebar-link.is-active .marketplace-sidebar-icon{color:currentColor}
+.marketplace-sidebar-item-label{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.marketplace-sidebar-badge{min-width:21px;height:21px;display:grid;place-items:center;margin-left:auto;padding:0 6px;border-radius:99px;background:#d5ef9b;color:#263629;font-size:11px;font-weight:850;line-height:1}
+.marketplace-sidebar-badge+.marketplace-sidebar-trailing{margin-left:0}
+.marketplace-sidebar-trailing{margin-left:auto;color:#8ca184;font-size:12px;opacity:0;transition:opacity .18s}
+.marketplace-sidebar-link:hover .marketplace-sidebar-trailing,.marketplace-sidebar-link.is-active .marketplace-sidebar-trailing{opacity:1}
+.marketplace-sidebar-icon.market-category-dot{width:24px;height:24px;border-radius:7px;background:#eff0e8;color:#71856a;font-size:13px}
+.marketplace-sidebar-icon.market-dot-1{background:#f8eee4;color:#b87950}
+.marketplace-sidebar-icon.market-dot-2{background:#edf1e6;color:#718765}
+.marketplace-sidebar-icon.market-dot-3{background:#f1ebf2;color:#96779d}
+.marketplace-sidebar-icon.market-dot-4{background:#e9f1f0;color:#538a80}
+.marketplace-sidebar-note{display:grid;gap:10px;margin-top:auto;padding:19px 16px;border:1px solid #e1e7da;border-radius:9px;background:linear-gradient(145deg,#f1f5eb,#faf9f1)}
+.marketplace-sidebar-note-icon{width:31px;height:31px;display:grid;place-items:center;border-radius:9px;background:#e2edcf;color:#557450}
+.marketplace-sidebar-note-icon>svg{width:19px;height:19px}
+.marketplace-sidebar-note>b{color:#384639;font-size:14px}
+.marketplace-sidebar-note>p{margin:0;color:#788176;font-size:12px;line-height:1.6}
+.marketplace-sidebar-note>a{display:flex;align-items:center;gap:8px;margin-top:2px;color:#31573f;font-size:12px;font-weight:800;text-decoration:none}
+.marketplace-sidebar-note>a>svg{width:15px;height:15px}
+.marketplace-sidebar-footer{display:flex;justify-content:space-between;gap:9px;margin:16px 3px 0;color:#9ba197;font-size:10px}
+.marketplace-sidebar.is-settings{background:#f8f9fc;border-color:#e3e7ee}
+.marketplace-sidebar.is-settings .marketplace-sidebar-heading>b,.marketplace-sidebar.is-settings .marketplace-sidebar-label{color:#9098a7}
+.marketplace-sidebar.is-settings .marketplace-sidebar-link{color:#505b6b}
+.marketplace-sidebar.is-settings .marketplace-sidebar-link:hover,.marketplace-sidebar.is-settings .marketplace-sidebar-link.is-active{background:#edf2ff;color:#315fc8}
+.marketplace-sidebar.is-settings .marketplace-sidebar-icon{color:currentColor}
+.marketplace-sidebar.is-settings .marketplace-sidebar-note{border-color:#e4e8f0;background:#fff}
+@media(max-width:1200px) and (min-width:761px){.market-workspace,.buyer-account-layout,.buyer-collection-layout{grid-template-columns:220px minmax(0,1fr)}}
+@media(max-width:1200px) and (min-width:761px){.marketplace-sidebar{padding-right:14px;padding-left:19px}}
+@media(max-width:760px){.marketplace-sidebar--drawer{position:fixed;z-index:30;top:64px;bottom:0;left:0;width:min(300px,85vw);height:auto;padding:24px 18px 16px;border-right:1px solid #e5e8df;box-shadow:8px 0 26px #14231810;transform:translateX(-105%);transition:transform .25s ease}.marketplace-sidebar--drawer.is-open{transform:translateX(0)}.marketplace-sidebar--bar{position:static;width:auto;height:auto;display:flex;flex-direction:row;align-items:center;gap:10px;overflow-x:auto;overflow-y:hidden;padding:11px 15px;border-right:0;border-bottom:1px solid #e5e8df}.marketplace-sidebar--bar .marketplace-sidebar-heading,.marketplace-sidebar--bar .marketplace-sidebar-label,.marketplace-sidebar--bar .marketplace-sidebar-note,.marketplace-sidebar--bar .marketplace-sidebar-footer{display:none}.marketplace-sidebar--bar .marketplace-sidebar-section,.marketplace-sidebar--bar .marketplace-sidebar-section+.marketplace-sidebar-section{display:contents;margin:0}.marketplace-sidebar--bar .marketplace-sidebar-section nav{display:contents}.marketplace-sidebar--bar .marketplace-sidebar-link{width:auto;min-height:45px;flex:none;gap:9px;padding:0 13px;border:1px solid #e3e8df;border-radius:7px;background:#fff;font-size:13px;transform:none}.marketplace-sidebar--bar .marketplace-sidebar-link.is-active{border-color:#d5e2cc;background:#edf3e6}.marketplace-sidebar--bar .marketplace-sidebar-icon{width:20px;height:20px}.marketplace-sidebar--bar .marketplace-sidebar-icon>svg{width:17px;height:17px}.marketplace-sidebar--bar .marketplace-sidebar-trailing{display:none}}
+@media(prefers-reduced-motion:reduce){.marketplace-sidebar *{transition-duration:.01ms!important}}

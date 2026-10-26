@@ -97,8 +97,7 @@ export const redirectVerification = async (req: Request, res: Response): Promise
     });
 
     if (!verificationToken) {
-      // Token not found — redirect with error in fragment
-      const errorUrl = `${getVerificationBaseUrl()}/pages/auth/verify-email.html#error=invalid`;
+      const errorUrl = `${getVerificationBaseUrl()}/auth/verify#error=invalid`;
       console.warn(`[redirectVerification] Invalid token attempted: ${token.substring(0, 8)}...`);
       res.redirect(302, errorUrl);
       return;
@@ -106,7 +105,7 @@ export const redirectVerification = async (req: Request, res: Response): Promise
 
     // Check if token is expired
     if (verificationToken.expiresAt < new Date()) {
-      const errorUrl = `${getVerificationBaseUrl()}/pages/auth/verify-email.html#error=expired`;
+      const errorUrl = `${getVerificationBaseUrl()}/auth/verify#error=expired`;
       console.warn(`[redirectVerification] Expired token: ${token.substring(0, 8)}...`);
       res.redirect(302, errorUrl);
       return;
@@ -114,24 +113,22 @@ export const redirectVerification = async (req: Request, res: Response): Promise
 
     // Check if user is already verified
     if (verificationToken.user.emailVerified) {
-      const errorUrl = `${getVerificationBaseUrl()}/pages/auth/verify-email.html#error=already_verified`;
+      const errorUrl = `${getVerificationBaseUrl()}/auth/verify#error=already_verified`;
       res.redirect(302, errorUrl);
       return;
     }
 
-    // Token is valid — redirect to the verification HTML page with token+email in the fragment
-    // The fragment (#) portion of the URL is never sent to the server in requests,
-    // so it will survive Gmail's link-rewriting proxy intact.
+    // Token is valid — redirect to the verification page with token+email in the fragment
     const encodedToken = encodeURIComponent(verificationToken.token);
     const encodedEmail = encodeURIComponent(verificationToken.user.email);
-    const fragmentUrl = `${getVerificationBaseUrl()}/pages/auth/verify-email.html#token=${encodedToken}&email=${encodedEmail}`;
+    const fragmentUrl = `${getVerificationBaseUrl()}/auth/verify#token=${encodedToken}&email=${encodedEmail}`;
 
     console.log(`[redirectVerification] Redirecting user to fragment URL for token: ${token.substring(0, 8)}...`);
     res.redirect(302, fragmentUrl);
 
   } catch (error) {
     console.error('[redirectVerification] Error:', error);
-    const errorUrl = `${getVerificationBaseUrl()}/pages/auth/verify-email.html#error=server_error`;
+    const errorUrl = `${getVerificationBaseUrl()}/auth/verify#error=server_error`;
     res.redirect(302, errorUrl);
   }
 };

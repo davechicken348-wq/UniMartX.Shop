@@ -30,6 +30,7 @@ function absUrl(path: string | null | undefined): string | null {
  */
 export const getSellerProfile = async (req: Request, res: Response): Promise<void> => {
   try {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
     const userPayload = authenticate(req);
     if (!userPayload) {
       throw new AppError('Authentication required', 401);
@@ -76,18 +77,21 @@ export const getSellerProfile = async (req: Request, res: Response): Promise<voi
         businessHours: user.seller.businessHours || '',
         deliveryOptions: user.seller.deliveryOptions || '',
         studentEmail: user.seller.sellerVerification?.studentEmail || '',
-         // Branding
-          storeBanner: absUrl(user.seller.storeBanner || ''),
-          storeAvatar: absUrl(user.seller.storeAvatar || ''),
-          storeColor: user.seller.storeColor || '',
-          deliveryFee: user.seller.deliveryFee !== null && user.seller.deliveryFee !== undefined ? parseFloat(user.seller.deliveryFee.toString()) : null,
-          returnPolicy: user.seller.returnPolicy || '',
-          shippingPolicy: user.seller.shippingPolicy || '',
-          refundPolicy: user.seller.refundPolicy || '',
-          exchangePolicy: user.seller.exchangePolicy || '',
-          cancellationPolicy: user.seller.cancellationPolicy || '',
-          processingTime: user.seller.processingTime || '',
-        };
+        // Branding
+         storeBanner: absUrl(user.seller.storeBanner || ''),
+         storeAvatar: absUrl(user.seller.storeAvatar || ''),
+         storeColor: user.seller.storeColor || '',
+         deliveryFee: user.seller.deliveryFee !== null && user.seller.deliveryFee !== undefined ? parseFloat(user.seller.deliveryFee.toString()) : null,
+         returnPolicy: user.seller.returnPolicy || '',
+         shippingPolicy: user.seller.shippingPolicy || '',
+         refundPolicy: user.seller.refundPolicy || '',
+         exchangePolicy: user.seller.exchangePolicy || '',
+         cancellationPolicy: user.seller.cancellationPolicy || '',
+         processingTime: user.seller.processingTime || '',
+         slug: user.seller.slug || '',
+         isActive: user.seller.isActive,
+         verificationStatus: user.seller.sellerVerification?.status || 'pending',
+       };
 
     res.status(200).json({ success: true, data: profileData });
   } catch (error) {
@@ -136,7 +140,44 @@ export const updateSellerProfile = async (req: Request, res: Response): Promise<
     if (input.website !== undefined) userUpdate.website = input.website ? input.website.trim() : null;
 
      // Map to Seller columns
-     if (input.storeName !== undefined) sellerUpdate.storeName = input.storeName.trim();
+     if (input.storeName !== undefined) {
+       sellerUpdate.storeName = input.storeName.trim();
+     }
+     if (input.storeDescription !== undefined) sellerUpdate.storeDescription = input.storeDescription ? input.storeDescription.trim() : null;
+     if (input.category !== undefined) sellerUpdate.category = input.category;
+      if (input.country !== undefined) sellerUpdate.country = input.country ? input.country.trim() : null;
+      if (input.city !== undefined) sellerUpdate.city = input.city ? input.city.trim() : null;
+      if (input.pickupAddress !== undefined) sellerUpdate.pickupAddress = input.pickupAddress ? input.pickupAddress.trim() : null;
+      if (input.storeTagline !== undefined) sellerUpdate.storeTagline = input.storeTagline ? input.storeTagline.trim() : null;
+      if (input.universityAffiliation !== undefined) sellerUpdate.universityAffiliation = input.universityAffiliation ? input.universityAffiliation.trim() : null;
+      if (input.campus !== undefined) sellerUpdate.campus = input.campus ? input.campus.trim() : null;
+      if (input.businessHours !== undefined) sellerUpdate.businessHours = input.businessHours ? input.businessHours.trim() : null;
+      if (input.deliveryOptions !== undefined) sellerUpdate.deliveryOptions = input.deliveryOptions ? input.deliveryOptions.trim() : null;
+
+      if (input.slug !== undefined || input.storeName !== undefined) {
+        const currentSeller = await prisma.seller.findUnique({ where: { userId: userPayload.userId }, select: { id: true, slug: true } });
+        if (!currentSeller) throw new AppError('Seller not found', 404);
+
+        let slug: string | undefined = input.slug?.trim();
+        if (slug) {
+          slug = slug.toLowerCase().replace(/[^\w\s-]/g, '').replace(/[\s_]+/g, '-').replace(/^-+|-+$/g, '');
+          if (!slug) slug = currentSeller.slug || 'store';
+        } else if (input.storeName !== undefined) {
+          const baseSlug = input.storeName.trim().toLowerCase().replace(/[^\w\s-]/g, '').replace(/[\s_]+/g, '-').replace(/^-+|-+$/g, '');
+          slug = baseSlug || 'store';
+        } else {
+          slug = currentSeller.slug || undefined;
+        }
+
+        if (slug) {
+          let uniqueSlug = slug;
+          let suffix = 1;
+          while (await prisma.seller.findFirst({ where: { slug: uniqueSlug, id: { not: currentSeller.id } } })) {
+            uniqueSlug = `${slug}-${suffix++}`;
+          }
+          sellerUpdate.slug = uniqueSlug;
+        }
+      }
      if (input.storeDescription !== undefined) sellerUpdate.storeDescription = input.storeDescription ? input.storeDescription.trim() : null;
      if (input.category !== undefined) sellerUpdate.category = input.category;
       if (input.country !== undefined) sellerUpdate.country = input.country ? input.country.trim() : null;
@@ -209,40 +250,44 @@ export const updateSellerProfile = async (req: Request, res: Response): Promise<
       return user;
     });
 
-    const { seller } = updatedUser;
+    // The transaction's included seller relation was loaded before sellerUpdate
+    // ran, so it can contain stale branding URLs. Read the saved seller record
+    // before building the response consumed by the builder and storefront.
+    const seller = await prisma.seller.findUnique({ where: { userId: userPayload.userId } });
 
-     res.status(200).json({
-       success: true,
-       data: {
-         firstName: updatedUser.firstName,
-         lastName: updatedUser.lastName,
-         email: updatedUser.email,
-         phone: updatedUser.phone || '',
-          avatar: absUrl(updatedUser.avatar || ''),
-         bio: updatedUser.bio || '',
-         location: updatedUser.location || '',
-         whatsapp: updatedUser.whatsapp || '',
-         instagram: updatedUser.instagram || '',
-         twitter: updatedUser.twitter || '',
-         tiktok: updatedUser.tiktok || '',
-         website: updatedUser.website || '',
-         sellerId: seller?.id || '',
-         storeName: seller?.storeName || '',
-         storeDescription: seller?.storeDescription || '',
-         category: seller?.category || '',
-         country: seller?.country || '',
-         city: seller?.city || '',
-         pickupAddress: seller?.pickupAddress || '',
-         // Branding fields
-          storeBanner: absUrl(seller?.storeBanner || ''),
-          storeAvatar: absUrl(seller?.storeAvatar || ''),
-          storeColor: seller?.storeColor || '',
-          returnPolicy: seller?.returnPolicy || '',
-          shippingPolicy: seller?.shippingPolicy || '',
-          refundPolicy: seller?.refundPolicy || '',
-          exchangePolicy: seller?.exchangePolicy || '',
-          cancellationPolicy: seller?.cancellationPolicy || '',
-          processingTime: seller?.processingTime || '',
+      res.status(200).json({
+        success: true,
+        data: {
+          firstName: updatedUser.firstName,
+          lastName: updatedUser.lastName,
+          email: updatedUser.email,
+          phone: updatedUser.phone || '',
+           avatar: absUrl(updatedUser.avatar || ''),
+          bio: updatedUser.bio || '',
+          location: updatedUser.location || '',
+          whatsapp: updatedUser.whatsapp || '',
+          instagram: updatedUser.instagram || '',
+          twitter: updatedUser.twitter || '',
+          tiktok: updatedUser.tiktok || '',
+          website: updatedUser.website || '',
+          sellerId: seller?.id || '',
+          storeName: seller?.storeName || '',
+          storeDescription: seller?.storeDescription || '',
+          category: seller?.category || '',
+          country: seller?.country || '',
+          city: seller?.city || '',
+          pickupAddress: seller?.pickupAddress || '',
+          // Branding fields
+           storeBanner: absUrl(seller?.storeBanner || ''),
+           storeAvatar: absUrl(seller?.storeAvatar || ''),
+           storeColor: seller?.storeColor || '',
+           returnPolicy: seller?.returnPolicy || '',
+           shippingPolicy: seller?.shippingPolicy || '',
+           refundPolicy: seller?.refundPolicy || '',
+           exchangePolicy: seller?.exchangePolicy || '',
+           cancellationPolicy: seller?.cancellationPolicy || '',
+           processingTime: seller?.processingTime || '',
+           slug: seller?.slug || '',
         },
       });
   } catch (error) {

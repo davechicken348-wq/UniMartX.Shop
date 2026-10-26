@@ -15,6 +15,7 @@ CREATE TABLE "users" (
     "lastName" TEXT NOT NULL,
     "phone" TEXT,
     "avatar" TEXT,
+    "profileBanner" TEXT,
     "emailVerified" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -223,14 +224,37 @@ CREATE TABLE "addresses" (
     "zipCode" TEXT NOT NULL,
     "country" TEXT NOT NULL,
     "isDefault" BOOLEAN NOT NULL DEFAULT false,
-    "createdAt" TIMestamp(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "addresses_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable store_configurations
+CREATE TABLE "store_configurations" (
+    "id" TEXT NOT NULL DEFAULT gen_random_uuid()::text,
+    "sellerId" TEXT NOT NULL,
+    "draft" JSONB NOT NULL,
+    "published" JSONB,
+    "publishedAt" TIMESTAMP(3),
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "store_configurations_pkey" PRIMARY KEY ("id")
+);
+
+-- Create unique index on store_configurations.sellerId
+CREATE UNIQUE INDEX "store_configurations_sellerId_key" ON "store_configurations"("sellerId");
+
+-- Create index on sellers.slug for storefront URL lookups
+CREATE INDEX "sellers_slug_idx" ON "sellers"("slug");
+
+-- Create composite index on order_items for common join patterns
+CREATE INDEX "order_items_orderId_productId_idx" ON "order_items"("orderId", "productId");
+
 -- Add foreign keys
 ALTER TABLE "buyers" ADD CONSTRAINT "buyers_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "store_configurations" ADD CONSTRAINT "store_configurations_sellerId_fkey" FOREIGN KEY ("sellerId") REFERENCES "sellers"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE "sellers" ADD CONSTRAINT "sellers_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE "seller_verifications" ADD CONSTRAINT "seller_verifications_sellerId_fkey" FOREIGN KEY ("sellerId") REFERENCES "sellers"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE "products" ADD CONSTRAINT "products_sellerId_fkey" FOREIGN KEY ("sellerId") REFERENCES "sellers"("id") ON DELETE CASCADE ON UPDATE CASCADE;

@@ -15,6 +15,7 @@ import {
   getSellerBySlug,
   getSellerReviews,
   submitSellerReview,
+  getPublicStoreConfig,
 } from '../controllers/public-seller.controller';
 
 const router = Router();
@@ -68,16 +69,24 @@ router.get('/stores', asyncHandler(getPublicStores));
  * @desc    Public seller profile — profile, stats, products, reviews
  * @access  Public (no auth required)
  */
+/**
+ * @route   GET /api/public/seller/by-slug/:slug
+ * @desc    Resolve a seller slug to their sellerId
+ * @access  Public (no auth required)
+ * IMPORTANT: must be registered before /seller/:sellerId to avoid wildcard capture
+ */
+router.get('/seller/by-slug/:slug', asyncHandler(getSellerBySlug));
+
 router.get('/seller/:sellerId', asyncHandler(getPublicSellerProfile));
 router.get('/seller/:sellerId/reviews', asyncHandler(getSellerReviews));
 router.post('/seller/:sellerId/reviews', asyncHandler(submitSellerReview));
 
 /**
- * @route   GET /api/public/seller/by-slug/:slug
- * @desc    Resolve a seller slug to their sellerId
+ * @route   GET /api/public/store-config/:sellerId
+ * @desc    Get published store configuration for public storefront
  * @access  Public (no auth required)
  */
-router.get('/seller/by-slug/:slug', asyncHandler(getSellerBySlug));
+router.get('/store-config/:sellerId', asyncHandler(getPublicStoreConfig));
 
 /**
  * @route   POST /api/public/reviews

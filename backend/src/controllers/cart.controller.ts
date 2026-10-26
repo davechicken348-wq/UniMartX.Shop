@@ -2,11 +2,16 @@ import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import { AppError } from '../middleware/errorHandler';
 import prisma from '../lib/prisma';
+import { emitToUser } from '../services/realtime.service';
 
 const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:5000';
 function absUrl(path: string | null | undefined): string | null {
   const p = path || '';
   if (!p) return null;
+  if (p.endsWith('/')) return null;
+  if (p.startsWith('/uploads')) {
+    try { return new URL(p, BACKEND_URL).href; } catch { return `${BACKEND_URL}${p}`; }
+  }
   if (/^https?:/.test(p) || p.startsWith('data:') || p.startsWith('blob:')) return p;
   return `${BACKEND_URL}${p}`;
 }
@@ -38,12 +43,12 @@ export const getCart = async (req: Request, res: Response): Promise<void> => {
             include: {
               product: {
                   select: {
-                    id: true, name: true, price: true, image: true,
+                    id: true, name: true, price: true, image: true, images: true,
                     stock: true, isActive: true, details: true,
                     seller: {
                       select: {
-                        id: true, storeName: true, storeAvatar: true, storeBanner: true,
-                        pickupAddress: true, businessType: true, universityAffiliation: true, deliveryFee: true,
+                        id: true, slug: true, storeName: true, storeAvatar: true, storeBanner: true,
+                        pickupAddress: true, businessType: true, universityAffiliation: true, deliveryFee: true, deliveryOptions: true,
                       },
                     },
                   },
@@ -59,7 +64,7 @@ export const getCart = async (req: Request, res: Response): Promise<void> => {
         include: {
           items: {
             include: {
-            product: { select: { id: true, name: true, price: true, image: true, stock: true, isActive: true, details: true, seller: { select: { storeName: true } } } },
+            product: { select: { id: true, name: true, price: true, image: true, images: true, stock: true, isActive: true, details: true, seller: { select: { id: true, slug: true, storeName: true, pickupAddress: true, deliveryFee: true, deliveryOptions: true } } } },
             },
           },
         },
@@ -86,7 +91,8 @@ export const getCart = async (req: Request, res: Response): Promise<void> => {
             ? {
                 ...item.product,
                 price: Number(item.product.price),
-                image: absUrl(item.product.image || ''),
+                image: absUrl(item.product.image || item.product.images?.[0]),
+                images: Array.isArray(item.product.images) ? item.product.images.map(absUrl).filter(Boolean) : [],
                 seller: {
                   ...item.product.seller,
                   storeAvatar: absUrl(item.product.seller.storeAvatar),
@@ -127,6 +133,7 @@ export const addToCart = async (req: Request, res: Response): Promise<void> => {
     }
 
     const count = await prisma.cartItem.aggregate({ where: { cartId: cart.id }, _sum: { quantity: true } });
+    emitToUser(userId, { type: 'cart.updated', resource: 'cart', timestamp: Date.now() });
     res.status(200).json({ success: true, data: item, cartCount: count._sum.quantity || 0 });
   } catch (error) {
     if (error instanceof AppError) throw error;
@@ -151,6 +158,7 @@ export const updateCartItem = async (req: Request, res: Response): Promise<void>
 
     const updated = await prisma.cartItem.update({ where: { id: itemId }, data: { quantity } });
     const count = await prisma.cartItem.aggregate({ where: { cartId: updated.cartId }, _sum: { quantity: true } });
+    emitToUser(userId, { type: 'cart.updated', resource: 'cart', timestamp: Date.now() });
 
     res.status(200).json({
       success: true,
@@ -177,6 +185,7 @@ export const removeFromCart = async (req: Request, res: Response): Promise<void>
     await prisma.cartItem.delete({ where: { id: itemId } });
 
     const count = await prisma.cartItem.aggregate({ where: { cartId }, _sum: { quantity: true } });
+    emitToUser(userId, { type: 'cart.updated', resource: 'cart', timestamp: Date.now() });
     res.status(200).json({ success: true, message: 'Item removed from cart', cartCount: count._sum.quantity || 0 });
   } catch (error) {
     if (error instanceof AppError) throw error;
@@ -189,6 +198,7 @@ export const clearCart = async (req: Request, res: Response): Promise<void> => {
     const userId = decodeToken(req);
     const cart = await prisma.cart.findUnique({ where: { userId } });
     if (cart) await prisma.cartItem.deleteMany({ where: { cartId: cart.id } });
+    emitToUser(userId, { type: 'cart.updated', resource: 'cart', timestamp: Date.now() });
     res.status(200).json({ success: true, message: 'Cart cleared' });
   } catch (error) {
     if (error instanceof AppError) throw error;

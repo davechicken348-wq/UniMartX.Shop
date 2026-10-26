@@ -1,17 +1,29 @@
 {
   "name": "frontend",
   "version": "1.0.0",
-  "description": "UnimartX frontend - static HTML/CSS/JS",
+  "description": "UniMartX React frontend",
   "private": true,
   "scripts": {
-    "start": "http-server . -p 3000 --cors -c-1",
-    "dev": "http-server . -p 3000 --cors -c-1"
+    "start": "vite --host 0.0.0.0",
+    "dev": "vite --host 0.0.0.0",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview --host 0.0.0.0"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
     "http-server": "^14.1.1",
-    "serve": "^14.2.3"
+    "serve": "^14.2.3",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.4"
+  },
+  "dependencies": {
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "react-router-dom": "^7.18.4"
   }
 }

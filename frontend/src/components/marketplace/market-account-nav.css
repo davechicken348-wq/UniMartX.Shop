@@ -1,0 +1,3 @@
+.marketplace .market-account-trigger{width:36px;height:36px;justify-content:center;padding:0;border:0;background:transparent}
+.marketplace .market-account-trigger .market-account-avatar{width:30px;height:30px;border:1px solid #e4e8df;font-size:10px}
+.marketplace .market-account-trigger:hover .market-account-avatar{box-shadow:0 0 0 3px #d5ef9b70}

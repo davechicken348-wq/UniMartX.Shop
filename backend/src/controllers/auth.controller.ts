@@ -11,8 +11,13 @@ import { sendVerificationEmail, sendWelcomeEmail, getVerificationBaseUrl, getBac
 import { sendSmsVerificationCode } from '../services/sms.service';
 import { NotificationService } from '../services/notification.service';
 import { redirectVerification } from './verification.controller';
+import { createHash } from 'crypto';
 
 const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:5000';
+
+function hashToken(token: string): string {
+  return createHash('sha256').update(token).digest('hex');
+}
 function absUrl(path: string | null | undefined): string | null {
   const p = path || '';
   if (!p) return null;
@@ -91,6 +96,7 @@ export const registerBuyer = async (req: Request, res: Response): Promise<void> 
           firstName: firstName,
           lastName: lastName,
           phone: input.phone || null,
+          role: 'buyer',
         },
       });
 
@@ -197,6 +203,7 @@ export const registerBuyer = async (req: Request, res: Response): Promise<void> 
             firstName: result.user.firstName,
             lastName: result.user.lastName,
             role: 'buyer',
+            avatar: absUrl(result.user.avatar || ''),
           },
           token: result.token,
         },
@@ -283,6 +290,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
           firstName: user.firstName,
           lastName: user.lastName,
           role,
+          avatar: absUrl(user.avatar || ''),
         },
       },
     });
@@ -334,7 +342,7 @@ export const logout = async (req: Request, res: Response): Promise<void> => {
       }
 
       // Fetch user, addresses, and stats in parallel
-      const [user, addresses, ordersCount, wishlistCount] = await Promise.all([
+      const [user, addresses, ordersCount, wishlistCount, bannerRows] = await Promise.all([
         prisma.user.findUnique({
           where: { id: userPayload.userId },
           select: {
@@ -358,6 +366,7 @@ export const logout = async (req: Request, res: Response): Promise<void> => {
         }),
         prisma.order.count({ where: { buyerId: userPayload.userId } }),
         prisma.wishlist.count({ where: { userId: userPayload.userId } }),
+        prisma.$queryRaw<{ profileBanner: string | null }[]>`SELECT "profileBanner" FROM "users" WHERE "id" = ${userPayload.userId} LIMIT 1`,
       ]);
 
       if (!user) {
@@ -373,6 +382,7 @@ export const logout = async (req: Request, res: Response): Promise<void> => {
           lastName: user.lastName,
           phone: user.phone || '',
           avatar: absUrl(user.avatar || ''),
+          profileBanner: absUrl(bannerRows[0]?.profileBanner || ''),
           role: user.role,
           emailVerified: user.emailVerified,
           memberSince: user.createdAt,
@@ -390,11 +400,11 @@ export const logout = async (req: Request, res: Response): Promise<void> => {
 
   /**
    * PATCH /api/auth/me
-   * Update current user's profile (name, phone, avatar)
+   * Update current user's profile (name, phone, avatar, profile banner)
    */
   /**
    * PATCH /api/auth/me
-   * Update current user's profile (name, phone, avatar)
+   * Update current user's profile (name, phone, avatar, profile banner)
    * All fields are optional — only provided fields will be updated
    */
   export const updateProfile = async (req: Request, res: Response): Promise<void> => {
@@ -404,7 +414,7 @@ export const logout = async (req: Request, res: Response): Promise<void> => {
         throw new AppError('Authentication required', 401);
       }
 
-      const { firstName, lastName, phone, avatar } = req.body;
+      const { firstName, lastName, phone, avatar, profileBanner } = req.body;
 
       // Build update payload with only provided fields
       const updateData: any = {};
@@ -425,11 +435,11 @@ export const logout = async (req: Request, res: Response): Promise<void> => {
       if (avatar !== undefined) {
         updateData.avatar = avatar; // base64 data URL or string URL
       }
-
       // If nothing to update, short-circuit
-      if (Object.keys(updateData).length === 0) {
+      if (Object.keys(updateData).length === 0 && profileBanner === undefined) {
         throw new AppError('No fields provided for update', 400);
       }
+      if (Object.keys(updateData).length === 0) updateData.updatedAt = new Date();
 
       const updatedUser = await prisma.user.update({
         where: { id: userPayload.userId },
@@ -448,6 +458,12 @@ export const logout = async (req: Request, res: Response): Promise<void> => {
           seller: true,
         },
       });
+
+      if (profileBanner !== undefined) {
+        await prisma.$executeRaw`UPDATE "users" SET "profileBanner" = ${profileBanner} WHERE "id" = ${userPayload.userId}`;
+      }
+
+      const bannerRows = await prisma.$queryRaw<{ profileBanner: string | null }[]>`SELECT "profileBanner" FROM "users" WHERE "id" = ${userPayload.userId} LIMIT 1`;
 
       // Get updated stats and addresses
       const [ordersCount, wishlistCount, addresses] = await Promise.all([
@@ -469,6 +485,7 @@ export const logout = async (req: Request, res: Response): Promise<void> => {
           lastName: updatedUser.lastName,
           phone: updatedUser.phone || '',
           avatar: absUrl(updatedUser.avatar || ''),
+          profileBanner: absUrl(bannerRows[0]?.profileBanner || ''),
           role: updatedUser.role,
           emailVerified: updatedUser.emailVerified,
           memberSince: updatedUser.createdAt,
@@ -554,15 +571,12 @@ export const logout = async (req: Request, res: Response): Promise<void> => {
   export const forgotPassword = async (req: Request, res: Response): Promise<void> => {
     try {
       const { email } = forgotPasswordSchema.parse(req.body);
-      console.log(`[forgotPassword] Request received for email: ${email}`);
 
-      // Find user by email (if not found, still return success for security)
       const user = await prisma.user.findUnique({
         where: { email },
       });
 
       if (!user) {
-        console.log(`[forgotPassword] No user found with email: ${email}`);
         res.status(200).json({
           success: true,
           message: 'If an account exists with this email, a password reset link has been sent.',
@@ -570,50 +584,32 @@ export const logout = async (req: Request, res: Response): Promise<void> => {
         return;
       }
 
-      console.log(`[forgotPassword] User found: ${user.id}, sending reset email`);
-
-      // Delete any existing unused reset tokens for this user
       await prisma.passwordResetToken.deleteMany({
         where: { userId: user.id, usedAt: null },
       });
 
-      // Generate new token
       const resetToken = generateToken(32);
       const expiresAt = getTokenExpiry();
-      console.log(`[forgotPassword] Generated reset token (first 8 chars): ${resetToken.substring(0,8)}...`);
+      const tokenHash = hashToken(resetToken);
 
-      // Capture request metadata for tracking
-      const ipAddress = (req as any).ip || (req as any).headers['x-forwarded-for']?.split(',')[0]?.trim() || null;
-      const userAgent = req.headers['user-agent'] || null;
-
-      // Store token
       await prisma.passwordResetToken.create({
         data: {
           userId: user.id,
-          token: resetToken,
+          token: tokenHash,
           expiresAt,
-          ipAddress,
-          userAgent,
         },
       });
-      console.log(`[forgotPassword] Token stored in DB for user ${user.id}, expires: ${expiresAt}`);
 
-        // Build redirect URL that preserves token via fragment
-        const backendBaseUrl = getBackendBaseUrl().replace(/\/$/, '');
-        const redirectUrl = `${backendBaseUrl}/api/auth/forgot-password-redirect/${resetToken}`;
+      const backendBaseUrl = getBackendBaseUrl().replace(/\/$/, '');
+      const redirectUrl = `${backendBaseUrl}/api/auth/forgot-password-redirect/${resetToken}`;
 
-        console.log(`[forgotPassword] Redirect URL for email: ${redirectUrl}`);
-
-        // Send password reset email with redirect link
-        await sendPasswordResetEmail(user.email, user.firstName || 'User', redirectUrl);
-        console.log(`[forgotPassword] Password reset email sent to ${user.email}`);
+      await sendPasswordResetEmail(user.email, user.firstName || 'User', redirectUrl);
 
       res.status(200).json({
         success: true,
         message: 'If an account exists with this email, a password reset link has been sent.',
       });
     } catch (error) {
-      console.error('[forgotPassword] Error:', error);
       if (error instanceof z.ZodError) {
         throw new AppError('Invalid email address', 400);
       }
@@ -628,37 +624,17 @@ export const logout = async (req: Request, res: Response): Promise<void> => {
   export const resetPassword = async (req: Request, res: Response): Promise<void> => {
     try {
       const { token, newPassword } = resetPasswordSchema.parse(req.body);
-      console.log(`[resetPassword] Request received`);
-      console.log(`[resetPassword] Token (first 20 chars):`, token ? token.substring(0,20) + '...' : 'EMPTY');
-      console.log(`[resetPassword] Password length:`, newPassword.length);
 
-      // Find token record with user
+      const tokenHash = hashToken(token);
       const resetTokenRecord = await prisma.passwordResetToken.findUnique({
-        where: { token },
+        where: { token: tokenHash },
         include: { user: true },
       });
 
       if (!resetTokenRecord) {
-        console.warn(`[resetPassword] Token not found in database`);
-        console.warn(`[resetPassword] Looking for token:`, token);
-        // For debugging: show all active tokens
-        try {
-          const allTokens = await prisma.passwordResetToken.findMany({
-            where: { usedAt: null },
-            select: { token: true, expiresAt: true, userId: true, createdAt: true },
-            orderBy: { createdAt: 'desc' },
-            take: 5,
-          });
-          console.log(`[resetPassword] Recent active tokens in DB:`, JSON.stringify(allTokens, null, 2));
-        } catch (e) {
-          console.log('[resetPassword] Could not fetch tokens for debugging:', e);
-        }
         throw new AppError('Invalid or already used reset token', 404);
       }
 
-      console.log(`[resetPassword] Token found. User:`, resetTokenRecord.userId, 'Expires:', resetTokenRecord.expiresAt, 'Used:', resetTokenRecord.usedAt);
-
-      // Check if token is expired
       if (resetTokenRecord.expiresAt < new Date()) {
         await prisma.passwordResetToken.delete({
           where: { id: resetTokenRecord.id },
@@ -666,34 +642,27 @@ export const logout = async (req: Request, res: Response): Promise<void> => {
         throw new AppError('Reset token has expired. Please request a new one.', 410);
       }
 
-      // Check if token already used
       if (resetTokenRecord.usedAt) {
         throw new AppError('This reset token has already been used', 400);
       }
 
-      // Hash new password
       const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-      // Perform password update, token invalidation, session cleanup, and notification in a transaction
       await prisma.$transaction(async (tx) => {
-        // Update user password
         await tx.user.update({
           where: { id: resetTokenRecord.userId },
           data: { password: hashedPassword },
         });
 
-        // Mark token as used
         await tx.passwordResetToken.update({
           where: { id: resetTokenRecord.id },
           data: { usedAt: new Date() },
         });
 
-        // Delete all existing sessions to force re-login on all devices (security)
         await tx.session.deleteMany({
           where: { userId: resetTokenRecord.userId },
         });
 
-        // Create notification for user about password change
         await NotificationService.create({
           userId: resetTokenRecord.userId,
           type: 'password_changed',
@@ -703,7 +672,6 @@ export const logout = async (req: Request, res: Response): Promise<void> => {
         });
       });
 
-      // Send confirmation email after transaction commits
       const displayName = resetTokenRecord.user.firstName || 'User';
       const frontendUrl = getVerificationBaseUrl().replace(/\/$/, '');
       await sendPasswordChangedEmail(resetTokenRecord.user.email, displayName, frontendUrl);
@@ -734,49 +702,41 @@ export const logout = async (req: Request, res: Response): Promise<void> => {
 
       if (!token) {
         const errorUrl = `${getVerificationBaseUrl()}/pages/auth/forgot-password.html#error=invalid_token`;
-        console.warn(`[redirectForgotPassword] Missing token`);
         res.redirect(302, errorUrl);
         return;
       }
 
-      // Validate that the token exists and is unused
+      const tokenHash = hashToken(token);
       const resetTokenRecord = await prisma.passwordResetToken.findUnique({
-        where: { token },
+        where: { token: tokenHash },
         include: { user: true },
       });
 
       if (!resetTokenRecord) {
         const errorUrl = `${getVerificationBaseUrl()}/pages/auth/forgot-password.html#error=invalid_token`;
-        console.warn(`[redirectForgotPassword] Invalid token: ${token.substring(0,8)}...`);
         res.redirect(302, errorUrl);
         return;
       }
 
-      // Check if token is expired
       if (resetTokenRecord.expiresAt < new Date()) {
         await prisma.passwordResetToken.delete({
           where: { id: resetTokenRecord.id },
         });
         const errorUrl = `${getVerificationBaseUrl()}/pages/auth/forgot-password.html#error=expired`;
-        console.warn(`[redirectForgotPassword] Expired token: ${token.substring(0,8)}...`);
         res.redirect(302, errorUrl);
         return;
       }
 
-      // Check if token already used
       if (resetTokenRecord.usedAt) {
         const errorUrl = `${getVerificationBaseUrl()}/pages/auth/forgot-password.html#error=already_used`;
-        console.warn(`[redirectForgotPassword] Already used token: ${token.substring(0,8)}...`);
         res.redirect(302, errorUrl);
         return;
       }
 
-      // Token is valid — redirect to reset page with token+email in fragment
       const encodedToken = encodeURIComponent(resetTokenRecord.token);
       const encodedEmail = encodeURIComponent(resetTokenRecord.user.email);
       const fragmentUrl = `${getVerificationBaseUrl()}/pages/auth/reset-password.html#token=${encodedToken}&email=${encodedEmail}`;
 
-      console.log(`[redirectForgotPassword] Redirecting to reset page: ${fragmentUrl}`);
       res.redirect(302, fragmentUrl);
     } catch (error) {
       console.error('[redirectForgotPassword] Error:', error);

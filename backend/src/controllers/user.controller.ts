@@ -473,38 +473,23 @@ export const getNotificationPreferences = async (req: Request, res: Response): P
       where: { userId: userPayload.userId },
     });
 
-    // If no preferences exist yet, return defaults
-    if (!prefs) {
-      const defaultPrefs = {
-        orderUpdates: true,
-        wishlistAlerts: true,
-        promotions: true,
-        accountActivity: true,
-        emailNotifications: true,
-orderHistoryVisibility: true,
-  personalizedRecommendations: true,
-  lowStockAlerts: true,
-  paymentNotifications: true,
-      };
-
-      // Create default preferences for the user
-      await prisma.notificationPreference.create({
-        data: {
-          userId: userPayload.userId,
-          ...defaultPrefs,
-        },
-      });
-
-      res.status(200).json({
-        success: true,
-        data: defaultPrefs,
-      });
-      return;
-    }
+    const defaultPrefs = {
+      orderUpdates: true,
+      wishlistAlerts: true,
+      promotions: true,
+      accountActivity: true,
+      emailNotifications: true,
+      orderHistoryVisibility: true,
+      personalizedRecommendations: true,
+      lowStockAlerts: true,
+      paymentNotifications: true,
+      reviewNotifications: true,
+      followAlerts: true,
+    };
 
     res.status(200).json({
       success: true,
-      data: {
+      data: prefs ? {
         orderUpdates: prefs.orderUpdates,
         wishlistAlerts: prefs.wishlistAlerts,
         promotions: prefs.promotions,
@@ -514,7 +499,9 @@ orderHistoryVisibility: true,
         personalizedRecommendations: prefs.personalizedRecommendations,
         lowStockAlerts: prefs.lowStockAlerts,
         paymentNotifications: prefs.paymentNotifications,
-      },
+        reviewNotifications: prefs.reviewNotifications,
+        followAlerts: prefs.followAlerts,
+      } : defaultPrefs,
     });
   } catch (error) {
     if (error instanceof AppError) {
@@ -560,6 +547,8 @@ export const updateNotificationPreferences = async (req: Request, res: Response)
         personalizedRecommendations: prefs.personalizedRecommendations,
         lowStockAlerts: prefs.lowStockAlerts,
         paymentNotifications: prefs.paymentNotifications,
+        reviewNotifications: prefs.reviewNotifications,
+        followAlerts: prefs.followAlerts,
       },
     });
   } catch (error) {

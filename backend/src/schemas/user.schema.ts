@@ -43,6 +43,7 @@ export const notificationPreferencesSchema = z.object({
   lowStockAlerts: z.boolean().optional(),
   paymentNotifications: z.boolean().optional(),
   reviewNotifications: z.boolean().optional(),
+  followAlerts: z.boolean().optional(),
 });
 
 export type NotificationPreferencesInput = z.infer<typeof notificationPreferencesSchema>;

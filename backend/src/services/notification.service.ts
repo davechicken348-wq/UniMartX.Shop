@@ -1,5 +1,6 @@
 import { type NotificationPreference, type NotificationType, type NotificationPriority } from '@prisma/client';
 import prisma from '../lib/prisma';
+import { emitToUser } from './realtime.service';
 
 type NotificationPrefs = {
   orderUpdates: boolean;
@@ -126,7 +127,7 @@ export class NotificationService {
       return;
     }
 
-    await prisma.notification.create({
+    const notification = await prisma.notification.create({
       data: {
         userId,
         type,
@@ -140,6 +141,7 @@ export class NotificationService {
         metadata: input.metadata,
       },
     });
+    emitToUser(userId, { type: 'notification.created', resource: 'notifications', timestamp: Date.now(), payload: { id: notification.id } });
   }
 
   /**

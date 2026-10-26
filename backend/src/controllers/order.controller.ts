@@ -4,6 +4,7 @@ import { AppError } from '../middleware/errorHandler';
 import prisma from '../lib/prisma';
 import { sendBuyerOrderConfirmationEmail, sendSellerNewOrderEmail, sendLowStockEmail } from '../services/email.service';
 import { sendSms } from '../services/sms.service';
+import { emitToRole, emitToUser } from '../services/realtime.service';
 
 const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:5000';
 function absUrl(path: string | null | undefined): string | null {
@@ -29,6 +30,16 @@ function fmt(n: number): string {
 
 export const createOrder = async (req: Request, res: Response): Promise<void> => {
   const userId = decodeToken(req);
+
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { role: true },
+  });
+
+  if (!user || user.role !== 'buyer') {
+    throw new AppError('Only buyers can place orders', 403);
+  }
+
   const { items, sellerFulfillments, address, payment } = req.body;
 
   if (!Array.isArray(items) || !items.length) {
@@ -52,25 +63,29 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
   });
   if (stockErrors.length) throw new AppError(stockErrors.join('; '), 400);
 
-  let addressRecord = await prisma.address.findFirst({
+  let addressRecord = address?.id
+    ? await prisma.address.findFirst({ where: { id: address.id, userId } })
+    : null;
+  const defaultAddress = addressRecord || await prisma.address.findFirst({
     where: { userId, isDefault: true },
     orderBy: { createdAt: 'desc' },
   });
-  if (!addressRecord && address) {
+  if (!addressRecord && address?.street && address?.city && address?.state) {
     addressRecord = await prisma.address.create({
       data: {
         userId,
         label: address.fullName || 'Checkout address',
-        street: address.street || '',
-        city: address.city || '',
-        state: address.state || '',
-        zipCode: '',
+        street: address.street,
+        city: address.city,
+        state: address.state,
+        zipCode: address.zipCode || '',
         country: address.country || 'Ghana',
-        isDefault: true,
+        isDefault: !defaultAddress,
         notes: address.notes || null,
       },
     });
   }
+  addressRecord = addressRecord || defaultAddress;
   if (!addressRecord) throw new AppError('Delivery address is required', 400);
 
   const itemsBySeller = new Map<string, typeof items>();
@@ -81,7 +96,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
     itemsBySeller.get(sid)!.push({ ...i, product });
   });
 
-  const createdOrders: { orderNumber: string; sellerId: string; orderDbId: string; totalAmount: number }[] = [];
+  const createdOrders: { orderNumber: string; sellerId: string; storeName: string; orderDbId: string; totalAmount: number; fulfillmentType: string; deliveryFee: number }[] = [];
 
   for (const [sellerId, sellerItems] of itemsBySeller.entries()) {
     const sellerFulfillment = (sellerFulfillments && sellerFulfillments[sellerId]) || { fulfillment: 'pickup', deliveryFee: 0 };
@@ -120,25 +135,35 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
       },
     });
 
-    createdOrders.push({ orderNumber: order.orderNumber, sellerId, orderDbId: order.id, totalAmount });
+    createdOrders.push({ orderNumber: order.orderNumber, sellerId, storeName: order.seller.storeName, orderDbId: order.id, totalAmount, fulfillmentType: sellerFulfillment.fulfillment || 'pickup', deliveryFee });
 
     const LOW_STOCK_THRESHOLD = 5;
 
-    for (const i of sellerItems) {
-      const updatedProduct = await prisma.product.update({
+    const stockUpdates = sellerItems.map((i) =>
+      prisma.product.update({
         where: { id: i.productId },
         data: { stock: { decrement: i.quantity } },
         select: { id: true, name: true, stock: true, sellerId: true },
-      });
-      await prisma.orderItem.create({
+      })
+    );
+
+    const orderItemCreations = sellerItems.map((i) =>
+      prisma.orderItem.create({
         data: {
           orderId: order.id,
           productId: i.productId,
           quantity: i.quantity,
           price: Number(i.product.price),
         },
-      });
+      })
+    );
 
+    await Promise.all([...stockUpdates, ...orderItemCreations]);
+
+    for (const updatedProduct of await prisma.product.findMany({
+      where: { id: { in: sellerItems.map((i) => i.productId) } },
+      select: { id: true, name: true, stock: true, sellerId: true },
+    })) {
       if (updatedProduct.stock <= LOW_STOCK_THRESHOLD) {
         const sellerRecord = await prisma.seller.findUnique({
           where: { id: updatedProduct.sellerId },
@@ -254,6 +279,13 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
     if (orderedIds.length) await prisma.cartItem.deleteMany({ where: { id: { in: orderedIds } } });
   }
 
+  emitToUser(userId, { type: 'order.created', resource: 'orders', timestamp: Date.now() });
+  emitToUser(userId, { type: 'cart.updated', resource: 'cart', timestamp: Date.now() });
+  for (const seller of await prisma.seller.findMany({ where: { id: { in: createdOrders.map(order => order.sellerId) } }, select: { userId: true } })) {
+    emitToUser(seller.userId, { type: 'order.created', resource: 'orders', timestamp: Date.now() });
+  }
+  emitToRole('admin', { type: 'order.created', resource: 'adminOverview', timestamp: Date.now() });
+
   res.status(201).json({
     success: true,
     data: {
@@ -261,6 +293,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
       firstOrderId: createdOrders[0]?.orderNumber,
       firstOrderDbId: createdOrders[0]?.orderDbId,
       allOrderDbIds: createdOrders.map(o => o.orderDbId),
+      sellerOrders: createdOrders.map(({ orderNumber, sellerId, storeName, totalAmount, fulfillmentType, deliveryFee }) => ({ orderNumber, sellerId, storeName, totalAmount, fulfillmentType, deliveryFee })),
       emailsSent: createdOrders.length > 0 && !!process.env.EMAIL_USER,
       smsSent: createdOrders.length > 0 && !!process.env.TEXTBEE_API_KEY,
     },

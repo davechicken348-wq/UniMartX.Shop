@@ -196,6 +196,7 @@ export const getFollowedSellers = async (req: Request, res: Response): Promise<v
     const data = follows.map(f => ({
       id:              f.seller.id,
       sellerId:        f.seller.id,
+      slug:            f.seller.slug,
       storeName:       f.seller.storeName,
       storeBanner:     absUrl(f.seller.storeBanner),
       storeAvatar:     absUrl(f.seller.storeAvatar),

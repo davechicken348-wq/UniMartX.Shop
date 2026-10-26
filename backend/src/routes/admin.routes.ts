@@ -20,9 +20,11 @@ import {
   listOrders,
   getAdminOrderDetail,
   updateOrderStatus,
+  deleteOrder,
   getSellerStats,
   listSellers,
   verifySeller,
+  toggleSellerActive,
   getProductStats,
   listProducts,
   toggleProduct,
@@ -75,11 +77,13 @@ router.get('/orders',               asyncHandler(listOrders));
 router.get('/orders/recent',         asyncHandler(getRecentOrders));
 router.get('/orders/:id',           asyncHandler(getAdminOrderDetail));
 router.patch('/orders/:id/status',   asyncHandler(updateOrderStatus));
+router.delete('/orders/:id',         asyncHandler(deleteOrder));
 
 // Seller verification
 router.get('/sellers/stats',        asyncHandler(getSellerStats));
 router.get('/sellers',              asyncHandler(listSellers));
 router.patch('/sellers/:id/verify',  asyncHandler(verifySeller));
+router.patch('/sellers/:id/activate', asyncHandler(toggleSellerActive));
 
 // Product management
 router.get('/products/stats',        asyncHandler(getProductStats));

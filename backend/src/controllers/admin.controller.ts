@@ -4,6 +4,7 @@ import prisma from '../lib/prisma';
 import { AppError } from '../middleware/errorHandler';
 import { JwtPayload } from '../controllers/auth.controller';
 import { sendBuyerOrderStatusEmail, getVerificationBaseUrl } from '../services/email.service';
+import { emitToRole, emitToUser } from '../services/realtime.service';
 
 /** POST /api/admin/register — create first super admin, guarded by secret */
 export const registerAdmin = async (req: Request, res: Response): Promise<void> => {
@@ -206,7 +207,7 @@ export const listUsers = async (req: Request, res: Response): Promise<void> => {
 export const deleteUser = async (req: Request, res: Response): Promise<void> => {
   const { id } = req.params;
   const user = await prisma.user.findUnique({ where: { id }, select: { id: true } });
-  if (!user) { res.status(404).json({ success: false, error: 'User not found' }); return; }
+  if (!user) throw new AppError('User not found', 404);
   await prisma.user.delete({ where: { id } });
   res.json({ success: true, message: 'User deleted' });
 };
@@ -270,9 +271,11 @@ export const listSellers = async (req: Request, res: Response): Promise<void> =>
         storeName: true,
         storeDescription: true,
         businessType: true,
+        isActive: true,
         category: true,
         city: true,
         country: true,
+        storeAvatar: true,
         createdAt: true,
         user: { select: { firstName: true, lastName: true, email: true, emailVerified: true, phone: true } },
         sellerVerification: { select: { status: true, submittedAt: true, reviewedAt: true, rejectionReason: true } },
@@ -325,7 +328,30 @@ export const verifySeller = async (req: Request, res: Response): Promise<void> =
     },
   });
 
+  emitToUser(seller.userId, { type: 'seller.verification_changed', resource: 'sellerVerification', timestamp: Date.now(), payload: { status } });
+  emitToRole('admin', { type: 'seller.verification_changed', resource: 'adminOverview', timestamp: Date.now(), payload: { sellerId: id, status } });
+
   res.json({ success: true, message: `Seller ${status} successfully`, data: verification });
+};
+
+/** PATCH /api/admin/sellers/:id/activate — toggle seller active status */
+export const toggleSellerActive = async (req: Request, res: Response): Promise<void> => {
+  const { id } = req.params;
+  const { isActive } = req.body;
+
+  const seller = await prisma.seller.findUnique({ where: { id } });
+  if (!seller) {
+    res.status(404).json({ success: false, error: 'Seller not found' });
+    return;
+  }
+
+  const updated = await prisma.seller.update({
+    where: { id },
+    data: { isActive: !!isActive },
+    select: { id: true, isActive: true },
+  });
+
+  res.json({ success: true, message: `Seller ${updated.isActive ? 'activated' : 'deactivated'} successfully`, data: updated });
 };
 
 /** GET /api/orders/admin/stats — order statistics for admin */
@@ -471,10 +497,31 @@ export const updateOrderStatus = async (req: Request, res: Response): Promise<vo
     return;
   }
 
+  const previousStatus = order.status;
+
   await prisma.order.update({
     where: { id },
     data: { status },
   });
+  emitToUser(order.buyerId, { type: 'order.status_changed', resource: 'orders', timestamp: Date.now(), payload: { orderId: order.id, status } });
+  emitToRole('admin', { type: 'order.status_changed', resource: 'adminOverview', timestamp: Date.now() });
+
+  if (status === 'cancelled' && previousStatus !== 'cancelled') {
+    const orderItems = await prisma.orderItem.findMany({
+      where: { orderId: id },
+      select: { productId: true, quantity: true },
+    });
+
+    if (orderItems.length > 0) {
+      const stockUpdates = orderItems.map((item) =>
+        prisma.product.update({
+          where: { id: item.productId },
+          data: { stock: { increment: item.quantity } },
+        })
+      );
+      await Promise.all(stockUpdates);
+    }
+  }
 
   if (!['pending', 'cancelled'].includes(status)) {
     const buyerUser = await prisma.user.findUnique({ where: { id: order.buyerId }, select: { email: true, firstName: true, lastName: true } });
@@ -650,6 +697,15 @@ export const changeAdminPassword = async (req: Request, res: Response): Promise<
   });
 
   res.json({ success: true, message: 'Password changed successfully' });
+};
+
+/** DELETE /api/admin/orders/:id — delete an order */
+export const deleteOrder = async (req: Request, res: Response): Promise<void> => {
+  const { id } = req.params;
+  const order = await prisma.order.findUnique({ where: { id }, select: { id: true } });
+  if (!order) throw new AppError('Order not found', 404);
+  await prisma.order.delete({ where: { id } });
+  res.json({ success: true, message: 'Order deleted' });
 };
 
 /** PATCH /api/admin/settings/maintenance — toggle maintenance mode */

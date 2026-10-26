@@ -22,6 +22,7 @@ model User {
   lastName               String
   phone                  String?
   avatar                 String?
+  profileBanner          String?
   emailVerified          Boolean                 @default(false)
   createdAt              DateTime                @default(now())
   updatedAt              DateTime                @updatedAt
@@ -106,10 +107,26 @@ model Seller {
   sellerReviews         SellerReview[]
   user                  User                @relation(fields: [userId], references: [id], onDelete: Cascade)
   followers             Follow[] @relation("SellerFollowers")
+  promotions            Promotion[]
   refunds               Refund[] @relation("SellerRefunds")
+  storeConfiguration     StoreConfiguration?
 
   @@map("sellers")
   @@index([slug])
+}
+
+model StoreConfiguration {
+  id            String   @id @default(cuid())
+  sellerId      String   @unique
+  draft         Json
+  published     Json?
+  publishedAt   DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  seller        Seller   @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+
+  @@map("store_configurations")
 }
 
 model SellerVerification {
@@ -163,6 +180,7 @@ model Product {
   subcategoryRef Subcategory?   @relation(fields: [subcategoryId], references: [id], onDelete: SetNull)
   reviews       Review[]
   wishlists     Wishlist[]
+  options       ProductOption[]
 
   @@index([sellerId])
   @@index([category])
@@ -208,6 +226,22 @@ model Subcategory {
 
   @@unique([categoryId, slug])
   @@map("subcategories")
+}
+
+model ProductOption {
+  id        String   @id @default(cuid())
+  productId String
+  name      String
+  values    String[]
+  isRequired Boolean @default(false)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@map("product_options")
 }
 
 model Review {
@@ -393,6 +427,46 @@ model Follow {
   @@index([buyerId])
   @@index([sellerId])
   @@map("follows")
+}
+
+model Promotion {
+  id            String          @id @default(cuid())
+  sellerId      String
+  name          String
+  description   String?
+  type          PromotionType
+  value         Decimal         @db.Decimal(10, 2)
+  target        PromotionTarget
+  productIds    String[]        @default([])
+  startDate     DateTime        @db.Date
+  endDate       DateTime?       @db.Date
+  status        PromotionStatus @default(draft)
+  ordersCount   Int             @default(0)
+  revenue       Decimal         @db.Decimal(10, 2) @default(0)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  seller        Seller          @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+
+  @@index([sellerId])
+  @@map("promotions")
+}
+
+enum PromotionType {
+  percentage
+  fixed
+}
+
+enum PromotionTarget {
+  store
+  selected
+}
+
+enum PromotionStatus {
+  active
+  scheduled
+  ended
+  draft
 }
 
 model ContentSection {

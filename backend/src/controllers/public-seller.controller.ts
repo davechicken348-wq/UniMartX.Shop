@@ -17,15 +17,6 @@ function absUrl(path: string | null | undefined): string | null {
   return `${BACKEND_URL}${p}`;
 }
 
-function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, '')
-    .replace(/[\s_]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-}
-
 /**
  * GET /api/public/products
  * Paginated, filterable public product listing.
@@ -243,6 +234,7 @@ export const getPublicProductById = async (req: Request, res: Response): Promise
       serviceType:  product.serviceType,
       seller: {
         id:               product.seller.id,
+        slug:             product.seller.slug,
         userId:           product.seller.userId,
         storeName:        product.seller.storeName,
         storeDescription: product.seller.storeDescription,
@@ -512,7 +504,7 @@ export const getPublicStores = async (req: Request, res: Response): Promise<void
 
     return {
       id:               s.id,
-      slug:             s.slug || slugify(s.storeName),
+      slug:             s.slug ?? null,
       storeName:        s.storeName,
       storeDescription: s.storeDescription || '',
       storeAvatar:      absUrl(s.storeAvatar),
@@ -525,6 +517,7 @@ export const getPublicStores = async (req: Request, res: Response): Promise<void
       totalReviews:     reviews,
       isVerified,
       isOpen,
+      businessHours: s.businessHours || null,
       isNewStore,
       featuredProducts,
     };
@@ -552,19 +545,17 @@ export const getPublicStores = async (req: Request, res: Response): Promise<void
  * Returns profile, stats, active products, and reviews in one response.
  */
 export const getPublicSellerProfile = async (req: Request, res: Response): Promise<void> => {
+  // The seller profile contains frequently changed branding URLs. Prevent
+  // browsers and intermediary caches from reusing an older profile after publish.
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
   const rawParam = (req.params.sellerId || '') as string;
 
-  // If it looks like a slug (not a CUID), resolve it to a seller ID first
-  let sellerId = rawParam;
-  if (!rawParam.startsWith('cm')) {
-    const resolved = await prisma.seller.findFirst({
-      where: { slug: rawParam },
-      select: { id: true },
-    });
-    if (resolved) {
-      sellerId = resolved.id;
-    }
-  }
+  // Always try slug first, then fall back to treating it as an ID
+  const bySlug = await prisma.seller.findFirst({
+    where: { slug: rawParam },
+    select: { id: true },
+  });
+  const sellerId = bySlug ? bySlug.id : rawParam;
 
   const seller = await prisma.seller.findUnique({
     where: { id: sellerId },
@@ -666,7 +657,7 @@ export const getPublicSellerProfile = async (req: Request, res: Response): Promi
   // Resolve the seller's slug for the response so the frontend can build clean URLs
   const profileForResponse = {
     ...seller,
-    slug: seller.slug || slugify(seller.storeName),
+    slug: seller.slug ?? null,
   };
 
   // ...rest of the function stays the same...
@@ -767,7 +758,7 @@ export const getPublicSellerProfile = async (req: Request, res: Response): Promi
         exchangePolicy: seller.exchangePolicy || null,
         cancellationPolicy: seller.cancellationPolicy || null,
         processingTime: seller.processingTime || null,
-        slug: seller.slug || slugify(seller.storeName),
+        slug: seller.slug ?? null,
         verified: seller.isActive,
         deliveryFee: seller.deliveryFee !== null && seller.deliveryFee !== undefined ? parseFloat(seller.deliveryFee.toString()) : null,
       },
@@ -1180,4 +1171,36 @@ export const getSellerBySlug = async (req: Request, res: Response): Promise<void
   }
 
   res.json({ success: true, data: { sellerId: seller.id, storeName: seller.storeName } });
+};
+
+/**
+ * GET /api/public/store-config/:sellerId
+ * Get published store configuration for public storefront
+ */
+export const getPublicStoreConfig = async (req: Request, res: Response): Promise<void> => {
+  const { sellerId } = req.params;
+
+  // Published storefronts must reflect the latest seller publish immediately.
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+
+  const config = await prisma.storeConfiguration.findUnique({
+    where: { sellerId },
+    select: {
+      published: true,
+      publishedAt: true,
+    },
+  });
+
+  if (!config || !config.published) {
+    res.status(200).json({ success: true, data: null });
+    return;
+  }
+
+  res.status(200).json({
+    success: true,
+    data: {
+      ...(config.published as Record<string, unknown>),
+      publishedAt: config.publishedAt,
+    },
+  });
 };

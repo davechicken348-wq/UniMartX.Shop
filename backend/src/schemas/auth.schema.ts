@@ -105,7 +105,7 @@ export const storeInfoSchema = z.object({
   campus: z.string().max(120).optional().or(z.literal('')).default(''),
   pickupLocation: z.string().max(160).optional().or(z.literal('')).default(''),
   deliveryOptions: z.array(z.string()).optional().default([]),
-  businessHours: z.string().max(80).optional().or(z.literal('')).default(''),
+  businessHours: z.string().max(500).optional().or(z.literal('')).default(''),
   storeTags: z.array(z.string().max(40)).max(12).optional().default([]),
 });
 

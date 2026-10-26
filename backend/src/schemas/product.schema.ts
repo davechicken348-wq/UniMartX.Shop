@@ -45,6 +45,15 @@ export const createProductSchema = z.object({
     })
     .pipe(z.record(z.string(), z.string()))
     .optional(),
+  options: z.string()
+    .transform(raw => {
+      try {
+        const parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed)) return [];
+        return parsed.filter((item: any) => item && typeof item.name === 'string' && Array.isArray(item.values) && item.values.length > 0);
+      } catch { return []; }
+    })
+    .optional(),
 });
 
 export type CreateProductInput = z.infer<typeof createProductSchema>;

@@ -21,6 +21,26 @@ import {
   getBackendBaseUrl,
 } from '../services/email.service';
 
+function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/[\s_]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:5000';
+function absUrl(path: string | null | undefined): string | null {
+  const p = path || '';
+  if (!p) return null;
+  if (p.startsWith('/uploads')) {
+    try { return new URL(p, BACKEND_URL).href; } catch { return `${BACKEND_URL}${p}`; }
+  }
+  if (/^https?:/.test(p) || p.startsWith('data:') || p.startsWith('blob:')) return p;
+  return `${BACKEND_URL}${p}`;
+}
+
 export interface JwtPayload {
   userId: string;
   email: string;
@@ -82,6 +102,14 @@ export const registerSeller = async (req: Request, res: Response): Promise<void>
         },
       });
 
+      const baseSlug = slugify(storeData.storeName);
+      // Ensure slug uniqueness by appending a counter if needed
+      let slug = baseSlug;
+      let suffix = 1;
+      while (await tx.seller.findFirst({ where: { slug } })) {
+        slug = `${baseSlug}-${suffix++}`;
+      }
+
       const seller = await tx.seller.create({
         data: {
           userId: user.id,
@@ -99,6 +127,7 @@ export const registerSeller = async (req: Request, res: Response): Promise<void>
           businessHours: storeData.businessHours || null,
           storeColor: storeData.accentColor || null,
           storeTags: storeData.storeTags || [],
+          slug,
         },
       });
 
@@ -219,6 +248,7 @@ export const registerSeller = async (req: Request, res: Response): Promise<void>
           firstName: result.user.firstName,
           lastName: result.user.lastName,
           role: 'seller',
+          avatar: absUrl(result.user.avatar || ''),
         },
         token: result.token,
       },

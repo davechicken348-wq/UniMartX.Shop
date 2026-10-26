@@ -202,8 +202,9 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
     }
 
     // Fallback: plain JSON placeholder strings (for dev/testing without upload)
-    if (imageUrls.length === 0 && Array.isArray(fields.images)) {
-      imageUrls = fields.images.filter(Boolean);
+    if (imageUrls.length === 0) {
+      const suppliedImages = Array.isArray(fields.images) ? fields.images : [fields.images];
+      imageUrls = suppliedImages.filter((image: unknown): image is string => typeof image === 'string' && image.trim().length > 0);
     }
 
     if (imageUrls.length === 0) {
@@ -257,6 +258,17 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
     if (input.location)    detailsObj._location    = input.location;
     createData.details = detailsObj;
 
+    if (input.options && Array.isArray(input.options) && input.options.length > 0) {
+      createData.options = {
+        create: input.options.map((opt: any) => ({
+          name: opt.name,
+          values: Array.isArray(opt.values) ? opt.values : [String(opt.values)],
+          isRequired: Boolean(opt.isRequired),
+          sortOrder: typeof opt.sortOrder === 'number' ? opt.sortOrder : 0,
+        })),
+      };
+    }
+
     const product = await prisma.product.create({
       data: createData,
       select: {
@@ -281,10 +293,16 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
       },
     });
 
-    const result: any = { ...product, image: absUrl(product.image), serviceType: product.serviceType, details: product.details };
-    if (Array.isArray(product.images)) {
-      result.images = product.images.map(absUrl);
+    const created = await prisma.product.findUnique({
+      where: { id: product.id },
+      include: { options: { orderBy: { sortOrder: 'asc' } } },
+    });
+
+    const result: any = { ...created, image: absUrl(created!.image), serviceType: created!.serviceType, details: created!.details };
+    if (Array.isArray(created!.images)) {
+      result.images = created!.images.map(absUrl);
     }
+    result.options = created!.options;
     res.status(201).json({ success: true, data: result });
   } catch (error) {
     if (error instanceof AppError) throw error;
@@ -371,7 +389,7 @@ export const listProducts = async (req: Request, res: Response): Promise<void> =
       details:     p.details,
       deliveryFee: p.seller?.deliveryFee !== null && p.seller?.deliveryFee !== undefined ? parseFloat(p.seller.deliveryFee.toString()) : null,
     }));
-    void res.json({ success: true, data: { products: normalized, total } });
+    void res.json({ success: true, data: { products: normalized, total, pages: Math.ceil(total / limit), page } });
   } catch (error) {
     if (error instanceof AppError) throw error;
     console.error('listProducts error:', error);
@@ -670,6 +688,20 @@ export const updateProduct = async (req: Request, res: Response): Promise<void> 
     else if (existingDetails._location) detailsObj._location = existingDetails._location;
     updateData.details = Object.keys(detailsObj).length ? detailsObj : existingDetails;
 
+    if (input.options && Array.isArray(input.options)) {
+      await prisma.productOption.deleteMany({ where: { productId: id } });
+      if (input.options.length > 0) {
+        updateData.options = {
+          create: input.options.map((opt: any) => ({
+            name: opt.name,
+            values: Array.isArray(opt.values) ? opt.values : [String(opt.values)],
+            isRequired: Boolean(opt.isRequired),
+            sortOrder: typeof opt.sortOrder === 'number' ? opt.sortOrder : 0,
+          })),
+        };
+      }
+    }
+
     const product = await prisma.product.update({
       where: { id },
       data:  updateData,
@@ -682,8 +714,14 @@ export const updateProduct = async (req: Request, res: Response): Promise<void> 
       },
     });
 
+    const updated = await prisma.product.findUnique({
+      where: { id: product.id },
+      include: { options: { orderBy: { sortOrder: 'asc' } } },
+    });
+
     const result: any = { ...product, image: absUrl(product.image), details: product.details };
     if (Array.isArray(product.images)) result.images = product.images.map(absUrl);
+    result.options = updated!.options;
     void res.json({ success: true, data: result });
   } catch (error) {
     if (error instanceof AppError) throw error;

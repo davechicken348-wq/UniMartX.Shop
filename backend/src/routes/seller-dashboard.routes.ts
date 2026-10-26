@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { asyncHandler } from '../middleware/asyncHandler';
-import { getSellerDashboard, getSellerOrders, getSellerOrder, updateSellerOrderStatus, getSellerRefunds, respondToRefund, getSellerRefundDetail } from '../controllers/seller-dashboard.controller';
+import { getSellerDashboard, getSellerOrders, getSellerOrder, updateSellerOrderStatus, getSellerRefunds, respondToRefund, getSellerRefundDetail, getSellerCustomers, getSellerAnalytics, getSellerFollowersStats, getSellerFollowersList } from '../controllers/seller-dashboard.controller';
 import { getSellerProfile, updateSellerProfile } from '../controllers/seller-profile.controller';
 import { validate } from '../middleware/validate';
 import { updateProfileSchema } from '../schemas/seller-profile.schema';
@@ -13,6 +13,27 @@ const router = Router();
  * @access  Private (requires authentication)
  */
 router.get('/dashboard', asyncHandler(getSellerDashboard));
+
+/**
+ * @route   GET /api/seller/analytics?period=7d|30d|90d|1y
+ * @desc    Get analytics data for seller for a given period
+ * @access  Private (Seller only)
+ */
+router.get('/analytics', asyncHandler(getSellerAnalytics));
+
+/**
+ * @route   GET /api/seller/followers/stats?period=7d|30d|90d|1y
+ * @desc    Get followers overview stats and growth data
+ * @access  Private (Seller only)
+ */
+router.get('/followers/stats', asyncHandler(getSellerFollowersStats));
+
+/**
+ * @route   GET /api/seller/followers?page&limit&search
+ * @desc    Get paginated, searchable followers list
+ * @access  Private (Seller only)
+ */
+router.get('/followers', asyncHandler(getSellerFollowersList));
 
 /**
  * @route   GET /api/seller/orders?page&limit&status&search
@@ -55,6 +76,13 @@ router.get('/refunds/:orderId', asyncHandler(getSellerRefundDetail));
  * @access  Private (Seller only)
  */
 router.post('/refunds/:orderId/respond', asyncHandler(respondToRefund));
+
+/**
+ * @route   GET /api/seller/customers?page&limit&search
+ * @desc    Get unique customers for seller derived from orders
+ * @access  Private (Seller only)
+ */
+router.get('/customers', asyncHandler(getSellerCustomers));
 
 /**
  * @route   GET /api/seller/profile

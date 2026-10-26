@@ -1,4 +1,5 @@
 import express from 'express';
+import { createServer } from 'http';
 import cors from 'cors';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
@@ -14,6 +15,8 @@ import dashboardRoutes from './routes/dashboard.routes';
 import sellerAuthRoutes from './routes/seller-auth.routes';
 import sellerDashboardRoutes from './routes/seller-dashboard.routes';
 import productRoutes from './routes/product.routes';
+import productOptionRoutes from './routes/product-option.routes';
+import promotionRoutes from './routes/promotion.routes';
 import categoryRoutes from './routes/category.routes';
 import publicSellerRoutes from './routes/public-seller.routes';
 import wishlistRoutes from './routes/wishlist.routes';
@@ -21,20 +24,34 @@ import followRoutes from './routes/follow.routes';
 import adminRoutes from './routes/admin.routes';
 import orderRoutes from './routes/order.routes';
 import refundRoutes from './routes/refund.routes';
+import contentRoutes from './routes/content.routes';
+import storeConfigRoutes from './routes/store-config.routes';
 import { errorHandler } from './middleware/errorHandler';
+import { rateLimit } from './middleware/rateLimit';
 import { initializeEmailService } from './services/email.service';
 import { initializeR2 } from './services/r2.service';
+import { initializeRealtime } from './services/realtime.service';
 
 dotenv.config();
 
+const requiredEnvVars = ['JWT_SECRET', 'DATABASE_URL'] as const;
+const missingEnvVars = requiredEnvVars.filter((key) => !process.env[key]);
+if (missingEnvVars.length > 0) {
+  console.error(`❌ Missing required environment variables: ${missingEnvVars.join(', ')}`);
+  process.exit(1);
+}
+
 const app = express();
+const server = createServer(app);
+initializeRealtime(server);
 
 // ── Process-level handlers ──
 process.on('unhandledRejection', (err: any) => {
   console.error('❌ Unhandled Rejection:', err);
 });
-process.on('uncaughtException', (err: Error) => {
+process.on('uncaughtException', async (err: Error) => {
   console.error('❌ Uncaught Exception:', err);
+  await prisma.$disconnect();
   process.exit(1);
 });
 process.on('SIGTERM', async () => {
@@ -52,7 +69,7 @@ async function startServer(port: number) {
     await prisma.$connect();
     console.log('✅ Database connected');
 
-    app.listen(port, () => {
+    server.listen(port, () => {
       console.log(`🚀 Server is running on http://localhost:${PORT}`);
       console.log(`📊 Prisma Studio: run "npm run prisma:studio" to view the database`);
     });
@@ -67,11 +84,13 @@ const isDev = process.env.NODE_ENV === 'development';
 const allowedOrigins = isDev
   ? ['http://localhost:3000', 'http://127.0.0.1:3000', 'http://localhost:5173', 'http://localhost:5500', 'http://localhost:8080', 'http://localhost:5000', 'http://127.0.0.1:5000']
   : [process.env.FRONTEND_URL, process.env.VERCEL_URL, 'https://unimartx-shop.onrender.com'].filter((v): v is string => Boolean(v));
+const corsOrigin = allowedOrigins.length > 0 ? allowedOrigins : false;
 app.use(cors({
-  origin: allowedOrigins,
+  origin: corsOrigin,
   credentials: true,
 }));
 const backendOrigin = process.env.BACKEND_URL || 'http://localhost:5000';
+const realtimeOrigin = backendOrigin.replace(/^http/, 'ws');
 const frontendOrigin = process.env.FRONTEND_URL || 'http://localhost:3000';
 app.use(helmet({
   crossOriginResourcePolicy: { policy: 'cross-origin' },
@@ -79,7 +98,7 @@ app.use(helmet({
     directives: {
       ...helmet.contentSecurityPolicy.getDefaultDirectives(),
       'img-src':    ["'self'", 'data:', backendOrigin, '*.supabase.co'],
-      'connect-src': ["'self'", backendOrigin, frontendOrigin],
+      'connect-src': ["'self'", backendOrigin, realtimeOrigin, frontendOrigin],
       'upgrade-insecure-requests': [],
     },
   },
@@ -90,7 +109,7 @@ app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 // ── Health checks ──
 app.get('/health', (_req, res) => {
-  res.json({ status: 'OK', message: 'UnimartX Backend is running' });
+  res.json({ status: 'OK', message: 'UnimartX Backend is running', recommendedPollFloor: 15_000, realtimeAvailable: true });
 });
 
 app.get('/api/health/db', async (req, res) => {
@@ -117,6 +136,9 @@ app.use('/api/buyer', dashboardRoutes);
 app.use('/api/seller-auth', sellerAuthRoutes);
 app.use('/api/seller', sellerDashboardRoutes);
 app.use('/api/seller', productRoutes);
+app.use('/api/seller', productOptionRoutes);
+app.use('/api/seller', promotionRoutes);
+app.use('/api/seller', storeConfigRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/public', publicSellerRoutes);
 app.use('/api/wishlist', wishlistRoutes);
@@ -124,6 +146,7 @@ app.use('/api/follow', followRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/refunds', refundRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/content', contentRoutes);
 
 
 // ── Error handler (must be last) ──

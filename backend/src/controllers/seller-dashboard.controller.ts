@@ -4,6 +4,8 @@ import prisma from '../lib/prisma';
 import { authenticate } from '../controllers/auth.controller';
 import { NotificationService } from '../services/notification.service';
 import { sendBuyerOrderStatusEmail, sendBuyerRefundStatusEmail, sendSellerRefundResponseEmail, sendAdminRefundAlertEmail, getVerificationBaseUrl } from '../services/email.service';
+import { OrderStatus } from '@prisma/client';
+import { emitToUser } from '../services/realtime.service';
 
 const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:5000';
 function absUrl(path: string | null | undefined): string | null {
@@ -368,6 +370,7 @@ export const updateSellerOrderStatus = async (req: Request, res: Response): Prom
       where: { id },
       data: { status },
     });
+    emitToUser(order.buyerId, { type: 'order.status_changed', resource: 'orders', timestamp: Date.now(), payload: { orderId: order.id, status } });
 
     if (!['pending', 'cancelled'].includes(status)) {
       const sellerRecord = await prisma.seller.findUnique({ where: { id: order.sellerId }, select: { storeName: true } });
@@ -675,5 +678,512 @@ export const getSellerRefundDetail = async (req: Request, res: Response): Promis
   } catch (error) {
     if (error instanceof AppError) throw error;
     throw new AppError('Failed to fetch refund detail', 500);
+  }
+};
+
+/**
+ * GET /api/seller/customers?page&limit&search
+ * Get unique customers for the authenticated seller
+ * derived from orders: one row per buyer with aggregate stats
+ */
+export const getSellerCustomers = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const userPayload = authenticate(req);
+    if (!userPayload) {
+      throw new AppError('Authentication required', 401);
+    }
+
+    const seller = await prisma.seller.findUnique({
+      where: { userId: userPayload.userId },
+      select: { id: true },
+    });
+
+    if (!seller) {
+      throw new AppError('Seller account not found', 404);
+    }
+
+    const page  = Math.max(1, parseInt(req.query.page  as string) || 1);
+    const limit = Math.min(100, parseInt(req.query.limit as string) || 20);
+    const skip  = (page - 1) * limit;
+    const search = (req.query.search as string) || '';
+
+    const orderWhere: any = { sellerId: seller.id };
+    if (search) {
+      orderWhere.OR = [
+        { buyer: { firstName: { contains: search, mode: 'insensitive' } } },
+        { buyer: { lastName:  { contains: search, mode: 'insensitive' } } },
+        { buyer: { email:      { contains: search, mode: 'insensitive' } } },
+      ];
+    }
+
+    const [orders, total] = await Promise.all([
+      prisma.order.findMany({
+        where: orderWhere,
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take: limit,
+        select: {
+          id: true,
+          totalAmount: true,
+          createdAt: true,
+          buyer: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              email: true,
+              avatar: true,
+              phone: true,
+            },
+          },
+        },
+      }),
+      prisma.order.count({ where: orderWhere }),
+    ]);
+
+    const customerMap = new Map<string, {
+      id: string;
+      name: string;
+      email: string;
+      avatar: string | null;
+      phone: string | null;
+      orders: number;
+      spent: number;
+      firstOrderAt: string | null;
+      lastOrderAt: string | null;
+    }>();
+
+    for (const order of orders) {
+      const buyer = order.buyer as any;
+      if (!buyer?.id) continue;
+
+      const existing = customerMap.get(buyer.id);
+      const spent = parseFloat(order.totalAmount.toString());
+      const orderDate = order.createdAt.toISOString();
+      if (existing) {
+        existing.orders += 1;
+        existing.spent += spent;
+        if (!existing.lastOrderAt || new Date(orderDate).getTime() > new Date(existing.lastOrderAt).getTime()) {
+          existing.lastOrderAt = orderDate;
+        }
+        if (!existing.firstOrderAt || new Date(orderDate).getTime() < new Date(existing.firstOrderAt).getTime()) {
+          existing.firstOrderAt = orderDate;
+        }
+      } else {
+        customerMap.set(buyer.id, {
+          id: buyer.id,
+          name: `${buyer.firstName || ''} ${buyer.lastName || ''}`.trim() || 'Customer',
+          email: buyer.email || '',
+          avatar: buyer.avatar || null,
+          phone: buyer.phone || null,
+          orders: 1,
+          spent,
+          firstOrderAt: orderDate,
+          lastOrderAt: orderDate,
+        });
+      }
+    }
+
+    const customers = Array.from(customerMap.values()).map((c) => ({
+      ...c,
+      joined: c.firstOrderAt ? new Date(c.firstOrderAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : null,
+      spent: Number(c.spent.toFixed(2)),
+    }));
+
+    res.status(200).json({
+      success: true,
+      data: {
+        customers,
+        total,
+        pages: Math.ceil(total / limit),
+        page,
+      },
+    });
+  } catch (error) {
+    if (error instanceof AppError) throw error;
+    console.error('Get seller customers error:', error);
+    throw new AppError('Failed to fetch customers', 500);
+  }
+};
+
+const PERIOD_DAYS: Record<string, number> = {
+  '7d': 7,
+  '30d': 30,
+  '90d': 90,
+  '1y': 365,
+};
+
+function startOfDay(d: Date): Date {
+  const date = new Date(d);
+  date.setHours(0, 0, 0, 0);
+  return date;
+}
+
+function addDays(d: Date, days: number): Date {
+  const result = new Date(d);
+  result.setDate(result.getDate() + days);
+  return result;
+}
+
+/**
+ * GET /api/seller/analytics?period=7d|30d|90d|1y
+ * Get analytics data for the authenticated seller for a given period.
+ */
+export const getSellerAnalytics = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const userPayload = authenticate(req);
+    if (!userPayload) {
+      throw new AppError('Authentication required', 401);
+    }
+
+    const seller = await prisma.seller.findUnique({
+      where: { userId: userPayload.userId },
+      select: { id: true },
+    });
+
+    if (!seller) {
+      throw new AppError('Seller account not found', 404);
+    }
+
+    const period = (req.query.period as string) || '30d';
+    const days = PERIOD_DAYS[period] || 30;
+    const now = startOfDay(new Date());
+    const periodStart = addDays(now, -days);
+    const previousPeriodStart = addDays(periodStart, -days);
+
+    const revenueStatuses = ['pending', 'processing', 'shipped', 'delivered'] as OrderStatus[];
+
+    const [
+      currentRevenueAgg,
+      currentOrdersCount,
+      currentCustomers,
+      currentUnitsSoldAgg,
+      previousRevenueAgg,
+      previousOrdersCount,
+      previousCustomers,
+      previousUnitsSoldAgg,
+      topProducts,
+    ] = await Promise.all([
+      prisma.order.aggregate({
+        where: { sellerId: seller.id, status: { in: revenueStatuses }, createdAt: { gte: periodStart } },
+        _sum: { totalAmount: true },
+      }),
+      prisma.order.count({
+        where: { sellerId: seller.id, status: { in: revenueStatuses }, createdAt: { gte: periodStart } },
+      }),
+      prisma.order.findMany({
+        where: { sellerId: seller.id, status: { in: revenueStatuses }, createdAt: { gte: periodStart } },
+        select: { buyerId: true },
+        distinct: ['buyerId'],
+      }),
+      prisma.orderItem.aggregate({
+        where: { order: { sellerId: seller.id, status: { in: revenueStatuses }, createdAt: { gte: periodStart } } },
+        _sum: { quantity: true },
+      }),
+      prisma.order.aggregate({
+        where: { sellerId: seller.id, status: { in: revenueStatuses }, createdAt: { gte: previousPeriodStart, lt: periodStart } },
+        _sum: { totalAmount: true },
+      }),
+      prisma.order.count({
+        where: { sellerId: seller.id, status: { in: revenueStatuses }, createdAt: { gte: previousPeriodStart, lt: periodStart } },
+      }),
+      prisma.order.findMany({
+        where: { sellerId: seller.id, status: { in: revenueStatuses }, createdAt: { gte: previousPeriodStart, lt: periodStart } },
+        select: { buyerId: true },
+        distinct: ['buyerId'],
+      }),
+      prisma.orderItem.aggregate({
+        where: { order: { sellerId: seller.id, status: { in: revenueStatuses }, createdAt: { gte: previousPeriodStart, lt: periodStart } } },
+        _sum: { quantity: true },
+      }),
+      prisma.orderItem.findMany({
+        where: { order: { sellerId: seller.id, status: { in: revenueStatuses }, createdAt: { gte: periodStart } } },
+        select: {
+          quantity: true,
+          price: true,
+          product: { select: { id: true, name: true, image: true } },
+        },
+      }),
+    ]);
+
+    const currentRevenue = parseFloat(String(currentRevenueAgg._sum?.totalAmount || 0));
+    const previousRevenue = parseFloat(String(previousRevenueAgg._sum?.totalAmount || 0));
+    const currentUnitsSold = parseFloat(String(currentUnitsSoldAgg._sum?.quantity || 0));
+    const previousUnitsSold = parseFloat(String(previousUnitsSoldAgg._sum?.quantity || 0));
+    const currentCustomersCount = currentCustomers.length;
+    const previousCustomersCount = previousCustomers.length;
+
+    const revenueChange = previousRevenue > 0 ? ((currentRevenue - previousRevenue) / previousRevenue) * 100 : currentRevenue > 0 ? 100 : 0;
+    const ordersChange = previousOrdersCount > 0 ? ((currentOrdersCount - previousOrdersCount) / previousOrdersCount) * 100 : currentOrdersCount > 0 ? 100 : 0;
+    const customersChange = previousCustomersCount > 0 ? ((currentCustomersCount - previousCustomersCount) / previousCustomersCount) * 100 : currentCustomersCount > 0 ? 100 : 0;
+    const unitsChange = previousUnitsSold > 0 ? ((currentUnitsSold - previousUnitsSold) / previousUnitsSold) * 100 : currentUnitsSold > 0 ? 100 : 0;
+
+    // Build daily revenue map
+    const revenueByDate = new Map<string, number>();
+    const allOrders = await prisma.order.findMany({
+      where: { sellerId: seller.id, status: { in: revenueStatuses }, createdAt: { gte: periodStart } },
+      select: { createdAt: true, totalAmount: true },
+    });
+    for (const order of allOrders) {
+      const dateKey = startOfDay(order.createdAt).toISOString().split('T')[0];
+      revenueByDate.set(dateKey, (revenueByDate.get(dateKey) || 0) + parseFloat(order.totalAmount.toString()));
+    }
+
+    const chartData: number[] = [];
+    const chartLabels: string[] = [];
+    for (let i = days - 1; i >= 0; i--) {
+      const d = addDays(now, -i);
+      const key = d.toISOString().split('T')[0];
+      chartData.push(revenueByDate.get(key) || 0);
+      if (period === '1y') {
+        chartLabels.push(d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }));
+      } else if (days <= 7) {
+        chartLabels.push(d.toLocaleDateString('en-US', { weekday: 'short' }));
+      } else if (days <= 31) {
+        chartLabels.push(d.toLocaleDateString('en-US', { day: 'numeric', month: 'short' }));
+      } else {
+        chartLabels.push(d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+      }
+    }
+
+    // Top products
+    const revenueByProduct = new Map<string, { name: string; image: string; units: number; revenue: number }>();
+    for (const item of topProducts) {
+      const pid = item.product.id;
+      const existing = revenueByProduct.get(pid) || { name: item.product.name, image: item.product.image, units: 0, revenue: 0 };
+      existing.units += item.quantity;
+      existing.revenue += parseFloat(item.price.toString());
+      revenueByProduct.set(pid, existing);
+    }
+    const topProductsList = Array.from(revenueByProduct.values())
+      .sort((a, b) => b.revenue - a.revenue)
+      .slice(0, 5)
+      .map(p => ({ name: p.name, units: p.units, revenue: Number(p.revenue.toFixed(2)), image: absUrl(p.image) }));
+
+    res.status(200).json({
+      success: true,
+      data: {
+        period,
+        stats: {
+          revenue: Number(currentRevenue.toFixed(2)),
+          orders: currentOrdersCount,
+          customers: currentCustomersCount,
+          productsSold: Math.round(currentUnitsSold),
+          revenueChange: Number(revenueChange.toFixed(1)),
+          ordersChange: Number(ordersChange.toFixed(1)),
+          customersChange: Number(customersChange.toFixed(1)),
+          productsChange: Number(unitsChange.toFixed(1)),
+        },
+        chartData,
+        chartLabels,
+        topProducts: topProductsList,
+      },
+    });
+  } catch (error) {
+    if (error instanceof AppError) throw error;
+    console.error('Get seller analytics error:', error);
+    throw new AppError('Failed to fetch analytics', 500);
+  }
+};
+
+/**
+ * GET /api/seller/followers/stats?period=7d|30d|90d|1y
+ * Get followers overview stats and growth data for the authenticated seller.
+ */
+export const getSellerFollowersStats = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const userPayload = authenticate(req);
+    if (!userPayload) throw new AppError('Authentication required', 401);
+
+    const seller = await prisma.seller.findUnique({ where: { userId: userPayload.userId } });
+    if (!seller) throw new AppError('Seller account not found', 404);
+
+    const sellerId = seller.id;
+    const now = startOfDay(new Date());
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    const [totalFollowers, newThisMonth, returningBuyersRaw] = await Promise.all([
+      prisma.follow.count({ where: { sellerId } }),
+      prisma.follow.count({ where: { sellerId, createdAt: { gte: startOfMonth } } }),
+      prisma.$queryRaw<[{ count: bigint }]>`
+        SELECT COUNT(DISTINCT o."buyerId")::int as count
+        FROM "orders" o
+        INNER JOIN "buyers" b ON o."buyerId" = b."userId"
+        INNER JOIN "follows" f ON b."id" = f."buyerId" AND f."sellerId" = ${sellerId}
+        WHERE o."sellerId" = ${sellerId}
+          AND o."status" IN ('pending', 'processing', 'shipped', 'delivered')
+      `,
+    ]);
+
+    const returningBuyers = Number(returningBuyersRaw[0]?.count || 0);
+    const engagementRate = totalFollowers > 0 ? Math.round((returningBuyers / totalFollowers) * 100) : 0;
+
+    const period = (req.query.period as string) || '1y';
+    const growth: { label: string; count: number }[] = [];
+
+    if (period === '7d') {
+      for (let i = 6; i >= 0; i--) {
+        const dayEnd = addDays(now, -i + 1);
+        const dayStart = addDays(now, -i);
+        const count = await prisma.follow.count({
+          where: { sellerId, createdAt: { gte: dayStart, lt: dayEnd } },
+        });
+        growth.push({
+          label: dayStart.toLocaleDateString('en-US', { weekday: 'short' }),
+          count,
+        });
+      }
+    } else if (period === '30d') {
+      for (let i = 3; i >= 0; i--) {
+        const weekEnd = addDays(now, -i * 7);
+        const weekStart = addDays(now, -(i + 1) * 7);
+        const count = await prisma.follow.count({
+          where: { sellerId, createdAt: { gte: weekStart, lt: weekEnd } },
+        });
+        growth.push({ label: `Week ${4 - i}`, count });
+      }
+    } else if (period === '90d') {
+      for (let i = 2; i >= 0; i--) {
+        const monthEnd = new Date(now.getFullYear(), now.getMonth() - i + 1, 1);
+        const monthStart = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const count = await prisma.follow.count({
+          where: { sellerId, createdAt: { gte: monthStart, lt: monthEnd } },
+        });
+        growth.push({
+          label: monthStart.toLocaleDateString('en-US', { month: 'short' }),
+          count,
+        });
+      }
+    } else {
+      for (let i = 5; i >= 0; i--) {
+        const monthEnd = new Date(now.getFullYear(), now.getMonth() - i + 1, 1);
+        const count = await prisma.follow.count({
+          where: { sellerId, createdAt: { lt: monthEnd } },
+        });
+        const label = new Date(now.getFullYear(), now.getMonth() - i, 1).toLocaleDateString('en-US', { month: 'short' });
+        growth.push({ label, count });
+      }
+    }
+
+    res.status(200).json({
+      success: true,
+      data: {
+        total: totalFollowers,
+        newThisMonth,
+        returningBuyers,
+        engagementRate,
+        growth,
+      },
+    });
+  } catch (error) {
+    if (error instanceof AppError) throw error;
+    console.error('Get seller followers stats error:', error);
+    throw new AppError('Failed to fetch followers stats', 500);
+  }
+};
+
+/**
+ * GET /api/seller/followers?page&limit&search
+ * Get paginated, searchable followers list for the authenticated seller.
+ */
+export const getSellerFollowersList = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const userPayload = authenticate(req);
+    if (!userPayload) throw new AppError('Authentication required', 401);
+
+    const seller = await prisma.seller.findUnique({ where: { userId: userPayload.userId } });
+    if (!seller) throw new AppError('Seller account not found', 404);
+
+    const sellerId = seller.id;
+    const page = Math.max(1, parseInt(req.query.page as string) || 1);
+    const limit = Math.min(100, parseInt(req.query.limit as string) || 20);
+    const skip = (page - 1) * limit;
+    const search = (req.query.search as string) || '';
+
+    const where: any = { sellerId };
+    if (search) {
+      where.buyer = {
+        user: {
+          OR: [
+            { firstName: { contains: search, mode: 'insensitive' } },
+            { lastName: { contains: search, mode: 'insensitive' } },
+            { email: { contains: search, mode: 'insensitive' } },
+          ],
+        },
+      };
+    }
+
+    const [follows, total] = await Promise.all([
+      prisma.follow.findMany({
+        where,
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take: limit,
+        include: {
+          buyer: {
+            include: {
+              user: { select: { firstName: true, lastName: true, avatar: true, email: true, id: true } },
+            },
+          },
+        },
+      }),
+      prisma.follow.count({ where }),
+    ]);
+
+    const buyerUserIds = follows.map(f => f.buyer.userId);
+    const orders = await prisma.order.findMany({
+      where: {
+        sellerId,
+        buyerId: { in: buyerUserIds },
+        status: { in: ['pending', 'processing', 'shipped', 'delivered'] },
+      },
+      select: { buyerId: true },
+    });
+    const orderCountMap = new Map<string, number>();
+    for (const o of orders) {
+      orderCountMap.set(o.buyerId, (orderCountMap.get(o.buyerId) || 0) + 1);
+    }
+
+    const now = new Date();
+    const data = follows.map(f => {
+      const orderCount = orderCountMap.get(f.buyer.userId) || 0;
+      const daysSinceFollow = (now.getTime() - new Date(f.createdAt).getTime()) / (1000 * 60 * 60 * 24);
+      let activity: 'active' | 'purchased' | 'recently-seen' | 'inactive';
+      if (orderCount > 0) {
+        activity = 'purchased';
+      } else if (daysSinceFollow <= 7) {
+        activity = 'active';
+      } else if (daysSinceFollow <= 30) {
+        activity = 'recently-seen';
+      } else {
+        activity = 'inactive';
+      }
+
+      return {
+        id: f.id,
+        buyerId: f.buyer.id,
+        firstName: f.buyer.user.firstName,
+        lastName: f.buyer.user.lastName,
+        avatar: f.buyer.user.avatar,
+        email: f.buyer.user.email,
+        followedAt: f.createdAt,
+        activity,
+        orderCount,
+      };
+    });
+
+    res.status(200).json({
+      success: true,
+      data: {
+        followers: data,
+        total,
+        pages: Math.ceil(total / limit),
+        page,
+      },
+    });
+  } catch (error) {
+    if (error instanceof AppError) throw error;
+    console.error('Get seller followers error:', error);
+    throw new AppError('Failed to fetch followers', 500);
   }
 };

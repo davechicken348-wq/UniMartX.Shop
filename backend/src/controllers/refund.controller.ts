@@ -267,6 +267,21 @@ export const confirmRefundReceipt = async (req: Request, res: Response): Promise
       data: { status: 'refunded' },
     });
 
+    const orderItems = await prisma.orderItem.findMany({
+      where: { orderId: refund.orderId },
+      select: { productId: true, quantity: true },
+    });
+
+    if (orderItems.length > 0) {
+      const stockUpdates = orderItems.map((item) =>
+        prisma.product.update({
+          where: { id: item.productId },
+          data: { stock: { increment: item.quantity } },
+        })
+      );
+      await Promise.all(stockUpdates);
+    }
+
     await NotificationService.create({
       userId: refund.seller.user.id,
       type: 'order_refunded',
@@ -421,6 +436,23 @@ export const arbitrateRefund = async (req: Request, res: Response): Promise<void
       where: { id: refund.orderId },
       data: { status: orderNewStatus },
     });
+
+    if (decision === 'approve') {
+      const orderItems = await prisma.orderItem.findMany({
+        where: { orderId: refund.orderId },
+        select: { productId: true, quantity: true },
+      });
+
+      if (orderItems.length > 0) {
+        const stockUpdates = orderItems.map((item) =>
+          prisma.product.update({
+            where: { id: item.productId },
+            data: { stock: { increment: item.quantity } },
+          })
+        );
+        await Promise.all(stockUpdates);
+      }
+    }
 
     const buyer = refund.buyer as any;
     const order = refund.order;

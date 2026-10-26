@@ -68,11 +68,15 @@ export const getBuyerDashboard = async (req: Request, res: Response): Promise<vo
           orderNumber: true,
           status: true,
           totalAmount: true,
+          fulfillmentType: true,
+          sellerDeliveryFee: true,
           createdAt: true,
+          seller: { select: { id: true, storeName: true, slug: true, storeAvatar: true, pickupAddress: true } },
           items: {
             select: {
               quantity: true,
-              product: { select: { name: true, image: true, seller: { select: { storeName: true } } } },
+              price: true,
+              product: { select: { id: true, name: true, image: true, seller: { select: { storeName: true } } } },
             },
           },
         },
@@ -193,11 +197,15 @@ export const getBuyerOrders = async (req: Request, res: Response): Promise<void>
           orderNumber: true,
           status: true,
           totalAmount: true,
+          fulfillmentType: true,
+          sellerDeliveryFee: true,
           createdAt: true,
+          seller: { select: { storeName: true, slug: true, storeAvatar: true, pickupAddress: true } },
           items: {
             select: {
               quantity: true,
-              product: { select: { name: true, image: true, seller: { select: { storeName: true } } } },
+              price: true,
+              product: { select: { id: true, name: true, image: true, seller: { select: { storeName: true } } } },
             },
           },
         },
@@ -215,8 +223,12 @@ export const getBuyerOrders = async (req: Request, res: Response): Promise<void>
     // Normalize image URLs
     const normalizedOrders = orders.map((order: any) => ({
       ...order,
+      totalAmount: Number(order.totalAmount),
+      sellerDeliveryFee: Number(order.sellerDeliveryFee || 0),
+      seller: { ...order.seller, storeAvatar: absUrl(order.seller?.storeAvatar || '') },
       items: order.items.map((item: any) => ({
         ...item,
+        price: Number(item.price),
         product: { ...item.product, image: absUrl(item.product.image || '') },
       })),
     }));
@@ -266,6 +278,8 @@ export const getBuyerLatestOrder = async (req: Request, res: Response): Promise<
         orderNumber: true,
         status: true,
         totalAmount: true,
+        fulfillmentType: true,
+        sellerDeliveryFee: true,
         createdAt: true,
         notes: true,
         paymentMethod: true,
@@ -273,6 +287,7 @@ export const getBuyerLatestOrder = async (req: Request, res: Response): Promise<
         seller: {
           select: {
             storeName: true,
+            slug: true,
             user: { select: { firstName: true, lastName: true, email: true, phone: true } },
             storeAvatar: true,
             pickupAddress: true,
@@ -304,6 +319,7 @@ export const getBuyerLatestOrder = async (req: Request, res: Response): Promise<
     const normalizedOrder = {
       ...order,
       totalAmount: parseFloat(order.totalAmount.toString()),
+      sellerDeliveryFee: parseFloat(order.sellerDeliveryFee?.toString() || '0'),
       paymentDetails: order.paymentDetails || {},
       seller: order.seller
         ? {
@@ -349,6 +365,8 @@ export const getBuyerOrder = async (req: Request, res: Response): Promise<void> 
         orderNumber: true,
         status: true,
         totalAmount: true,
+        fulfillmentType: true,
+        sellerDeliveryFee: true,
         createdAt: true,
         notes: true,
         paymentMethod: true,
@@ -356,6 +374,7 @@ export const getBuyerOrder = async (req: Request, res: Response): Promise<void> 
         seller: {
           select: {
             storeName: true,
+            slug: true,
             user: { select: { firstName: true, lastName: true, email: true, phone: true } },
             storeAvatar: true,
             pickupAddress: true,
@@ -374,7 +393,7 @@ export const getBuyerOrder = async (req: Request, res: Response): Promise<void> 
           select: {
             quantity: true,
             price: true,
-            product: { select: { name: true, image: true, seller: { select: { storeName: true } } } },
+            product: { select: { id: true, name: true, image: true, seller: { select: { storeName: true } } } },
           },
         },
       },
@@ -388,6 +407,7 @@ export const getBuyerOrder = async (req: Request, res: Response): Promise<void> 
     const normalizedOrder = {
       ...order,
       totalAmount: parseFloat(order.totalAmount.toString()),
+      sellerDeliveryFee: parseFloat(order.sellerDeliveryFee?.toString() || '0'),
       paymentDetails: order.paymentDetails || {},
       seller: order.seller
         ? {
